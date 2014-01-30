@@ -1,0 +1,3 @@
+[submodule "shine/public/bootstrap"]
+	path = shine/public/bootstrap
+	url = https://github.com/ukwa/bootstrap.git
