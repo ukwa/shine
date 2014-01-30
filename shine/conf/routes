@@ -5,10 +5,13 @@
 # Home page
 GET     /                           controllers.Application.index
 
-# The query parameter is optional. E.g. /search?query=*:*
+# Main facets search interface. The query parameter is optional, defaulting to /search?query=*:*
 GET     /search                     controllers.Application.search(query ?= "*:*")
 
-# The web half-life illustrator
+# TBD: The main hook for the explore/trend analysis/delve UI.
+
+
+# The web half-life visualisation:
 GET     /halflife                   controllers.Application.halflife
 
 # Map static resources from the /public folder to the /assets URL path
