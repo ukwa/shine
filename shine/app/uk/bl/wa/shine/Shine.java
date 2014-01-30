@@ -62,16 +62,24 @@ public class Shine extends Solr {
 		List<String> fq = new ArrayList<String>();
 		for( String param : params.keySet() ) {
 			String field = param;
-			if( field.startsWith("-")) field = field.replaceFirst("-", "");
-			String filter = "{!tag="+field+"}"+param+":";
-			int counter = 0;
-			for( String val : params.get(param)) {
-				if( counter > 0 ) filter += " OR ";
-			    filter += val;// TODO Escape correctly?
-			    counter++;
-			    
-			}
-			fq.add(filter);
+			// Excluded tags are ANDed together:
+			if( param.startsWith("-")) {
+				field = field.replaceFirst("-", "");
+				for( String val : params.get(param)) {
+					fq.add("{!tag="+field+"}"+param+":"+val); // TODO Escape correctly?
+				}
+			} else {
+				// Included tags are ORed together:
+				String filter = "{!tag="+field+"}"+param+":(";
+				int counter = 0;
+				for( String val : params.get(param)) {
+					if( counter > 0 ) filter += " OR ";
+				    filter += ""+val+"";							  // TODO Escape correctly?
+				    counter++;
+				    
+				}
+				filter += ")";
+				fq.add(filter);			}			
 		}
 		if( fq.size() > 0 ) {
 			parameters.setFilterQueries(fq.toArray(new String[fq.size()]));
