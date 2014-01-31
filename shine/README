@@ -124,6 +124,9 @@ https://cwiki.apache.org/confluence/display/solr/The+Stats+Component
 
 (use this to make faceted search saner)
 
+Perhaps a simple force-directed graph display, like [this one](http://bl.ocks.org/mbostock/1153292)?
+
+
 ### Domain Index ###
 
 Domain index, i.e. all distinct slash pages ordered alphabetically.

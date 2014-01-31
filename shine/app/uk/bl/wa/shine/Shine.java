@@ -79,7 +79,8 @@ public class Shine extends Solr {
 				    
 				}
 				filter += ")";
-				fq.add(filter);			}			
+				fq.add(filter);
+			}			
 		}
 		if( fq.size() > 0 ) {
 			parameters.setFilterQueries(fq.toArray(new String[fq.size()]));

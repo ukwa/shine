@@ -3,6 +3,7 @@
  */
 package uk.bl.wa.shine;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,11 +18,13 @@ import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 
+import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 import play.Configuration;
 import play.Logger;
 import uk.bl.wa.shine.URIStatusLookup.URIStatus;
+import uk.bl.wa.whois.JRubyWhois;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
@@ -136,10 +139,15 @@ SolrQuery.addFilterQuery("yourStringField:Cameras\\ \\&\\ Photos")
 	 * @throws MalformedURLException 
 	 */
 	public static void main(String[] args) throws MalformedURLException, SolrServerException {
-		Configuration config = new play.Configuration(ConfigFactory.load("conf/application.conf").getConfig("shine"));
+		JRubyWhois w = new JRubyWhois();
+		System.out.println("Whois: "+w.lookup("bbc.co.uk").isUKRegistrant());
+
+		Config c = ConfigFactory.parseFile(new File("conf/application.conf") );
+		Configuration config = new play.Configuration(c.getConfig("shine"));
 		Rescued r = new Rescued(config);
 		//r.halflife();
 		List<String> years = r.getYearDistribution();
+		System.out.println("Y: "+years);
 	}
 
 }
