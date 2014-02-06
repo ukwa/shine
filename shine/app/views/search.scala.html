@@ -1,40 +1,6 @@
-@(q: uk.bl.wa.shine.Query)
+@(q: uk.bl.wa.shine.Query, pageNo: Int, noOfPages: Int, offset: Int, resultsOf: Int)
 
-@main(q.query) {
-
-@helper.form(action=routes.Application.search()) {
-
-	<div class="row">
-		<div class="col-md-5">
-			<div class="panel-group" id="accordion">
-				@for(fc <- q.res.getFacetFields()) {
-	  				<div class="panel panel-default">
-	    				<div class="panel-heading">
-	      					<h4 class="panel-title">
-	        					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-@(fc.getName())">
-	          						@(fc.getName()) (@(fc.getValueCount()))
-	        					</a>
-	      					</h4>
-	    				</div>
-	    				<div id="collapse-@(fc.getName())" class="panel-collapse collapse">
-	      					<div class="panel-body">
-	      						<ul>
-	    							@for(f <- fc.getValues() ) {
-	        							<li>
-	          								<input type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-	          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@Html(q.formatFacet(fc,f)) (@(f.getCount()))</a>
-	          								<input type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-	        							</li>
-								        <!-- dynamically add checked="true"? -->
-								        <!-- OR use some kind of link constructor? -->
-									} 
-	    						</ul>
-	      					</div>
-	    				</div>
-	  				</div>
-				}
-			</div>
-	
+@scripts = {
 			<script type="text/javascript">
 				$(document).ready(function() {
 	        		var last=$.cookie('activeAccordionGroup');
@@ -51,42 +17,146 @@
 			        $.cookie('activeAccordionGroup', active)
 			    });
 			</script>
-	
-		</div>
+}
 
-		<div class="col-md-7">
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<h4>Query</h4>
-					<input type="text" name="query" value="@(q.query)"/>
-					<input type="submit"/>
-					<h4>Filters</h4>
-					<ul>
-						@for(f <- q.filters.keySet()) {
-		    				@for( v <- q.filters.get(f)) {
-		        				<li>@f @v</li>
-		    				}
-						}
-					</ul>
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(query: String, page: Int) = @{
+    
+    // Generate the link
+    routes.Application.search(query, page, offset, resultsOf)
+    
+}
+
+@pagination = {
+	<div class="text-center">
+		<ul class="pagination">
+        	@if(pageNo >= noOfPages) {
+            	<li class="prev">
+            		<a href="@link(q.query, pageNo-1)">&larr; Previous</a>
+                </li>
+            } else {
+                <li class="prev disabled">
+                    <a>&larr; Previous</a>
+                </li>
+            }
+            <li class="current">
+                <a>Displaying @offset to ??? of @(q.formatNumber(q.res.getResults().getNumFound()))</a>
+            </li>
+        	@if(pageNo < noOfPages) {
+                <li class="next">
+                    <a href="@link(q.query, pageNo+1)">Next &rarr;</a>
+                </li>
+            } else {
+                <li class="next disabled">
+                    <a>Next &rarr;</a>
+                </li>
+			}
+		</ul>
+	</div>
+}
+
+@main(q.query, scripts) {
+
+	@helper.form(action=routes.Application.search()) {
+
+		<div class="row">
+			<div class="col-md-3">
+				<div class="panel-group" id="accordion">
+					@for(fc <- q.res.getFacetFields()) {
+		  				<div class="panel panel-default">
+		    				<div class="panel-heading">
+		      					<h4 class="panel-title">
+		        					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-@(fc.getName())">
+		          						@(fc.getName()) (@(fc.getValueCount()))
+		        					</a>
+		      					</h4>
+		    				</div>
+		    				<div id="collapse-@(fc.getName())" class="panel-collapse collapse">
+		      					<div class="panel-body">
+		      						<ul>
+		    							@for(f <- fc.getValues() ) {
+		        							<li>
+		          								<input type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
+		          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@Html(q.formatFacet(fc,f)) (@(f.getCount()))</a>
+		          								<input type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
+		        							</li>
+									        <!-- dynamically add checked="true"? -->
+									        <!-- OR use some kind of link constructor? -->
+										} 
+		    						</ul>
+		      					</div>
+		    				</div>
+		  				</div>
+					}
 				</div>
 			</div>
 	
-			<div class="panel panel-default">
-				<div class="panel-heading">
-			    	<h4 class="panel-title">
-			      		Results 1 - @(q.res.getResults().size()) of @(q.formatNumber(q.res.getResults().getNumFound()))
-					</h4>
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<h4>Query</h4>
+			   			<div class="input-group">
+							<input type="text" class="form-control" name="query" value="@(q.query)"/>
+				   			<span class="input-group-btn">
+								<button type="submit" class="btn btn-primary" id="search" name="action" value="search">Search</button>
+							</span>
+						</div>					
+						
+						<h4>Filters</h4>
+						<ul>
+							@for(f <- q.filters.keySet()) {
+			    				@for( v <- q.filters.get(f)) {
+			        				<li>@f @v</li>
+			    				}
+							}
+						</ul>
+					</div>
 				</div>
-				<div class="panel-body">
-					<ul> 
-						@for(d <- q.res.getResults()) {
-							<li><a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a><br/>
-			   					@d.getFirstValue("crawl_date"), @d.getFirstValue("content_type_norm"), @d.getFirstValue("domain"), @d.getFirstValue("sentiment_score")</li>
-						}
-					</ul>
+		
+				<div class="panel panel-default">
+					<div class="panel-heading">
+				    	<h4 class="panel-title">
+				      		Results 1 - @(q.res.getResults().size()) of @(q.formatNumber(q.res.getResults().getNumFound()))
+						</h4>
+					</div>
+					<div class="panel-body">
+						@pagination
+						<ul> 
+							@for(d <- q.res.getResults()) {
+								<li><a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a><br/>
+				   					@d.getFirstValue("crawl_date"), @d.getFirstValue("content_type_norm"), @d.getFirstValue("domain"), @d.getFirstValue("sentiment_score")</li>
+							}
+						</ul>
+						@pagination
+					</div>
+				</div>
+			</div>
+	
+			<div class="col-md-3">
+				<div class="panel-group" id="accordion">
+		  				<div class="panel panel-default">
+		    				<div class="panel-heading">
+		      					<h4 class="panel-title">
+		        					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#">
+										Filters
+		        					</a>
+		      					</h4>
+		    				</div>
+		    				<div id="collapse" class="panel-collapse collapse">
+		      					<div class="panel-body">
+		      						<ul>
+		        							<li>
+		        							</li>
+									        <!-- dynamically add checked="true"? -->
+									        <!-- OR use some kind of link constructor? -->
+		    						</ul>
+		      					</div>
+		    				</div>
+		  				</div>
 				</div>
 			</div>
 		</div>
-	</div>
 	}
 }

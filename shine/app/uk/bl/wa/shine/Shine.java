@@ -8,11 +8,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
 import play.Logger;
@@ -29,6 +27,8 @@ public class Shine extends Solr {
 	private Map<String,String> facet_names = null;
 	
 	private Map<String,List<String>> facets_tree = null;
+	
+	private int perPage; 
 	
 	public Shine( play.Configuration config ) {
 		 super(config);
@@ -48,12 +48,16 @@ public class Shine extends Solr {
 			 Logger.info("Putting "+fc+" > "+fl);
 			 this.facets_tree.put(fc, fl);
 		 }
+		 this.perPage = config.getInt("per_page");
     }
 	
-	public QueryResponse search( String query, Map<String,List<String>> params ) throws SolrServerException {
+	public QueryResponse search( String query, Map<String,List<String>> params, int pageNo) throws SolrServerException {
+		Logger.info("per_page: " + perPage);
 		SolrQuery parameters = new SolrQuery();
 		// The query:
 		parameters.set("q", query);
+		// calculate increments based on per_page
+		parameters.set("start", ((pageNo - 1) * perPage));
 		// Facets:
 		for( String f : facets ) {
 			parameters.addFacetField("{!ex="+f+"}"+f);
@@ -89,7 +93,7 @@ public class Shine extends Solr {
 		parameters.setSort("wayback_date", ORDER.asc);
 		//parameters.setSort("sentiment_score", ORDER.asc);
 		// Paging:
-		parameters.setRows(20);
+		parameters.setRows(perPage);
 		Logger.info("Query: "+parameters.toString());		
 		// Perform the query:
 		QueryResponse res = solr.query(parameters);
@@ -101,11 +105,16 @@ public class Shine extends Solr {
 
 	
 	private String temp( String query ) throws SolrServerException {
-		QueryResponse res = this.search(query, null);
+		QueryResponse res = this.search(query, null, 0);
 		res.getFacetFields().get(0).getValues().get(0).getName();
 		res.getResults().get(0).getFirstValue("title");
 		res.getResults().getNumFound();
 		return null;
+	}
+
+	
+	public int getPerPage() {
+		return perPage;
 	}
 
 	/**

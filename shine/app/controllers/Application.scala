@@ -26,14 +26,22 @@ object Application extends Controller {
     Ok(views.html.index("Half-life..."))
   }
   
-  def search ( query: String ) = Action { implicit request =>
+  def search (query: String, pageNo: Int, offset: Int, resultsOf: Int) = Action { implicit request =>
+  	println("Page #: " + pageNo);
     val map = request.queryString;
     val javaMap = map.map { case (k,v) => (k, v.asJava) }.asJava;
     val q = new Query()
     q.query = query
     q.parseParams(javaMap)
-    q.res = solr.search(query, q.filters)
-    Ok(views.html.search(q))
+    q.res = solr.search(query, q.filters, pageNo)
+    
+    val noOfRecords = q.res.getResults().getNumFound()
+    val recordsPerPage = solr.getPerPage()
+    val noOfPages = Math.ceil(noOfRecords * 1.0 / recordsPerPage).intValue()
+    val offset = (pageNo - 1) * recordsPerPage + 1
+    val resultsOf = 0
+
+    Ok(views.html.search(q, pageNo, noOfPages, offset, resultsOf))
   }
   
 }
