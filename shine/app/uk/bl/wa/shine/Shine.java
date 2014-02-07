@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
@@ -51,13 +53,28 @@ public class Shine extends Solr {
 		 this.perPage = config.getInt("per_page");
     }
 	
-	public QueryResponse search( String query, Map<String,List<String>> params, int pageNo) throws SolrServerException {
+	public QueryResponse search(String query, Map<String,List<String>> params, int pageNo, String sort, String order) throws SolrServerException {
+		
+		ORDER orderSolr = ORDER.asc;
+		
+		if (StringUtils.equalsIgnoreCase(order, "desc")) {
+			orderSolr = ORDER.desc;
+		}
+		if (StringUtils.isEmpty(sort)) {
+			sort = "crawl_date";
+		}
+		
 		Logger.info("per_page: " + perPage);
 		SolrQuery parameters = new SolrQuery();
 		// The query:
 		parameters.set("q", query);
 		// calculate increments based on per_page
-		parameters.set("start", ((pageNo - 1) * perPage));
+		Integer start = ((pageNo - 1) * perPage);
+		if (start < 0) {
+			start = 0;
+		}
+		parameters.set("start", start);
+		Logger.info("start: " + parameters.get("start"));
 		// Facets:
 		for( String f : facets ) {
 			parameters.addFacetField("{!ex="+f+"}"+f);
@@ -90,11 +107,11 @@ public class Shine extends Solr {
 			parameters.setFilterQueries(fq.toArray(new String[fq.size()]));
 		}
 		// Sorts:
-		parameters.setSort("wayback_date", ORDER.asc);
+		parameters.setSort(sort, orderSolr);
 		//parameters.setSort("sentiment_score", ORDER.asc);
 		// Paging:
 		parameters.setRows(perPage);
-		Logger.info("Query: "+parameters.toString());		
+		Logger.info("Query: "+parameters.toString());
 		// Perform the query:
 		QueryResponse res = solr.query(parameters);
 		Logger.info("QTime: "+res.getQTime());
@@ -105,7 +122,7 @@ public class Shine extends Solr {
 
 	
 	private String temp( String query ) throws SolrServerException {
-		QueryResponse res = this.search(query, null, 0);
+		QueryResponse res = this.search(query, null, 0, null, null);
 		res.getFacetFields().get(0).getValues().get(0).getName();
 		res.getResults().get(0).getFirstValue("title");
 		res.getResults().getNumFound();

@@ -28,22 +28,26 @@ object Application extends Controller {
     Ok(views.html.index("Half-life..."))
   }
   
-  def search (query: String, pageNo: Int) = Action { implicit request =>
-  	println("Page #: " + pageNo)
+  def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     val map = request.queryString
     val javaMap = map.map { case (k,v) => (k, v.asJava) }.asJava;
     val q = new Query()
     q.query = query
     q.parseParams(javaMap)
-    q.res = solr.search(query, q.filters, pageNo)
+    q.res = solr.search(query, q.filters, pageNo, sort, order)
     
     val totalRecords = q.res.getResults().getNumFound().intValue()
 	val recordsPerPage = solr.getPerPage()
 	val currentPageSize = q.res.getResults().size()
 	
+	println("Page #: " + pageNo)
+  	println("totalRecords #: " + totalRecords)
+  	println("recordsPerPage #: " + recordsPerPage)
+  	println("currentPageSize #: " + currentPageSize)
+	
 	pagination.update(totalRecords, recordsPerPage, pageNo, currentPageSize)
 
-    Ok(views.html.search(q, pagination))
+    Ok(views.html.search(q, pagination, sort, order))
   }
   
 }
