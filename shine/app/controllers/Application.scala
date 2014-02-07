@@ -7,6 +7,7 @@ import java.util.List
 import uk.bl.wa.shine.Shine
 import uk.bl.wa.shine.Query
 import uk.bl.wa.shine.Rescued
+import uk.bl.wa.shine.Pagination
 
 object Application extends Controller {
   
@@ -16,6 +17,7 @@ object Application extends Controller {
   
   val rescued = new Rescued(config);
   
+  var pagination = new Pagination();
   
   def index = Action {
     Ok(views.html.index("Shine Application"))
@@ -26,22 +28,22 @@ object Application extends Controller {
     Ok(views.html.index("Half-life..."))
   }
   
-  def search (query: String, pageNo: Int, offset: Int, resultsOf: Int) = Action { implicit request =>
-  	println("Page #: " + pageNo);
-    val map = request.queryString;
+  def search (query: String, pageNo: Int) = Action { implicit request =>
+  	println("Page #: " + pageNo)
+    val map = request.queryString
     val javaMap = map.map { case (k,v) => (k, v.asJava) }.asJava;
     val q = new Query()
     q.query = query
     q.parseParams(javaMap)
     q.res = solr.search(query, q.filters, pageNo)
     
-    val noOfRecords = q.res.getResults().getNumFound()
-    val recordsPerPage = solr.getPerPage()
-    val noOfPages = Math.ceil(noOfRecords * 1.0 / recordsPerPage).intValue()
-    val offset = (pageNo - 1) * recordsPerPage + 1
-    val resultsOf = 0
+    val totalRecords = q.res.getResults().getNumFound().intValue()
+	val recordsPerPage = solr.getPerPage()
+	val currentPageSize = q.res.getResults().size()
+	
+	pagination.update(totalRecords, recordsPerPage, pageNo, currentPageSize)
 
-    Ok(views.html.search(q, pageNo, noOfPages, offset, resultsOf))
+    Ok(views.html.search(q, pagination))
   }
   
 }

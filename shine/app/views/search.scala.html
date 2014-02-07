@@ -1,4 +1,4 @@
-@(q: uk.bl.wa.shine.Query, pageNo: Int, noOfPages: Int, offset: Int, resultsOf: Int)
+@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination)
 
 @scripts = {
 			<script type="text/javascript">
@@ -22,19 +22,19 @@
 @****************************************
 * Helper generating navigation links    *
 ****************************************@
-@link(query: String, page: Int) = @{
+@link(query: String, pageNo: Int) = @{
     
     // Generate the link
-    routes.Application.search(query, page, offset, resultsOf)
+    routes.Application.search(query, pageNo)
     
 }
 
 @pagination = {
 	<div class="text-center">
 		<ul class="pagination">
-        	@if(pageNo >= noOfPages) {
+        	@if(currentPage.hasPreviousPage) {
             	<li class="prev">
-            		<a href="@link(q.query, pageNo-1)">&larr; Previous</a>
+            		<a href="@link(q.query, currentPage.getCurrentPage-1)">&larr; Previous</a>
                 </li>
             } else {
                 <li class="prev disabled">
@@ -42,11 +42,11 @@
                 </li>
             }
             <li class="current">
-                <a>Displaying @offset to ??? of @(q.formatNumber(q.res.getResults().getNumFound()))</a>
+                <a>Displaying @currentPage.getDisplayXtoYofZ(" to "," of ")</a>
             </li>
-        	@if(pageNo < noOfPages) {
+        	@if(currentPage.hasNextPage) {
                 <li class="next">
-                    <a href="@link(q.query, pageNo+1)">Next &rarr;</a>
+                    <a href="@link(q.query, currentPage.getCurrentPage+1)">Next &rarr;</a>
                 </li>
             } else {
                 <li class="next disabled">
@@ -118,7 +118,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 				    	<h4 class="panel-title">
-				      		Results 1 - @(q.res.getResults().size()) of @(q.formatNumber(q.res.getResults().getNumFound()))
+				    		Results @currentPage.getDisplayXtoYofZ(" to "," of ")
 						</h4>
 					</div>
 					<div class="panel-body">
