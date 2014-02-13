@@ -1,8 +1,19 @@
-body {
-  min-height: 2000px;
-  padding-top: 70px;
-}
-
 .panel-title {
 	font-size: 12px;
+}
+
+.padding-20 {
+	padding: 20px;
+}
+
+.padding-10 {
+	padding: 10px;
+}
+
+#search-sorting-buttons {
+	margin-bottom:-40px;
+}
+
+.sort-dropdown {
+	margin: 20px 0;
 }

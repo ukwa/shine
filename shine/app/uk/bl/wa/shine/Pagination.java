@@ -1,5 +1,8 @@
 package uk.bl.wa.shine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pagination {
 
     private int currentPage = 1;
@@ -7,11 +10,10 @@ public class Pagination {
     private int itemsPerPage;
 
     private int totalPages = 0;
-    private int currentPageSize;
 
     public Pagination() {}
     
-    public void update(int totalItems, int itemsPerPage, int pageNo, int currentPageSize) {
+    public void update(int totalItems, int itemsPerPage, int pageNo) {
 
         this.totalItems = totalItems;
         this.itemsPerPage = itemsPerPage;
@@ -25,8 +27,6 @@ public class Pagination {
         }
         
         this.currentPage = pageNo;
-        this.currentPageSize = currentPageSize;
-
     }
 
     public int getCurrentPage() {
@@ -74,6 +74,10 @@ public class Pagination {
     public int getStartIndex() {
         return (this.currentPage - 1) * this.itemsPerPage + 1;
     }
+    
+    public int getNextIndex(int currentIndex) {
+    	return getStartIndex()+currentIndex;
+    }
 
     public int getEndIndex() {
         int endIndex = this.currentPage * this.itemsPerPage;
@@ -87,10 +91,30 @@ public class Pagination {
         return totalItems;
     }
     
+    public List<Integer> getPagesList(int radius) {
+        List<Integer> pageList = new ArrayList<Integer>();
+        
+        int startPage = getCurrentPage() - radius;
+        if (startPage < 1) {
+            startPage = 1;
+        }
+        
+        int endPage = getCurrentPage() + radius;
+        if (endPage > getTotalPages()) {
+            endPage = getTotalPages();
+        }
+        
+        for (int page = startPage; page <= endPage; page++) {
+            pageList.add(page);
+        }
+        
+        return pageList;
+    }
+    
 	public String getDisplayXtoYofZ(String to, String of) {
-        int first = (currentPage - 1) * itemsPerPage + 1;
-        int last = first + currentPageSize-1;
-        int total = totalItems;
+        int first = this.getStartIndex();
+        int last = this.getEndIndex();
+        int total = this.getTotalItems();
           
         return first+to+last+of+total;
 	}
