@@ -2,12 +2,10 @@
 
 @scripts = {
 	<script type="text/javascript">
-		$(document).ready(function() {
-		    if(@(currentPage.getTotalItems > 0)) {
-		    	console.log("results: " + @(q.res.getResults().size()))
-		    	$('#filter-panel').collapse('hide');
-		    }
-		});
+	    if(@(currentPage.getTotalItems == 0)) {
+	    	console.log("results: " + @(q.res.getResults().size()))
+	    	$('#filter-panel').collapse('show');
+	    }
 	</script>
 }
 
@@ -89,7 +87,7 @@
 			<a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 		</div>
 	
-		<div id="filter-panel" class="panel-collapse collapse in">
+		<div id="filter-panel" class="panel-collapse collapse">
 			<div class="row">
 				<div class="col-md-12">
 					@helper.form(action=routes.Application.advanced_search(), 'class -> "form-horizontal") {

@@ -1,0 +1,45 @@
+@(title: String, labelX: String, labelY: String, data: List[Int])
+
+@styles = {
+	<link rel="stylesheet" type="text/css" href="@routes.Assets.at("jqplot/jquery.jqplot.min.css")">
+}
+
+@scripts = {
+	<!--[if lt IE 9]><script src="@routes.Assets.at("javascripts/jqplot/excanvas.min.js")" type="text/javascript"></script><![endif]-->
+	<script src="@routes.Assets.at("jqplot/jquery.jqplot.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("jqplot/plugins/jqplot.canvasTextRenderer.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js")" type="text/javascript"></script>
+	
+	<script type="text/javascript">
+		$(document).ready(function(){
+			var cosPoints = []; 
+			@for(i <- 0 until data.length) {
+				cosPoints.push([@i, Math.cos(@i)]);
+				console.log(@i);
+			}
+			var plot1 = $.jqplot('chart-id', [cosPoints], {  
+				series:[{showMarker:false}],
+				axes:{
+					xaxis:{
+					  label:'@(labelX)'
+					},
+					yaxis:{
+					  label:'@(labelY)'
+					}
+				}
+			});
+		});
+	</script>
+}
+
+@main(title, scripts, styles) {
+
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#">Plot</a></li>
+		<li><a href="#">Bar</a></li>
+	</ul>
+
+	<div class="padding-20">
+	    <div id="chart-id"></div>
+	</div>
+}

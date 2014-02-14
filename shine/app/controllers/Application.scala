@@ -3,7 +3,6 @@ package controllers
 import play.api._
 import play.api.mvc._
 import scala.collection.JavaConverters._
-import java.util.List
 import uk.bl.wa.shine.Shine
 import uk.bl.wa.shine.Query
 import uk.bl.wa.shine.Rescued
@@ -23,6 +22,11 @@ object Application extends Controller {
 		Ok(views.html.index("Shine Application"))
 	}
   
+	def graph = Action {
+		val data = List.fill(50)(scala.util.Random.nextInt)
+		Ok(views.html.graphs.plot("Plot Graph Test", "label x", "label y", data))
+	}
+	
 	def halflife = Action {
 	    rescued.halflife();
 	    Ok(views.html.index("Half-life..."))
