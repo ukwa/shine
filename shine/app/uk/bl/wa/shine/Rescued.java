@@ -24,7 +24,6 @@ import com.typesafe.config.ConfigFactory;
 import play.Configuration;
 import play.Logger;
 import uk.bl.wa.shine.URIStatusLookup.URIStatus;
-import uk.bl.wa.whois.JRubyWhois;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
@@ -139,9 +138,6 @@ SolrQuery.addFilterQuery("yourStringField:Cameras\\ \\&\\ Photos")
 	 * @throws MalformedURLException 
 	 */
 	public static void main(String[] args) throws MalformedURLException, SolrServerException {
-		JRubyWhois w = new JRubyWhois();
-		System.out.println("Whois: "+w.lookup("bbc.co.uk").isUKRegistrant());
-
 		Config c = ConfigFactory.parseFile(new File("conf/application.conf") );
 		Configuration config = new play.Configuration(c.getConfig("shine"));
 		Rescued r = new Rescued(config);

@@ -7,6 +7,7 @@ public class Pagination {
 
     private int currentPage = 1;
     private int totalItems;
+    private int totalPageableItems;
     private int itemsPerPage;
 
     private int totalPages = 0;
@@ -16,13 +17,17 @@ public class Pagination {
     public void update(int totalItems, int itemsPerPage, int pageNo) {
 
         this.totalItems = totalItems;
+        // Place hard upper limit on paging
+        this.totalPageableItems = 100;
+        if( this.totalItems > 100 ) this.totalPageableItems = 100;
+        
         this.itemsPerPage = itemsPerPage;
         if (this.itemsPerPage < 1) {
             this.itemsPerPage = 1;
         }
 
-        this.totalPages = this.totalItems / this.itemsPerPage;
-        if (this.totalItems % this.itemsPerPage > 0) {
+        this.totalPages = this.totalPageableItems / this.itemsPerPage;
+        if (this.totalPageableItems % this.itemsPerPage > 0) {
             this.totalPages = this.totalPages + 1;
         }
         
@@ -81,8 +86,8 @@ public class Pagination {
 
     public int getEndIndex() {
         int endIndex = this.currentPage * this.itemsPerPage;
-        if (endIndex > this.totalItems) {
-            endIndex = this.totalItems;
+        if (endIndex > this.totalPageableItems) {
+            endIndex = this.totalPageableItems;
         }
         return endIndex;
     }
