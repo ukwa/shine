@@ -12,8 +12,7 @@ GET     /advanced_search            controllers.Application.advanced_search(quer
 
 # TBD: The main hook for the explore/trend analysis/delve UI.
 
-# The web half-life visualisation:
-GET     /graph						controllers.Application.graph
+GET     /graph						controllers.Application.plot_graph(query ?= "*:*", year_start ?= "1800", year_end ?= "2000")
 
 # The web half-life visualisation:
 GET     /halflife                   controllers.Application.halflife
