@@ -7,29 +7,34 @@ public class Pagination {
 
     private int currentPage = 1;
     private int totalItems;
-    private int totalPageableItems;
     private int itemsPerPage;
+    private int maxNumberOfLinksOnPage; // i.e 10 links per page
+    private int maxViewablePages; // i.e 50 pages max
 
     private int totalPages = 0;
 
-    public Pagination() {}
-    
-    public void update(int totalItems, int itemsPerPage, int pageNo) {
+    // The paging must limit the depth to which we allow the user to descend, as otherwise Solr starts to fall over. 
+    // The Pager should only show ten page numbers at once, and should only allow 50 pages to be viewed. 
+    // On the last page of results, you should instead get a warning that you can't page any deeper.
 
-        this.totalItems = totalItems;
-        // Place hard upper limit on paging
-        this.totalPageableItems = 100;
-        if( this.totalItems > 100 ) this.totalPageableItems = 100;
-        
-        this.itemsPerPage = itemsPerPage;
+    public Pagination(int itemsPerPage, int maxNumberOfLinksOnPage, int maxViewablePages) {
+    	this.itemsPerPage = itemsPerPage;
+    	this.maxNumberOfLinksOnPage = maxNumberOfLinksOnPage; // 10
+    	this.maxViewablePages = maxViewablePages; // 500
         if (this.itemsPerPage < 1) {
             this.itemsPerPage = 1;
         }
+    }
+    
+    public void update(int totalItems, int pageNo) {
 
-        this.totalPages = this.totalPageableItems / this.itemsPerPage;
-        if (this.totalPageableItems % this.itemsPerPage > 0) {
+        this.totalItems = totalItems;
+        // Place hard upper limit on paging
+        this.totalPages = this.totalItems / this.itemsPerPage;
+        if (this.totalItems % this.itemsPerPage > 0) {
             this.totalPages = this.totalPages + 1;
         }
+        if (this.totalPages > maxViewablePages) this.totalPages = maxViewablePages;
         
         this.currentPage = pageNo;
     }
@@ -86,8 +91,8 @@ public class Pagination {
 
     public int getEndIndex() {
         int endIndex = this.currentPage * this.itemsPerPage;
-        if (endIndex > this.totalPageableItems) {
-            endIndex = this.totalPageableItems;
+        if (endIndex > this.totalItems) {
+            endIndex = this.totalItems;
         }
         return endIndex;
     }
@@ -96,7 +101,8 @@ public class Pagination {
         return totalItems;
     }
     
-    public List<Integer> getPagesList(int radius) {
+    public List<Integer> getPagesList() {
+    	int radius = this.maxNumberOfLinksOnPage / 2;
         List<Integer> pageList = new ArrayList<Integer>();
         
         int startPage = getCurrentPage() - radius;
@@ -113,6 +119,7 @@ public class Pagination {
             pageList.add(page);
         }
         
+
         return pageList;
     }
     
@@ -123,4 +130,20 @@ public class Pagination {
           
         return first+to+last+of+total;
 	}
+
+	public int getMaxNumberOfLinksOnPage() {
+		return maxNumberOfLinksOnPage;
+	}
+
+	public int getMaxViewablePages() {
+		return maxViewablePages;
+	}
+	
+	public boolean hasMaxViewablePagedReached() {
+        System.out.println("currentPage: " + currentPage);
+        System.out.println("maxViewablePages: " + maxViewablePages);
+		return (this.currentPage == this.maxViewablePages);
+	}
+	
+	
 }

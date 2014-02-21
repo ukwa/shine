@@ -22,7 +22,11 @@ object Application extends Controller {
   
 	val rescued = new Rescued(config);
   
-	var pagination = new Pagination();
+	val recordsPerPage = solr.getPerPage()
+	val maxNumberOfLinksOnPage = config.getInt("max_number_of_links_on_page")
+	val maxViewablePages = config.getInt("max_viewable_pages")
+			
+	var pagination = new Pagination(recordsPerPage, maxNumberOfLinksOnPage, maxViewablePages);
   
 	def index = Action {
 		Ok(views.html.index("Shine Application"))
@@ -35,16 +39,14 @@ object Application extends Controller {
   
 	def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
 
-		val q = doSearch(query, request.queryString, sort, order)
+		val q = doSearch(query, request.queryString, pageNo, sort, order)
 	    
 	    val totalRecords = q.res.getResults().getNumFound().intValue()
-		val recordsPerPage = solr.getPerPage()
 		
 		println("Page #: " + pageNo)
 	  	println("totalRecords #: " + totalRecords)
-	  	println("recordsPerPage #: " + recordsPerPage)
 		
-		pagination.update(totalRecords, recordsPerPage, pageNo)
+		pagination.update(totalRecords, pageNo)
 	
 	    Ok(views.html.search.search(q, pagination, sort, order))
 	}
@@ -52,16 +54,14 @@ object Application extends Controller {
 	def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
 		println("advanced_search")
 
-		val q = doSearch(query, request.queryString, sort, order)
+		val q = doSearch(query, request.queryString, pageNo, sort, order)
 
 		val totalRecords = q.res.getResults().getNumFound().intValue()
-		val recordsPerPage = solr.getPerPage()
 	
 		println("Page #: " + pageNo)
 		println("totalRecords #: " + totalRecords)
-		println("recordsPerPage #: " + recordsPerPage)
 		
-		pagination.update(totalRecords, recordsPerPage, pageNo)
+		pagination.update(totalRecords, pageNo)
 	  	Ok(views.html.search.advanced(q, pagination, sort, order))
 	}
 	
@@ -76,7 +76,7 @@ object Application extends Controller {
 		if (StringUtils.isBlank(yearEnd)) {
 			yearEnd = config.getString("default_end_year")
 		}
-		val q = doSearch(query, request.queryString, "", "")
+		val q = doSearch(query, request.queryString, 0, "", "")
 		val totalRecords = q.res.getResults().getNumFound().intValue()
 		println("totalRecords: " + totalRecords);
 
@@ -99,31 +99,14 @@ object Application extends Controller {
 	    Ok(views.html.graphs.plot("Plot Graph Test", query, "Years", "label Y", data, yearStart, yearEnd))
 	}
 	
-	def doSearch(query: String, queryString: Map[String, Seq[String]], sort: String, order: String) = {
+	def doSearch(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
 		val map = queryString
 		val javaMap = map.map { case (k,v) => (k, v.asJava) }.asJava;
 		println("javaMap: " + javaMap)
 		val q = new Query()
 		q.query = query
 		q.parseParams(javaMap)
-		q.res = solr.search(query, q.filters, 0, sort, order)
+		q.res = solr.search(query, q.filters, pageNo, sort, order)
 		q
 	}
-	
-	def sum(num: Integer) = {
-		var prevNum = num
-		prevNum = prevNum + 20 
-		val newNum = prevNum
-		newNum
-	}
-	
-	def currentYear() = {
-		val today = Calendar.getInstance().getTime()
-		val yearFormat = new SimpleDateFormat("yyyy")
-		val currentYear = yearFormat.format(today)
-		println("currentYear: " + currentYear)
-		currentYear
-	}
-
-	case class Mut[A](var value: A) {}
 }

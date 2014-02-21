@@ -6,7 +6,7 @@
 GET     /                           controllers.Application.index
 
 # Main facets search interface. The query parameter is optional, defaulting to /search?query=*:*
-GET     /search                     controllers.Application.search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /search                     controllers.Application.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
 
 GET     /advanced_search            controllers.Application.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
 
