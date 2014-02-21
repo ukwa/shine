@@ -5,16 +5,14 @@ import play.api.mvc._
 import scala.collection.JavaConverters._
 import uk.bl.wa.shine.Shine
 import uk.bl.wa.shine.Query
-import uk.bl.wa.shine.Rescued
 import uk.bl.wa.shine.Pagination
+import uk.bl.wa.shine.rescued.Rescued
 
 object Application extends Controller {
   
 	val config = play.Play.application().configuration().getConfig("shine");
   
 	val solr = new Shine(config);
-  
-	val rescued = new Rescued(config);
   
 	var pagination = new Pagination();
   
@@ -27,11 +25,6 @@ object Application extends Controller {
 		Ok(views.html.graphs.plot("Plot Graph Test", "label x", "label y", data))
 	}
 	
-	def halflife = Action {
-	    rescued.halflife();
-	    Ok(views.html.index("Half-life..."))
-	}
-  
 	def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
 	    val map = request.queryString
 	    val javaMap = map.map { case (k,v) => (k, v.asJava) }.asJava;
