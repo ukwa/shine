@@ -1,4 +1,4 @@
-@(title: String, labelX: String, labelY: String, data: List[Int])
+@(title: String, query: String, labelX: String, labelY: String, data: scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData], year_start: String, year_end: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" href="@routes.Assets.at("jqplot/jquery.jqplot.min.css")">
@@ -8,26 +8,85 @@
 	<!--[if lt IE 9]><script src="@routes.Assets.at("javascripts/jqplot/excanvas.min.js")" type="text/javascript"></script><![endif]-->
 	<script src="@routes.Assets.at("jqplot/jquery.jqplot.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("jqplot/plugins/jqplot.canvasTextRenderer.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("jqplot/plugins/jqplot.cursor.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("jqplot/plugins/jqplot.highlighter.min.js")" type="text/javascript"></script>
 	
 	<script type="text/javascript">
 		$(document).ready(function(){
-			var cosPoints = []; 
-			@for(i <- 0 until data.length) {
-				cosPoints.push([@i, Math.cos(@i)]);
-				console.log(@i);
+			
+			// Some simple loops to build up data arrays.
+			var cosPoints = [];
+
+			@for(graphData <- data) {
+				cosPoints.push([@(graphData.getYear), @(graphData.getData)]);
 			}
-			var plot1 = $.jqplot('chart-id', [cosPoints], {  
-				series:[{showMarker:false}],
+			
+			var powPoints1 = []; 
+			@for(graphData <- data) {
+			    powPoints1.push([@(graphData.getYear), 2.5 + Math.pow(@(graphData.getData)/4, 2)]); 
+			}
+			  
+			var powPoints2 = []; 
+			@for(graphData <- data) {
+			    powPoints2.push([@(graphData.getYear), -2.5 - Math.pow(@(graphData.getData)/4, 2)]); 
+			} 
+			
+			var plot1 = $.jqplot('chart-search', [cosPoints, powPoints1, powPoints2], {
+				
+			    title:'Ngram Example',
 				axes:{
-					xaxis:{
-					  label:'@(labelX)'
+			        xaxis:{
+			            renderer:$.jqplot.DateAxisRenderer,
+					  	label:'@(labelX)'
 					},
 					yaxis:{
 					  label:'@(labelY)'
 					}
-				}
+				},
+			    highlighter: {
+					show: true,
+					sizeAdjust: 7.5,
+					formatString: '<h1>@(query) %d %d</h1>'
+		        },
+				cursor:{ 
+				   	show: true,
+					zoom: true, 
+					showTooltip: false
+				}, 
+			    // Series options are specified as an array of objects, one object
+			    // for each series.
+			    series:[ 
+			        {
+			          // Change our line width and use a diamond shaped marker.
+			          lineWidth:2, 
+			          markerOptions: { style:'diamond' }
+			        }, 
+			        {
+			          // Don't show a line, just show markers.
+			          // Make the markers 7 pixels with an 'x' style
+			          showLine:false, 
+			          markerOptions: { size: 7, style:"x" }
+			        },
+			        { 
+			          // Use (open) circlular markers.
+			          markerOptions: { style:"circle" }
+			        }, 
+			        {
+			          // Use a thicker, 5 pixel line and 10 pixel
+			          // filled square markers.
+			          lineWidth:5, 
+			          markerOptions: { style:"filledSquare", size:10 }
+			        }
+			    ]
 			});
+			$('.button-reset').click(function() { 
+				plot1.resetZoom(); 
+				console.log("cleared");
+			});
+			$("#year-start").val(@(year_start));
+			$("#year-end").val(@(year_end));
 		});
 	</script>
 }
@@ -36,10 +95,32 @@
 
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="#">Plot</a></li>
-		<li><a href="#">Bar</a></li>
 	</ul>
 
-	<div class="padding-20">
-	    <div id="chart-id"></div>
+	<div class="padding-20" id="graph-container">
+		@helper.form(action=routes.Application.plot_graph()) {
+			<div class="row padding-10">
+				<div class="col-md-12 text-center">
+					<input type="text" class="form-control" name="query" placeholder="Search Term" value="@(query)" id="query" />
+				</div>
+			</div>
+			<div class="row padding-10 text-center">
+				<div class="col-md-12">
+					<div class="form-inline">
+						<div class="form-group">
+							<label class="sr-only" for="from-date">From:</label>
+							<input type="text" class="form-control field-right" id="year-start" name="year_start">
+						</div>
+						<div class="form-group">
+							<label class="sr-only" for="to-date">To:</label>
+							<input type="text" class="form-control field-right" id="year-end" name="year_end">
+						</div>
+						<button type="submit" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
+						<button type="reset" class="btn btn-primary button-reset" id="reset" name="action" value="reset">Reset All</button>
+					</div>
+				</div>
+			</div>
+	    }
+	    <div id="chart-search"></div>
 	</div>
 }

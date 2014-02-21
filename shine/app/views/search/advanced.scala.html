@@ -2,10 +2,31 @@
 
 @scripts = {
 	<script type="text/javascript">
-	    if(@(currentPage.getTotalItems == 0)) {
-	    	console.log("results: " + @(q.res.getResults().size()))
-	    	$('#filter-panel').collapse('show');
-	    }
+		$(document).ready(function() {
+			$('#sort').val('@(currentSortBy)')
+	  		$('#order').val('@(currentOrder)')
+	  		$('#sort').change(function() {
+				$('form').submit();
+	  		});
+	  		$('#order').change(function() {
+	 			$('form').submit();
+	  		});
+			$('#reset').click(function() { 
+				$('.search-field').each(function() {
+					$(this).attr('value', ''); 
+				});
+			});
+			if ($('.max-viewable-reached').attr('class') != undefined) {
+				$('#max-view-reached').removeClass('hide');
+			}
+			
+			if(@(currentPage.getTotalItems == 0)) {
+		    	console.log("results: " + @(q.res.getResults().size()))
+		    	$('#filter-panel').collapse('show');
+		    }
+		});
+	    
+	    
 	</script>
 }
 
@@ -35,43 +56,39 @@
     
 }
 
-@**********************************
-* Helper generating table headers *
-***********************************@
-@sort_links(key:String, title:String) = {
-	<a href="@link(1, key)">@title
-		<span class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "glyphicon glyphicon-chevron-down" else "glyphicon glyphicon-chevron-up"}"></span>
-	</a>
-}
-
 @pagination = {
-	<ul class="pagination">
-		@if(currentPage.hasPreviousPage) {
-           	<li class="prev">
-           		<a href="@link(currentPage.getCurrentPage-1, null)">&laquo;</a>
-               </li>
-           } else {
-               <li class="prev disabled">
-                   <a>&laquo;</a>
-               </li>
-           }
-		@for(index <- 1 until currentPage.getTotalPages+1){
-			@if(index == currentPage.getCurrentPage) {
-				<li class="active current"><a href="@link(index, null)">@index <span class="sr-only">(current)</span></a></li>
-			} else {
-				<li><a href="@link(index, null)">@index </a></li>
+	<div class="text-center">
+		<ul class="pagination">
+			@if(currentPage.hasPreviousPage) {
+            	<li class="prev">
+            		<a href="@link(currentPage.getCurrentPage-1, null)">&laquo;</a>
+                </li>
+            } else {
+                <li class="prev disabled">
+                    <a>&laquo;</a>
+                </li>
+            }
+			@for(index <- currentPage.getPagesList) {
+				@if(index == currentPage.getCurrentPage) {
+					@if(index == currentPage.getMaxViewablePages) {
+						<span class="max-viewable-reached hide"></span>
+					}
+					<li class="active current"><a href="@link(index, null)">@(index) <span class="sr-only">(current)</span></a></li>
+				} else {
+					<li><a href="@link(index, null)">@(index)</a></li>
+				}
 			}
-		}
-       	@if(currentPage.hasNextPage) {
-               <li class="next">
-                   <a href="@link(currentPage.getCurrentPage+1, null)">&raquo;</a>
-               </li>
-           } else {
-               <li class="next disabled">
-                   <a>&raquo;</a>
-               </li>
-		}
-	</ul>
+        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
+                <li class="next">
+                    <a href="@link(currentPage.getCurrentPage+1, null)">&raquo;</a>
+                </li>
+            } else {
+                <li class="next disabled">
+                    <a>&raquo;</a>
+                </li>
+			}
+		</ul>
+	</div>
 }
 
 @main(q.query, scripts) {
@@ -87,110 +104,116 @@
 			<a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 		</div>
 	
-		<div id="filter-panel" class="panel-collapse collapse">
+		@helper.form(action=routes.Application.advanced_search(), 'class -> "form-horizontal") {
+	
+			<div id="filter-panel" class="panel-collapse collapse">
 			<div class="row">
 				<div class="col-md-12">
-					@helper.form(action=routes.Application.advanced_search(), 'class -> "form-horizontal") {
-						<input type="hidden" name="sort" value="@(currentSortBy)" />
-						<input type="hidden" name="order" value="@(currentOrder)" />
-						<div class="form-group">
-							<label for="option1" class="col-sm-2 control-label">
-								Option 1:
-							</label>
-							<div class="col-sm-7">
-								<input type="text" class="form-control" name="query" value="@(q.query)" />
-							</div>
-							<div class="col-sm-3">
-								<p class="text-success">help text here</p>
-							</div>
+					<div class="form-group">
+						<label for="option1" class="col-sm-2 control-label">
+							Option 1:
+						</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control search-field" name="query" value="@(q.query)" />
 						</div>
-						<div class="form-group">
-							<label for="option2" class="col-sm-2 control-label">
-								Option 2:
-							</label>
-							<div class="col-sm-7">
-								<input type=""text"" class="form-control" id="option2" placeholder="Option 2">
-							</div>
-							<div class="col-sm-3">
-								<p class="text-success">help text here</p>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="option3" class="col-sm-2 control-label">
-								Option 3:
-							</label>
-							<div class="col-sm-7">
-								<input type=""text"" class="form-control" id="option3" placeholder="Option 3">
-							</div>
-							<div class="col-sm-3">
-								<p class="text-success">help text here</p>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="option4" class="col-sm-2 control-label">
-								Option 4:
-							</label>
-							<div class="col-sm-7">
-								<input type=""text"" class="form-control" id="option4" placeholder="Option 4">
-							</div>
-							<div class="col-sm-3">
-								<p class="text-success">help text here</p>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-sm-offset-2 col-sm-10">
-								<button type="submit" class="btn btn-primary" name="action" value="search">Search</button>
-								<button type="reset" class="btn btn-primary" name="action" value="reset">Reset</button>
-							</div>
+						<div class="col-sm-3">
+							<p class="text-success">help text here</p>
 						</div>
 					</div>
-				}
+					<div class="form-group">
+						<label for="option2" class="col-sm-2 control-label">
+							Option 2:
+						</label>
+						<div class="col-sm-7">
+							<input type=""text"" class="form-control" id="option2" placeholder="Option 2">
+						</div>
+						<div class="col-sm-3">
+							<p class="text-success">help text here</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="option3" class="col-sm-2 control-label">
+							Option 3:
+						</label>
+						<div class="col-sm-7">
+							<input type=""text"" class="form-control" id="option3" placeholder="Option 3">
+						</div>
+						<div class="col-sm-3">
+							<p class="text-success">help text here</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="option4" class="col-sm-2 control-label">
+							Option 4:
+						</label>
+						<div class="col-sm-7">
+							<input type=""text"" class="form-control" id="option4" placeholder="Option 4">
+						</div>
+						<div class="col-sm-3">
+							<p class="text-success">help text here</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button type="submit" class="btn btn-primary" name="action" value="search">Search</button>
+							<button type="reset" class="btn btn-primary" name="action" value="reset" id="reset">Reset</button>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		
-		<div id="results">
-
-			<div class="row">
-				<div class="col-md-3">
-					<div class="btn-group sort-dropdown">
-						<button class="btn btn-default btn dropdown-toggle" type="button" data-toggle="dropdown">
-					    	Sort <span id="sort-name"></span> <span class="caret"></span>
-					  	</button>
-					  	<ul class="dropdown-menu">
-							<li>@sort_links("content_type_norm", "Title")</li>
-							<li>@sort_links("crawl_date", "Crawl Date")</li>
-							<li>@sort_links("content_type_norm", "Content")</li>
-							<li>@sort_links("domain", "Domain")</li>
-							<li>@sort_links("sentiment_score", "Score")</li>
-					  	</ul>
+			<div class="padding-20 hide" id="max-view-reached">
+				<div class="alert alert-danger alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					Maximum number of results reached
+				</div>
+			</div>
+						
+			<div class="panel panel-default">
+				<div class="panel-heading filter-heading">
+                    <h4 class="panel-title pull-left filter-heading-title">
+                        Results @currentPage.getDisplayXtoYofZ(" to "," of ")
+                    </h4>
+                       <div class="form-inline pull-right">
+						<div class="form-group">
+							<select class="form-control" name="sort" id="sort">
+								<option value="content_type_norm">Title</option>
+								<option value="crawl_date">Crawl Date</option>
+								<option value="content_type_norm">Content</option>
+								<option value="domain">Domain</option>
+								<option value="sentiment_score">Score</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<select class="form-control" name="order" id="order">
+								<option value="asc">Asc</option>
+								<option value="desc">Desc</option>
+							</select>
+						</div>
 					</div>
 				</div>
-				<div class="col-md-6 text-center">
-					@pagination
-				</div>
-				<div class="col-md-3">
-				</div>
-			</div>
-			
-			@for((d, index) <- q.res.getResults().zipWithIndex) {
-				<div class="list-group">
-					<span class="list-group-item" href="#">
-						<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a></h4>
-						<p class="list-group-item-text">
-								@d.getFirstValue("crawl_date")<br />
-								@d.getFirstValue("content_type_norm")<br />
-								@d.getFirstValue("domain")<br />
-								@d.getFirstValue("sentiment_score")
-						</p>
-					</span>
-				</div>
-			}
 
-			<div class="row">
-				<div class="col-md-12 text-center">
+				<div class="panel-body">
+					@pagination
+
+					@for((d, index) <- q.res.getResults().zipWithIndex) {
+						<div class="list-group">
+							<span class="list-group-item" href="#">
+								<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a></h4>
+								<p class="list-group-item-text">
+										@d.getFirstValue("crawl_date")<br />
+										@d.getFirstValue("content_type_norm")<br />
+										@d.getFirstValue("domain")<br />
+										@d.getFirstValue("sentiment_score")
+								</p>
+							</span>
+						</div>
+					}
+
 					@pagination
 				</div>
 			</div>
-		</div>
+		}
 	</div>
 }

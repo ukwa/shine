@@ -10,10 +10,22 @@
 	padding: 10px;
 }
 
-#search-sorting-buttons {
-	margin-bottom:-40px;
-}
-
 .sort-dropdown {
 	margin: 20px 0;
+}
+
+#chart-search {
+	margin-top: 50px;
+}
+
+.field-right {
+	text-align:right;
+}
+
+.filter-heading {
+	min-height: 54px;
+}
+
+.filter-heading-title {
+	padding-top: 8px;
 }
