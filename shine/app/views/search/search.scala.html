@@ -1,24 +1,73 @@
 @(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
 
 @scripts = {
-    <!--
 	<script type="text/javascript">
 		$(document).ready(function() {
-	      		var last=$.cookie('activeAccordionGroup');
-	      		if (last != undefined) {
-				//remove default collapse settings
-	          		$("#accordion .collapse").removeClass('in');
-	          		//show the last visible group
-	          		$("#"+last).collapse("show");
-	      		}
+			$('#sort').val('@(currentSortBy)')
+	  		$('#order').val('@(currentOrder)')
+	  		$('#sort').change(function() {
+				$('form').submit();
+	  		});
+	  		$('#order').change(function() {
+	 			$('form').submit();
+	  		});
+			$('#reset').click(function() { 
+				$('.search-field').each(function() {
+					$(this).attr('value', ''); 
+				});
+			});
+			if ($('.max-viewable-reached').attr('class') != undefined) {
+				$('#max-view-reached').removeClass('hide');
+			}
+			
+			$(".add-more-button").each(function(index) {
+				$(this).click(function(event) {
+					event.preventDefault();
+					var addMoreSelector = "#add-more-option-" + index;
+					var buttonText = "#add-more-button-text-" + index;
+					if ($(addMoreSelector).hasClass('hide')) {
+						$(addMoreSelector).removeClass('hide');
+						$(buttonText).html("REMOVE")
+					} else {
+						$(addMoreSelector).addClass('hide');
+						$(buttonText).html("ADD")
+					}
+				});
+			});
+
+			$(".facet-options").each(function(index) {
+				$(this).find('a.facet').click(function(event) {
+					event.preventDefault();
+					$link = $(this).find('span');
+					$facet_name = $(this).parent().find('span:nth-child(3)').text();
+					$facet_value = $(this).parent().find('span:nth-child(4)').text();
+					var facet_name = "#facet-id-" + $facet_name;
+					if ($link.hasClass('glyphicon-minus-sign')) {
+						$link.removeClass('glyphicon-minus-sign');
+						$link.addClass('glyphicon-plus-sign');
+						$(facet_name).remove();
+						$('<input>').attr({
+						    type: 'hidden',
+						    name: "facet.out." + $facet_name,
+						    value: $facet_value,
+						    id: 'facet-id-' + $facet_name
+						}).appendTo(".facet-options");
+					} else {
+						$link.removeClass('glyphicon-plus-sign');
+						$link.addClass('glyphicon-minus-sign');
+						$(facet_name).remove();
+						$('<input>').attr({
+						    type: 'hidden',
+						    name: "facet.in." + $facet_name,
+						    value: $facet_value,
+						    id: 'facet-id-' + $facet_name
+						}).appendTo(".facet-options");
+					}
+		 			$('form').submit();
+				});
+			});
 		});
-	    //when a group is shown, save it as the active accordion group
-	    $("#accordion").bind('shown.bs.collapse', function() {
-	        var active=$("#accordion .in").attr('id');
-	        $.cookie('activeAccordionGroup', active)
-	    });
 	</script>
-     -->
 }
 
 @****************************************
@@ -47,15 +96,6 @@
     
 }
 
-@**********************************
-* Helper generating table headers *
-***********************************@
-@sort_links(key:String, title:String) = {
-	<a href="@link(1, key)" class="btn btn-primary">@title
-		<span class="@key.replace(".","_") header @if(currentSortBy == key) @{if(currentOrder == "asc") "glyphicon glyphicon-chevron-down" else "glyphicon glyphicon-chevron-up"}"></span>
-	</a>
-}
-
 @pagination = {
 	<div class="text-center">
 		<ul class="pagination">
@@ -68,14 +108,17 @@
                     <a>&laquo;</a>
                 </li>
             }
-			@for(index <- 1 until currentPage.getTotalPages+1){
+			@for(index <- currentPage.getPagesList) {
 				@if(index == currentPage.getCurrentPage) {
-					<li class="active current"><a href="@link(index, null)">@index <span class="sr-only">(current)</span></a></li>
+					@if(index == currentPage.getMaxViewablePages) {
+						<span class="max-viewable-reached hide"></span>
+					}
+					<li class="active current"><a href="@link(index, null)">@(index) <span class="sr-only">(current)</span></a></li>
 				} else {
-					<li><a href="@link(index, null)">@index </a></li>
+					<li><a href="@link(index, null)">@(index)</a></li>
 				}
 			}
-        	@if(currentPage.hasNextPage) {
+        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
                 <li class="next">
                     <a href="@link(currentPage.getCurrentPage+1, null)">&raquo;</a>
                 </li>
@@ -96,47 +139,44 @@
 	</ul>
 
 	<div class="padding-20">
-
 		@helper.form(action=routes.Application.search()) {
 	
 			<div class="row">
-				<div class="col-md-4">
-					<div class="panel-group" id="accordion">
-						@for(fc <- q.res.getFacetFields()) {
-			  				<div class="panel panel-default">
-			    				<div class="panel-heading">
-			      					<h4 class="panel-title">
-			        					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse-@(fc.getName())">
-			          						@(fc.getName()) (@(fc.getValueCount()))
-			        					</a>
-			      					</h4>
+				<div class="col-md-3 col-sm-3">
+					<div class="panel panel-default">
+						@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
+							<div class="panel-body">
+			    				<div>
+		        					<a href="#expand-@(index)">
+		          						<strong>@(fc.getName()) (@(fc.getValueCount()))</strong>
+		        					</a>
 			    				</div>
-			    				<div id="collapse-@(fc.getName())" class="panel-collapse collapse">
-			      					<div class="panel-body">
-			      						<ul>
-			    							@for(f <- fc.getValues() ) {
-			        							<li>
-			          								<input type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-			          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) (@(f.getCount()))</a>
-			          								<input type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-			          								&nbsp;<a href="#" title="Include"><span class="glyphicon glyphicon-plus-sign"></span></a>&nbsp;<a href="#" title="Exclude"><span class="glyphicon glyphicon-minus-sign"></span>
-			        							</li>
-										        <!-- dynamically add checked="true"? -->
-										        <!-- OR use some kind of link constructor? -->
-											} 
-											<li>
-											<a href="#" title="Add filters for other values"><span class="glyphicon glyphicon-plus"></span></a>
+			    				<div class="facet-index">
+		      						<ul class="list-unstyled">
+										@for((f, i) <- fc.getValues().zipWithIndex) {
+		        							<li class="facet-options">
+		        								<a class="facet" href="" title="Include"><span class="glyphicon glyphicon-plus-sign"></span></a>
+		          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) (@(f.getCount()))</a>
+		          								<span id="facet-field-fc-@(index)" class="facet-name hide">@(fc.getName())</span>
+		          								<span id="facet-field-f-@(f.getName())" class="facet-name hide">@(f.getName())</span>
 											</li>
-			    						</ul>
-
-
-<div class="input-group">
-  <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-  <input type="text" class="form-control" value="This form should pop-up when the plus is pressed.">
-  <span class="input-group-addon"><a href="#" title="Include"><span class="glyphicon glyphicon-plus-sign"></span></a>&nbsp;<a href="#" title="Exclude"><span class="glyphicon glyphicon-minus-sign"></span></span>
-</div>
-
-			      					</div>
+									        <!-- dynamically add checked="true"? -->
+									        <!-- OR use some kind of link constructor? -->
+										}
+										<li> 
+        									<a href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
+        								</li>
+										<li>
+        									<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">ADD</span> <span class="glyphicon glyphicon-plus"></span></button>
+										</li>
+		    						</ul>
+									<div id="add-more-option-@(index)" class="input-group hide">
+										<span class="input-group-btn">
+        									<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+      									</span>
+										<input type="text" class="form-control" value="This form should pop-up when the plus is pressed.">
+										<span class="input-group-addon"><a href="#" title="Include"><span class="glyphicon glyphicon-plus-sign"></span></a>&nbsp;<a href="#" title="Exclude"><span class="glyphicon glyphicon-minus-sign"></span></span>
+									</div>
 			    				</div>
 			  				</div>
 						}
@@ -173,42 +213,50 @@
                     </div>
 				</div>
 		
-				<div class="col-md-8">
+				<div class="col-md-9 col-sm-9">
 					<div class="panel panel-default">
 						<div class="panel-body">
 				   			<div class="input-group">
-				   			    <span class="input-group-addon">
-	        						<input type="checkbox" >
-	      						</span>
-								<input type="hidden" name="sort" value="@(currentSortBy)" />
-								<input type="hidden" name="order" value="@(currentOrder)" />
-								<input type="text" class="form-control" name="query" value="@(q.query)" />
+								<input type="text" class="form-control" name="query" value="@(q.query)" id="query" />
 								<span class="input-group-btn">
 									<button type="submit" class="btn btn-primary" id="search" name="action" value="search">Search</button>
 									<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
 								</span>
 							</div>
-                            <div id="search-sorting-buttons" class="text-center padding-20">
-                              <div class="btn-group btn-group-sm">
-                                @sort_links("content_type_norm", "Title")
-                                @sort_links("crawl_date", "Crawl Date")
-                                @sort_links("content_type_norm", "Content")
-                                @sort_links("domain", "Domain")
-                                @sort_links("sentiment_score", "Score")
-                              </div>
-                            </div>
-							
 						</div>
 					</div>
-			
+					
+					<div class="padding-20 hide" id="max-view-reached">
+						<div class="alert alert-danger alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+							Maximum number of results reached
+						</div>
+					</div>
+								
 					<div class="panel panel-default">
-						<div class="panel-heading">
-                            <h4 class="panel-title">
+						<div class="panel-heading filter-heading">
+                            <h4 class="panel-title pull-left filter-heading-title">
                                 Results @currentPage.getDisplayXtoYofZ(" to "," of ")
                             </h4>
+                            <div class="form-inline pull-right">
+								<div class="form-group">
+									<select class="form-control" name="sort" id="sort">
+										<option value="content_type_norm">Title</option>
+										<option value="crawl_date">Crawl Date</option>
+										<option value="content_type_norm">Content</option>
+										<option value="domain">Domain</option>
+										<option value="sentiment_score">Score</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<select class="form-control" name="order" id="order">
+										<option value="asc">Asc</option>
+										<option value="desc">Desc</option>
+									</select>
+								</div>
+							</div>
 						</div>
-						
-						
+
 						<div class="panel-body">
 							@pagination
 	
@@ -231,7 +279,6 @@
 					</div>
 
 				</div>
-		
 			</div>
 		}
 	</div>
