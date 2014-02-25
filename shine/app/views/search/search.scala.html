@@ -36,32 +36,60 @@
 			});
 
 			$(".facet-options").each(function(index) {
-				$(this).find('a.facet').click(function(event) {
+				// check form fields
+				var $input_include = $(this).find('input.include');
+				var $input_exclude = $(this).find('input.exclude');
+
+				var $link_span_include = $(this).find('a.facet.include span');
+				var $link_span_exclude = $(this).find('a.facet.exclude span');
+
+				// to read back facet options after submit
+				if ($input_include.attr('checked') !== undefined) {
+					$link_span_include.removeClass('facet-deselected');
+					$link_span_include.addClass('facet-selected');
+				} else {
+					$link_span_exclude.removeClass('facet-selected');
+					$link_span_exclude.addClass('facet-deselected');
+				}
+
+				if ($input_exclude.attr('checked') !== undefined) {
+					$link_span_exclude.removeClass('facet-deselected');
+					$link_span_exclude.addClass('facet-selected');
+				} else {
+					$link_span_exclude.removeClass('facet-selected');
+					$link_span_exclude.addClass('facet-deselected');
+				}
+				
+				// for clicking on facet options
+				$(this).find('a.facet.include').click(function(event) {
 					event.preventDefault();
-					$link = $(this).find('span');
-					$facet_name = $(this).parent().find('span:nth-child(3)').text();
-					$facet_value = $(this).parent().find('span:nth-child(4)').text();
-					var facet_name = "#facet-id-" + $facet_name;
-					if ($link.hasClass('glyphicon-minus-sign')) {
-						$link.removeClass('glyphicon-minus-sign');
-						$link.addClass('glyphicon-plus-sign');
-						$(facet_name).remove();
-						$('<input>').attr({
-						    type: 'hidden',
-						    name: "facet.out." + $facet_name,
-						    value: $facet_value,
-						    id: 'facet-id-' + $facet_name
-						}).appendTo(".facet-options");
+					// change +/-
+					if ($link_span_include.hasClass('facet-deselected')) {
+						// SELECTED
+						$link_span_include.removeClass('facet-deselected');
+						$link_span_include.addClass('facet-selected');
+						$input_include.attr('checked', '');
 					} else {
-						$link.removeClass('glyphicon-plus-sign');
-						$link.addClass('glyphicon-minus-sign');
-						$(facet_name).remove();
-						$('<input>').attr({
-						    type: 'hidden',
-						    name: "facet.in." + $facet_name,
-						    value: $facet_value,
-						    id: 'facet-id-' + $facet_name
-						}).appendTo(".facet-options");
+						// DESELECTED
+						$link_span_include.removeClass('facet-selected');
+						$link_span_include.addClass('facet-deselected');
+						$input_include.removeAttr('checked');
+					}
+		 			$('form').submit();
+				});
+				
+				$(this).find('a.facet.exclude').click(function(event) {
+					event.preventDefault();
+					if ($link_span_exclude.hasClass('facet-deselected')) {
+						// SELECTED
+						$link_span_exclude.removeClass('facet-deselected');
+						$link_span_exclude.addClass('facet-selected');
+						$input_exclude.attr('checked', '');
+					} else {
+						// DESELECTED
+						$link_span_exclude.removeClass('facet-selected');
+						$link_span_exclude.addClass('facet-deselected');
+						$input_exclude.removeAttr('checked');
 					}
 		 			$('form').submit();
 				});
@@ -155,10 +183,11 @@
 		      						<ul class="list-unstyled">
 										@for((f, i) <- fc.getValues().zipWithIndex) {
 		        							<li class="facet-options">
-		        								<a class="facet" href="" title="Include"><span class="glyphicon glyphicon-plus-sign"></span></a>
+		        								<a class="facet include" href="" title="Include" id="include_@(fc.getName())"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
+		        								<a class="facet exclude" href="" title="Exclude" id="exclude_@(fc.getName())"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
 		          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) (@(f.getCount()))</a>
-		          								<span id="facet-field-fc-@(index)" class="facet-name hide">@(fc.getName())</span>
-		          								<span id="facet-field-f-@(f.getName())" class="facet-name hide">@(f.getName())</span>
+		          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
+		          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 											</li>
 									        <!-- dynamically add checked="true"? -->
 									        <!-- OR use some kind of link constructor? -->

@@ -33,3 +33,13 @@
 .facet-index {
 	padding-left: 15px;
 }
+
+.facet-selected {
+    background-color: #FFFFFF;
+	color: #5CB85C;
+}
+
+.facet-deselected {
+    background-color: #FFFFFF;
+	color: #428BCA;
+}
