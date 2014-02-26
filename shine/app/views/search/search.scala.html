@@ -20,6 +20,30 @@
 				$('#max-view-reached').removeClass('hide');
 			}
 			
+			function facetToggle($element, $button) {
+				if ($element.attr('checked') !== undefined) {
+					$button.removeClass('facet-deselected');
+					$button.addClass('facet-selected');
+				} else {
+					$button.removeClass('facet-selected');
+					$button.addClass('facet-deselected');
+				}
+			}
+			
+			function facetClickToggle($button, $element) {
+				if ($button.hasClass('facet-deselected')) {
+					// SELECTED
+					$button.removeClass('facet-deselected');
+					$button.addClass('facet-selected');
+					$element.attr('checked', '');
+				} else {
+					// DESELECTED
+					$button.removeClass('facet-selected');
+					$button.addClass('facet-deselected');
+					$element.removeAttr('checked');
+				}
+			}
+			
 			$(".add-more-button").each(function(index) {
 				$(this).click(function(event) {
 					event.preventDefault();
@@ -44,55 +68,72 @@
 				var $link_span_exclude = $(this).find('a.facet.exclude span');
 
 				// to read back facet options after submit
-				if ($input_include.attr('checked') !== undefined) {
-					$link_span_include.removeClass('facet-deselected');
-					$link_span_include.addClass('facet-selected');
-				} else {
-					$link_span_exclude.removeClass('facet-selected');
-					$link_span_exclude.addClass('facet-deselected');
-				}
+				facetToggle($input_include, $link_span_include);
+				facetToggle($input_exclude, $link_span_exclude);
 
-				if ($input_exclude.attr('checked') !== undefined) {
-					$link_span_exclude.removeClass('facet-deselected');
-					$link_span_exclude.addClass('facet-selected');
-				} else {
-					$link_span_exclude.removeClass('facet-selected');
-					$link_span_exclude.addClass('facet-deselected');
-				}
-				
-				// for clicking on facet options
+				// for clicking on facet options (includes)
 				$(this).find('a.facet.include').click(function(event) {
 					event.preventDefault();
 					// change +/-
-					if ($link_span_include.hasClass('facet-deselected')) {
+					facetClickToggle($link_span_include, $input_include);
+		 			$('form').submit();
+				});
+				
+				// for clicking on facet options (excludes)
+				$(this).find('a.facet.exclude').click(function(event) {
+					event.preventDefault();
+					facetClickToggle($link_span_exclude, $input_exclude);
+		 			$('form').submit();
+				});
+			});
+			
+			// read in what was submitted
+			$facet_sort_input = $('#facet-sort');
+			$link_sort_count = $('a#facet-sort-count').find('span.label');
+			$link_sort_value = $('a#facet-sort-value').find('span.label');
+
+			if ($facet_sort_input.attr('checked') === undefined) {
+				$("a.facet-sort").each(function(index) {
+					// unchecked then reset all buttons
+					var $link_span = $(this).find('span.label');
+					$link_span.removeClass('label-success');
+					$link_span.addClass('label-primary');
+				});
+			} else {
+				if ($facet_sort_input.val() == 'count') {
+					$link_sort_count.removeClass('label-primary');
+					$link_sort_count.addClass('label-success');
+				} else if ($facet_sort_input.val() == 'index') {
+					$link_sort_value.removeClass('label-primary');
+					$link_sort_value.addClass('label-success');
+				}
+			}
+
+			// on clicks
+			$("a.facet-sort").each(function(index) {
+				var $link_span = $(this).find('span.label');
+				$(this).click(function(event) {
+					event.preventDefault();
+					if ($link_span.hasClass('label-primary')) {
 						// SELECTED
-						$link_span_include.removeClass('facet-deselected');
-						$link_span_include.addClass('facet-selected');
-						$input_include.attr('checked', '');
+						$link_span.removeClass('label-primary');
+						$link_span.addClass('label-success');
+						if ($link_span.text() == 'count') {
+							$facet_sort_input.val("count");
+						} else if ($link_span.text() == 'value') {
+							$facet_sort_input.val("index");
+						}
+						$facet_sort_input.attr("checked", "checked");
 					} else {
 						// DESELECTED
-						$link_span_include.removeClass('facet-selected');
-						$link_span_include.addClass('facet-deselected');
-						$input_include.removeAttr('checked');
+						$link_span.removeClass('label-success');
+						$link_span.addClass('label-primary');
+						$facet_sort_input.val("");
+						$facet_sort_input.removeAttr("checked");
 					}
 		 			$('form').submit();
 				});
 				
-				$(this).find('a.facet.exclude').click(function(event) {
-					event.preventDefault();
-					if ($link_span_exclude.hasClass('facet-deselected')) {
-						// SELECTED
-						$link_span_exclude.removeClass('facet-deselected');
-						$link_span_exclude.addClass('facet-selected');
-						$input_exclude.attr('checked', '');
-					} else {
-						// DESELECTED
-						$link_span_exclude.removeClass('facet-selected');
-						$link_span_exclude.addClass('facet-deselected');
-						$input_exclude.removeAttr('checked');
-					}
-		 			$('form').submit();
-				});
 			});
 		});
 	</script>
@@ -170,14 +211,19 @@
 		@helper.form(action=routes.Application.search()) {
 	
 			<div class="row">
-				<div class="col-md-3 col-sm-3">
+				<div class="col-md-4 col-sm-4">
 					<div class="panel panel-default">
+						<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
+						<div class="padding-5 pull-right">
+							<a id="facet-sort-value" class="facet-sort" href="#"><span class="label label-primary">value</span></a>
+							<a id="facet-sort-count" class="facet-sort" href="#"><span class="label label-primary">count</span></a> 
+						</div>
 						@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 							<div class="panel-body">
 			    				<div>
 		        					<a href="#expand-@(index)">
-		          						<strong>@(fc.getName()) (@(fc.getValueCount()))</strong>
-		        					</a>
+		          						<strong>@(fc.getName())</strong>
+		        					</a> <span class="badge">@(fc.getValueCount())</span>
 			    				</div>
 			    				<div class="facet-index">
 		      						<ul class="list-unstyled">
@@ -185,7 +231,7 @@
 		        							<li class="facet-options">
 		        								<a class="facet include" href="" title="Include" id="include_@(fc.getName())"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
 		        								<a class="facet exclude" href="" title="Exclude" id="exclude_@(fc.getName())"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-		          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) (@(f.getCount()))</a>
+		          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
 		          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 		          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 											</li>
@@ -242,7 +288,7 @@
                     </div>
 				</div>
 		
-				<div class="col-md-9 col-sm-9">
+				<div class="col-md-8 col-sm-8">
 					<div class="panel panel-default">
 						<div class="panel-body">
 				   			<div class="input-group">

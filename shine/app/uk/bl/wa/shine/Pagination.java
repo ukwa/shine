@@ -140,8 +140,6 @@ public class Pagination {
 	}
 	
 	public boolean hasMaxViewablePagedReached() {
-        System.out.println("currentPage: " + currentPage);
-        System.out.println("maxViewablePages: " + maxViewablePages);
 		return (this.currentPage == this.maxViewablePages);
 	}
 	

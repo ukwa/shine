@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -24,6 +25,9 @@ import play.Logger;
  */
 public class Query {
 
+	public static final String FACET_SORT_INDEX = "index";
+	public static final String FACET_SORT_COUNT = "count";
+	
 	public String query;
 	
 	public Map<String,List<String>> filters;
@@ -37,13 +41,18 @@ public class Query {
 			    filters.put(param.replace("facet.in.", ""), params.get(param));
 			} else if( param.startsWith("facet.out.")) {
 			    filters.put("-"+param.replace("facet.out.", ""), params.get(param));
+			} else if( param.equals("facet.sort") ) {
+			    filters.put(param, params.get(param));
 			}
 		}
+		Logger.info("filters: " + filters);
 	}
 	
 	public String getCheckedInString(String facet_name, String value ) {
 		for( String fc : filters.keySet() ) {
-			if( fc.equals(facet_name) && filters.get(fc).contains("\""+value+"\"")) return "checked=\"\"";
+			if( fc.equals(facet_name) && filters.get(fc).contains("\""+value+"\"")) {
+				return "checked=''";
+			}
 		}
 		return "";
 	}
@@ -100,6 +109,28 @@ public class Query {
 			Logger.error("Hex to UTF-8 recoding failed: "+e);
 		}
 		return hex;
+	}
+	
+	public String getFacetValue(String facet_name) {
+		if (filters.get(facet_name) != null) {
+			return filters.get(facet_name).get(0);
+		}
+		return "";
+	}
+	
+	public String getCheckedFacet(String facet_name) {
+		if (StringUtils.isNotBlank(this.getFacetValue(facet_name))) {
+			return "checked=''";
+		}
+		return "";
+	}
+	
+	public String getFacetSortValue(String facet_name) {
+		// only return the correct facet sort values
+		if (facet_name.equals("facet.sort")) {
+			return getFacetValue(facet_name);
+		}
+		return "";
 	}
 	
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {

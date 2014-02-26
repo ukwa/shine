@@ -10,6 +10,10 @@
 	padding: 10px;
 }
 
+.padding-5 {
+	padding: 5px;
+}
+
 .sort-dropdown {
 	margin: 20px 0;
 }
@@ -43,3 +47,5 @@
     background-color: #FFFFFF;
 	color: #428BCA;
 }
+
+a.facet-sort:link    { text-decoration:none; }

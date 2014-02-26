@@ -83,8 +83,12 @@ public class Shine extends Solr {
 		List<String> fq = new ArrayList<String>();
 		for( String param : params.keySet() ) {
 			String field = param;
+			if ( param.equals("facet.sort")) {
+				// there's only one sort
+				parameters.setFacetSort(params.get(param).get(0));
+			}
 			// Excluded tags are ANDed together:
-			if( param.startsWith("-")) {
+			else if( param.startsWith("-")) {
 				field = field.replaceFirst("-", "");
 				for( String val : params.get(param)) {
 					fq.add("{!tag="+field+"}"+param+":"+val); // TODO Escape correctly?
