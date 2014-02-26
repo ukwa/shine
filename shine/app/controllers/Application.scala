@@ -29,11 +29,6 @@ object Application extends Controller {
 		Ok(views.html.index("Shine Application"))
 	}
   
-	def graph = Action {
-		val data = List.fill(50)(scala.util.Random.nextInt)
-		Ok(views.html.graphs.plot("Plot Graph Test", "label x", "label y", data))
-	}
-	
 	def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
 
 		val q = doSearch(query, request.queryString, pageNo, sort, order)

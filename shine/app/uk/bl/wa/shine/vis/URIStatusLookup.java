@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.shine.rescued;
+package uk.bl.wa.shine.vis;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

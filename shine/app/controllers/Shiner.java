@@ -9,7 +9,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 
 import play.*;
 import play.mvc.*;
-import uk.bl.wa.shine.rescued.Rescued;
+import uk.bl.wa.shine.vis.Rescued;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
@@ -31,11 +31,7 @@ public class Shiner extends Controller {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ok( views.html.rescued.render("Half-life...") );
-	}
-	
-	public static Result index() {
-		return ok("It works!");
+		return ok( views.html.vis.rescued.render("Half-life...") );
 	}
 	
 }

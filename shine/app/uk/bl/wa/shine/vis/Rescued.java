@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.bl.wa.shine.rescued;
+package uk.bl.wa.shine.vis;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -24,7 +24,7 @@ import com.typesafe.config.ConfigFactory;
 import play.Configuration;
 import play.Logger;
 import uk.bl.wa.shine.Solr;
-import uk.bl.wa.shine.rescued.URIStatusLookup.URIStatus;
+import uk.bl.wa.shine.vis.URIStatusLookup.URIStatus;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
