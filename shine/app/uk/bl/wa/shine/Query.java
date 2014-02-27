@@ -133,6 +133,30 @@ public class Query {
 		return "";
 	}
 	
+	public String getFacetsAsParamValues() {
+		StringBuilder parameters = new StringBuilder("");
+		for (FacetField facetField : res.getFacetFields()) {
+			for (Count count : facetField.getValues()) {
+				String facet = facetField.getName() + "=\"" + count.getName() + "\"";
+				if (StringUtils.isNotBlank(this.getCheckedInString(facetField.getName(),count.getName()))) {
+					String in = "&facet.in."; 
+					parameters.append(in).append(facet);
+				} else if (StringUtils.isNotBlank(this.getCheckedOutString(facetField.getName(),count.getName()))) {
+					String out = "&facet.out";
+					parameters.append(out).append(facet);
+				}
+			}
+		 }
+		String facetSort = "facet.sort";
+		String checked = getCheckedFacet(facetSort);
+		if (StringUtils.isNotBlank(checked)) {
+			String sortValue = getFacetSortValue(facetSort);
+			parameters.append("&").append(facetSort).append("=").append(sortValue);
+		}
+		Logger.info(parameters.toString());
+		return parameters.toString();
+	}
+	
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {
 		String myString = new String( bytes, "ASCII");
 		StringBuilder newString = new StringBuilder(myString.length());
