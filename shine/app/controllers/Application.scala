@@ -25,6 +25,7 @@ object Application extends Controller {
 	val recordsPerPage = solr.getPerPage()
 	val maxNumberOfLinksOnPage = config.getInt("max_number_of_links_on_page")
 	val maxViewablePages = config.getInt("max_viewable_pages")
+	val facetLimit = config.getInt("facet_limit")
 			
 	var pagination = new Pagination(recordsPerPage, maxNumberOfLinksOnPage, maxViewablePages);
   
@@ -48,7 +49,7 @@ object Application extends Controller {
 		
 		pagination.update(totalRecords, pageNo)
 	
-	    Ok(views.html.search.search(q, pagination, sort, order))
+	    Ok(views.html.search.search(q, pagination, sort, order, facetLimit))
 	}
   
 	def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -107,6 +108,7 @@ object Application extends Controller {
 		q.query = query
 		q.parseParams(javaMap)
 		q.res = solr.search(query, q.filters, pageNo, sort, order)
+		q.processFacetsAsParamValues
 		q
 	}
 }

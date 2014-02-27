@@ -34,6 +34,8 @@ public class Query {
 	
 	public QueryResponse res;
 	
+	public String facetParameters;
+	
 	public void parseParams( Map<String,List<String>> params ) {
 		filters = new HashMap<String, List<String>>();
 		for( String param : params.keySet() ) {
@@ -133,7 +135,7 @@ public class Query {
 		return "";
 	}
 	
-	public String getFacetsAsParamValues() {
+	public void processFacetsAsParamValues() {
 		StringBuilder parameters = new StringBuilder("");
 		for (FacetField facetField : res.getFacetFields()) {
 			for (Count count : facetField.getValues()) {
@@ -154,7 +156,7 @@ public class Query {
 			parameters.append("&").append(facetSort).append("=").append(sortValue);
 		}
 		Logger.info(parameters.toString());
-		return parameters.toString();
+		facetParameters = parameters.toString();
 	}
 	
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {
