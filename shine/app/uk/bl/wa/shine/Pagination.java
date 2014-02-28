@@ -127,8 +127,12 @@ public class Pagination {
         int first = this.getStartIndex();
         int last = this.getEndIndex();
         int total = this.getTotalItems();
-          
-        return first+to+last+of+total;
+
+        String displayText = first+to+last+of+total;
+        if (first > total) {
+        	displayText = " not found";
+        }
+        return displayText;
 	}
 
 	public int getMaxNumberOfLinksOnPage() {
