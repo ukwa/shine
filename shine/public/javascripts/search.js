@@ -1,5 +1,5 @@
 $(function () {
-	
+
 	$('#reset').click(function() { 
 		$('.search-field').each(function() {
 			$(this).attr('value', ''); 
@@ -21,7 +21,7 @@ $(function () {
 			var buttonText = "#add-more-button-text-" + index;
 			if ($(addMoreSelector).hasClass('hide')) {
 				$(addMoreSelector).removeClass('hide');
-				$(buttonText).html("REMOVE")
+				$(buttonText).html("CLOSE")
 			} else {
 				$(addMoreSelector).addClass('hide');
 				$(buttonText).html("ADD")
@@ -158,5 +158,5 @@ $(function () {
 		});
 		
 	});
-	
+
 });

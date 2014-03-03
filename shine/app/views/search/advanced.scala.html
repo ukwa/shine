@@ -1,29 +1,37 @@
 @(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
 
+@styles = {
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+}
+
 @scripts = {
+	<script src="@routes.Assets.at("javascripts/jquery-ui-1.10.4.custom.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$('#sort').val('@(currentSortBy)')
 	  		$('#order').val('@(currentOrder)')
-	  		$('#sort').change(function() {
-				$('form').submit();
-	  		});
-	  		$('#order').change(function() {
-	 			$('form').submit();
-	  		});
-			$('#reset').click(function() { 
-				$('.search-field').each(function() {
-					$(this).attr('value', ''); 
-				});
-			});
-			if ($('.max-viewable-reached').attr('class') != undefined) {
-				$('#max-view-reached').removeClass('hide');
-			}
+			$("#date-from").datepicker({ dateFormat: "dd/mm/yy" });
+			$("#date-to").datepicker({ dateFormat: "dd/mm/yy" });
 			
 			if(@(currentPage.getTotalItems == 0)) {
 		    	console.log("results: " + @(q.res.getResults().size()))
 		    	$('#filter-panel').collapse('show');
 		    }
+	    	$('#filter-panel').collapse('show');
+	    	
+			var searchResults = [];
+	        $("#full-text-field").typeahead({
+	    		remote: {
+	    			url: '/suggest/%QUERY',
+	    			filter: function(items) {
+						console.log(name)
+	    	          	return items;
+	    			}
+	    		}
+	    	});
 		});
 	    
 	    
@@ -91,7 +99,7 @@
 	</div>
 }
 
-@main(q.query, scripts) {
+@main(q.query, styles, scripts) {
 
 	<ul class="nav nav-tabs">
 		<li><a href="@routes.Application.search()">Search</a></li>
@@ -108,28 +116,31 @@
 			
 				@helper.form(action=routes.Application.advanced_search(), 'class -> "form-horizontal") {
 			
-					<div id="filter-panel" class="panel-collapse collapse">
+				<div id="filter-panel" class="panel-collapse collapse">
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
 								<label for="option1" class="col-sm-2 control-label">
-									Option 1:
+									Full Text Search:
 								</label>
-								<div class="col-sm-7">
-									<input type="text" class="form-control search-field" name="query" value="@(q.query)" />
+								<div class="col-sm-6">
+									<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="full-text-field" />
 								</div>
-								<div class="col-sm-3">
-									<p class="text-success">help text here</p>
+								<div class="col-sm-4">
+									<p class="text-success">Full Text Search</p>
 								</div>
 							</div>
 							<div class="form-group">
 								<label for="option2" class="col-sm-2 control-label">
-									Option 2:
+									Date Range:
 								</label>
-								<div class="col-sm-7">
-									<input type=""text"" class="form-control" id="option2" placeholder="Option 2">
+								<div class="col-sm-3">
+									<input type="text" class="form-control" id="date-from" placeholder="dd/mm/yyyy">
 								</div>
 								<div class="col-sm-3">
+									<input type="text" class="form-control" id="date-to" placeholder="dd/mm/yyyy">
+								</div>
+								<div class="col-sm-4">
 									<p class="text-success">help text here</p>
 								</div>
 							</div>
@@ -137,21 +148,10 @@
 								<label for="option3" class="col-sm-2 control-label">
 									Option 3:
 								</label>
-								<div class="col-sm-7">
-									<input type=""text"" class="form-control" id="option3" placeholder="Option 3">
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="option3" placeholder="Option 3">
 								</div>
-								<div class="col-sm-3">
-									<p class="text-success">help text here</p>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="option4" class="col-sm-2 control-label">
-									Option 4:
-								</label>
-								<div class="col-sm-7">
-									<input type=""text"" class="form-control" id="option4" placeholder="Option 4">
-								</div>
-								<div class="col-sm-3">
+								<div class="col-sm-4">
 									<p class="text-success">help text here</p>
 								</div>
 							</div>
