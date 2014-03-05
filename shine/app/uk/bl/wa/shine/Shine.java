@@ -14,8 +14,14 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.SpellCheckResponse;
+import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
+import org.apache.solr.common.params.ModifiableSolrParams;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import play.Logger;
+import play.libs.Json;
 
 
 /**
@@ -136,6 +142,29 @@ public class Shine extends Solr {
 		return res;
 	}
 
+    public JsonNode suggest(String name) throws SolrServerException {
+    	ModifiableSolrParams params = new ModifiableSolrParams();
+    	params.set("qt", "/suggest");
+    	params.set("q", name);
+    	params.set("wt", "json");
+    	QueryResponse response = solr.query(params);
+        SpellCheckResponse spellCheckResponse = response.getSpellCheckResponse() ;
+        
+        List<Suggestion> suggestions = spellCheckResponse.getSuggestions();
+        List<String> result = new ArrayList<String>();
+        if (suggestions != null && suggestions.size() > 0) {
+        	for(Suggestion suggestion : suggestions) {
+               List<String> alternatives = suggestion.getAlternatives() ;
+               if (alternatives != null && alternatives.size() > 0) {
+            	   for(String alternative : alternatives) {
+            		   result.add(alternative);
+                   }
+               }
+        	}
+        }
+    	JsonNode jsonData = Json.toJson(result);
+    	return jsonData;
+    }
 	
 	private String temp( String query ) throws SolrServerException {
 		QueryResponse res = this.search(query, null, 0, null, null);

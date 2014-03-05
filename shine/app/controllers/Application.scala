@@ -12,8 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import org.apache.commons.lang3.StringUtils
 import scala.collection.mutable.ListBuffer
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsString
+import play.api.libs.json._
 
 object Application extends Controller {
 
@@ -113,20 +112,14 @@ object Application extends Controller {
     q
   }
 
-  def suggest(query: String) = Action { implicit request =>
-   	val javaMap = request.queryString.map { case (k, v) => (k, v.asJava) }.asJava;
-
-    val q = new Query()
-    q.query = query
-    q.parseParams(javaMap)
-    q.res = solr.search(query, q.filters)
-    q.processFacetsAsParamValues
-    var jsObject = JsObject(
-        "name" -> JsString("AND")::
-        "name" -> JsString("OR")::Nil)
-    Ok(jsObject)
- 
-  }
+  def suggest(name: String) = Action { implicit request =>
+    val result = solr.suggest(name)
+    println("result: " + result.toString)
+//    var jsonObject = JsObject(
+//        "name" -> JsString("AND")::
+//        "name" -> JsString("OR")::Nil)
+    Ok(result.toString)
+  }  
 
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._

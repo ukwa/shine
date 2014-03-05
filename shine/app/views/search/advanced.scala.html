@@ -24,13 +24,16 @@
 	    	
 			var searchResults = [];
 	        $("#full-text-field").typeahead({
-	    		remote: {
+	            minLength: 2,
+	            remote: {
 	    			url: '/suggest/%QUERY',
 	    			filter: function(items) {
-						console.log(name)
 	    	          	return items;
 	    			}
 	    		}
+	    	}).on('typeahead:selected', function(event, datum) {
+	    		event.preventDefault();
+	    		console.log($(this).val() + " " + datum);
 	    	});
 		});
 	    
@@ -177,7 +180,7 @@
 		                    <h4 class="panel-title pull-left filter-heading-title">
 		                        Results @currentPage.getDisplayXtoYofZ(" to "," of ")
 		                    </h4>
-		                       <div class="form-inline pull-right">
+		                    <div class="form-inline pull-right">
 								<div class="form-group">
 									<select class="form-control" name="sort" id="sort">
 										<option value="content_type_norm">Title</option>
