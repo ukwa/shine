@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JSpinner;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -19,6 +21,8 @@ import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import play.Logger;
 import play.libs.Json;
@@ -151,14 +155,22 @@ public class Shine extends Solr {
         SpellCheckResponse spellCheckResponse = response.getSpellCheckResponse() ;
         
         List<Suggestion> suggestions = spellCheckResponse.getSuggestions();
-        List<String> result = new ArrayList<String>();
+        List<ObjectNode> result = new ArrayList<ObjectNode>();
+
+        JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
+
         if (suggestions != null && suggestions.size() > 0) {
         	for(Suggestion suggestion : suggestions) {
                List<String> alternatives = suggestion.getAlternatives() ;
                if (alternatives != null && alternatives.size() > 0) {
             	   for(String alternative : alternatives) {
-            		   result.add(alternative);
+            		   ObjectNode child = nodeFactory.objectNode();
+            		   child.put("title", alternative);
+            		   result.add(child);
                    }
+        		   ObjectNode testChild = nodeFactory.objectNode();
+        		   testChild.put("title", "Joey");
+        		   result.add(testChild);
                }
         	}
         }
