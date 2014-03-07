@@ -102,8 +102,6 @@ public class URIStatusLookup {
 			} catch (UnknownHostException e) {
 				Logger.info("UnknownHostException for "+name);
 				return URIStatus.HOST_UNRESOLVABLE;
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 			return null;
 		}

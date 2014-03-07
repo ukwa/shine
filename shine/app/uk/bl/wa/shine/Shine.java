@@ -147,34 +147,44 @@ public class Shine extends Solr {
 	}
 
     public JsonNode suggest(String name) throws SolrServerException {
-    	ModifiableSolrParams params = new ModifiableSolrParams();
-    	params.set("qt", "/suggest");
-    	params.set("q", name);
-    	params.set("wt", "json");
-    	QueryResponse response = solr.query(params);
-        SpellCheckResponse spellCheckResponse = response.getSpellCheckResponse() ;
-        
-        List<Suggestion> suggestions = spellCheckResponse.getSuggestions();
+    	
+    	JsonNode jsonData = null;
         List<ObjectNode> result = new ArrayList<ObjectNode>();
-
         JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
 
-        if (suggestions != null && suggestions.size() > 0) {
-        	for(Suggestion suggestion : suggestions) {
-               List<String> alternatives = suggestion.getAlternatives() ;
-               if (alternatives != null && alternatives.size() > 0) {
-            	   for(String alternative : alternatives) {
-            		   ObjectNode child = nodeFactory.objectNode();
-            		   child.put("title", alternative);
-            		   result.add(child);
-                   }
-        		   ObjectNode testChild = nodeFactory.objectNode();
-        		   testChild.put("title", "Joey");
-        		   result.add(testChild);
-               }
-        	}
-        }
-    	JsonNode jsonData = Json.toJson(result);
+    	try {
+	    	ModifiableSolrParams params = new ModifiableSolrParams();
+	    	params.set("qt", "/suggest");
+	    	params.set("q", name);
+	    	params.set("wt", "json");
+	    	QueryResponse response = solr.query(params);
+	        SpellCheckResponse spellCheckResponse = response.getSpellCheckResponse() ;
+	        
+			Logger.info("spellCheckResponse: " + spellCheckResponse);
+
+	        List<Suggestion> suggestions = spellCheckResponse.getSuggestions();
+	
+	        if (suggestions != null && suggestions.size() > 0) {
+	        	for(Suggestion suggestion : suggestions) {
+	               List<String> alternatives = suggestion.getAlternatives() ;
+	               if (alternatives != null && alternatives.size() > 0) {
+	            	   for(String alternative : alternatives) {
+	            		   ObjectNode child = nodeFactory.objectNode();
+	            		   child.put("title", alternative);
+	            		   result.add(child);
+	                   }
+	               }
+	        	}
+	        }
+	    	jsonData = Json.toJson(result);
+    	} catch (Exception e) {
+//    		throw new SolrServerException("Suggestions not found: " + e);
+    		ObjectNode testChild = nodeFactory.objectNode();
+    		testChild.put("title", "Suggestions server isn't working at present");
+    		result.add(testChild);
+    		Logger.info("result: " + result);
+	    	jsonData = Json.toJson(result);
+    	}
     	return jsonData;
     }
 	
