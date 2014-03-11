@@ -1,6 +1,7 @@
 $(function () {
 
-	$('#reset').click(function() { 
+	$('#reset').click(function(event) { 
+		event.preventDefault();
 		$('.search-field').each(function() {
 			$(this).attr('value', ''); 
 		});
@@ -158,5 +159,53 @@ $(function () {
 		});
 		
 	});
+	
+	var inList = [];
+	
+	$('input.add-facet-field').each(function() {
+	    $(this).keyup(function() {
+	    	var $search_field = $(this);
+	    	console.log($search_field.val());
+			$add_more_options = $(this).parent().parent();
+			if ($add_more_options.find('span.tt-dropdown-menu').css('display') == 'none') {
+				$search_field = $add_more_options.find('input.form-control');
+				console.log("$search_field: " + $search_field.val());
+				$hidden_facets = $add_more_options.parent().find('li.facet-options.hide');
+				$hidden_facets.each(function(index) {
+					$value = $(this).find('a:nth-child(3)');
+					$value.find("span").remove();
+					console.log($value.html() + " " + $search_field.val());
+					if ($value.html().trim().indexOf($search_field.val().trim()) == 0) {
+						console.log("matches");
+						var found = $.inArray($value.html().trim(), inList) > -1;
+						if (!found) {
+							inList.push($value.html().trim());
+							console.log("inList: " + inList);
+							$dropdown = $add_more_options.find('span.tt-dropdown-menu');
+							// check if you already got one in the list
+							$dropdown.append(
+								'<div class=\"tt-dataset-' + index + '\"><span class=\"tt-suggestions\" style=\"display: block;\"><div class=\"tt-suggestion\"><p style=\"white-space: normal;\"><a>' + $value.html().trim() + '</a></p></div></span></div>'
+							);
+						}
+						$dropdown.show();
+					} else {
+						
+					}
+				});
+			} else {
+				if ($search_field.val() == '') {
+		    		$add_more_options.find('span.tt-dropdown-menu').css('display', 'none');
+				}
+			}
+	    });
+	
+	});
 
+	$(".add-facet-button").each(function() {
+		$(this).click(function(event) {
+			event.preventDefault();
+
+		});
+	});
+	
 });
