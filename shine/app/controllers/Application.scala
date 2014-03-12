@@ -27,6 +27,10 @@ object Application extends Controller {
 
   var pagination = new Pagination(recordsPerPage, maxNumberOfLinksOnPage, maxViewablePages);
 
+  def index = Action {
+    Ok(views.html.index("Shine Application"))
+  }
+
   def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
 
     val q = doSearch(query, request.queryString, pageNo, sort, order)
