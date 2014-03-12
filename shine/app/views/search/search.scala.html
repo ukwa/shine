@@ -101,8 +101,8 @@
 						<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
 						<input type="hidden" name="page" value="@(currentPage.getCurrentPage)" />
 						<div class="padding-5 pull-right">
-							<a id="facet-sort-value" class="facet-sort" href="#"><span class="label label-primary">value</span></a>
-							<a id="facet-sort-count" class="facet-sort" href="#"><span class="label label-primary">count</span></a> 
+							<a id="facet-sort-value" class="facet-sort" href=""><span class="label label-primary">value</span></a>
+							<a id="facet-sort-count" class="facet-sort" href=""><span class="label label-primary">count</span></a> 
 						</div>
 						
 						@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
@@ -118,7 +118,7 @@
 											@if(i >= facetLimit) {
 		        								<li class="facet-options hide">
 											} else {
-		        								<li class="facet-options show">
+		        								<li class="facet-options show" data-attr="default">
 											}
 		        								<a class="facet include" href="" title="Include" id="include_@(fc.getName())"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
 		        								<a class="facet exclude" href="" title="Exclude" id="exclude_@(fc.getName())"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
@@ -145,10 +145,10 @@
       									</span>
 										<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
 										<span class="input-group-sm input-group-addon">
-											<a href="#" title="Include">
+											<a href="#" title="Include" class="add-facet-value">
 												<span class="glyphicon glyphicon-plus-sign"></span>
 											</a>&nbsp;
-											<a href="#" title="Exclude">
+											<a href="#" title="Exclude" class="remove-facet-value">
 												<span class="glyphicon glyphicon-minus-sign"></span>
 											</a>
 										</span>
