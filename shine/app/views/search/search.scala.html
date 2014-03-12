@@ -1,99 +1,13 @@
-@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
+@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int)
 
 @scripts = {
+	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
+
 			$('#sort').val('@(currentSortBy)')
 	  		$('#order').val('@(currentOrder)')
-	  		$('#sort').change(function() {
-				$('form').submit();
-	  		});
-	  		$('#order').change(function() {
-	 			$('form').submit();
-	  		});
-			$('#reset').click(function() { 
-				$('.search-field').each(function() {
-					$(this).attr('value', ''); 
-				});
-			});
-			if ($('.max-viewable-reached').attr('class') != undefined) {
-				$('#max-view-reached').removeClass('hide');
-			}
-			
-			$(".add-more-button").each(function(index) {
-				$(this).click(function(event) {
-					event.preventDefault();
-					var addMoreSelector = "#add-more-option-" + index;
-					var buttonText = "#add-more-button-text-" + index;
-					if ($(addMoreSelector).hasClass('hide')) {
-						$(addMoreSelector).removeClass('hide');
-						$(buttonText).html("REMOVE")
-					} else {
-						$(addMoreSelector).addClass('hide');
-						$(buttonText).html("ADD")
-					}
-				});
-			});
 
-			$(".facet-options").each(function(index) {
-				// check form fields
-				var $input_include = $(this).find('input.include');
-				var $input_exclude = $(this).find('input.exclude');
-
-				var $link_span_include = $(this).find('a.facet.include span');
-				var $link_span_exclude = $(this).find('a.facet.exclude span');
-
-				// to read back facet options after submit
-				if ($input_include.attr('checked') !== undefined) {
-					$link_span_include.removeClass('facet-deselected');
-					$link_span_include.addClass('facet-selected');
-				} else {
-					$link_span_exclude.removeClass('facet-selected');
-					$link_span_exclude.addClass('facet-deselected');
-				}
-
-				if ($input_exclude.attr('checked') !== undefined) {
-					$link_span_exclude.removeClass('facet-deselected');
-					$link_span_exclude.addClass('facet-selected');
-				} else {
-					$link_span_exclude.removeClass('facet-selected');
-					$link_span_exclude.addClass('facet-deselected');
-				}
-				
-				// for clicking on facet options
-				$(this).find('a.facet.include').click(function(event) {
-					event.preventDefault();
-					// change +/-
-					if ($link_span_include.hasClass('facet-deselected')) {
-						// SELECTED
-						$link_span_include.removeClass('facet-deselected');
-						$link_span_include.addClass('facet-selected');
-						$input_include.attr('checked', '');
-					} else {
-						// DESELECTED
-						$link_span_include.removeClass('facet-selected');
-						$link_span_include.addClass('facet-deselected');
-						$input_include.removeAttr('checked');
-					}
-		 			$('form').submit();
-				});
-				
-				$(this).find('a.facet.exclude').click(function(event) {
-					event.preventDefault();
-					if ($link_span_exclude.hasClass('facet-deselected')) {
-						// SELECTED
-						$link_span_exclude.removeClass('facet-deselected');
-						$link_span_exclude.addClass('facet-selected');
-						$input_exclude.attr('checked', '');
-					} else {
-						// DESELECTED
-						$link_span_exclude.removeClass('facet-selected');
-						$link_span_exclude.addClass('facet-deselected');
-						$input_exclude.removeAttr('checked');
-					}
-		 			$('form').submit();
-				});
-			});
 		});
 	</script>
 }
@@ -118,45 +32,46 @@
             order = "asc"
         }
     }
-        
+
     // Generate the link
     routes.Application.search(q.query, pageNo, sortBy, order)
-    
 }
 
 @pagination = {
-	<div class="text-center">
-		<ul class="pagination">
-			@if(currentPage.hasPreviousPage) {
-            	<li class="prev">
-            		<a href="@link(currentPage.getCurrentPage-1, null)">&laquo;</a>
-                </li>
-            } else {
-                <li class="prev disabled">
-                    <a>&laquo;</a>
-                </li>
-            }
-			@for(index <- currentPage.getPagesList) {
-				@if(index == currentPage.getCurrentPage) {
-					@if(index == currentPage.getMaxViewablePages) {
-						<span class="max-viewable-reached hide"></span>
+	@if(currentPage.getTotalItems > 0) {
+		<div class="text-center">
+			<ul class="pagination">
+				@if(currentPage.hasPreviousPage) {
+	            	<li class="prev">
+	            		<a href="@link(currentPage.getCurrentPage-1, null)@(q.facetParameters)">&laquo;</a>
+	                </li>
+	            } else {
+	                <li class="prev disabled">
+	                    <a>&laquo;</a>
+	                </li>
+	            }
+				@for(index <- currentPage.getPagesList) {
+					@if(index == currentPage.getCurrentPage) {
+						@if(index == currentPage.getMaxViewablePages) {
+							<span class="max-viewable-reached hide"></span>
+						}
+						<li class="active current"><a href="#">@(currentPage.getCurrentPage) <span class="sr-only">(current)</span></a></li>
+					} else {
+						<li><a href="@link(index, null)@(q.facetParameters)">@(index)</a></li>
 					}
-					<li class="active current"><a href="@link(index, null)">@(index) <span class="sr-only">(current)</span></a></li>
-				} else {
-					<li><a href="@link(index, null)">@(index)</a></li>
 				}
-			}
-        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
-                <li class="next">
-                    <a href="@link(currentPage.getCurrentPage+1, null)">&raquo;</a>
-                </li>
-            } else {
-                <li class="next disabled">
-                    <a>&raquo;</a>
-                </li>
-			}
-		</ul>
-	</div>
+	        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
+	                <li class="next">
+	                    <a href="@link(currentPage.getCurrentPage+1, null)@(q.facetParameters)">&raquo;</a>
+	                </li>
+	            } else {
+	                <li class="next disabled">
+	                    <a>&raquo;</a>
+	                </li>
+				}
+			</ul>
+		</div>
+	}
 }
 
 @main(q.query, scripts) {
@@ -170,34 +85,47 @@
 		@helper.form(action=routes.Application.search()) {
 	
 			<div class="row">
-				<div class="col-md-3 col-sm-3">
+				<div class="col-md-4 col-sm-4">
 					<div class="panel panel-default">
+						<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
+						<input type="hidden" name="page" value="@(currentPage.getCurrentPage)" />
+						<div class="padding-5 pull-right">
+							<a id="facet-sort-value" class="facet-sort" href="#"><span class="label label-primary">value</span></a>
+							<a id="facet-sort-count" class="facet-sort" href="#"><span class="label label-primary">count</span></a> 
+						</div>
 						@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 							<div class="panel-body">
 			    				<div>
-		        					<a href="#expand-@(index)">
-		          						<strong>@(fc.getName()) (@(fc.getValueCount()))</strong>
-		        					</a>
+		        					<a>
+		          						<strong>@(fc.getName())</strong>
+		        					</a> <span class="badge">@(fc.getValueCount())</span>
 			    				</div>
 			    				<div class="facet-index">
 		      						<ul class="list-unstyled">
 										@for((f, i) <- fc.getValues().zipWithIndex) {
-		        							<li class="facet-options">
+											@if(i >= facetLimit) {
+		        								<li class="facet-options hide">
+											} else {
+		        								<li class="facet-options">
+											}
 		        								<a class="facet include" href="" title="Include" id="include_@(fc.getName())"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
 		        								<a class="facet exclude" href="" title="Exclude" id="exclude_@(fc.getName())"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-		          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) (@(f.getCount()))</a>
+		          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
 		          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 		          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 											</li>
 									        <!-- dynamically add checked="true"? -->
 									        <!-- OR use some kind of link constructor? -->
 										}
-										<li> 
-        									<a href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
-        								</li>
+										@if(q.res.getResults().size() > 0) {
+											<li> 
+	        									<a class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
+	        								</li>
+        								}
 										<li>
         									<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">ADD</span> <span class="glyphicon glyphicon-plus"></span></button>
 										</li>
+										
 		    						</ul>
 									<div id="add-more-option-@(index)" class="input-group hide">
 										<span class="input-group-btn">
@@ -242,11 +170,11 @@
                     </div>
 				</div>
 		
-				<div class="col-md-9 col-sm-9">
+				<div class="col-md-8 col-sm-8">
 					<div class="panel panel-default">
 						<div class="panel-body">
 				   			<div class="input-group">
-								<input type="text" class="form-control" name="query" value="@(q.query)" id="query" />
+								<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="query" />
 								<span class="input-group-btn">
 									<button type="submit" class="btn btn-primary" id="search" name="action" value="search">Search</button>
 									<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>

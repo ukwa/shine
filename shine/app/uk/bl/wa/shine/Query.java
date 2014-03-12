@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -24,11 +25,16 @@ import play.Logger;
  */
 public class Query {
 
+	public static final String FACET_SORT_INDEX = "index";
+	public static final String FACET_SORT_COUNT = "count";
+	
 	public String query;
 	
 	public Map<String,List<String>> filters;
 	
 	public QueryResponse res;
+	
+	public String facetParameters;
 	
 	public void parseParams( Map<String,List<String>> params ) {
 		filters = new HashMap<String, List<String>>();
@@ -37,13 +43,18 @@ public class Query {
 			    filters.put(param.replace("facet.in.", ""), params.get(param));
 			} else if( param.startsWith("facet.out.")) {
 			    filters.put("-"+param.replace("facet.out.", ""), params.get(param));
+			} else if( param.equals("facet.sort") ) {
+			    filters.put(param, params.get(param));
 			}
 		}
+		Logger.info("filters: " + filters);
 	}
 	
 	public String getCheckedInString(String facet_name, String value ) {
 		for( String fc : filters.keySet() ) {
-			if( fc.equals(facet_name) && filters.get(fc).contains("\""+value+"\"")) return "checked=\"\"";
+			if( fc.equals(facet_name) && filters.get(fc).contains("\""+value+"\"")) {
+				return "checked=''";
+			}
 		}
 		return "";
 	}
@@ -100,6 +111,52 @@ public class Query {
 			Logger.error("Hex to UTF-8 recoding failed: "+e);
 		}
 		return hex;
+	}
+	
+	public String getFacetValue(String facet_name) {
+		if (filters.get(facet_name) != null) {
+			return filters.get(facet_name).get(0);
+		}
+		return "";
+	}
+	
+	public String getCheckedFacet(String facet_name) {
+		if (StringUtils.isNotBlank(this.getFacetValue(facet_name))) {
+			return "checked=''";
+		}
+		return "";
+	}
+	
+	public String getFacetSortValue(String facet_name) {
+		// only return the correct facet sort values
+		if (facet_name.equals("facet.sort")) {
+			return getFacetValue(facet_name);
+		}
+		return "";
+	}
+	
+	public void processFacetsAsParamValues() {
+		StringBuilder parameters = new StringBuilder("");
+		for (FacetField facetField : res.getFacetFields()) {
+			for (Count count : facetField.getValues()) {
+				String facet = facetField.getName() + "=\"" + count.getName() + "\"";
+				if (StringUtils.isNotBlank(this.getCheckedInString(facetField.getName(),count.getName()))) {
+					String in = "&facet.in."; 
+					parameters.append(in).append(facet);
+				} else if (StringUtils.isNotBlank(this.getCheckedOutString(facetField.getName(),count.getName()))) {
+					String out = "&facet.out";
+					parameters.append(out).append(facet);
+				}
+			}
+		 }
+		String facetSort = "facet.sort";
+		String checked = getCheckedFacet(facetSort);
+		if (StringUtils.isNotBlank(checked)) {
+			String sortValue = getFacetSortValue(facetSort);
+			parameters.append("&").append(facetSort).append("=").append(sortValue);
+		}
+		Logger.info(parameters.toString());
+		facetParameters = parameters.toString();
 	}
 	
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {

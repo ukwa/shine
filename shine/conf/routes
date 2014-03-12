@@ -9,7 +9,7 @@ GET     /                           controllers.Application.index
 GET     /search                     controllers.Application.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
 
 GET     /advanced_search            controllers.Application.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
-
+ 
 # TBD: The main hook for the explore/trend analysis/delve UI.
 
 GET     /graph						controllers.Application.plot_graph(query ?= "*:*", year_start ?= "1800", year_end ?= "2000")
@@ -20,3 +20,6 @@ GET     /halflife                   controllers.Shiner.halflife
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
+GET 	/javascriptRoutes    		controllers.Application.javascriptRoutes
+
+GET    	/suggest/:name				controllers.Application.suggest(name)

@@ -53,6 +53,10 @@ public class Shine extends Solr {
 		 this.perPage = config.getInt("per_page");
     }
 	
+	public QueryResponse search(String query, Map<String,List<String>> params) throws SolrServerException {
+		return this.search(query, params, null);
+	}
+
 	public QueryResponse search(String query, Map<String,List<String>> params, int pageNo, String sort, String order) throws SolrServerException {
 		
 		ORDER orderSolr = ORDER.asc;
@@ -65,16 +69,27 @@ public class Shine extends Solr {
 		}
 		
 		Logger.info("per_page: " + perPage);
-		SolrQuery parameters = new SolrQuery();
-		// The query:
-		parameters.set("q", query);
-		// calculate increments based on per_page
+		
 		Integer start = ((pageNo - 1) * perPage);
 		if (start < 0) {
 			start = 0;
 		}
+		
+		SolrQuery parameters = new SolrQuery();
 		parameters.set("start", start);
-		Logger.info("start: " + parameters.get("start"));
+		// Sorts:
+		parameters.setSort(sort, orderSolr);
+		//parameters.setSort("sentiment_score", ORDER.asc);
+		QueryResponse res = this.search(query, params, parameters);
+		return res;
+	}
+
+	public QueryResponse search(String query, Map<String,List<String>> params, SolrQuery parameters) throws SolrServerException {
+		if (parameters == null) parameters = new SolrQuery();
+		// The query:
+		parameters.set("q", query);
+		// calculate increments based on per_page
+
 		// Facets:
 		for( String f : facets ) {
 			parameters.addFacetField("{!ex="+f+"}"+f);
@@ -83,8 +98,12 @@ public class Shine extends Solr {
 		List<String> fq = new ArrayList<String>();
 		for( String param : params.keySet() ) {
 			String field = param;
+			if ( param.equals("facet.sort")) {
+				// there's only one sort
+				parameters.setFacetSort(params.get(param).get(0));
+			}
 			// Excluded tags are ANDed together:
-			if( param.startsWith("-")) {
+			else if( param.startsWith("-")) {
 				field = field.replaceFirst("-", "");
 				for( String val : params.get(param)) {
 					fq.add("{!tag="+field+"}"+param+":"+val); // TODO Escape correctly?
@@ -106,9 +125,7 @@ public class Shine extends Solr {
 		if( fq.size() > 0 ) {
 			parameters.setFilterQueries(fq.toArray(new String[fq.size()]));
 		}
-		// Sorts:
-		parameters.setSort(sort, orderSolr);
-		//parameters.setSort("sentiment_score", ORDER.asc);
+
 		// Paging:
 		parameters.setRows(perPage);
 		Logger.info("Query: "+parameters.toString());
@@ -118,7 +135,6 @@ public class Shine extends Solr {
 		Logger.info("Response Header: "+res.getResponseHeader());
 		return res;
 	}
-
 
 	
 	private String temp( String query ) throws SolrServerException {
