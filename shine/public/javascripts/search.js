@@ -1,6 +1,7 @@
 $(function () {
 
-	$('#reset').click(function() { 
+	$('#reset').click(function(event) { 
+		event.preventDefault();
 		$('.search-field').each(function() {
 			$(this).attr('value', ''); 
 		});
@@ -87,17 +88,24 @@ $(function () {
 		var $show_more = $(this);
 		$(this).click(function(event) {
 			event.preventDefault();
+			// click on link and do something....
 			$(this).parent().parent().find('li.facet-options').each(function(index) {
-				$link = $(this);
+				$li = $(this);
 				var $show_more_icon = $show_more.find('span:nth-child(1)');
 				var $show_more_span = $show_more.find('span:nth-child(2)');
-				if ($link.hasClass('hide')) {
-					$link.removeClass('hide');
+				var $link_text = $show_more.find('span:nth-child(2)').html();
+				var $default_show = $li.attr('data-attr');
+				if ($li.hasClass('hide')) {
+					$li.addClass('show');
+					$li.removeClass('hide');
 					$show_more_icon.removeClass('glyphicon-plus-sign');
 					$show_more_icon.addClass('glyphicon-minus-sign');
 					$show_more_span.html("Hide");
-				} else {
-					$link.addClass('hide');
+				} 
+				else if ($li.hasClass('show') && $default_show !== 'default') {
+					console.log($link_text + " " + $default_show);
+					$li.addClass('hide');
+					$li.removeClass('show');
 					$show_more_icon.removeClass('glyphicon-minus-sign');
 					$show_more_icon.addClass('glyphicon-plus-sign');
 					$show_more_span.html("Show more...");
@@ -158,5 +166,107 @@ $(function () {
 		});
 		
 	});
+	
+	var inList = [];
+	
+	$(".add-facet-button").each(function() {
+		$(this).click(function(event) {
+			event.preventDefault();
+			alert('search');
+		});
+	});
+	
+	$('input.add-facet-field').each(function() {
+	    $(this).keyup(function() {
+	    	var $search_field = $(this);
+			$add_more_options = $(this).parent().parent();
+			if ($add_more_options.find('span.tt-dropdown-menu').css('display') == 'none') {
+				$search_field = $add_more_options.find('input.form-control');
+				$hidden_facets = $add_more_options.parent().find('li.facet-options.hide');
+				$hidden_facets.each(function(index) {
+					var $value = $(this).find('a:nth-child(3)');
+					var $copied_value = $value.clone();
+					$copied_value.find("span").remove();
+					$value = $copied_value.html().trim(); 
+					console.log($value + " " + $search_field.val());
+					if ($value.indexOf($search_field.val().trim()) == 0) {
+						var found = $.inArray($value, inList) > -1;
+						if (!found) {
+							inList.push($value.trim());
+							$dropdown = $add_more_options.find('span.tt-dropdown-menu');
+							// check if you already got one in the list
+							$dropdown.append(
+								'<div class=\"tt-dataset-' + index + '\"><span class=\"tt-suggestions\" style=\"display: block;\"><div class=\"tt-suggestion\"><p style=\"white-space: normal;\"><a href="#" class=\"suggested-facet-value\">' + $value + '</a></p></div></span></div>'
+							);
+						}
+						$dropdown.show();
+					}
+				});
+			} else {
+				if ($search_field.val() == '') {
+		    		$add_more_options.find('span.tt-dropdown-menu').css('display', 'none');
+				}
+			}
+			applyClicks();
+	    });
+	
+	});
 
+	function applyClicks() {
+		$('.suggested-facet-value').each(function() {
+			$(this).click(function(event) {
+				event.preventDefault();
+				// copy field
+				var $face_value = $(this).html();
+				console.log("$face_value: " + $face_value);
+				var $add_more_options = $(this).parent().parent().parent().parent().parent().parent();
+				var $add_field = $add_more_options.find('input.form-control.add-facet-field');
+				$add_field.val($face_value);
+				
+				// add to facet list
+				$('.add-facet-value').each(function() {
+					$(this).click(function(event) {
+						event.preventDefault();
+						var $link = $(this);
+						var $hidden_list = $(this).parent().parent().parent().find('ul.list-unstyled li.facet-options.hide');
+						$hidden_list.each(function(index) {
+							// find the correct one
+							var $anchor = $(this).find('a:nth-child(3)');
+							var $copied_value = $anchor.clone();
+							$copied_value.find("span").remove();
+							$value = $copied_value.html().trim(); 
+							var $local_field = $link.parent().parent().find('input.form-control.add-facet-field');
+							console.log(index + " " + $value + " " + $local_field.val());
+							if ($local_field.val().trim() == $value) {
+								$(this).removeClass('hide');
+								$(this).addClass('show');
+							}
+						});
+					});
+				});
+				
+				// remove from facet list
+				$('.remove-facet-value').each(function() {
+					$(this).click(function(event) {
+						event.preventDefault();
+						var $link = $(this);
+						var $show_list = $(this).parent().parent().parent().find('ul.list-unstyled li.facet-options.show');
+						$show_list.each(function(index) {
+							// find the correct one
+							var $anchor = $(this).find('a:nth-child(3)');
+							var $copied_value = $anchor.clone();
+							$copied_value.find("span").remove();
+							$value = $copied_value.html().trim();
+							var $local_field = $link.parent().parent().find('input.form-control.add-facet-field');
+							console.log(index + " " + $value + " " + $local_field.val());
+							if ($local_field.val().trim() == $value) {
+								$(this).removeClass('show');
+								$(this).addClass('hide');
+							}
+						});
+					});
+				});
+			});
+		});
+	}
 });

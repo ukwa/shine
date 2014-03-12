@@ -1,13 +1,24 @@
 @(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int)
 
+@styles = {
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+}
+
 @scripts = {
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+	
 	<script type="text/javascript">
 		$(document).ready(function() {
 
 			$('#sort').val('@(currentSortBy)')
 	  		$('#order').val('@(currentOrder)')
-
+	  		
+	  		$('#reset-facets').click(function(event) {
+				event.preventDefault();
+				alert('resetting fields');
+	  		});
+			
 		});
 	</script>
 }
@@ -74,7 +85,7 @@
 	}
 }
 
-@main(q.query, scripts) {
+@main(q.query, styles, scripts) {
 
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="#">Search</a></li>
@@ -90,9 +101,10 @@
 						<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
 						<input type="hidden" name="page" value="@(currentPage.getCurrentPage)" />
 						<div class="padding-5 pull-right">
-							<a id="facet-sort-value" class="facet-sort" href="#"><span class="label label-primary">value</span></a>
-							<a id="facet-sort-count" class="facet-sort" href="#"><span class="label label-primary">count</span></a> 
+							<a id="facet-sort-value" class="facet-sort" href=""><span class="label label-primary">value</span></a>
+							<a id="facet-sort-count" class="facet-sort" href=""><span class="label label-primary">count</span></a> 
 						</div>
+						
 						@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 							<div class="panel-body">
 			    				<div>
@@ -106,7 +118,7 @@
 											@if(i >= facetLimit) {
 		        								<li class="facet-options hide">
 											} else {
-		        								<li class="facet-options">
+		        								<li class="facet-options show" data-attr="default">
 											}
 		        								<a class="facet include" href="" title="Include" id="include_@(fc.getName())"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
 		        								<a class="facet exclude" href="" title="Exclude" id="exclude_@(fc.getName())"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
@@ -117,7 +129,7 @@
 									        <!-- dynamically add checked="true"? -->
 									        <!-- OR use some kind of link constructor? -->
 										}
-										@if(q.res.getResults().size() > 0) {
+										@if((fc.getValues().size - facetLimit) > 0) {
 											<li> 
 	        									<a class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
 	        								</li>
@@ -127,16 +139,30 @@
 										</li>
 										
 		    						</ul>
-									<div id="add-more-option-@(index)" class="input-group hide">
+									<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
 										<span class="input-group-btn">
-        									<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+        									<button class="add-facet-button btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
       									</span>
-										<input type="text" class="form-control" value="This form should pop-up when the plus is pressed.">
-										<span class="input-group-addon"><a href="#" title="Include"><span class="glyphicon glyphicon-plus-sign"></span></a>&nbsp;<a href="#" title="Exclude"><span class="glyphicon glyphicon-minus-sign"></span></span>
+										<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
+										<span class="input-group-sm input-group-addon">
+											<a href="#" title="Include" class="add-facet-value">
+												<span class="glyphicon glyphicon-plus-sign"></span>
+											</a>&nbsp;
+											<a href="#" title="Exclude" class="remove-facet-value">
+												<span class="glyphicon glyphicon-minus-sign"></span>
+											</a>
+										</span>
+										<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
+										</span>
+
 									</div>
 			    				</div>
 			  				</div>
 						}
+						<div class="panel-body">
+							<button class="btn btn-primary btn-xs" type="button" id="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
+						</div>
+						
 					</div>
 					
                     <div class="panel-group" id="accordion2">
@@ -174,7 +200,7 @@
 					<div class="panel panel-default">
 						<div class="panel-body">
 				   			<div class="input-group">
-								<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="query" />
+								<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="query" placeholder="Enter search term" />
 								<span class="input-group-btn">
 									<button type="submit" class="btn btn-primary" id="search" name="action" value="search">Search</button>
 									<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>

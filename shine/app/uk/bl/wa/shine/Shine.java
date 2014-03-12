@@ -9,13 +9,23 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JSpinner;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.SpellCheckResponse;
+import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
+import org.apache.solr.common.params.ModifiableSolrParams;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import play.Logger;
+import play.libs.Json;
 
 
 /**
@@ -136,6 +146,47 @@ public class Shine extends Solr {
 		return res;
 	}
 
+    public JsonNode suggest(String name) throws SolrServerException {
+    	
+    	JsonNode jsonData = null;
+        List<ObjectNode> result = new ArrayList<ObjectNode>();
+        JsonNodeFactory nodeFactory = new JsonNodeFactory(false);
+
+    	try {
+	    	ModifiableSolrParams params = new ModifiableSolrParams();
+	    	params.set("qt", "/suggest");
+	    	params.set("q", name);
+	    	params.set("wt", "json");
+	    	QueryResponse response = solr.query(params);
+	        SpellCheckResponse spellCheckResponse = response.getSpellCheckResponse() ;
+	        
+			Logger.info("spellCheckResponse: " + spellCheckResponse);
+
+	        List<Suggestion> suggestions = spellCheckResponse.getSuggestions();
+	
+	        if (suggestions != null && suggestions.size() > 0) {
+	        	for(Suggestion suggestion : suggestions) {
+	               List<String> alternatives = suggestion.getAlternatives() ;
+	               if (alternatives != null && alternatives.size() > 0) {
+	            	   for(String alternative : alternatives) {
+	            		   ObjectNode child = nodeFactory.objectNode();
+	            		   child.put("title", alternative);
+	            		   result.add(child);
+	                   }
+	               }
+	        	}
+	        }
+	    	jsonData = Json.toJson(result);
+    	} catch (Exception e) {
+//    		throw new SolrServerException("Suggestions not found: " + e);
+    		ObjectNode testChild = nodeFactory.objectNode();
+    		testChild.put("title", "Suggestions server isn't working at present");
+    		result.add(testChild);
+    		Logger.info("result: " + result);
+	    	jsonData = Json.toJson(result);
+    	}
+    	return jsonData;
+    }
 	
 	private String temp( String query ) throws SolrServerException {
 		QueryResponse res = this.search(query, null, 0, null, null);

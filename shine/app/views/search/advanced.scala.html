@@ -7,7 +7,7 @@
 
 @scripts = {
 	<script src="@routes.Assets.at("javascripts/jquery-ui-1.10.4.custom.min.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("bootstrap/typeahead/js/typeahead.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/typeahead.bundle.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -22,19 +22,55 @@
 		    }
 	    	$('#filter-panel').collapse('show');
 	    	
-			var searchResults = [];
-	        $("#full-text-field").typeahead({
-	    		remote: {
-	    			url: '/suggest/%QUERY',
-	    			filter: function(items) {
-						console.log(name)
-	    	          	return items;
-	    			}
-	    		}
-	    	});
+	        var suggestions = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggest/%QUERY'
+				}
+        	});
+	        	 
+	        suggestions.initialize();
+
+			$('#full-text-field').typeahead({
+				highlight: true
+			},
+			{
+	        	displayKey: 'title',
+	        	source: suggestions.ttAdapter(),
+        	})
+            .on('typeahead:selected', onSelected)
+            .on('typeahead:cursorchanged', onCursorchanged);
+			 
+			function onCursorchanged($e, datum) {
+			    console.log('onCursorchanged');
+			    selectedWord(datum);
+			}
+			 
+			function onSelected($e, datum) {
+			    console.log('selected');
+			    selectedWord(datum);
+			}
+
+			function selectedWord(datum) {
+			    searchField = $('#search-field').html();
+			    var clickedOnValue = datum['title'];
+			    var value = replaceLastWord(searchField, clickedOnValue);
+			    $('#full-text-field').typeahead('val', value);
+			}
+			
+			function replaceLastWord(str, newStr) {
+			   return str.replace(/\w*$/, newStr);
+			}
+			
+			$('#full-text-field').keyup(function(value) {
+		    	var searchValue = $('#full-text-field').val();
+			    $('#search-field').html(searchValue);
+				console.log("keyup: " + $('#search-field').html());
+			});
+			
+			$('.search-field').css('z-index', '0');
 		});
-	    
-	    
 	</script>
 }
 
@@ -125,6 +161,7 @@
 								</label>
 								<div class="col-sm-6">
 									<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="full-text-field" />
+									<span id="search-field" class="hide"></span>
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Full Text Search</p>
@@ -177,7 +214,7 @@
 		                    <h4 class="panel-title pull-left filter-heading-title">
 		                        Results @currentPage.getDisplayXtoYofZ(" to "," of ")
 		                    </h4>
-		                       <div class="form-inline pull-right">
+		                    <div class="form-inline pull-right">
 								<div class="form-group">
 									<select class="form-control" name="sort" id="sort">
 										<option value="content_type_norm">Title</option>

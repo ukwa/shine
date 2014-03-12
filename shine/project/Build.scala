@@ -12,8 +12,7 @@ object ApplicationBuild extends Build {
     jdbc,
     anorm,
     "org.xerial" % "sqlite-jdbc" % "3.7.2",
-    "org.apache.solr" % "solr-solrj" % "4.4.0",
-    "uk.bl.wa.whois" % "jruby-whois" % "3.4.2.1"
+    "org.apache.solr" % "solr-solrj" % "4.4.0"
   )
 
 
