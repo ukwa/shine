@@ -1,4 +1,4 @@
-@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int)
+@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -85,7 +85,7 @@
 	}
 }
 
-@main(q.query, styles, scripts) {
+@main(title, styles, scripts) {
 
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="#">Search</a></li>
@@ -135,7 +135,7 @@
 	        								</li>
         								}
 										<li>
-        									<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">ADD</span> <span class="glyphicon glyphicon-plus"></span></button>
+        									<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
 										</li>
 										
 		    						</ul>
@@ -161,6 +161,10 @@
 						}
 						<div class="panel-body">
 							<button class="btn btn-primary btn-xs" type="button" id="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
+							<span class="input-group pull-right">
+								<button class="btn btn-primary btn-xs" type="button"><span>Add Facet</span></button>
+								<button class="btn btn-primary btn-xs" type="button"><span>Facet Name</span></button>
+							</span>
 						</div>
 						
 					</div>

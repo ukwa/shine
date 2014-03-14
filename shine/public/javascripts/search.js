@@ -22,10 +22,10 @@ $(function () {
 			var buttonText = "#add-more-button-text-" + index;
 			if ($(addMoreSelector).hasClass('hide')) {
 				$(addMoreSelector).removeClass('hide');
-				$(buttonText).html("CLOSE")
+				$(buttonText).html("Close")
 			} else {
 				$(addMoreSelector).addClass('hide');
-				$(buttonText).html("ADD")
+				$(buttonText).html("Add")
 			}
 		});
 	});
@@ -172,46 +172,49 @@ $(function () {
 	$(".add-facet-button").each(function() {
 		$(this).click(function(event) {
 			event.preventDefault();
-			alert('search');
+			var $search_field = $(this).parent().parent().find('input.form-control.add-facet-field')
+	    	searchFacetValues($search_field);
 		});
 	});
 	
 	$('input.add-facet-field').each(function() {
 	    $(this).keyup(function() {
-	    	var $search_field = $(this);
-			$add_more_options = $(this).parent().parent();
-			if ($add_more_options.find('span.tt-dropdown-menu').css('display') == 'none') {
-				$search_field = $add_more_options.find('input.form-control');
-				$hidden_facets = $add_more_options.parent().find('li.facet-options.hide');
-				$hidden_facets.each(function(index) {
-					var $value = $(this).find('a:nth-child(3)');
-					var $copied_value = $value.clone();
-					$copied_value.find("span").remove();
-					$value = $copied_value.html().trim(); 
-					console.log($value + " " + $search_field.val());
-					if ($value.indexOf($search_field.val().trim()) == 0) {
-						var found = $.inArray($value, inList) > -1;
-						if (!found) {
-							inList.push($value.trim());
-							$dropdown = $add_more_options.find('span.tt-dropdown-menu');
-							// check if you already got one in the list
-							$dropdown.append(
-								'<div class=\"tt-dataset-' + index + '\"><span class=\"tt-suggestions\" style=\"display: block;\"><div class=\"tt-suggestion\"><p style=\"white-space: normal;\"><a href="#" class=\"suggested-facet-value\">' + $value + '</a></p></div></span></div>'
-							);
-						}
-						$dropdown.show();
-					}
-				});
-			} else {
-				if ($search_field.val() == '') {
-		    		$add_more_options.find('span.tt-dropdown-menu').css('display', 'none');
-				}
-			}
-			applyClicks();
+	    	searchFacetValues($(this));
 	    });
-	
 	});
 
+	searchFacetValues = function($element) {
+		var $facet_index = $element.parent().parent();
+		if ($facet_index.find('span.tt-dropdown-menu').css('display') == 'none') {
+			var $search_field = $element;
+			var $hidden_facets = $facet_index.find('ul.list-unstyled li.facet-options.hide');
+			$hidden_facets.each(function(index) {
+				var $value = $(this).find('a:nth-child(3)');
+				var $copied_value = $value.clone();
+				$copied_value.find("span").remove();
+				var $value = $copied_value.html().trim(); 
+				console.log($value + " " + $search_field.val());
+				if ($value.indexOf($search_field.val().trim()) == 0) {
+					var found = $.inArray($value, inList) > -1;
+					if (!found) {
+						inList.push($value.trim());
+						$dropdown = $facet_index.find('span.tt-dropdown-menu');
+						// check if you already got one in the list
+						$dropdown.append(
+							'<div class=\"tt-dataset-' + index + '\"><span class=\"tt-suggestions\" style=\"display: block;\"><div class=\"tt-suggestion\"><p style=\"white-space: normal;\"><a href="#" class=\"suggested-facet-value\">' + $value + '</a></p></div></span></div>'
+						);
+					}
+					$dropdown.show();
+				}
+			});
+		} else {
+			if ($element.val() == '') {
+				$facet_index.find('span.tt-dropdown-menu').css('display', 'none');
+			}
+		}
+		applyClicks();
+	}
+	
 	function applyClicks() {
 		$('.suggested-facet-value').each(function() {
 			$(this).click(function(event) {

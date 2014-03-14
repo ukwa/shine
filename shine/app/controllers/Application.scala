@@ -41,7 +41,7 @@ object Application extends Controller {
 
     pagination.update(totalRecords, pageNo)
 
-    Ok(views.html.search.search(q, pagination, sort, order, facetLimit))
+    Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit))
   }
 
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -55,7 +55,7 @@ object Application extends Controller {
     println("totalRecords #: " + totalRecords)
 
     pagination.update(totalRecords, pageNo)
-    Ok(views.html.search.advanced(q, pagination, sort, order))
+    Ok(views.html.search.advanced("Advanced Search", q, pagination, sort, order))
   }
 
   def plot_graph(query: String, year_start: String, year_end: String) = Action { implicit request =>
