@@ -16,6 +16,7 @@ object ApplicationBuild extends Build {
     "org.fluentlenium" % "fluentlenium-core" % "0.9.2",
     "org.jbehave" % "jbehave-core" % "3.9.1",
     "org.codehaus.plexus" % "plexus-archiver" % "1.2",
+    "org.apache.maven.wagon" % "wagon-provider-api" % "2.6",
     "org.jbehave" % "jbehave-maven-plugin" % "3.9.1"
   )
 
