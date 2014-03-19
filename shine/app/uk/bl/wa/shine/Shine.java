@@ -47,8 +47,10 @@ public class Shine extends Solr {
 		 this.facet_names = new HashMap<String,String>();
 		 this.facets_tree = new LinkedHashMap<String,List<String>>();
 		 for( String fc : config.getConfig("facets").subKeys() ) {
+			 Logger.info("facet: " + fc);
 			 List<String> fl = new ArrayList<String>();
 			 for( String f : config.getConfig("facets."+fc).subKeys() ) {
+				 Logger.info("facet subkeys: " + f);
 				 fl.add(f);
 				 // Also store in a flat list:
 				 this.facets.add(f);
@@ -93,15 +95,32 @@ public class Shine extends Solr {
 	}
 
 	public QueryResponse search(String query, Map<String,List<String>> params, SolrQuery parameters) throws SolrServerException {
+		
+		Logger.info("search parameters: " + params);
+
 		if (parameters == null) parameters = new SolrQuery();
 		// The query:
 		parameters.set("q", query);
 		// calculate increments based on per_page
 
 		// Facets:
-		for( String f : facets ) {
-			parameters.addFacetField("{!ex="+f+"}"+f);
+		// TODO: change it here
+		
+		for (Map.Entry<String, List<String>> entry : this.facets_tree.entrySet()) {
+			String facet = entry.getKey(); 
+			Logger.info("Key : " + facet);
+			if (!facet.equalsIgnoreCase("additions")) {
+				List<String> facets = entry.getValue();
+				for (String f : facets) {
+					parameters.addFacetField("{!ex="+f+"}"+f);
+				}
+			}
 		}
+		 
+//		for( String f : facets ) {
+//			parameters.addFacetField("{!ex="+f+"}"+f);
+//		}
+		
 		parameters.setFacetMinCount(1);
 		List<String> fq = new ArrayList<String>();
 		for( String param : params.keySet() ) {
@@ -194,7 +213,10 @@ public class Shine extends Solr {
 		return null;
 	}
 
-	
+	public Map<String, List<String>> getFacets_tree() {
+		return facets_tree;
+	}
+
 	public int getPerPage() {
 		return perPage;
 	}

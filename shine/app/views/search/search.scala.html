@@ -13,12 +13,6 @@
 
 			$('#sort').val('@(currentSortBy)')
 	  		$('#order').val('@(currentOrder)')
-	  		
-	  		$('#reset-facets').click(function(event) {
-				event.preventDefault();
-				alert('resetting fields');
-	  		});
-			
 		});
 	</script>
 }
@@ -163,7 +157,13 @@
 							<button class="btn btn-primary btn-xs" type="button" id="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
 							<span class="input-group pull-right">
 								<button class="btn btn-primary btn-xs" type="button"><span>Add Facet</span></button>
-								<button class="btn btn-primary btn-xs" type="button"><span>Facet Name</span></button>
+								<div class="btn-group">
+  									<button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+    									Facet Name <span class="caret"></span>
+  									</button>
+  									<ul class="dropdown-menu">
+									</ul>
+								</div>
 							</span>
 						</div>
 						

@@ -272,4 +272,9 @@ $(function () {
 			});
 		});
 	}
+	
+	$('#reset-facets').click(function(event) {
+		event.preventDefault();
+		
+	});
 });
