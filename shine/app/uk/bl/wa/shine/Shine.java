@@ -24,6 +24,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import play.Logger;
 import play.libs.Json;
+import uk.bl.wa.shine.model.FacetValue;
+import uk.bl.wa.shine.service.FacetService;
+import uk.bl.wa.shine.service.FacetServiceImpl;
 
 
 /**
@@ -32,32 +35,52 @@ import play.libs.Json;
  */
 public class Shine extends Solr {
 
-	private List<String> facets = null;
+	private List<FacetValue> facets = null;
 	
 	private Map<String,String> facet_names = null;
 	
 	private Map<String,List<String>> facets_tree = null;
-	
+		
 	private int perPage; 
+	
+	private FacetService facetService = null;
 	
 	public Shine( play.Configuration config ) {
 		 super(config);
-		 //
-		 this.facets = new ArrayList<String>();
+		 
+		 this.facetService = new FacetServiceImpl();
+		 this.facets = new ArrayList<FacetValue>();
 		 this.facet_names = new HashMap<String,String>();
 		 this.facets_tree = new LinkedHashMap<String,List<String>>();
+
+		 List<FacetValue> facetValues = new ArrayList<FacetValue>();
+		 Map<String, Object> map = config.getConfig("facets").asMap();
+		 for (String facetHeader : map.keySet()) {
+			 @SuppressWarnings("unchecked")
+			Map<String, String> values = (Map<String, String>) map.get(facetHeader);
+			 for (String key : values.keySet()) {
+				 String value = values.get(key);
+				 FacetValue facetValue = new FacetValue(key, value);
+//				 Logger.info("facetValue: " + facetValue.getName() + "=" + facetValue.getValue());
+				 facetValues.add(facetValue);
+				 // current stuff
+				 // Also store in a flat list:
+				 this.facets.add(facetValue);
+			 }
+			 facetService.add(facetHeader, facetValues);
+		 }
+//		 Logger.info("Map>>> " + FacetServiceImpl.INSTANCE.getMap());
 		 for( String fc : config.getConfig("facets").subKeys() ) {
-			 Logger.info("facet: " + fc);
 			 List<String> fl = new ArrayList<String>();
 			 for( String f : config.getConfig("facets."+fc).subKeys() ) {
-				 Logger.info("facet subkeys: " + f);
+//				 Logger.info("facet value: " + f);
 				 fl.add(f);
 				 // Also store in a flat list:
-				 this.facets.add(f);
+//				 this.facets.add(f);
 				 // Also store the name:
 				 this.facet_names.put(f,config.getString("facets."+fc+"."+f));
 			 }
-			 Logger.info("Putting "+fc+" > "+fl);
+//			 Logger.info("Putting "+fc+" > "+fl);
 			 this.facets_tree.put(fc, fl);
 		 }
 		 this.perPage = config.getInt("per_page");
@@ -97,30 +120,17 @@ public class Shine extends Solr {
 	public QueryResponse search(String query, Map<String,List<String>> params, SolrQuery parameters) throws SolrServerException {
 		
 		Logger.info("search parameters: " + params);
+		Logger.info("facetService: " + facetService + " - " + facetService.getDefaultList() + " - " + facetService.getMap());
 
 		if (parameters == null) parameters = new SolrQuery();
 		// The query:
 		parameters.set("q", query);
 		// calculate increments based on per_page
 
-		// Facets:
-		// TODO: change it here
-		
-		for (Map.Entry<String, List<String>> entry : this.facets_tree.entrySet()) {
-			String facet = entry.getKey(); 
-			Logger.info("Key : " + facet);
-			if (!facet.equalsIgnoreCase("additions")) {
-				List<String> facets = entry.getValue();
-				for (String f : facets) {
-					parameters.addFacetField("{!ex="+f+"}"+f);
-				}
-			}
+		for (FacetValue facetValue : facetService.getList()) {
+			parameters.addFacetField("{!ex="+facetValue.getName()+"}"+facetValue.getName());
 		}
-		 
-//		for( String f : facets ) {
-//			parameters.addFacetField("{!ex="+f+"}"+f);
-//		}
-		
+
 		parameters.setFacetMinCount(1);
 		List<String> fq = new ArrayList<String>();
 		for( String param : params.keySet() ) {

@@ -45,7 +45,7 @@ public class AddFacetSteps {
 	@Then("the outcome should show <result> with added facet $result")
 	public void thenTheOutcomeShould(@Named("result") Map<String, List<FacetValue>> result) {
 		Assert.assertEquals(2, result.size());
-		Assert.assertEquals(facetService.getList().size(), result.size());
+		Assert.assertEquals(facetService.getMap().size(), result.size());
 	}
 	
     @AsParameterConverter

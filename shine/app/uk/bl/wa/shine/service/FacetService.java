@@ -12,6 +12,8 @@ import uk.bl.wa.shine.model.FacetValue;
 
 public interface FacetService {
 	void add(String facetName, List<FacetValue> facetValues);
-	Map<String, List<FacetValue>> getList();
-	Map<String, List<FacetValue>> getDefaultList();
+	Map<String, List<FacetValue>> getMap();
+	Map<String, List<FacetValue>> getDefaultMap();
+	List<FacetValue> getList();
+	List<FacetValue> getDefaultList();
 }
