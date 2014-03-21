@@ -4,8 +4,6 @@
 package uk.bl.wa.shine;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,54 +33,13 @@ import uk.bl.wa.shine.service.FacetServiceImpl;
  */
 public class Shine extends Solr {
 
-	private List<FacetValue> facets = null;
-	
-	private Map<String,String> facet_names = null;
-	
-	private Map<String,List<String>> facets_tree = null;
-		
 	private int perPage; 
 	
 	private FacetService facetService = null;
 	
 	public Shine( play.Configuration config ) {
-		 super(config);
-		 
-		 this.facetService = new FacetServiceImpl();
-		 this.facets = new ArrayList<FacetValue>();
-		 this.facet_names = new HashMap<String,String>();
-		 this.facets_tree = new LinkedHashMap<String,List<String>>();
-
-		 List<FacetValue> facetValues = new ArrayList<FacetValue>();
-		 Map<String, Object> map = config.getConfig("facets").asMap();
-		 for (String facetHeader : map.keySet()) {
-			 @SuppressWarnings("unchecked")
-			Map<String, String> values = (Map<String, String>) map.get(facetHeader);
-			 for (String key : values.keySet()) {
-				 String value = values.get(key);
-				 FacetValue facetValue = new FacetValue(key, value);
-//				 Logger.info("facetValue: " + facetValue.getName() + "=" + facetValue.getValue());
-				 facetValues.add(facetValue);
-				 // current stuff
-				 // Also store in a flat list:
-				 this.facets.add(facetValue);
-			 }
-			 facetService.add(facetHeader, facetValues);
-		 }
-//		 Logger.info("Map>>> " + FacetServiceImpl.INSTANCE.getMap());
-		 for( String fc : config.getConfig("facets").subKeys() ) {
-			 List<String> fl = new ArrayList<String>();
-			 for( String f : config.getConfig("facets."+fc).subKeys() ) {
-//				 Logger.info("facet value: " + f);
-				 fl.add(f);
-				 // Also store in a flat list:
-//				 this.facets.add(f);
-				 // Also store the name:
-				 this.facet_names.put(f,config.getString("facets."+fc+"."+f));
-			 }
-//			 Logger.info("Putting "+fc+" > "+fl);
-			 this.facets_tree.put(fc, fl);
-		 }
+		 super(config);		 
+		 this.facetService = new FacetServiceImpl(config);
 		 this.perPage = config.getInt("per_page");
     }
 	
@@ -120,14 +77,16 @@ public class Shine extends Solr {
 	public QueryResponse search(String query, Map<String,List<String>> params, SolrQuery parameters) throws SolrServerException {
 		
 		Logger.info("search parameters: " + params);
-		Logger.info("facetService: " + facetService + " - " + facetService.getDefaultList() + " - " + facetService.getMap());
 
 		if (parameters == null) parameters = new SolrQuery();
 		// The query:
 		parameters.set("q", query);
 		// calculate increments based on per_page
 
-		for (FacetValue facetValue : facetService.getList()) {
+		// should get updated list of added/removed facet values
+		Map<String, FacetValue> facetValues = facetService.getFacetValues();
+		for (String key : facetValues.keySet()) {
+			FacetValue facetValue = facetValues.get(key);
 			parameters.addFacetField("{!ex="+facetValue.getName()+"}"+facetValue.getName());
 		}
 
@@ -215,16 +174,28 @@ public class Shine extends Solr {
     	return jsonData;
     }
 	
-	private String temp( String query ) throws SolrServerException {
+    public Map<String, FacetValue> getFacetValues() {
+    	return this.facetService.getFacetValues();
+    }
+    
+    public Map<String, FacetValue> getAdditionalFacetValues() {
+    	return this.facetService.getAdditionalFacetValues();
+    }
+    
+    public void addFacetValue(String facetName) {
+    	facetService.addFacetValue(facetName);
+    }
+
+    public void removeFacetValue(String facetName) {
+    	facetService.removeFacetValue(facetName);
+    }
+
+    private String temp( String query ) throws SolrServerException {
 		QueryResponse res = this.search(query, null, 0, null, null);
 		res.getFacetFields().get(0).getValues().get(0).getName();
 		res.getResults().get(0).getFirstValue("title");
 		res.getResults().getNumFound();
 		return null;
-	}
-
-	public Map<String, List<String>> getFacets_tree() {
-		return facets_tree;
 	}
 
 	public int getPerPage() {

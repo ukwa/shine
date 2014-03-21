@@ -39,7 +39,25 @@ object Application extends Controller {
   }
 
   def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
-
+    
+    val action = request.getQueryString("action")
+    val selectedFacet = request.getQueryString("selected.facet")
+    val removeFacet = request.getQueryString("remove.facet")
+    println("action: " + action)
+    if (action != None) {
+	  	val parameter = action.get
+	  	println("action " + parameter)
+		println("pre facet values: " + solr.getFacetValues())
+	  	if (parameter.equals("facetadd") && selectedFacet != None) {
+	  	  val facetValue = selectedFacet.get
+	  	  solr.addFacetValue(facetValue)
+	  	} else if (parameter.equals("facetremove") && removeFacet != None) {
+	  	  val facetValue = removeFacet.get
+	  	  println("removing facet: " + facetValue)
+	  	  solr.removeFacetValue(facetValue)
+	  	}
+	  	println("post facet values: " + solr.getFacetValues())
+    }
     val q = doSearch(query, request.queryString, pageNo, sort, order)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
@@ -48,8 +66,10 @@ object Application extends Controller {
     println("totalRecords #: " + totalRecords)
 
     pagination.update(totalRecords, pageNo)
-
-    Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit))
+    
+    println("map >>>> " + solr.getAdditionalFacetValues().asScala.toMap)
+    
+    Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getAdditionalFacetValues().asScala.toMap))
   }
 
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -104,6 +124,12 @@ object Application extends Controller {
     val map = queryString
     val javaMap = map.map { case (k, v) => (k, v.asJava) }.asJava;
     println("javaMap: " + javaMap)
+    
+    // TODO: process add/remove facets
+    if (javaMap.containsKey("facet.add")) {
+      println("facet.add >>> " + javaMap.get("facet.add"))
+    }
+    
     val q = new Query()
     q.query = query
     q.parseParams(javaMap)

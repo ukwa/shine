@@ -277,4 +277,17 @@ $(function () {
 		event.preventDefault();
 		
 	});
+	
+	$('.facet-remove').each(function() {
+		$(this).click(function(event) {
+			event.preventDefault();
+			var value = $(this).parent().find("a strong").html();
+			console.log(value);
+			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("facetremove");
+			var input = $("<input>").attr("type", "hidden").attr("name", "remove.facet").val(value);
+			$('form').append($(action));
+			$('form').append($(input));
+			$("form").submit();
+		});
+	});
 });

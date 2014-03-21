@@ -1,6 +1,5 @@
 package uk.bl.wa.shine.service;
 
-import java.util.List;
 import java.util.Map;
 
 import uk.bl.wa.shine.model.FacetValue;
@@ -11,9 +10,9 @@ import uk.bl.wa.shine.model.FacetValue;
  */
 
 public interface FacetService {
-	void add(String facetName, List<FacetValue> facetValues);
-	Map<String, List<FacetValue>> getMap();
-	Map<String, List<FacetValue>> getDefaultMap();
-	List<FacetValue> getList();
-	List<FacetValue> getDefaultList();
+	Map<String, FacetValue> getFacetValues();
+	Map<String, FacetValue> getAdditionalFacetValues();
+	void addFacetValue(String key);
+	void removeFacetValue(String key);
+
 }

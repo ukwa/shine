@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int)
+@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, facetValues: Map[String, uk.bl.wa.shine.model.FacetValue])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -13,6 +13,7 @@
 
 			$('#sort').val('@(currentSortBy)')
 	  		$('#order').val('@(currentOrder)')
+
 		});
 	</script>
 }
@@ -102,9 +103,10 @@
 						@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 							<div class="panel-body">
 			    				<div>
-		        					<a>
-		          						<strong>@(fc.getName())</strong>
-		        					</a> <span class="badge">@(fc.getValueCount())</span>
+		        					<a><strong>@(fc.getName())</strong></a><span class="badge">@(fc.getValueCount())</span>
+		        					<button class="btn btn-primary btn-xs facet-remove" type="button" name="action" value="facetremove">
+		        						<span class="glyphicon glyphicon-remove"></span>
+		        					</button>
 			    				</div>
 			    				<div class="facet-index">
 		      						<ul class="list-unstyled">
@@ -156,13 +158,15 @@
 						<div class="panel-body">
 							<button class="btn btn-primary btn-xs" type="button" id="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
 							<span class="input-group pull-right">
-								<button class="btn btn-primary btn-xs" type="button"><span>Add Facet</span></button>
+								<button class="btn btn-primary btn-xs" type="submit" name="action" value="facetadd"><span>Add Facet</span></button>
 								<div class="btn-group">
-  									<button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
-    									Facet Name <span class="caret"></span>
-  									</button>
-  									<ul class="dropdown-menu">
-									</ul>
+  									<div class="form-group">
+										<select class="form-control" name="selected.facet" id="facet-values">
+											@for((key, value) <- facetValues) {
+												<option value="@(key)">@(value.getValue)</option>
+											}
+										</select>
+									</div>
 								</div>
 							</span>
 						</div>
