@@ -8,6 +8,8 @@ import uk.bl.wa.shine.Query
 import uk.bl.wa.shine.Rescued
 import uk.bl.wa.shine.Pagination
 import uk.bl.wa.shine.GraphData
+import uk.bl.wa.shine.model.FacetValue
+
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import org.apache.commons.lang3.StringUtils
@@ -48,15 +50,17 @@ object Application extends Controller {
 	  	val parameter = action.get
 	  	println("action " + parameter)
 		println("pre facet values: " + solr.getFacetValues())
-	  	if (parameter.equals("facetadd") && selectedFacet != None) {
+		if (parameter.equals("reset-facets")) {
+	  	  println("resetting facets")
+	  	  solr.resetFacets()
+	  	} else if (parameter.equals("facetadd") && selectedFacet != None) {
 	  	  val facetValue = selectedFacet.get
 	  	  solr.addFacetValue(facetValue)
 	  	} else if (parameter.equals("facetremove") && removeFacet != None) {
 	  	  val facetValue = removeFacet.get
 	  	  println("removing facet: " + facetValue)
 	  	  solr.removeFacetValue(facetValue)
-	  	}
-	  	println("post facet values: " + solr.getFacetValues())
+	  	} 
     }
     val q = doSearch(query, request.queryString, pageNo, sort, order)
 
@@ -67,7 +71,7 @@ object Application extends Controller {
 
     pagination.update(totalRecords, pageNo)
     
-    println("map >>>> " + solr.getAdditionalFacetValues().asScala.toMap)
+//    println("map >>>> " + solr.getAdditionalFacetValues().asScala.toMap)
     
     Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getAdditionalFacetValues().asScala.toMap))
   }
@@ -135,6 +139,9 @@ object Application extends Controller {
     q.parseParams(javaMap)
     q.res = solr.search(query, q.filters, pageNo, sort, order)
     q.processFacetsAsParamValues
+    val facets = q.res.getFacetFields().asScala.toList
+    q.facetValues = solr.getFacetValues()
+    println("q.facetValues: " + q.facetValues)
     q
   }
 

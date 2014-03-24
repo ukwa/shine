@@ -10,9 +10,10 @@ import uk.bl.wa.shine.model.FacetValue;
  */
 
 public interface FacetService {
-	Map<String, FacetValue> getFacetValues();
+	Map<String, FacetValue> getSelectedFacetValues();
+	Map<String, FacetValue> getDefaultFacetValues();
 	Map<String, FacetValue> getAdditionalFacetValues();
 	void addFacetValue(String key);
 	void removeFacetValue(String key);
-
+	void resetFacets();
 }

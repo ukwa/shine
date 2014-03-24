@@ -18,6 +18,7 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
 import play.Logger;
+import uk.bl.wa.shine.model.FacetValue;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
@@ -35,6 +36,12 @@ public class Query {
 	public QueryResponse res;
 	
 	public String facetParameters;
+
+	public Map<String, FacetValue> facetValues;
+	
+	public Query() {
+		facetValues = new HashMap<String, FacetValue>();
+	}
 	
 	public void parseParams( Map<String,List<String>> params ) {
 		filters = new HashMap<String, List<String>>();

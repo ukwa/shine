@@ -4,6 +4,7 @@
 package uk.bl.wa.shine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +85,7 @@ public class Shine extends Solr {
 		// calculate increments based on per_page
 
 		// should get updated list of added/removed facet values
-		Map<String, FacetValue> facetValues = facetService.getFacetValues();
+		Map<String, FacetValue> facetValues = facetService.getSelectedFacetValues();
 		for (String key : facetValues.keySet()) {
 			FacetValue facetValue = facetValues.get(key);
 			parameters.addFacetField("{!ex="+facetValue.getName()+"}"+facetValue.getName());
@@ -175,7 +176,7 @@ public class Shine extends Solr {
     }
 	
     public Map<String, FacetValue> getFacetValues() {
-    	return this.facetService.getFacetValues();
+    	return this.facetService.getSelectedFacetValues();
     }
     
     public Map<String, FacetValue> getAdditionalFacetValues() {
@@ -190,6 +191,10 @@ public class Shine extends Solr {
     	facetService.removeFacetValue(facetName);
     }
 
+    public void resetFacets() {
+    	facetService.resetFacets();
+    }
+    
     private String temp( String query ) throws SolrServerException {
 		QueryResponse res = this.search(query, null, 0, null, null);
 		res.getFacetFields().get(0).getValues().get(0).getName();
