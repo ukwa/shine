@@ -71,13 +71,14 @@ public class Shine extends Solr {
 		// Sorts:
 		parameters.setSort(sort, orderSolr);
 		//parameters.setSort("sentiment_score", ORDER.asc);
+		Logger.info("params: " + parameters);
 		QueryResponse res = this.search(query, params, parameters);
 		return res;
 	}
 
 	public QueryResponse search(String query, Map<String,List<String>> params, SolrQuery parameters) throws SolrServerException {
 		
-		Logger.info("search parameters: " + params);
+		Logger.info("facet values: " + params);
 
 		if (parameters == null) parameters = new SolrQuery();
 		// The query:
@@ -85,7 +86,7 @@ public class Shine extends Solr {
 		// calculate increments based on per_page
 
 		// should get updated list of added/removed facet values
-		Map<String, FacetValue> facetValues = facetService.getSelectedFacetValues();
+		Map<String, FacetValue> facetValues = facetService.getSelected();
 		for (String key : facetValues.keySet()) {
 			FacetValue facetValue = facetValues.get(key);
 			parameters.addFacetField("{!ex="+facetValue.getName()+"}"+facetValue.getName());
@@ -175,24 +176,24 @@ public class Shine extends Solr {
     	return jsonData;
     }
 	
-    public Map<String, FacetValue> getFacetValues() {
-    	return this.facetService.getSelectedFacetValues();
+    public Map<String, FacetValue> getSelectedFacets() {
+    	return this.facetService.getSelected();
     }
     
-    public Map<String, FacetValue> getAdditionalFacetValues() {
-    	return this.facetService.getAdditionalFacetValues();
+    public Map<String, FacetValue> getOptionalFacets() {
+    	return this.facetService.getOptionals();
     }
     
-    public void addFacetValue(String facetName) {
-    	facetService.addFacetValue(facetName);
+    public void addFacet(String facetName) {
+    	facetService.add(facetName);
     }
 
-    public void removeFacetValue(String facetName) {
-    	facetService.removeFacetValue(facetName);
+    public void removeFacet(String facetName) {
+    	facetService.remove(facetName);
     }
 
     public void resetFacets() {
-    	facetService.resetFacets();
+    	facetService.reset();
     }
     
     private String temp( String query ) throws SolrServerException {

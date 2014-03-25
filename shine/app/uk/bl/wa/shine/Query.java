@@ -37,10 +37,10 @@ public class Query {
 	
 	public String facetParameters;
 
-	public Map<String, FacetValue> facetValues;
+	public Map<String, FacetValue> facets;
 	
 	public Query() {
-		facetValues = new HashMap<String, FacetValue>();
+		facets = new HashMap<String, FacetValue>();
 	}
 	
 	public void parseParams( Map<String,List<String>> params ) {
@@ -54,7 +54,7 @@ public class Query {
 			    filters.put(param, params.get(param));
 			}
 		}
-		Logger.info("filters: " + filters);
+		Logger.info("parseParams: " + filters);
 	}
 	
 	public String getCheckedInString(String facet_name, String value ) {

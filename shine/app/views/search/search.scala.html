@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, additionalFacetValues: Map[String, uk.bl.wa.shine.model.FacetValue])
+@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -157,13 +157,13 @@
 						}
 						<div class="panel-body">
 							<button class="btn btn-primary btn-xs" type="submit" id="reset-facets" name="action" value="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
-							@if(additionalFacetValues.size >= 1) {
+							@if(optionalFacets.size >= 1) {
 								<span class="input-group pull-right">
 									<button class="btn btn-primary btn-xs" type="submit" name="action" value="facetadd"><span>Add Facet</span></button>
 									<div class="btn-group">
 	  									<div class="form-group">
 											<select class="form-control" name="selected.facet" id="facet-values">
-												@for((key, value) <- additionalFacetValues) {
+												@for((key, value) <- optionalFacets) {
 													<option value="@key">@value.getValue</option>
 												}
 											</select>
