@@ -57,10 +57,10 @@ object Application extends Controller {
 	  	  solr.resetFacets()
 	  	  parameters = collection.immutable.Map(resetParameters(parameters).toSeq:_*)
 	  	  // also remove this stuff - facet.in.crawl_year="2008"&facet.out.public_suffix="co.uk"
-	  	} else if (parameter.equals("facetadd") && selectedFacet != None) {
+	  	} else if (parameter.equals("add-facet") && selectedFacet != None) {
 	  	  val facetValue = selectedFacet.get
 	  	  solr.addFacet(facetValue)
-	  	} else if (parameter.equals("facetremove") && removeFacet != None) {
+	  	} else if (parameter.equals("remove-facet") && removeFacet != None) {
 	  	  val facetValue = removeFacet.get
 	  	  println("removing facet: " + facetValue)
 	  	  solr.removeFacet(facetValue)

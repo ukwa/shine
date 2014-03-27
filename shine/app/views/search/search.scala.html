@@ -104,7 +104,7 @@
 							<div class="panel-body">
 			    				<div>
 		        					<a><strong>@(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
-		        					<button class="btn btn-primary btn-xs facet-remove" type="button" name="action" value="facetremove">
+		        					<button class="btn btn-primary btn-xs facet-remove" type="button" name="action" value="remove-facet">
 		        						<span class="glyphicon glyphicon-remove"></span>
 		        					</button>
 			    				</div>
@@ -156,10 +156,10 @@
 			  				</div>
 						}
 						<div class="panel-body">
-							<button class="btn btn-primary btn-xs" type="submit" id="reset-facets" name="action" value="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
+							<button class="btn btn-primary btn-xs" type="submit" name="action" value="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
 							@if(optionalFacets.size >= 1) {
 								<span class="input-group pull-right">
-									<button class="btn btn-primary btn-xs" type="submit" name="action" value="facetadd"><span>Add Facet</span></button>
+									<button class="btn btn-primary btn-xs" type="submit" name="action" value="add-facet"><span>Add Facet</span></button>
 									<div class="btn-group">
 	  									<div class="form-group">
 											<select class="form-control" name="selected.facet" id="facet-values">

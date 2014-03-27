@@ -92,7 +92,7 @@ public class Shine extends Solr {
 		Map<String, FacetValue> facetValues = facetService.getSelected();
 		for (String key : facetValues.keySet()) {
 			FacetValue facetValue = facetValues.get(key);
-			parameters.addFacetField("{!ex="+facetValue.getName()+"}"+facetValue.getName());
+			if (facetValue != null) parameters.addFacetField("{!ex="+facetValue.getName()+"}"+facetValue.getName());
 		}
 		Map<String, List<String>> params = query.filters;
 		
