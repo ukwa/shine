@@ -38,12 +38,17 @@ public class Query {
 	public String facetParameters;
 
 	public Map<String, FacetValue> facets;
+
+	public String dateStart;
+	
+	public String dateEnd;
 	
 	public Query() {
 		facets = new HashMap<String, FacetValue>();
 	}
 	
 	public void parseParams( Map<String,List<String>> params ) {
+		Logger.info("parseParams: " + params);
 		filters = new HashMap<String, List<String>>();
 		for( String param : params.keySet() ) {
 			if( param.startsWith("facet.in.")) {
@@ -55,6 +60,15 @@ public class Query {
 			}
 		}
 		Logger.info("parseParams: " + filters);
+		params.get("datestart");
+		if (params.get("datestart") != null) {
+			dateStart = params.get("datestart").get(0);
+			Logger.info("dateStart: " + dateStart);
+		}
+		if (params.get("dateend") != null) {
+			dateEnd = params.get("dateend").get(0);
+			Logger.info("dateEnd: " + dateEnd);
+		}
 	}
 	
 	public String getCheckedInString(String facet_name, String value ) {

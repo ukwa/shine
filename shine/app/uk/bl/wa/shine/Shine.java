@@ -3,8 +3,10 @@
  */
 package uk.bl.wa.shine;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.SolrParams;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -44,11 +47,11 @@ public class Shine extends Solr {
 		 this.perPage = config.getInt("per_page");
     }
 	
-	public QueryResponse search(String query, Map<String,List<String>> params) throws SolrServerException {
-		return this.search(query, params, null);
+	public QueryResponse search(Query query) throws SolrServerException {
+		return this.search(query, null);
 	}
 
-	public QueryResponse search(String query, Map<String,List<String>> params, int pageNo, String sort, String order) throws SolrServerException {
+	public QueryResponse search(Query query, int pageNo, String sort, String order) throws SolrServerException {
 		
 		ORDER orderSolr = ORDER.asc;
 		
@@ -72,26 +75,27 @@ public class Shine extends Solr {
 		parameters.setSort(sort, orderSolr);
 		//parameters.setSort("sentiment_score", ORDER.asc);
 		Logger.info("params: " + parameters);
-		QueryResponse res = this.search(query, params, parameters);
+		QueryResponse res = this.search(query, parameters);
 		return res;
 	}
 
-	public QueryResponse search(String query, Map<String,List<String>> params, SolrQuery parameters) throws SolrServerException {
+	public QueryResponse search(Query query, SolrQuery parameters) throws SolrServerException {
 		
-		Logger.info("facet values: " + params);
+		Logger.info("facet values: " + query.filters);
 
 		if (parameters == null) parameters = new SolrQuery();
 		// The query:
-		parameters.set("q", query);
-		// calculate increments based on per_page
-
+		// ?start=0&sort=content_type_norm+asc&q=wikipedia+crawl_date:[2009-06-01T00%3A00%3A00Z+TO+2011-06-01T00%3A00%3A00Z]&facet.field={!ex%3Dcrawl_year}crawl_year&facet.field={!ex%3Dpublic_suffix}public_suffix&facet=true&facet.mincount=1&rows=10
+		parameters.add("q", query.query);
+		
 		// should get updated list of added/removed facet values
 		Map<String, FacetValue> facetValues = facetService.getSelected();
 		for (String key : facetValues.keySet()) {
 			FacetValue facetValue = facetValues.get(key);
 			parameters.addFacetField("{!ex="+facetValue.getName()+"}"+facetValue.getName());
 		}
-
+		Map<String, List<String>> params = query.filters;
+		
 		parameters.setFacetMinCount(1);
 		List<String> fq = new ArrayList<String>();
 		for( String param : params.keySet() ) {
@@ -122,6 +126,29 @@ public class Shine extends Solr {
 		}
 		if( fq.size() > 0 ) {
 			parameters.setFilterQueries(fq.toArray(new String[fq.size()]));
+		}
+
+		Logger.info("Pre Query: "+parameters.toString());
+		
+		try {
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			Logger.info("dateEnd: " + query.dateEnd);
+			Date dateStart = null;
+			Date dateEnd = null;
+			if (StringUtils.isNotEmpty(query.dateStart)) {
+				dateStart = formatter.parse(query.dateStart);
+				Logger.info("dateStart: " + dateStart);
+			}
+			if (StringUtils.isNotEmpty(query.dateEnd)) {
+				dateEnd = formatter.parse(query.dateEnd);
+				Logger.info("dateStart: " + dateEnd);
+			}
+			if (dateStart != null && dateEnd != null) {
+				formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+				parameters.addFilterQuery("crawl_date:[" + formatter.format(dateStart) + " TO " + formatter.format(dateEnd) + "]");
+			}
+		} catch (ParseException e) {
+			throw new SolrServerException(e);
 		}
 
 		// Paging:
@@ -196,13 +223,13 @@ public class Shine extends Solr {
     	facetService.reset();
     }
     
-    private String temp( String query ) throws SolrServerException {
-		QueryResponse res = this.search(query, null, 0, null, null);
-		res.getFacetFields().get(0).getValues().get(0).getName();
-		res.getResults().get(0).getFirstValue("title");
-		res.getResults().getNumFound();
-		return null;
-	}
+//    private String temp( String query ) throws SolrServerException {
+//		QueryResponse res = this.search(query, null, 0, null, null);
+//		res.getFacetFields().get(0).getValues().get(0).getName();
+//		res.getResults().get(0).getFirstValue("title");
+//		res.getResults().getNumFound();
+//		return null;
+//	}
 
 	public int getPerPage() {
 		return perPage;

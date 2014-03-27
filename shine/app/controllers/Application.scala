@@ -135,7 +135,7 @@ object Application extends Controller {
     val q = new Query()
     q.query = query
     q.parseParams(javaMap)
-    q.res = solr.search(query, q.filters, pageNo, sort, order)
+    q.res = solr.search(q, pageNo, sort, order)
     q.processFacetsAsParamValues
 //    val facets = q.res.getFacetFields().asScala.toList
 //    facets = 

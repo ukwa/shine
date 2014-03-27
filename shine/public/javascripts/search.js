@@ -273,11 +273,10 @@ $(function () {
 		});
 	}
 	
-//	$('#reset-facets').click(function(event) {
-//		event.preventDefault();
-//		// reset 
-//		
-//	});
+	$('#reset-facets').click(function(event) {
+		event.preventDefault();
+		
+	});
 	
 	$('.facet-remove').each(function() {
 		$(this).click(function(event) {

@@ -15,7 +15,7 @@
 	  		$('#order').val('@(currentOrder)')
 			$("#date-from").datepicker({ dateFormat: "dd/mm/yy" });
 			$("#date-to").datepicker({ dateFormat: "dd/mm/yy" });
-			
+
 			if(@(currentPage.getTotalItems == 0)) {
 		    	console.log("results: " + @(q.res.getResults().size()))
 		    	$('#filter-panel').collapse('show');
@@ -160,7 +160,7 @@
 									Full Text Search:
 								</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="full-text-field" />
+									<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="full-text-field" placeholder="<TEXT FIELD>, <MATCH TYPE>" />
 									<span id="search-field" class="hide"></span>
 								</div>
 								<div class="col-sm-4">
@@ -172,13 +172,13 @@
 									Date Range:
 								</label>
 								<div class="col-sm-3">
-									<input type="text" class="form-control" id="date-from" placeholder="dd/mm/yyyy">
+									<input type="text" class="form-control" id="date-from" name="datestart" placeholder="dd/mm/yyyy" value="@(q.dateStart)">
 								</div>
 								<div class="col-sm-3">
-									<input type="text" class="form-control" id="date-to" placeholder="dd/mm/yyyy">
+									<input type="text" class="form-control" id="date-to" name="dateend" placeholder="dd/mm/yyyy" value="@(q.dateEnd)">
 								</div>
 								<div class="col-sm-4">
-									<p class="text-success">help text here</p>
+									<p class="text-success">Restrict by date (Format: dd/mm/yyyy)</p>
 								</div>
 							</div>
 							<div class="form-group">
