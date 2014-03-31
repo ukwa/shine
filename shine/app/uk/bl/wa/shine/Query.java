@@ -56,6 +56,7 @@ public class Query {
 	public Query(String query, Map<String,List<String>> params) {
 		facets = new HashMap<String, FacetValue>();
 		this.query = query;
+		this.proximity = new Proximity();
 		this.parseParams(params);
 	}
 	
