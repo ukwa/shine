@@ -43,11 +43,23 @@ public class Query {
 	
 	public String dateEnd;
 	
-	public Query() {
+	public String excluded;
+	
+	public Proximity proximity;
+	
+    // The text-field should match the values in the 'host', 'domain' or 'public_suffix' fields.
+	public String facetField;
+	// The text-field should match the values in the 'url', 'host', 'domain' or 'public_suffix' fields.
+	public String facetFieldValue;
+
+	
+	public Query(String query, Map<String,List<String>> params) {
 		facets = new HashMap<String, FacetValue>();
+		this.query = query;
+		this.parseParams(params);
 	}
 	
-	public void parseParams( Map<String,List<String>> params ) {
+	public void parseParams(Map<String,List<String>> params) {
 		Logger.info("parseParams: " + params);
 		filters = new HashMap<String, List<String>>();
 		for( String param : params.keySet() ) {
@@ -59,15 +71,24 @@ public class Query {
 			    filters.put(param, params.get(param));
 			}
 		}
+		
 		Logger.info("parseParams: " + filters);
-		params.get("datestart");
+		
 		if (params.get("datestart") != null) {
 			dateStart = params.get("datestart").get(0);
-			Logger.info("dateStart: " + dateStart);
 		}
 		if (params.get("dateend") != null) {
 			dateEnd = params.get("dateend").get(0);
-			Logger.info("dateEnd: " + dateEnd);
+		}
+		if (params.get("excluded") != null) {
+			excluded = params.get("excluded").get(0);
+		}
+		if (params.get("proximity") != null) {
+			proximity = new Proximity();
+			proximity.setPhrase1(params.get("proximity").get(0));
+			proximity.setPhrase2(params.get("proximity").get(1));
+			proximity.setProximity(params.get("proximity").get(2));
+			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
 		}
 	}
 	
@@ -156,7 +177,12 @@ public class Query {
 		return "";
 	}
 	
-	public void processFacetsAsParamValues() {
+	public void processQueryResponse(QueryResponse response) {
+		this.res = response;
+		this.processFacetsAsParamValues();
+	}
+
+	private void processFacetsAsParamValues() {
 		StringBuilder parameters = new StringBuilder("");
 		for (FacetField facetField : res.getFacetFields()) {
 			for (Count count : facetField.getValues()) {
@@ -177,9 +203,9 @@ public class Query {
 			parameters.append("&").append(facetSort).append("=").append(sortValue);
 		}
 		Logger.info(parameters.toString());
-		facetParameters = parameters.toString();
+		this.facetParameters = parameters.toString();
 	}
-	
+
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {
 		String myString = new String( bytes, "ASCII");
 		StringBuilder newString = new StringBuilder(myString.length());

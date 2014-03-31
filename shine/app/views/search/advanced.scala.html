@@ -22,14 +22,14 @@
 		    }
 	    	$('#filter-panel').collapse('show');
 	    	
+	    	// start of title suggestions
 	        var suggestions = new Bloodhound({
 	        	datumTokenizer: function(d) { return d.tokens; },
 	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
 				remote: {
-					url : '/suggest/%QUERY'
+					url : '/suggestTitle/%QUERY'
 				}
         	});
-	        	 
 	        suggestions.initialize();
 
 			$('#full-text-field').typeahead({
@@ -39,35 +39,73 @@
 	        	displayKey: 'title',
 	        	source: suggestions.ttAdapter(),
         	})
-            .on('typeahead:selected', onSelected)
-            .on('typeahead:cursorchanged', onCursorchanged);
-			 
-			function onCursorchanged($e, datum) {
-			    console.log('onCursorchanged');
-			    selectedWord(datum);
-			}
-			 
-			function onSelected($e, datum) {
+            .on('typeahead:selected', function ($e, datum) {
 			    console.log('selected');
-			    selectedWord(datum);
-			}
-
-			function selectedWord(datum) {
-			    searchField = $('#search-field').html();
+			    selectedTitle(datum);
+			})
+            .on('typeahead:cursorchanged', function ($e, datum) {
+			    console.log('onCursorchanged');
+			    selectedTitle(datum);
+			});
+			 
+			function selectedTitle(datum) {
+			    searchField = $('#search-result-field').html();
 			    var clickedOnValue = datum['title'];
 			    var value = replaceLastWord(searchField, clickedOnValue);
 			    $('#full-text-field').typeahead('val', value);
 			}
 			
+			$('#full-text-field').keyup(function(value) {
+		    	var searchValue = $('#full-text-field').val();
+			    $('#search-result-field').html(searchValue);
+				console.log("keyup: " + $('#search-field').html());
+			});
+	    	// end of title suggestions
+			
+	    	// start of url suggestions
+	        var suggestionsUrl = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggestUrl/%QUERY'
+				}
+        	});
+	        suggestionsUrl.initialize();
+
+	    	// start of url suggestions
+			$('#url-field').typeahead({
+				highlight: true
+			},
+			{
+	        	displayKey: 'title',
+	        	source: suggestionsUrl.ttAdapter(),
+        	})
+            .on('typeahead:selected', function ($e, datum) {
+			    console.log('selected');
+			    selectedUrl(datum);
+			})
+            .on('typeahead:cursorchanged', function ($e, datum) {
+			    console.log('onCursorchanged');
+			    selectedUrl(datum);
+			});
+			 
+			function selectedUrl(datum) {
+			    searchField = $('#url-result-field').html();
+			    var clickedOnValue = datum['title'];
+			    var value = replaceLastWord(searchField, clickedOnValue);
+			    $('#url-field').typeahead('val', value);
+			}
+
+			$('#url-field').keyup(function(value) {
+		    	var searchValue = $('#url-field').val();
+			    $('#url-result-field').html(searchValue);
+				console.log("keyup: " + $('#url-result-field').html());
+			});
+			// end of title suggestions
+
 			function replaceLastWord(str, newStr) {
 			   return str.replace(/\w*$/, newStr);
 			}
-			
-			$('#full-text-field').keyup(function(value) {
-		    	var searchValue = $('#full-text-field').val();
-			    $('#search-field').html(searchValue);
-				console.log("keyup: " + $('#search-field').html());
-			});
 			
 			$('.search-field').css('z-index', '0');
 		});
@@ -161,10 +199,27 @@
 								</label>
 								<div class="col-sm-6">
 									<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="full-text-field" placeholder="<TEXT FIELD>, <MATCH TYPE>" />
-									<span id="search-field" class="hide"></span>
+									<span id="search-result-field" class="hide"></span>
 								</div>
 								<div class="col-sm-4">
-									<p class="text-success">Full Text Search</p>
+									<p class="text-success">All these words</p>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">
+									Proximity:
+								</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control search-field" id="proximity-field-1" name="proximity" placeholder="phrase" value="@(q.proximity.getPhrase1)">
+								</div>
+								<div class="col-sm-2">
+									<input type="text" class="form-control search-field" id="proximity-field-2" name="proximity" placeholder="phrase" value="@(q.proximity.getPhrase2)">
+								</div>
+								<div class="col-sm-2">
+									<input type="text" class="form-control search-field" id="proximity" name="proximity" placeholder="25" value="@(q.proximity.getProximity)">
+								</div>
+								<div class="col-sm-4">
+									<p class="text-success">If you wish to search for word that appear together, try a proximity search. For example, the following finds resources where the words 'coffee' and 'java' occur within 25 words of each other.</p>
 								</div>
 							</div>
 							<div class="form-group">
@@ -172,10 +227,10 @@
 									Date Range:
 								</label>
 								<div class="col-sm-3">
-									<input type="text" class="form-control" id="date-from" name="datestart" placeholder="dd/mm/yyyy" value="@(q.dateStart)">
+									<input type="text" class="form-control search-field" id="date-from" name="datestart" placeholder="dd/mm/yyyy" value="@(q.dateStart)">
 								</div>
 								<div class="col-sm-3">
-									<input type="text" class="form-control" id="date-to" name="dateend" placeholder="dd/mm/yyyy" value="@(q.dateEnd)">
+									<input type="text" class="form-control search-field" id="date-to" name="dateend" placeholder="dd/mm/yyyy" value="@(q.dateEnd)">
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Restrict by date (Format: dd/mm/yyyy)</p>
@@ -183,13 +238,36 @@
 							</div>
 							<div class="form-group">
 								<label for="option3" class="col-sm-2 control-label">
-									Option 3:
+									None of these words
 								</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control" id="option3" placeholder="Option 3">
+									<input type="text" class="form-control search-field" id="exclude-field" name="excluded" placeholder="-rodent, -&quot;Jack Russell&quot;" value="@(q.excluded)">
 								</div>
 								<div class="col-sm-4">
-									<p class="text-success">help text here</p>
+									<p class="text-success">Put a minus sign just before words you don't want</p>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="option3" class="col-sm-2 control-label">
+									Host, Domain or Public Suffix
+								</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control search-field" id="facet-field" name="facetfield" placeholder="Host, Domain or Public Suffix" value="@(q.facetField)">
+								</div>
+								<div class="col-sm-4">
+									<p class="text-success">Match the values in the 'host', 'domain' or 'public_suffix' fields</p>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="option3" class="col-sm-2 control-label">
+									URL, Host, Domain or Public Suffix
+								</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control search-field" id="url-field" name="facetfieldvalue" placeholder="URL, Host, Domain or Public Suffix" value="@(q.facetFieldValue)">
+									<span id="url-result-field" class="hide"></span>
+								</div>
+								<div class="col-sm-4">
+									<p class="text-success">Match the values in the 'url', 'host', 'domain' or 'public_suffix' fields.</p>
 								</div>
 							</div>
 							<div class="form-group">

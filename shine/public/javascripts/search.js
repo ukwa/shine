@@ -1,7 +1,6 @@
 $(function () {
 
-	$('#reset').click(function(event) { 
-		event.preventDefault();
+	$('#reset').click(function(event) {
 		$('.search-field').each(function() {
 			$(this).attr('value', ''); 
 		});

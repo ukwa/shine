@@ -22,4 +22,6 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 GET 	/javascriptRoutes    		controllers.Application.javascriptRoutes
 
-GET    	/suggest/:name				controllers.Application.suggest(name)
+GET    	/suggestTitle/:name			controllers.Application.suggestTitle(name)
+
+GET    	/suggestUrl/:name			controllers.Application.suggestUrl(name)

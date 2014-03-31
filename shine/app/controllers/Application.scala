@@ -130,34 +130,34 @@ object Application extends Controller {
 
   def doSearch(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
     val map = queryString
-    val javaMap = map.map { case (k, v) => (k, v.asJava) }.asJava;
-    println("javaMap: " + javaMap)
-    val q = new Query()
-    q.query = query
-    q.parseParams(javaMap)
-    q.res = solr.search(q, pageNo, sort, order)
-    q.processFacetsAsParamValues
-//    val facets = q.res.getFacetFields().asScala.toList
-//    facets = 
-//    println("q.facetValues: " + facets)
+    val parametersAsJava = map.map { case (k, v) => (k, v.asJava) }.asJava;
+    val q = new Query(query, parametersAsJava)
+    q.processQueryResponse(solr.search(q, pageNo, sort, order))
     q
   }
 
-  def suggest(name: String) = Action { implicit request =>
-    val result = solr.suggest(name)
+  def suggestTitle(name: String) = Action { implicit request =>
+    val result = solr.suggestTitle(name)
     println("result: " + result.toString)
-//    var jsonObject = JsObject(
-//        "name" -> JsString("AND")::
-//        "name" -> JsString("OR")::Nil)
+    Ok(result.toString)
+  }  
+
+def suggestUrl(name: String) = Action { implicit request =>
+    val result = solr.suggestUrl(name)
+    println("result: " + result.toString)
     Ok(result.toString)
   }  
 
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(
-      Routes.javascriptRouter("jsRoutes")(routes.javascript.Application.suggest)).as("text/javascript")
+      Routes.javascriptRouter("jsRoutes")(
+          routes.javascript.Application.suggestTitle,
+          routes.javascript.Application.suggestUrl
+      )
+    ).as("text/javascript")
   }
-
+  
   def resetParameters(parameters: collection.immutable.Map[String, Seq[String]]) = {
 	val map = collection.mutable.Map(parameters.toSeq: _*) 
 	println("pre: " + map)

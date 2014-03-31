@@ -174,36 +174,6 @@
 						</div>
 						
 					</div>
-					
-                    <div class="panel-group" id="accordion2">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-                                            Current Filters
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="collapseOne" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                            <ul>
-                                @for(f <- q.filters.keySet()) {
-                                    @for( v <- q.filters.get(f)) {
-                                        <li>@f @v</li>
-                                    }
-                                }
-                            </ul>
-                                    
-                                        <ul>
-                                                <li>
-                                                </li>
-                                                <!-- dynamically add checked="true"? -->
-                                                <!-- OR use some kind of link constructor? -->
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
 				</div>
 		
 				<div class="col-md-8 col-sm-8">
