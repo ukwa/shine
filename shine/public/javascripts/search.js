@@ -1,7 +1,6 @@
 $(function () {
 
-	$('#reset').click(function(event) { 
-		event.preventDefault();
+	$('#reset').click(function(event) {
 		$('.search-field').each(function() {
 			$(this).attr('value', ''); 
 		});
@@ -272,4 +271,22 @@ $(function () {
 			});
 		});
 	}
+	
+	$('#reset-facets').click(function(event) {
+		event.preventDefault();
+		
+	});
+	
+	$('.facet-remove').each(function() {
+		$(this).click(function(event) {
+			event.preventDefault();
+			var value = $(this).parent().find("a strong").html();
+			console.log(value);
+			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("remove-facet");
+			var input = $("<input>").attr("type", "hidden").attr("name", "remove.facet").val(value);
+			$('form').append($(action));
+			$('form').append($(input));
+			$("form").submit();
+		});
+	});
 });

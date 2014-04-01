@@ -18,6 +18,7 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 
 import play.Logger;
+import uk.bl.wa.shine.model.FacetValue;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
@@ -35,8 +36,32 @@ public class Query {
 	public QueryResponse res;
 	
 	public String facetParameters;
+
+	public Map<String, FacetValue> facets;
+
+	public String dateStart;
 	
-	public void parseParams( Map<String,List<String>> params ) {
+	public String dateEnd;
+	
+	public String excluded;
+	
+	public Proximity proximity;
+	
+    // The text-field should match the values in the 'host', 'domain' or 'public_suffix' fields.
+	public String facetField;
+	// The text-field should match the values in the 'url', 'host', 'domain' or 'public_suffix' fields.
+	public String facetFieldValue;
+
+	
+	public Query(String query, Map<String,List<String>> params) {
+		facets = new HashMap<String, FacetValue>();
+		this.query = query;
+		this.proximity = new Proximity();
+		this.parseParams(params);
+	}
+	
+	public void parseParams(Map<String,List<String>> params) {
+		Logger.info("parseParams: " + params);
 		filters = new HashMap<String, List<String>>();
 		for( String param : params.keySet() ) {
 			if( param.startsWith("facet.in.")) {
@@ -47,7 +72,25 @@ public class Query {
 			    filters.put(param, params.get(param));
 			}
 		}
-		Logger.info("filters: " + filters);
+		
+		Logger.info("parseParams: " + filters);
+		
+		if (params.get("datestart") != null) {
+			dateStart = params.get("datestart").get(0);
+		}
+		if (params.get("dateend") != null) {
+			dateEnd = params.get("dateend").get(0);
+		}
+		if (params.get("excluded") != null) {
+			excluded = params.get("excluded").get(0);
+		}
+		if (params.get("proximity") != null) {
+			proximity = new Proximity();
+			proximity.setPhrase1(params.get("proximity").get(0));
+			proximity.setPhrase2(params.get("proximity").get(1));
+			proximity.setProximity(params.get("proximity").get(2));
+			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
+		}
 	}
 	
 	public String getCheckedInString(String facet_name, String value ) {
@@ -135,7 +178,12 @@ public class Query {
 		return "";
 	}
 	
-	public void processFacetsAsParamValues() {
+	public void processQueryResponse(QueryResponse response) {
+		this.res = response;
+		this.processFacetsAsParamValues();
+	}
+
+	private void processFacetsAsParamValues() {
 		StringBuilder parameters = new StringBuilder("");
 		for (FacetField facetField : res.getFacetFields()) {
 			for (Count count : facetField.getValues()) {
@@ -156,9 +204,9 @@ public class Query {
 			parameters.append("&").append(facetSort).append("=").append(sortValue);
 		}
 		Logger.info(parameters.toString());
-		facetParameters = parameters.toString();
+		this.facetParameters = parameters.toString();
 	}
-	
+
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {
 		String myString = new String( bytes, "ASCII");
 		StringBuilder newString = new StringBuilder(myString.length());

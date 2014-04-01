@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int)
+@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -13,12 +13,7 @@
 
 			$('#sort').val('@(currentSortBy)')
 	  		$('#order').val('@(currentOrder)')
-	  		
-	  		$('#reset-facets').click(function(event) {
-				event.preventDefault();
-				alert('resetting fields');
-	  		});
-			
+
 		});
 	</script>
 }
@@ -108,9 +103,10 @@
 						@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 							<div class="panel-body">
 			    				<div>
-		        					<a>
-		          						<strong>@(fc.getName())</strong>
-		        					</a> <span class="badge">@(fc.getValueCount())</span>
+		        					<a><strong>@(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
+		        					<button class="btn btn-primary btn-xs facet-remove" type="button" name="action" value="remove-facet">
+		        						<span class="glyphicon glyphicon-remove"></span>
+		        					</button>
 			    				</div>
 			    				<div class="facet-index">
 		      						<ul class="list-unstyled">
@@ -160,44 +156,24 @@
 			  				</div>
 						}
 						<div class="panel-body">
-							<button class="btn btn-primary btn-xs" type="button" id="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
-							<span class="input-group pull-right">
-								<button class="btn btn-primary btn-xs" type="button"><span>Add Facet</span></button>
-								<button class="btn btn-primary btn-xs" type="button"><span>Facet Name</span></button>
-							</span>
+							<button class="btn btn-primary btn-xs" type="submit" name="action" value="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
+							@if(optionalFacets.size >= 1) {
+								<span class="input-group pull-right">
+									<button class="btn btn-primary btn-xs" type="submit" name="action" value="add-facet"><span>Add Facet</span></button>
+									<div class="btn-group">
+	  									<div class="form-group">
+											<select class="form-control" name="selected.facet" id="facet-values">
+												@for((key, value) <- optionalFacets) {
+													<option value="@key">@value.getValue</option>
+												}
+											</select>
+										</div>
+									</div>
+								</span>
+							}
 						</div>
 						
 					</div>
-					
-                    <div class="panel-group" id="accordion2">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-                                            Current Filters
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="collapseOne" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                            <ul>
-                                @for(f <- q.filters.keySet()) {
-                                    @for( v <- q.filters.get(f)) {
-                                        <li>@f @v</li>
-                                    }
-                                }
-                            </ul>
-                                    
-                                        <ul>
-                                                <li>
-                                                </li>
-                                                <!-- dynamically add checked="true"? -->
-                                                <!-- OR use some kind of link constructor? -->
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
 				</div>
 		
 				<div class="col-md-8 col-sm-8">

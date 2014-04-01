@@ -1,4 +1,4 @@
-package test
+package integration
 
 import org.specs2.mutable._
 import org.specs2.runner._
@@ -27,7 +27,9 @@ class SearchPageSpec extends Specification {
 
         	browser.$("a").first.getText must equalTo("UK Web Archive")
         	
-        	browser.$("a", withText("Search")).click()
+        	//browser.$("a#nav-search").first.getText must equalTo("Search");
+        	
+        	browser.$("div.container ul.nav.nav-tabs li a", withText("Search")).click()
         	
         	browser.$("h4.panel-title.pull-left.filter-heading-title").first.getText must equalTo("Results not found")
         	

@@ -7,10 +7,13 @@ import uk.bl.wa.shine.Shine
 import uk.bl.wa.shine.Query
 import uk.bl.wa.shine.Pagination
 import uk.bl.wa.shine.GraphData
+import uk.bl.wa.shine.model.FacetValue
+
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import org.apache.commons.lang3.StringUtils
 import scala.collection.mutable.ListBuffer
+import scala.collection.immutable.Map
 import play.api.libs.json._
 
 object Application extends Controller {
@@ -31,8 +34,31 @@ object Application extends Controller {
   }
 
   def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
+    
+    val action = request.getQueryString("action")
+    val selectedFacet = request.getQueryString("selected.facet")
+    val removeFacet = request.getQueryString("remove.facet")
+	var parameters = collection.immutable.Map(request.queryString.toSeq:_*) 
 
-    val q = doSearch(query, request.queryString, pageNo, sort, order)
+    println("action: " + action)
+    if (action != None) {
+	  	val parameter = action.get
+	  	println("action " + parameter)
+		if (parameter.equals("reset-facets")) {
+	  	  println("resetting facets")
+	  	  solr.resetFacets()
+	  	  parameters = collection.immutable.Map(resetParameters(parameters).toSeq:_*)
+	  	  // also remove this stuff - facet.in.crawl_year="2008"&facet.out.public_suffix="co.uk"
+	  	} else if (parameter.equals("add-facet") && selectedFacet != None) {
+	  	  val facetValue = selectedFacet.get
+	  	  solr.addFacet(facetValue)
+	  	} else if (parameter.equals("remove-facet") && removeFacet != None) {
+	  	  val facetValue = removeFacet.get
+	  	  println("removing facet: " + facetValue)
+	  	  solr.removeFacet(facetValue)
+	  	} 
+    }
+    val q = doSearch(query, parameters, pageNo, sort, order)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -40,8 +66,10 @@ object Application extends Controller {
     println("totalRecords #: " + totalRecords)
 
     pagination.update(totalRecords, pageNo)
-
-    Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit))
+    
+    println("params: " + q.filters)
+    
+    Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap))
   }
 
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -94,29 +122,50 @@ object Application extends Controller {
 
   def doSearch(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
     val map = queryString
-    val javaMap = map.map { case (k, v) => (k, v.asJava) }.asJava;
-    println("javaMap: " + javaMap)
-    val q = new Query()
-    q.query = query
-    q.parseParams(javaMap)
-    q.res = solr.search(query, q.filters, pageNo, sort, order)
-    q.processFacetsAsParamValues
+    val parametersAsJava = map.map { case (k, v) => (k, v.asJava) }.asJava;
+    val q = new Query(query, parametersAsJava)
+    q.processQueryResponse(solr.search(q, pageNo, sort, order))
     q
   }
 
-  def suggest(name: String) = Action { implicit request =>
-    val result = solr.suggest(name)
+  def suggestTitle(name: String) = Action { implicit request =>
+    val result = solr.suggestTitle(name)
     println("result: " + result.toString)
-//    var jsonObject = JsObject(
-//        "name" -> JsString("AND")::
-//        "name" -> JsString("OR")::Nil)
+    Ok(result.toString)
+  }  
+
+def suggestUrl(name: String) = Action { implicit request =>
+    val result = solr.suggestUrl(name)
+    println("result: " + result.toString)
     Ok(result.toString)
   }  
 
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(
-      Routes.javascriptRouter("jsRoutes")(routes.javascript.Application.suggest)).as("text/javascript")
+      Routes.javascriptRouter("jsRoutes")(
+          routes.javascript.Application.suggestTitle,
+          routes.javascript.Application.suggestUrl
+      )
+    ).as("text/javascript")
   }
+  
+  def resetParameters(parameters: collection.immutable.Map[String, Seq[String]]) = {
+	val map = collection.mutable.Map(parameters.toSeq: _*) 
+	println("pre: " + map)
+//    val javaMap = map.map { case (k, v) => (k, v.asJava) }.asJava;
+    for ((k,v) <- map) {
+      if (k != "query") {
+        map.remove(k)
+        println("removed... " + k)
+      }
+    }
+	println("post: " + map)
+	map
+  }
+<<<<<<< HEAD
 
 }
+=======
+}
+>>>>>>> 75bd384d011780a07e4c2dcf4aea0a978f3de118
