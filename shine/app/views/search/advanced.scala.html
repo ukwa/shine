@@ -1,8 +1,17 @@
 @(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
 
 @styles = {
-	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+	<style>
+		.tt-suggestion.tt-cursor {
+			color: #fff;
+			background-color: #0097cf;
+		}
+
+		.tt-suggestion p {
+			margin: 0;
+		}
+	</style>
 }
 
 @scripts = {
@@ -36,7 +45,7 @@
 				highlight: true
 			},
 			{
-	        	displayKey: 'title',
+	        	displayKey: 'name',
 	        	source: suggestions.ttAdapter(),
         	})
             .on('typeahead:selected', function ($e, datum) {
@@ -50,7 +59,7 @@
 			 
 			function selectedTitle(datum) {
 			    searchField = $('#search-result-field').html();
-			    var clickedOnValue = datum['title'];
+			    var clickedOnValue = datum['name'];
 			    var value = replaceLastWord(searchField, clickedOnValue);
 			    $('#full-text-field').typeahead('val', value);
 			}
@@ -72,37 +81,82 @@
         	});
 	        suggestionsUrl.initialize();
 
-	    	// start of url suggestions
-			$('#url-field').typeahead({
+			$('#url .typeahead').typeahead({
 				highlight: true
 			},
 			{
-	        	displayKey: 'title',
+	        	displayKey: 'name',
 	        	source: suggestionsUrl.ttAdapter(),
-        	})
-            .on('typeahead:selected', function ($e, datum) {
-			    console.log('selected');
-			    selectedUrl(datum);
-			})
-            .on('typeahead:cursorchanged', function ($e, datum) {
-			    console.log('onCursorchanged');
-			    selectedUrl(datum);
-			});
-			 
-			function selectedUrl(datum) {
-			    searchField = $('#url-result-field').html();
-			    var clickedOnValue = datum['title'];
-			    var value = replaceLastWord(searchField, clickedOnValue);
-			    $('#url-field').typeahead('val', value);
-			}
+        	});
+			// end of url suggestions
 
-			$('#url-field').keyup(function(value) {
-		    	var searchValue = $('#url-field').val();
-			    $('#url-result-field').html(searchValue);
-				console.log("keyup: " + $('#url-result-field').html());
-			});
-			// end of title suggestions
+	    	// start of file format suggestions
+	        var suggestionsFileFormat = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggestFileFormat/%QUERY'
+				}
+        	});
+	        suggestionsFileFormat.initialize();
 
+			$('#file-format .typeahead').typeahead({
+				highlight: true
+			},
+			{
+	        	displayKey: 'name',
+	        	source: suggestionsFileFormat.ttAdapter(),
+        	});
+			// end of file format suggestions
+
+	    	// start of links hosts, domains, public suffixes suggestions
+	        var suggestionsLinksHosts = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggestLinksHosts/%QUERY'
+				}
+        	});
+	        var suggestionsLinksDomains = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggestLinksDomains/%QUERY'
+				}
+        	});
+	        var suggestionsLinksPublicSuffixes = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggestLinksPublicSuffixes/%QUERY'
+				}
+        	});
+	        
+	        suggestionsLinksHosts.initialize();
+	        suggestionsLinksDomains.initialize();
+	        suggestionsLinksPublicSuffixes.initialize();
+	        
+			$('#linked-to .typeahead').typeahead({
+				highlight: true
+			},
+			{
+				name: 'linksHosts',
+	        	displayKey: 'name',
+	        	source: suggestionsLinksHosts.ttAdapter(),
+        	},
+			{
+				name: 'linksDomains',
+	        	displayKey: 'name',
+	        	source: suggestionsLinksDomains.ttAdapter(),
+        	},
+			{
+				name: 'linkPublicSuffixes',
+	        	displayKey: 'name',
+	        	source: suggestionsLinksPublicSuffixes.ttAdapter(),
+        	}
+			);
+			// end of links hosts suggestions
+			
 			function replaceLastWord(str, newStr) {
 			   return str.replace(/\w*$/, newStr);
 			}
@@ -206,6 +260,61 @@
 								</div>
 							</div>
 							<div class="form-group">
+								<label for="option1" class="col-sm-2 control-label">
+									Website Title:
+								</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control search-field" name="query" value="@(q.websiteTitle)" id="website-title-field" placeholder="Website Title" />
+								</div>
+								<div class="col-sm-4">
+									<p class="text-success">Website title</p>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="option1" class="col-sm-2 control-label">
+									Page Title:
+								</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control search-field" name="query" value="@(q.pageTitle)" id="page-title-field" placeholder="Page Title" />
+								</div>
+								<div class="col-sm-4">
+									<p class="text-success">Page title</p>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="option1" class="col-sm-2 control-label">
+									Name:
+								</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control search-field" name="query" value="@(q.name)" id="name-field" placeholder="Name (personal and corporate)" />
+								</div>
+								<div class="col-sm-4">
+									<p class="text-success">Name (personal and corporate)</p>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="option1" class="col-sm-2 control-label">
+									URL:
+								</label>
+								<div class="col-sm-6" id="url">
+									<input type="text" class="typeahead form-control search-field" name="query" value="@(q.url)" id="url-field" placeholder="URL" />
+								</div>
+								<div class="col-sm-4">
+									<p class="text-success">URL</p>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="option1" class="col-sm-2 control-label">
+									File Format:
+								</label>
+								<div class="col-sm-6" id="file-format">
+									<input type="text" class="typeahead form-control search-field" name="query" value="@(q.fileFormat)" placeholder="File Format" />
+								</div>
+								<div class="col-sm-4">
+									<p class="text-success">File format</p>
+								</div>
+							</div>
+							<div class="form-group">
 								<label for="" class="col-sm-2 control-label">
 									Proximity:
 								</label>
@@ -251,8 +360,8 @@
 								<label for="option3" class="col-sm-2 control-label">
 									Host, Domain or Public Suffix
 								</label>
-								<div class="col-sm-6">
-									<input type="text" class="form-control search-field" id="facet-field" name="facetfield" placeholder="Host, Domain or Public Suffix" value="@(q.facetField)">
+								<div class="col-sm-6" id="links-hosts">
+									<input type="text" class="typeahead form-control search-field" id="links-hosts" name="facetfield" placeholder="Host, Domain or Public Suffix" value="@(q.hostedOn)">
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Match the values in the 'host', 'domain' or 'public_suffix' fields</p>
@@ -262,9 +371,8 @@
 								<label for="option3" class="col-sm-2 control-label">
 									URL, Host, Domain or Public Suffix
 								</label>
-								<div class="col-sm-6">
-									<input type="text" class="form-control search-field" id="url-field" name="facetfieldvalue" placeholder="URL, Host, Domain or Public Suffix" value="@(q.facetFieldValue)">
-									<span id="url-result-field" class="hide"></span>
+								<div class="col-sm-6" id="linked-to">
+									<input type="text" class="typeahead form-control search-field" id="linkedTo" name="linkedTo" placeholder="URL, Host, Domain or Public Suffix" value="@(q.linkedTo)">
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Match the values in the 'url', 'host', 'domain' or 'public_suffix' fields.</p>

@@ -29,7 +29,7 @@ public class Query {
 	public static final String FACET_SORT_INDEX = "index";
 	public static final String FACET_SORT_COUNT = "count";
 	
-	public String query;
+	public String query; // Full text
 	
 	public Map<String,List<String>> filters;
 	
@@ -39,18 +39,33 @@ public class Query {
 
 	public Map<String, FacetValue> facets;
 
-	public String dateStart;
+	public String websiteTitle;
+	
+	public String pageTitle;
+
+	public String name;
+	
+	public String url;
+	
+	public String fileFormat;
+	
+	public String collection;
+	
+	public String dateStart; // (this should select a date range for the crawl_date or crawl_dates field).
 	
 	public String dateEnd;
 	
 	public String excluded;
 	
 	public Proximity proximity;
-	
+
     // The text-field should match the values in the 'host', 'domain' or 'public_suffix' fields.
-	public String facetField;
+	public String hostedOn;
+    // Resources hosted on (should match the values in the 'host', 'domain' or 'public_suffix' fields).
+	// <str name="host">telegraph.co.uk</str><str name="domain">telegraph.co.uk</str><str name="public_suffix">co.uk</str>
 	// The text-field should match the values in the 'url', 'host', 'domain' or 'public_suffix' fields.
-	public String facetFieldValue;
+	public String linkedTo;
+	// Resources that link to (should match the values in the 'url', 'host', 'domain' or 'public_suffix' fields).
 
 	
 	public Query(String query, Map<String,List<String>> params) {

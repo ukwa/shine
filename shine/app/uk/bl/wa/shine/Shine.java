@@ -207,7 +207,23 @@ public class Shine extends Solr {
 	public JsonNode suggestUrl(String name) throws SolrServerException {
 		return suggest(name, "/suggestUrl"); 
 	}
-	
+
+	public JsonNode suggestFileFormat(String name) throws SolrServerException {
+		return suggest(name, "/suggestFileFormat"); 
+	}
+
+	public JsonNode suggestLinksHosts(String name) throws SolrServerException {
+		return suggest(name, "/suggestLinksHosts"); 
+	}
+
+	public JsonNode suggestLinksDomains(String name) throws SolrServerException {
+		return suggest(name, "/suggestLinksDomains"); 
+	}
+
+	public JsonNode suggestLinksPublicSuffixes(String name) throws SolrServerException {
+		return suggest(name, "/suggestLinksPublicSuffixes"); 
+	}
+
 	private JsonNode suggest(String name, String suggestPath) throws SolrServerException {
 
 		JsonNode jsonData = null;
@@ -234,7 +250,7 @@ public class Shine extends Solr {
 					if (alternatives != null && alternatives.size() > 0) {
 						for (String alternative : alternatives) {
 							ObjectNode child = nodeFactory.objectNode();
-							child.put("title", alternative);
+							child.put("name", alternative);
 							result.add(child);
 						}
 					}

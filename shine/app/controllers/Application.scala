@@ -142,8 +142,32 @@ object Application extends Controller {
     Ok(result.toString)
   }  
 
-def suggestUrl(name: String) = Action { implicit request =>
+  def suggestUrl(name: String) = Action { implicit request =>
     val result = solr.suggestUrl(name)
+    println("result: " + result.toString)
+    Ok(result.toString)
+  }  
+
+  def suggestFileFormat(name: String) = Action { implicit request =>
+    val result = solr.suggestFileFormat(name)
+    println("result: " + result.toString)
+    Ok(result.toString)
+  }  
+
+  def suggestLinksHosts(name: String) = Action { implicit request =>
+    val result = solr.suggestLinksHosts(name)
+    println("result: " + result.toString)
+    Ok(result.toString)
+  }  
+
+  def suggestLinksDomains(name: String) = Action { implicit request =>
+    val result = solr.suggestLinksDomains(name)
+    println("result: " + result.toString)
+    Ok(result.toString)
+  }  
+
+  def suggestLinksPublicSuffixes(name: String) = Action { implicit request =>
+    val result = solr.suggestLinksPublicSuffixes(name)
     println("result: " + result.toString)
     Ok(result.toString)
   }  
@@ -153,7 +177,11 @@ def suggestUrl(name: String) = Action { implicit request =>
     Ok(
       Routes.javascriptRouter("jsRoutes")(
           routes.javascript.Application.suggestTitle,
-          routes.javascript.Application.suggestUrl
+          routes.javascript.Application.suggestUrl,
+          routes.javascript.Application.suggestFileFormat,
+          routes.javascript.Application.suggestLinksHosts,
+          routes.javascript.Application.suggestLinksDomains,
+          routes.javascript.Application.suggestLinksPublicSuffixes
       )
     ).as("text/javascript")
   }
