@@ -88,7 +88,7 @@ public class Query {
 			}
 		}
 		
-		Logger.info("parseParams: " + filters);
+		Logger.info("filters: " + filters);
 		
 		if (params.get("datestart") != null) {
 			dateStart = params.get("datestart").get(0);
@@ -200,18 +200,21 @@ public class Query {
 
 	private void processFacetsAsParamValues() {
 		StringBuilder parameters = new StringBuilder("");
-		for (FacetField facetField : res.getFacetFields()) {
-			for (Count count : facetField.getValues()) {
-				String facet = facetField.getName() + "=\"" + count.getName() + "\"";
-				if (StringUtils.isNotBlank(this.getCheckedInString(facetField.getName(),count.getName()))) {
-					String in = "&facet.in."; 
-					parameters.append(in).append(facet);
-				} else if (StringUtils.isNotBlank(this.getCheckedOutString(facetField.getName(),count.getName()))) {
-					String out = "&facet.out";
-					parameters.append(out).append(facet);
+		if (res.getFacetFields() != null) {
+			for (FacetField facetField : res.getFacetFields()) {
+				for (Count count : facetField.getValues()) {
+					String facet = facetField.getName() + "=\"" + count.getName() + "\"";
+					if (StringUtils.isNotBlank(this.getCheckedInString(facetField.getName(),count.getName()))) {
+						String in = "&facet.in."; 
+						parameters.append(in).append(facet);
+					} else if (StringUtils.isNotBlank(this.getCheckedOutString(facetField.getName(),count.getName()))) {
+						String out = "&facet.out";
+						parameters.append(out).append(facet);
+					}
 				}
 			}
-		 }
+		}
+			
 		String facetSort = "facet.sort";
 		String checked = getCheckedFacet(facetSort);
 		if (StringUtils.isNotBlank(checked)) {

@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,9 +50,7 @@ public class Shine extends Solr {
 		return this.search(query, null);
 	}
 
-	public QueryResponse search(Query query, int pageNo, String sort,
-			String order) throws SolrServerException {
-
+	private SolrQuery buildInitialParameters(int pageNo, String sort, String order) {
 		ORDER orderSolr = ORDER.asc;
 
 		if (StringUtils.equalsIgnoreCase(order, "desc")) {
@@ -74,15 +73,41 @@ public class Shine extends Solr {
 		parameters.setSort(sort, orderSolr);
 		// parameters.setSort("sentiment_score", ORDER.asc);
 		Logger.info("params: " + parameters);
-		QueryResponse res = this.search(query, parameters);
+		
+		return parameters;
+	}
+	
+	public QueryResponse search(Query query, int pageNo, String sort, String order) throws SolrServerException {
+		QueryResponse res = this.search(query, buildInitialParameters(pageNo, sort, order));
 		return res;
 	}
+	
+	// usually for faceted search
+	private QueryResponse search(Query query, SolrQuery parameters) throws SolrServerException {
+		// selected facets
+		return search(query, parameters, facetService.getSelected());
+	}
 
-	public QueryResponse search(Query query, SolrQuery parameters)
+	public QueryResponse advancedSearch(Query query, int pageNo, String sort, String order) throws SolrServerException {
+		QueryResponse res = this.advancedSearch(query, buildInitialParameters(pageNo, sort, order));
+		Logger.info("facet fields: " + res.getFacetFields());
+		return res;
+	}
+	
+	private QueryResponse advancedSearch(Query query, SolrQuery parameters) throws SolrServerException {
+		// facets available on the advanced search fields
+		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
+//		FacetValue collectionsFacetValue = new FacetValue("Collections", "collections");
+//		facetValues.put(collectionsFacetValue.getValue(), collectionsFacetValue);
+		// build up the facets and add to map to pass on 
+		return search(query, parameters, facetValues);
+	}
+
+	// for advanced search using own facets
+	public QueryResponse search(Query query, SolrQuery parameters, Map<String, FacetValue> facetValues)
 			throws SolrServerException {
 
-		Logger.info("facet values: " + query.filters);
-
+		// add everything to parameters for solr
 		if (parameters == null)
 			parameters = new SolrQuery();
 		// The query:
@@ -90,13 +115,15 @@ public class Shine extends Solr {
 		parameters.add("q", query.query);
 
 		// should get updated list of added/removed facet values
-		Map<String, FacetValue> facetValues = facetService.getSelected();
-		for (String key : facetValues.keySet()) {
-			FacetValue facetValue = facetValues.get(key);
-			if (facetValue != null)
-				parameters.addFacetField("{!ex=" + facetValue.getName() + "}"
-						+ facetValue.getName());
+		if (facetValues != null) {
+			for (String key : facetValues.keySet()) {
+				FacetValue facetValue = facetValues.get(key);
+				if (facetValue != null)
+					parameters.addFacetField("{!ex=" + facetValue.getName() + "}"
+							+ facetValue.getName());
+			}
 		}
+		
 		Map<String, List<String>> params = query.filters;
 
 		parameters.setFacetMinCount(1);
@@ -167,7 +194,7 @@ public class Shine extends Solr {
 			dateObjEnd = formatter.parse(dateEnd);
 			Logger.info("dateStart: " + dateEnd);
 		}
-		if (dateStart != null && dateEnd != null) {
+		if (dateObjStart != null && dateObjEnd != null) {
 			formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 			parameters.addFilterQuery("crawl_date:["
 					+ formatter.format(dateObjStart) + " TO "
@@ -212,6 +239,18 @@ public class Shine extends Solr {
 		return suggest(name, "/suggestFileFormat"); 
 	}
 
+	public JsonNode suggestHost(String name) throws SolrServerException {
+		return suggest(name, "/suggestHost"); 
+	}
+
+	public JsonNode suggestDomain(String name) throws SolrServerException {
+		return suggest(name, "/suggestDomain"); 
+	}
+
+	public JsonNode suggestPublicSuffix(String name) throws SolrServerException {
+		return suggest(name, "/suggestPublicSuffix"); 
+	}
+
 	public JsonNode suggestLinksHosts(String name) throws SolrServerException {
 		return suggest(name, "/suggestLinksHosts"); 
 	}
@@ -222,6 +261,18 @@ public class Shine extends Solr {
 
 	public JsonNode suggestLinksPublicSuffixes(String name) throws SolrServerException {
 		return suggest(name, "/suggestLinksPublicSuffixes"); 
+	}
+
+	public JsonNode suggestAuthor(String name) throws SolrServerException {
+		return suggest(name, "/suggestAuthor"); 
+	}
+
+	public JsonNode suggestCollection(String name) throws SolrServerException {
+		return suggest(name, "/suggestCollection"); 
+	}
+
+	public JsonNode suggestCollections(String name) throws SolrServerException {
+		return suggest(name, "/suggestCollections"); 
 	}
 
 	private JsonNode suggest(String name, String suggestPath) throws SolrServerException {

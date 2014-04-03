@@ -75,15 +75,13 @@ object Application extends Controller {
 
     pagination.update(totalRecords, pageNo)
     
-    println("params: " + q.filters)
-    
     Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap))
   }
 
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     println("advanced_search")
 
-    val q = doSearch(query, request.queryString, pageNo, sort, order)
+    val q = doAdvanced(query, request.queryString, pageNo, sort, order)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -92,6 +90,20 @@ object Application extends Controller {
 
     pagination.update(totalRecords, pageNo)
     Ok(views.html.search.advanced("Advanced Search", q, pagination, sort, order))
+  }
+  
+  def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
+    println("browse")
+    val q = doSearch(query, request.queryString, pageNo, sort, order)
+
+    val totalRecords = q.res.getResults().getNumFound().intValue()
+
+    println("Page #: " + pageNo)
+    println("totalRecords #: " + totalRecords)
+
+    pagination.update(totalRecords, pageNo)
+    
+    Ok(views.html.search.browse("Browse", q, pagination, sort, order))
   }
 
   def plot_graph(query: String, year_start: String, year_end: String) = Action { implicit request =>
@@ -128,11 +140,21 @@ object Application extends Controller {
     Ok(views.html.graphs.plot("Plot Graph Test", query, "Years", "label Y", data, yearStart, yearEnd))
   }
 
-  def doSearch(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
+  def doInit(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
     val map = queryString
     val parametersAsJava = map.map { case (k, v) => (k, v.asJava) }.asJava;
-    val q = new Query(query, parametersAsJava)
+    new Query(query, parametersAsJava)
+  }
+  
+  def doSearch(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
+    val q = doInit(query, queryString, pageNo, sort, order)
     q.processQueryResponse(solr.search(q, pageNo, sort, order))
+    q
+  }
+  
+  def doAdvanced(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
+    val q = doInit(query, queryString, pageNo, sort, order)
+    q.processQueryResponse(solr.advancedSearch(q, pageNo, sort, order))
     q
   }
 
@@ -150,6 +172,24 @@ object Application extends Controller {
 
   def suggestFileFormat(name: String) = Action { implicit request =>
     val result = solr.suggestFileFormat(name)
+    println("result: " + result.toString)
+    Ok(result.toString)
+  }  
+
+  def suggestHost(name: String) = Action { implicit request =>
+    val result = solr.suggestHost(name)
+    println("result: " + result.toString)
+    Ok(result.toString)
+  }  
+
+  def suggestDomain(name: String) = Action { implicit request =>
+    val result = solr.suggestDomain(name)
+    println("result: " + result.toString)
+    Ok(result.toString)
+  }  
+
+  def suggestPublicSuffix(name: String) = Action { implicit request =>
+    val result = solr.suggestPublicSuffix(name)
     println("result: " + result.toString)
     Ok(result.toString)
   }  
@@ -172,6 +212,24 @@ object Application extends Controller {
     Ok(result.toString)
   }  
 
+  def suggestAuthor(name: String) = Action { implicit request =>
+    val result = solr.suggestAuthor(name)
+    println("result: " + result.toString)
+    Ok(result.toString)
+  }  
+  
+  def suggestCollection(name: String) = Action { implicit request =>
+    val result = solr.suggestCollection(name)
+    println("result: " + result.toString)
+    Ok(result.toString)
+  }  
+
+  def suggestCollections(name: String) = Action { implicit request =>
+    val result = solr.suggestCollections(name)
+    println("result: " + result.toString)
+    Ok(result.toString)
+  }
+  
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(
@@ -181,7 +239,10 @@ object Application extends Controller {
           routes.javascript.Application.suggestFileFormat,
           routes.javascript.Application.suggestLinksHosts,
           routes.javascript.Application.suggestLinksDomains,
-          routes.javascript.Application.suggestLinksPublicSuffixes
+          routes.javascript.Application.suggestLinksPublicSuffixes,
+          routes.javascript.Application.suggestAuthor,
+          routes.javascript.Application.suggestCollection,
+          routes.javascript.Application.suggestCollections
       )
     ).as("text/javascript")
   }

@@ -1,7 +1,9 @@
 @(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
 
 @styles = {
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+	
 	<style>
 		.tt-suggestion.tt-cursor {
 			color: #fff;
@@ -109,6 +111,54 @@
         	});
 			// end of file format suggestions
 
+			// start of host, domain, public suffix suggestions			
+	        var suggestionsHost = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggestHost/%QUERY'
+				}
+        	});
+	        var suggestionsDomain = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggestDomain/%QUERY'
+				}
+        	});
+	        var suggestionsPublicSuffix = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggestPublicSuffix/%QUERY'
+				}
+        	});
+	        
+	        suggestionsHost.initialize();
+	        suggestionsDomain.initialize();
+	        suggestionsPublicSuffix.initialize();
+	        
+			$('#host-domain-public-suffix .typeahead').typeahead({
+				highlight: true
+			},
+			{
+				name: 'linksHosts',
+	        	displayKey: 'name',
+	        	source: suggestionsHost.ttAdapter(),
+        	},
+			{
+				name: 'linksDomains',
+	        	displayKey: 'name',
+	        	source: suggestionsDomain.ttAdapter(),
+        	},
+			{
+				name: 'linkPublicSuffixes',
+	        	displayKey: 'name',
+	        	source: suggestionsPublicSuffix.ttAdapter(),
+        	}
+			);
+			// end of host, domain, public suffix suggestions			
+			
 	    	// start of links hosts, domains, public suffixes suggestions
 	        var suggestionsLinksHosts = new Bloodhound({
 	        	datumTokenizer: function(d) { return d.tokens; },
@@ -136,7 +186,7 @@
 	        suggestionsLinksDomains.initialize();
 	        suggestionsLinksPublicSuffixes.initialize();
 	        
-			$('#linked-to .typeahead').typeahead({
+			$('#links-to .typeahead').typeahead({
 				highlight: true
 			},
 			{
@@ -155,9 +205,47 @@
 	        	source: suggestionsLinksPublicSuffixes.ttAdapter(),
         	}
 			);
-			// end of links hosts suggestions
+	    	// end of links hosts, domains, public suffixes suggestions
 			
-			function replaceLastWord(str, newStr) {
+	    	// start of author (name, company????) suggestions
+	        var suggestionsAuthor = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggestAuthor/%QUERY'
+				}
+        	});
+	        suggestionsAuthor.initialize();
+
+			$('#author .typeahead').typeahead({
+				highlight: true
+			},
+			{
+	        	displayKey: 'name',
+	        	source: suggestionsAuthor.ttAdapter(),
+        	});
+	    	// end of author (name, company????) suggestions
+
+	    	// start of collection suggestions
+	        var suggestionsCollection = new Bloodhound({
+	        	datumTokenizer: function(d) { return d.tokens; },
+	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
+				remote: {
+					url : '/suggestCollection/%QUERY'
+				}
+        	});
+	        suggestionsCollection.initialize();
+
+			$('#collection .typeahead').typeahead({
+				highlight: true
+			},
+			{
+	        	displayKey: 'name',
+	        	source: suggestionsCollection.ttAdapter(),
+        	});
+	    	// end of collection suggestions
+	    	
+	    	function replaceLastWord(str, newStr) {
 			   return str.replace(/\w*$/, newStr);
 			}
 			
@@ -229,9 +317,10 @@
 
 @main(title, styles, scripts) {
 
-	<ul class="nav nav-tabs">
+	<ul class="nav nav-tabs" contextmenu="">
 		<li><a href="@routes.Application.search()">Search</a></li>
 		<li class="active"><a href="#">Advanced Search</a></li>
+		<li><a href="@routes.Application.browse()">Browse</a></li>
 	</ul>
 
 	<div class="row">
@@ -264,7 +353,7 @@
 									Website Title:
 								</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control search-field" name="query" value="@(q.websiteTitle)" id="website-title-field" placeholder="Website Title" />
+									<input type="text" class="form-control search-field" name="websiteTitle" value="@(q.websiteTitle)" id="website-title-field" placeholder="Website Title" />
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Website title</p>
@@ -275,7 +364,7 @@
 									Page Title:
 								</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control search-field" name="query" value="@(q.pageTitle)" id="page-title-field" placeholder="Page Title" />
+									<input type="text" class="form-control search-field" name="pageTitle" value="@(q.pageTitle)" id="page-title-field" placeholder="Page Title" />
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Page title</p>
@@ -285,8 +374,8 @@
 								<label for="option1" class="col-sm-2 control-label">
 									Name:
 								</label>
-								<div class="col-sm-6">
-									<input type="text" class="form-control search-field" name="query" value="@(q.name)" id="name-field" placeholder="Name (personal and corporate)" />
+								<div class="col-sm-6" id="author">
+									<input type="text" class="typeahead form-control search-field" name="ownerName" value="@(q.name)" id="name-field" placeholder="Name (personal and corporate)" />
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Name (personal and corporate)</p>
@@ -297,7 +386,7 @@
 									URL:
 								</label>
 								<div class="col-sm-6" id="url">
-									<input type="text" class="typeahead form-control search-field" name="query" value="@(q.url)" id="url-field" placeholder="URL" />
+									<input type="text" class="typeahead form-control search-field" name="url" value="@(q.url)" id="url-field" placeholder="URL" />
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">URL</p>
@@ -308,10 +397,21 @@
 									File Format:
 								</label>
 								<div class="col-sm-6" id="file-format">
-									<input type="text" class="typeahead form-control search-field" name="query" value="@(q.fileFormat)" placeholder="File Format" />
+									<input type="text" class="typeahead form-control search-field" name="fileFormat" value="@(q.fileFormat)" placeholder="File Format" />
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">File format</p>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="option1" class="col-sm-2 control-label">
+									Collection:
+								</label>
+								<div class="col-sm-6" id="collection">
+									<input type="text" class="typeahead form-control search-field" name="collection" value="@(q.collection)" placeholder="Collection" />
+								</div>
+								<div class="col-sm-4">
+									<p class="text-success">Collection</p>
 								</div>
 							</div>
 							<div class="form-group">
@@ -360,8 +460,8 @@
 								<label for="option3" class="col-sm-2 control-label">
 									Host, Domain or Public Suffix
 								</label>
-								<div class="col-sm-6" id="links-hosts">
-									<input type="text" class="typeahead form-control search-field" id="links-hosts" name="facetfield" placeholder="Host, Domain or Public Suffix" value="@(q.hostedOn)">
+								<div class="col-sm-6" id="host-domain-public-suffix">
+									<input type="text" class="typeahead form-control search-field" name="hostDomainPublicSuffix" placeholder="Host, Domain or Public Suffix" value="@(q.hostedOn)">
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Match the values in the 'host', 'domain' or 'public_suffix' fields</p>
@@ -371,8 +471,8 @@
 								<label for="option3" class="col-sm-2 control-label">
 									URL, Host, Domain or Public Suffix
 								</label>
-								<div class="col-sm-6" id="linked-to">
-									<input type="text" class="typeahead form-control search-field" id="linkedTo" name="linkedTo" placeholder="URL, Host, Domain or Public Suffix" value="@(q.linkedTo)">
+								<div class="col-sm-6" id="links-to">
+									<input type="text" class="typeahead form-control search-field" name="linksTo" placeholder="URL, Host, Domain or Public Suffix" value="@(q.linkedTo)">
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Match the values in the 'url', 'host', 'domain' or 'public_suffix' fields.</p>
@@ -425,7 +525,11 @@
 							@for((d, index) <- q.res.getResults().zipWithIndex) {
 								<div class="list-group">
 									<span class="list-group-item" href="#">
-										<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a></h4>
+										<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) 
+											<a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">
+												"@d.getFirstValue("title")"
+											</a>
+										</h4>
 										<p class="list-group-item-text">
 												@d.getFirstValue("crawl_date")<br />
 												@d.getFirstValue("content_type_norm")<br />
