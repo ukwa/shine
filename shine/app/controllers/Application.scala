@@ -34,29 +34,29 @@ object Application extends Controller {
   }
 
   def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
-    
+
     val action = request.getQueryString("action")
     val selectedFacet = request.getQueryString("selected.facet")
     val removeFacet = request.getQueryString("remove.facet")
-	var parameters = collection.immutable.Map(request.queryString.toSeq:_*) 
+    var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 
     println("action: " + action)
     if (action != None) {
-	  	val parameter = action.get
-	  	println("action " + parameter)
-		if (parameter.equals("reset-facets")) {
-	  	  println("resetting facets")
-	  	  solr.resetFacets()
-	  	  parameters = collection.immutable.Map(resetParameters(parameters).toSeq:_*)
-	  	  // also remove this stuff - facet.in.crawl_year="2008"&facet.out.public_suffix="co.uk"
-	  	} else if (parameter.equals("add-facet") && selectedFacet != None) {
-	  	  val facetValue = selectedFacet.get
-	  	  solr.addFacet(facetValue)
-	  	} else if (parameter.equals("remove-facet") && removeFacet != None) {
-	  	  val facetValue = removeFacet.get
-	  	  println("removing facet: " + facetValue)
-	  	  solr.removeFacet(facetValue)
-	  	} 
+      val parameter = action.get
+      println("action " + parameter)
+      if (parameter.equals("reset-facets")) {
+        println("resetting facets")
+        solr.resetFacets()
+        parameters = collection.immutable.Map(resetParameters(parameters).toSeq: _*)
+        // also remove this stuff - facet.in.crawl_year="2008"&facet.out.public_suffix="co.uk"
+      } else if (parameter.equals("add-facet") && selectedFacet != None) {
+        val facetValue = selectedFacet.get
+        solr.addFacet(facetValue)
+      } else if (parameter.equals("remove-facet") && removeFacet != None) {
+        val facetValue = removeFacet.get
+        println("removing facet: " + facetValue)
+        solr.removeFacet(facetValue)
+      }
     }
     val q = doSearch(query, parameters, pageNo, sort, order)
 
@@ -66,7 +66,7 @@ object Application extends Controller {
     println("totalRecords #: " + totalRecords)
 
     pagination.update(totalRecords, pageNo)
-    
+
     Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap))
   }
 
@@ -160,13 +160,13 @@ object Application extends Controller {
     val result = solr.suggestTitle(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
+  }
 
   def suggestUrl(name: String) = Action { implicit request =>
     val result = solr.suggestUrl(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
+  }
 
   def suggestFileFormat(name: String) = Action { implicit request =>
     val result = solr.suggestFileFormat(name)
@@ -244,23 +244,19 @@ object Application extends Controller {
       )
     ).as("text/javascript")
   }
-  
+
   def resetParameters(parameters: collection.immutable.Map[String, Seq[String]]) = {
-	val map = collection.mutable.Map(parameters.toSeq: _*) 
-	println("pre: " + map)
-//    val javaMap = map.map { case (k, v) => (k, v.asJava) }.asJava;
-    for ((k,v) <- map) {
+    val map = collection.mutable.Map(parameters.toSeq: _*)
+    println("pre: " + map)
+    //    val javaMap = map.map { case (k, v) => (k, v.asJava) }.asJava;
+    for ((k, v) <- map) {
       if (k != "query") {
         map.remove(k)
         println("removed... " + k)
       }
     }
-	println("post: " + map)
-	map
+    println("post: " + map)
+    map
   }
-<<<<<<< HEAD
 
 }
-=======
-}
->>>>>>> 75bd384d011780a07e4c2dcf4aea0a978f3de118
