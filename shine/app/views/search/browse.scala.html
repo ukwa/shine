@@ -1,0 +1,258 @@
+@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
+
+@styles = {
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+	<style>
+		.tree {
+		    min-height:20px;
+		    padding:19px;
+		    margin-bottom:20px;
+		    background-color:#fbfbfb;
+		    -webkit-border-radius:4px;
+		    -moz-border-radius:4px;
+		    border-radius:4px;
+		    -webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+		    -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+		    box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05)
+		}
+		.tree li {
+		    list-style-type:none;
+		    margin:0;
+		    padding:10px 5px 0 5px;
+		    position:relative
+		}
+		.tree li::before, .tree li::after {
+		    content:'';
+		    left:-20px;
+		    position:absolute;
+		    right:auto
+		}
+		.tree li::before {
+		    border-left:1px solid #999;
+		    bottom:50px;
+		    height:100%;
+		    top:0;
+		    width:1px
+		}
+		.tree li::after {
+		    border-top:1px solid #999;
+		    height:20px;
+		    top:25px;
+		    width:25px
+		}
+		.tree li span {
+		    -moz-border-radius:5px;
+		    -webkit-border-radius:5px;
+		    border:1px solid #999;
+		    border-radius:5px;
+		    display:inline-block;
+		    padding:3px 8px;
+		    text-decoration:none
+		}
+		.tree li.parent_li>span {
+		    cursor:pointer
+		}
+		.tree>ul>li::before, .tree>ul>li::after {
+		    border:0
+		}
+		.tree li:last-child::before {
+		    height:30px
+		}
+		.tree li.parent_li>span:hover, .tree li.parent_li>span:hover+ul li span {
+		    background:#eee;
+		    border:1px solid #94a0b4;
+		    color:#000
+		}
+	</style>
+}
+
+@scripts = {
+	<script src="@routes.Assets.at("javascripts/typeahead.bundle.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#sort').val('@(currentSortBy)')
+	  		$('#order').val('@(currentOrder)')
+
+			if(@(currentPage.getTotalItems == 0)) {
+		    	console.log("results: " + @(q.res.getResults().size()))
+		    	$('#filter-panel').collapse('show');
+		    }
+	    	$('#filter-panel').collapse('show');
+	    	
+			$('.search-field').css('z-index', '0');
+			
+		    $('.tree li:has(ul)').addClass('parent_li').find(' > span i').attr('title', 'Collapse');
+		    $('.tree li.parent_li > span i').on('click', function (e) {
+		        var children = $(this).parent().parent('li.parent_li').find(' > ul > li');
+		        if (children.is(":visible")) {
+		            children.hide('fast');
+		            $(this).attr('title', 'Expand').addClass('glyphicon-plus').removeClass('glyphicon-minus');
+		        } else {
+		            children.show('fast');
+		            $(this).attr('title', 'Collapse').addClass('glyphicon-minus').removeClass('glyphicon-plus');
+		        }
+		        e.stopPropagation();
+		    });
+		});
+	</script>
+}
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(pageNo:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+
+    // Generate the link
+    routes.Application.advanced_search(q.query, pageNo, sortBy, order)
+    
+}
+
+@pagination = {
+	<div class="text-center">
+		<ul class="pagination">
+			@if(currentPage.hasPreviousPage) {
+            	<li class="prev">
+            		<a href="@link(currentPage.getCurrentPage-1, null)">&laquo;</a>
+                </li>
+            } else {
+                <li class="prev disabled">
+                    <a>&laquo;</a>
+                </li>
+            }
+			@for(index <- currentPage.getPagesList) {
+				@if(index == currentPage.getCurrentPage) {
+					@if(index == currentPage.getMaxViewablePages) {
+						<span class="max-viewable-reached hide"></span>
+					}
+					<li class="active current"><a href="@link(index, null)">@(index) <span class="sr-only">(current)</span></a></li>
+				} else {
+					<li><a href="@link(index, null)">@(index)</a></li>
+				}
+			}
+        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
+                <li class="next">
+                    <a href="@link(currentPage.getCurrentPage+1, null)">&raquo;</a>
+                </li>
+            } else {
+                <li class="next disabled">
+                    <a>&raquo;</a>
+                </li>
+			}
+		</ul>
+	</div>
+}
+
+@main(title, styles, scripts) {
+
+	<ul class="nav nav-tabs" contextmenu="">
+		<li><a href="@routes.Application.search()">Search</a></li>
+		<li><a href="@routes.Application.advanced_search()">Advanced Search</a></li>
+		<li class="active"><a href="@routes.Application.browse()">Browse</a></li>
+	</ul>
+
+	<div class="row">
+		<div class="col-md-12 col-sm-12">
+			<div class="padding-20">
+		
+				@helper.form(action=routes.Application.browse(), 'class -> "form-horizontal") {
+					<div>
+						<div class="tree">
+						    <ul>
+						    	@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
+						        <li>
+						            <span><i class="icon-folder-open"></i> <strong>@(fc.getName())</strong> <span class="badge">@(fc.getValueCount())</span></span>
+						            <ul>
+										@for((f, i) <- fc.getValues().zipWithIndex) {
+							                <li>
+												<span><i class="glyphicon glyphicon-minus"></i> <a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span></span>
+							                    <ul>
+							                        <li>
+								                        <span><i class="icon-leaf"></i>collection children here</span>
+							                        </li>
+							                	</ul>
+											</li>
+										}
+						            </ul>
+								</li>
+							</ul>
+						</div>
+						}
+					</div>
+
+					<div class="padding-20 hide" id="max-view-reached">
+						<div class="alert alert-danger alert-dismissable">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+							Maximum number of results reached
+						</div>
+					</div>
+								
+					<div class="panel panel-default">
+						<div class="panel-heading filter-heading">
+		                    <h4 class="panel-title pull-left filter-heading-title">
+		                        Results @currentPage.getDisplayXtoYofZ(" to "," of ")
+		                    </h4>
+		                    <div class="form-inline pull-right">
+								<div class="form-group">
+									<select class="form-control" name="sort" id="sort">
+										<option value="content_type_norm">Title</option>
+										<option value="crawl_date">Crawl Date</option>
+										<option value="content_type_norm">Content</option>
+										<option value="domain">Domain</option>
+										<option value="sentiment_score">Score</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<select class="form-control" name="order" id="order">
+										<option value="asc">Asc</option>
+										<option value="desc">Desc</option>
+									</select>
+								</div>
+							</div>
+						</div>
+		
+						<div class="panel-body">
+							@pagination
+		
+							@for((d, index) <- q.res.getResults().zipWithIndex) {
+								<div class="list-group">
+									<span class="list-group-item" href="#">
+										<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) 
+											<a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">
+												"@d.getFirstValue("title")"
+											</a>
+										</h4>
+										<p class="list-group-item-text">
+												@d.getFirstValue("crawl_date")<br />
+												@d.getFirstValue("content_type_norm")<br />
+												@d.getFirstValue("domain")<br />
+												@d.getFirstValue("sentiment_score")
+										</p>
+									</span>
+								</div>
+							}
+		
+							@pagination
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+}

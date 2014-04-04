@@ -3,25 +3,47 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                           		controllers.Application.index
 
 # Main facets search interface. The query parameter is optional, defaulting to /search?query=*:*
-GET     /search                     controllers.Application.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /search                     		controllers.Application.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
 
-GET     /advanced_search            controllers.Application.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /advanced_search            		controllers.Application.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+
+GET     /browse            					controllers.Application.browse(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
  
 # TBD: The main hook for the explore/trend analysis/delve UI.
 
-GET     /graph						controllers.Application.plot_graph(query ?= "*:*", year_start ?= "1800", year_end ?= "2000")
+GET     /graph								controllers.Application.plot_graph(query ?= "*:*", year_start ?= "1800", year_end ?= "2000")
 
 # The web half-life/rescued visualisation:
 GET     /halflife                   controllers.Shiner.halflife
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file               		controllers.Assets.at(path="/public", file)
 
-GET 	/javascriptRoutes    		controllers.Application.javascriptRoutes
+GET 	/javascriptRoutes    				controllers.Application.javascriptRoutes
 
-GET    	/suggestTitle/:name			controllers.Application.suggestTitle(name)
+GET    	/suggestTitle/:name					controllers.Application.suggestTitle(name)
 
-GET    	/suggestUrl/:name			controllers.Application.suggestUrl(name)
+GET    	/suggestUrl/:name					controllers.Application.suggestUrl(name)
+
+GET    	/suggestFileFormat/:name			controllers.Application.suggestFileFormat(name)
+
+GET    	/suggestHost/:name					controllers.Application.suggestHost(name)
+
+GET    	/suggestDomain/:name				controllers.Application.suggestDomain(name)
+
+GET    	/suggestPublicSuffix/:name			controllers.Application.suggestPublicSuffix(name)
+
+GET    	/suggestLinksHosts/:name			controllers.Application.suggestLinksHosts(name)
+
+GET    	/suggestLinksDomains/:name			controllers.Application.suggestLinksDomains(name)
+
+GET    	/suggestLinksPublicSuffixes/:name	controllers.Application.suggestLinksPublicSuffixes(name)
+
+GET    	/suggestAuthor/:name				controllers.Application.suggestAuthor(name)
+
+GET    	/suggestCollection/:name			controllers.Application.suggestCollection(name)
+
+GET    	/suggestCollections/:name			controllers.Application.suggestCollections(name)
