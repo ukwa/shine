@@ -82,16 +82,15 @@
 	    	
 			$('.search-field').css('z-index', '0');
 			
-			
-		    $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+		    $('.tree li:has(ul)').addClass('parent_li').find(' > span i').attr('title', 'Collapse');
 		    $('.tree li.parent_li > span i').on('click', function (e) {
 		        var children = $(this).parent().parent('li.parent_li').find(' > ul > li');
 		        if (children.is(":visible")) {
 		            children.hide('fast');
-		            $(this).addClass('glyphicon-plus').removeClass('glyphicon-minus');
+		            $(this).attr('title', 'Expand').addClass('glyphicon-plus').removeClass('glyphicon-minus');
 		        } else {
 		            children.show('fast');
-		            $(this).addClass('glyphicon-minus').removeClass('glyphicon-plus');
+		            $(this).attr('title', 'Collapse').addClass('glyphicon-minus').removeClass('glyphicon-plus');
 		        }
 		        e.stopPropagation();
 		    });
