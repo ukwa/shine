@@ -3,13 +3,65 @@
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
 	<style>
-		.tt-suggestion.tt-cursor {
-			color: #fff;
-			background-color: #0097cf;
+		.tree {
+		    min-height:20px;
+		    padding:19px;
+		    margin-bottom:20px;
+		    background-color:#fbfbfb;
+		    -webkit-border-radius:4px;
+		    -moz-border-radius:4px;
+		    border-radius:4px;
+		    -webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+		    -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+		    box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05)
 		}
-
-		.tt-suggestion p {
-			margin: 0;
+		.tree li {
+		    list-style-type:none;
+		    margin:0;
+		    padding:10px 5px 0 5px;
+		    position:relative
+		}
+		.tree li::before, .tree li::after {
+		    content:'';
+		    left:-20px;
+		    position:absolute;
+		    right:auto
+		}
+		.tree li::before {
+		    border-left:1px solid #999;
+		    bottom:50px;
+		    height:100%;
+		    top:0;
+		    width:1px
+		}
+		.tree li::after {
+		    border-top:1px solid #999;
+		    height:20px;
+		    top:25px;
+		    width:25px
+		}
+		.tree li span {
+		    -moz-border-radius:5px;
+		    -webkit-border-radius:5px;
+		    border:1px solid #999;
+		    border-radius:5px;
+		    display:inline-block;
+		    padding:3px 8px;
+		    text-decoration:none
+		}
+		.tree li.parent_li>span {
+		    cursor:pointer
+		}
+		.tree>ul>li::before, .tree>ul>li::after {
+		    border:0
+		}
+		.tree li:last-child::before {
+		    height:30px
+		}
+		.tree li.parent_li>span:hover, .tree li.parent_li>span:hover+ul li span {
+		    background:#eee;
+		    border:1px solid #94a0b4;
+		    color:#000
 		}
 	</style>
 }
@@ -28,30 +80,21 @@
 		    }
 	    	$('#filter-panel').collapse('show');
 	    	
-	    	// start of collection suggestions
-	        var suggestionsCollection = new Bloodhound({
-	        	datumTokenizer: function(d) { return d.tokens; },
-	        	queryTokenizer: Bloodhound.tokenizers.whitespace,
-				remote: {
-					url : '/suggestCollection/%QUERY'
-				}
-        	});
-	        suggestionsCollection.initialize();
-
-			$('#collection .typeahead').typeahead({
-				highlight: true
-			},
-			{
-	        	displayKey: 'name',
-	        	source: suggestionsCollection.ttAdapter(),
-        	});
-	    	// end of collection suggestions
-	    	
-	    	function replaceLastWord(str, newStr) {
-			   return str.replace(/\w*$/, newStr);
-			}
-			
 			$('.search-field').css('z-index', '0');
+			
+			
+		    $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+		    $('.tree li.parent_li > span i').on('click', function (e) {
+		        var children = $(this).parent().parent('li.parent_li').find(' > ul > li');
+		        if (children.is(":visible")) {
+		            children.hide('fast');
+		            $(this).addClass('glyphicon-plus').removeClass('glyphicon-minus');
+		        } else {
+		            children.show('fast');
+		            $(this).addClass('glyphicon-minus').removeClass('glyphicon-plus');
+		        }
+		        e.stopPropagation();
+		    });
 		});
 	</script>
 }
@@ -129,36 +172,31 @@
 		<div class="col-md-12 col-sm-12">
 			<div class="padding-20">
 		
-				<div class="padding-20">
-					<a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
-				</div>
-			
-				@helper.form(action=routes.Application.advanced_search(), 'class -> "form-horizontal") {
-			
-				<div id="filter-panel" class="panel-collapse collapse">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="option1" class="col-sm-2 control-label">
-									Collection:
-								</label>
-								<div class="col-sm-6" id="collection">
-									<input type="text" class="typeahead form-control search-field" name="query" value="@(q.collection)" placeholder="Collection" />
-								</div>
-								<div class="col-sm-4">
-									<p class="text-success">Collection</p>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-offset-2 col-sm-10">
-									<button type="submit" class="btn btn-primary" name="action" value="search">Search</button>
-									<button type="reset" class="btn btn-primary" name="action" value="reset" id="reset">Reset</button>
-								</div>
-							</div>
+				@helper.form(action=routes.Application.browse(), 'class -> "form-horizontal") {
+					<div>
+						<div class="tree">
+						    <ul>
+						    	@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
+						        <li>
+						            <span><i class="icon-folder-open"></i> <strong>@(fc.getName())</strong> <span class="badge">@(fc.getValueCount())</span></span>
+						            <ul>
+										@for((f, i) <- fc.getValues().zipWithIndex) {
+							                <li>
+												<span><i class="glyphicon glyphicon-minus"></i> <a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span></span>
+							                    <ul>
+							                        <li>
+								                        <span><i class="icon-leaf"></i>collection children here</span>
+							                        </li>
+							                	</ul>
+											</li>
+										}
+						            </ul>
+								</li>
+							</ul>
 						</div>
+						}
 					</div>
-				</div>
-				
+
 					<div class="padding-20 hide" id="max-view-reached">
 						<div class="alert alert-danger alert-dismissable">
 							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>

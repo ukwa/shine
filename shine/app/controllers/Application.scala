@@ -94,7 +94,7 @@ object Application extends Controller {
   
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     println("browse")
-    val q = doSearch(query, request.queryString, pageNo, sort, order)
+    val q = doBrowse(query, request.queryString, pageNo, sort, order)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -155,6 +155,12 @@ object Application extends Controller {
   def doAdvanced(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
     val q = doInit(query, queryString, pageNo, sort, order)
     q.processQueryResponse(solr.advancedSearch(q, pageNo, sort, order))
+    q
+  }
+
+  def doBrowse(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
+    val q = doInit(query, queryString, pageNo, sort, order)
+    q.processQueryResponse(solr.browse(q, pageNo, sort, order))
     q
   }
 
