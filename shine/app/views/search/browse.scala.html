@@ -59,9 +59,14 @@
 		    height:30px
 		}
 		.tree li.parent_li>span:hover, .tree li.parent_li>span:hover+ul li span {
-		    background:#eee;
+		    background:#DF8505;
 		    border:1px solid #94a0b4;
 		    color:#000
+		}
+		
+		.parent_li span a {
+			color: #FFFFFF;
+		    text-decoration:none;
 		}
 	</style>
 }
@@ -83,16 +88,35 @@
 			$('.search-field').css('z-index', '0');
 			
 		    $('.tree li:has(ul)').addClass('parent_li').find(' > span i').attr('title', 'Collapse');
-		    $('.tree li.parent_li > span i').on('click', function (e) {
+		    
+		    
+		    $('.tree li.parent_li > span i').each(function() {
+	            $(this).attr('title', 'Expand').addClass('glyphicon-plus').removeClass('glyphicon-minus');
 		        var children = $(this).parent().parent('li.parent_li').find(' > ul > li');
-		        if (children.is(":visible")) {
-		            children.hide('fast');
-		            $(this).attr('title', 'Expand').addClass('glyphicon-plus').removeClass('glyphicon-minus');
-		        } else {
-		            children.show('fast');
-		            $(this).attr('title', 'Collapse').addClass('glyphicon-minus').removeClass('glyphicon-plus');
-		        }
-		        e.stopPropagation();
+				children.find('ul li').hide('fast');
+				$(this).click(function(event) {
+			        if (children.is(":visible")) {
+			            children.hide('fast');
+			            $(this).attr('title', 'Expand').addClass('glyphicon-plus').removeClass('glyphicon-minus');
+			        } else {
+			        	// go retrieve collections
+			            children.show('fast');
+			            $(this).attr('title', 'Collapse').addClass('glyphicon-minus').removeClass('glyphicon-plus');
+			            var collection = $(this).parent().find('a').text();
+			            console.log(collection);
+			    	    $.ajax({
+			    	    	url:  "/getCollection?facet.in.collection=\"" + collection + "\"",
+			    	    	dataType: 'json',
+			    	    	success: function(data) {
+		    			    	console.log("success " + data);
+			    	    	},
+			    	    	error: function(jqXHR, textStatus, errorThrown) {
+			    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+			    	    	}
+			    	    });
+			        }
+			        event.stopPropagation();
+				});
 		    });
 		});
 	</script>
@@ -164,7 +188,7 @@
 	<ul class="nav nav-tabs" contextmenu="">
 		<li><a href="@routes.Application.search()">Search</a></li>
 		<li><a href="@routes.Application.advanced_search()">Advanced Search</a></li>
-		<li class="active"><a href="@routes.Application.browse()">Browse</a></li>
+		<li class="active"><a href="@routes.Application.browse()">Browse Collections</a></li>
 	</ul>
 
 	<div class="row">
@@ -181,10 +205,17 @@
 						            <ul>
 										@for((f, i) <- fc.getValues().zipWithIndex) {
 							                <li>
-												<span><i class="glyphicon glyphicon-minus"></i> <a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span></span>
+							                <!-- 
+							                http://localhost:9000/search?facet.in.collection=%22NHS%22&query=*%3A*
+							                
+							                <input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
+							                 
+							               	-->
+												<span class="label-success"><i class="glyphicon glyphicon-minus"></i> <a href="@(routes.Application.search(q.query))&facet.in.collection=&#34;@(Html(q.formatFacet(fc,f)))&#34;">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span></span>
 							                    <ul>
-							                        <li>
+							                        <li id="collection-@(index)">
 								                        <span><i class="icon-leaf"></i>collection children here</span>
+								                        <input type="hidden" name="collectionType" value="@(Html(q.formatFacet(fc,f)))" />
 							                        </li>
 							                	</ul>
 											</li>

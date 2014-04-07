@@ -94,6 +94,7 @@ public class Shine extends Solr {
 	private QueryResponse search(Query query, SolrQuery parameters) throws SolrServerException {
 		// selected facets
 		parameters.setRows(perPage);
+		//parameters.setParam("wt", "json");
 		return search(query, parameters, facetService.getSelected());
 	}
 

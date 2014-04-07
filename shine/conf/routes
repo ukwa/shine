@@ -47,3 +47,5 @@ GET    	/suggestAuthor/:name				controllers.Application.suggestAuthor(name)
 GET    	/suggestCollection/:name			controllers.Application.suggestCollection(name)
 
 GET    	/suggestCollections/:name			controllers.Application.suggestCollections(name)
+
+GET    	/getCollection						controllers.Application.getCollection

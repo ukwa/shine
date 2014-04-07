@@ -42,7 +42,6 @@ object Application extends Controller {
   }
 
   def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
-    
     val action = request.getQueryString("action")
     val selectedFacet = request.getQueryString("selected.facet")
     val removeFacet = request.getQueryString("remove.facet")
@@ -235,7 +234,14 @@ object Application extends Controller {
     println("result: " + result.toString)
     Ok(result.toString)
   }
-  
+
+  def getCollection = Action { implicit request =>
+    println("queryString: " + request.queryString)
+    val results = doSearch("*:*", request.queryString, 0, "crawl_date", "asc")
+    println("results: " + results.res.getResults())
+    Ok(results.res.toString())
+  }
+
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(
@@ -248,7 +254,8 @@ object Application extends Controller {
           routes.javascript.Application.suggestLinksPublicSuffixes,
           routes.javascript.Application.suggestAuthor,
           routes.javascript.Application.suggestCollection,
-          routes.javascript.Application.suggestCollections
+          routes.javascript.Application.suggestCollections,
+          routes.javascript.Application.getCollection
       )
     ).as("text/javascript")
   }
