@@ -15,6 +15,7 @@ import java.util.Calendar
 import org.apache.commons.lang3.StringUtils
 import scala.collection.mutable.ListBuffer
 import scala.collection.immutable.Map
+import scala.collection.mutable.MutableList
 import play.api.libs.json._
 
 object Application extends Controller {
@@ -237,9 +238,19 @@ object Application extends Controller {
 
   def getCollection = Action { implicit request =>
     println("queryString: " + request.queryString)
-    val results = doSearch("*:*", request.queryString, 0, "crawl_date", "asc")
-    println("results: " + results.res.getResults())
-    Ok(results.res.toString())
+    var results = doAdvanced("*:*", request.queryString, 0, "crawl_date", "asc").res.getResults()
+    
+    var resultList  = List[String]()
+    
+    for (i <- 1 until results.size()) {
+	    val result = results.get(i)
+	    val url = result.getFirstValue("url")
+	    if (url ne null) {
+	    	resultList = result.getFirstValue("url").toString() :: resultList
+	    }
+    }
+    println(Json.toJson(resultList));
+    Ok(Json.toJson(resultList))
   }
 
   def javascriptRoutes = Action { implicit request =>
