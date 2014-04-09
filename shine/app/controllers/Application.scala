@@ -238,19 +238,88 @@ object Application extends Controller {
 
   def getCollection = Action { implicit request =>
     println("queryString: " + request.queryString)
-    var results = doAdvanced("*:*", request.queryString, 0, "crawl_date", "asc").res.getResults()
+    val parameter = request.getQueryString("pageNo")
+    var pageNo = 1
+    println("pageNo: " + pageNo)
+    if (parameter != None) {
+    	 pageNo = parameter.get.toInt
+    }
+	var results = doAdvanced("*:*", request.queryString, 0, "crawl_date", "asc").res.getResults()
+    
+    val totalRecords = results.getNumFound().intValue()
+
+    println("totalRecords #: " + totalRecords)
+
+    pagination.update(totalRecords, pageNo)
+    
+//    for (i <- 0 until pagination.getPagesList().size()) {
+//    	println("page: " + pagination.getPagesList().get(i))
+//    }
+
+//    http://192.168.1.204:8983/solr/ldwa/select?start=0&sort=crawl_date+asc&q=*%3A*&fq={!tag%3Dcollection}collection%3A%28%22Acute+Trusts%22%29
+//    http://192.168.1.204:8983/solr/ldwa/select?start=0&sort=crawl_date+asc&q=*%3A*&facet.mincount=1&fq=%7B%21tag%3Dcollection%7Dcollection%3A%28%22Acute+Trusts%22%29
+//http://localhost:9000/search?query=*%3A*&page=2&sort=content_type_norm&facet.in.collection=%22Acute%20Trusts%22
     
     var resultList  = List[String]()
     
+    println("size >>> " + results.size())
+    
+    var jsonArray = Json.arr()
+    var resultsJson = Json.obj("urls" -> jsonArray)
+    
+	println("array: " + resultsJson)
+	
     for (i <- 1 until results.size()) {
 	    val result = results.get(i)
 	    val url = result.getFirstValue("url")
 	    if (url ne null) {
 	    	resultList = result.getFirstValue("url").toString() :: resultList
+	    	val jsonObject = Json.obj("url" -> JsString(result.getFirstValue("url").toString()))
+	    	println("jsonObject: " + jsonObject)
+	    	jsonArray :+ jsonObject
+	    	println("inside: " + jsonArray)
 	    }
     }
+    
+    val jsonPages = Json.obj("pages" -> JsNumber(pagination.getPagesList().size()))
+    jsonArray :+ jsonPages
+	println("jsonPages: " + jsonPages)
+    
+println("test: " + Json.obj(
+  "users" -> Json.arr(
+    Json.obj(
+      "name" -> "bob",
+      "age" -> 31,
+      "email" -> "bob@gmail.com"  	  
+    ),
+    Json.obj(
+      "name" -> "kiki",
+      "age" -> 25,
+      "email" -> JsNull  	  
+    )
+  )
+))
+//    
+//    {
+//  "name" : "Watership Down",
+//  "location" : {
+//    "lat" : 51.235685,
+//    "long" : -1.309197
+//  },
+//  "residents" : [ {
+//    "name" : "Fiver",
+//    "age" : 4,
+//    "role" : null
+//  }, {
+//    "name" : "Bigwig",
+//    "age" : 6,
+//    "role" : "Owsla"
+//  } ]
+//}
+    
+    println("resultsJson: " + resultsJson)
     println(Json.toJson(resultList));
-    Ok(Json.toJson(resultList))
+    Ok(resultsJson)
   }
 
   def javascriptRoutes = Action { implicit request =>

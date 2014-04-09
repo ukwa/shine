@@ -60,8 +60,6 @@ public class Shine extends Solr {
 			sort = "crawl_date";
 		}
 
-		Logger.info("per_page: " + perPage);
-
 		Integer start = ((pageNo - 1) * perPage);
 		if (start < 0) {
 			start = 0;
@@ -105,14 +103,14 @@ public class Shine extends Solr {
 //		FacetValue collectionsFacetValue = new FacetValue("collections", "Collections");
 //		facetValues.put(collectionsFacetValue.getName(), collectionsFacetValue);
 		// build up the facets and add to map to pass on 
-		parameters.setRows(perPage);
+//		parameters.setRows(perPage);
 		return search(query, parameters, facetValues);
 	}
 
 	private QueryResponse browse(Query query, SolrQuery parameters) throws SolrServerException {
 		// facets available on the advanced search fields
 		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
-		FacetValue collectionsFacetValue = new FacetValue("crawl_year", "Crawl Year");
+		FacetValue collectionsFacetValue = new FacetValue("collection", "Collection");
 		facetValues.put(collectionsFacetValue.getName(), collectionsFacetValue);
 		// build up the facets and add to map to pass on 
 		Logger.info("browse facetValues: " + facetValues);
@@ -179,8 +177,6 @@ public class Shine extends Solr {
 			parameters.setFilterQueries(fq.toArray(new String[fq.size()]));
 		}
 
-		Logger.info("Pre Query: " + parameters.toString());
-
 		try {
 			processDateRange(parameters, query.dateStart, query.dateEnd);
 			processProximity(parameters, query.proximity);
@@ -193,7 +189,6 @@ public class Shine extends Solr {
 		QueryResponse res = solr.query(parameters);
 		Logger.info("QTime: " + res.getQTime());
 		Logger.info("Response Header: " + res.getResponseHeader());
-		Logger.info("facet fields: " + res.getFacetFields());
 		return res;
 	}
 

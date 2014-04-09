@@ -52,6 +52,11 @@
 		.tree li.parent_li>span {
 		    cursor:pointer
 		}
+		
+		ul.collection-root li span {
+		    cursor:pointer
+		}
+		
 		.tree>ul>li::before, .tree>ul>li::after {
 		    border:0
 		}
@@ -90,7 +95,7 @@
 		    $('.tree li:has(ul)').addClass('parent_li').find(' > span i').attr('title', 'Collapse');
 		    
 		    
-		    $('.tree li.parent_li > span i').each(function() {
+		    $('.tree li.parent_li > span i').each(function(index) {
 	            $(this).attr('title', 'Expand').addClass('glyphicon-plus').removeClass('glyphicon-minus');
 		        var children = $(this).parent().parent('li.parent_li').find(' > ul > li');
 				children.find('ul li').hide('fast');
@@ -103,30 +108,83 @@
 			            children.show('fast');
 			            $(this).attr('title', 'Collapse').addClass('glyphicon-minus').removeClass('glyphicon-plus');
 			            var collection = $(this).parent().find('a').text();
-			            var ul = $(this).parent().parent('.parent_li');
-			            console.log("ul: " + ul);
-			    	    $.ajax({
-			    	    	url:  "/getCollection?facet.in.crawl_year=\"" + collection + "\"",
-			    	    	dataType: 'json',
-			    	    	success: function(data) {
-			    	    		var items = [];
-			    	    		$.each( data, function( key, val ) {
-			    	    		    items.push( "<li id='collection-" + key + "' style='display: list-item;'>" 
-			    	    			+ "<span><i class='icon-leaf'></i>" + val + "</span></li>" );
-			    	    		});
-			    	    		 
-			    	    		$( "<ul/>", {
-			    	    			html: items.join( "" )
-			    	    		}).appendTo(ul);
-			    	    	},
-			    	    	error: function(jqXHR, textStatus, errorThrown) {
-			    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
-			    	    	}
-			    	    });
+			            var $list_root = $(this).parent().parent('li.parent_li').find('ul:nth-child(2)')
+			            $list_root.attr("id", "collection-root-" + index);
+//			            list.find('ul:nth-child(2)').find('li:nth-child(1)')
+						var pageNo = 1;
+			            if (!$list_root.hasClass('activated')) {
+				    	    $.ajax({
+				    	    	url:  "/getCollection?pageNo=" + pageNo + "&facet.in.collection=\"" + collection + "\"",
+				    	    	dataType: 'json',
+				    	    	success: function(data) {
+				    	    		var items = [];
+				    	    		$.each( data, function( key, val ) {
+					    	    		console.log(key + " - " + val);
+				    	    		    items.push( "<li id='collection-" + key + "' style='display: list-item;'>" 
+				    	    			+ "<span><i class='icon-leaf'></i>" + val + "</span></li>" );
+				    	    		});
+				    	    		
+				    	    		var loadmore = "load-more-" + index;
+				    	    		var ajaxloader = "ajax-loader-" + index;
+				    	    		var startIndex = "pageNo-" + pageNo;
+				    	    		
+			    	    		    items.push( "<li id='collection-load-more-" + index + "' style='display: list-item;'>" 
+					    	    			+ "<span class='load-more' id='" + loadmore + "'><i class='icon-leaf'></i>Load more...<img id='" + ajaxloader + "' src='/assets/images/ajax-loader.gif' /></span>"
+					    	    			+ "<span style='display:none;' id='" + startIndex + "'>" + pageNo + "</span>"
+					    	    			+ "</li>" );
+									$list_root.append(items.join('')).addClass('activated');			            
+									applyLoadMore(collection, index, pageNo, $list_root);
+				    	    	},
+				    	    	error: function(jqXHR, textStatus, errorThrown) {
+				    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+				    	    	}
+				    	    });
+			            }
 			        }
 			        event.stopPropagation();
 				});
 		    });
+		    
+		    function applyLoadMore(collection, index, pageNo, list_root) {
+	    		var loadmore = "load-more-" + index;
+	    		var ajaxloader = "ajax-loader-" + index;
+		    	pageNo++;
+		    	console.log("pageNo: " + pageNo);
+		    	$('#' + ajaxloader).hide();
+		    	$('#' + loadmore).click(function(event) {
+		    		console.log('clicked ' + loadmore + " " + start);
+			    	$('#' + ajaxloader).show();
+			    	// go get more data with starting points to get more
+			    	
+/*		    	    $.ajax({
+		    	    	url:  "/getCollection?start=" + start + "&facet.in.collection=\"" + collection + "\"",
+		    	    	dataType: 'json',
+		    	    	success: function(data) {
+		    	    		var items = [];
+		    	    		$.each( data, function( key, val ) {
+		    	    		    items.push( "<li id='collection-" + key + "' style='display: list-item;'>" 
+		    	    			+ "<span><i class='icon-leaf'></i>" + val + "</span></li>" );
+		    	    		});
+		    	    		
+		    	    		var loadmore = "load-more-" + index;
+		    	    		var ajaxloader = "ajax-loader-" + index;
+		    	    		var startIndex = "start-" + index;
+		    	    		
+		    	    		start = 0;
+		    	    		
+	    	    		    items.push( "<li id='collection-load-more-" + index + "' style='display: list-item;'>" 
+			    	    			+ "<span class='load-more' id='" + loadmore + "'><i class='icon-leaf'></i>Load more...<img id='" + ajaxloader + "' src='/assets/images/ajax-loader.gif' /></span>"
+			    	    			+ "<span style='display:none;' id='" + startIndex + "'>" + start + "</span>"
+			    	    			+ "</li>" );
+							list_root.append(items.join('')).addClass('activated');			            
+							applyLoadMore(index, start);
+		    	    	},
+		    	    	error: function(jqXHR, textStatus, errorThrown) {
+		    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+		    	    	}
+		    	    });*/
+		    	});
+		    }
 		});
 	</script>
 }
@@ -221,11 +279,11 @@
 							                 
 							               	-->
 												<span class="label-success"><i class="glyphicon glyphicon-minus"></i> <a href="@(routes.Application.search(q.query))&facet.in.collection=&#34;@(Html(q.formatFacet(fc,f)))&#34;">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span></span>
-							                    <ul>
-							                        <li id="@(index)">
+							                    <ul class="collection-root">
+<!-- 							                        <li id="@(index)">
 								                        <span><i class="icon-leaf"></i>collection children here</span>
 								                        <input type="hidden" name="collectionType" value="@(Html(q.formatFacet(fc,f)))" />
-							                        </li>
+							                        </li> -->
 							                	</ul>
 											</li>
 										}
