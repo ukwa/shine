@@ -110,7 +110,7 @@ public class Shine extends Solr {
 	private QueryResponse browse(Query query, SolrQuery parameters) throws SolrServerException {
 		// facets available on the advanced search fields
 		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
-		FacetValue collectionsFacetValue = new FacetValue("collection", "Collection");
+		FacetValue collectionsFacetValue = new FacetValue("crawl_year", "Crawl Year");
 		facetValues.put(collectionsFacetValue.getName(), collectionsFacetValue);
 		// build up the facets and add to map to pass on 
 		Logger.info("browse facetValues: " + facetValues);

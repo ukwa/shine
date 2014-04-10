@@ -94,7 +94,6 @@
 			
 		    $('.tree li:has(ul)').addClass('parent_li').find(' > span i').attr('title', 'Collapse');
 		    
-		    
 		    $('.tree li.parent_li > span i').each(function(index) {
 	            $(this).attr('title', 'Expand').addClass('glyphicon-plus').removeClass('glyphicon-minus');
 		        var children = $(this).parent().parent('li.parent_li').find(' > ul > li');
@@ -107,33 +106,35 @@
 			        	// go retrieve collections
 			            children.show('fast');
 			            $(this).attr('title', 'Collapse').addClass('glyphicon-minus').removeClass('glyphicon-plus');
-			            var collection = $(this).parent().find('a').text();
-			            var $list_root = $(this).parent().parent('li.parent_li').find('ul:nth-child(2)')
-			            $list_root.attr("id", "collection-root-" + index);
-//			            list.find('ul:nth-child(2)').find('li:nth-child(1)')
+			            var collection_name = $(this).parent().find('a').text();
+			            var list_root = $(this).parent().parent('li.parent_li').find('ul:nth-child(2)')
+			            list_root.attr("id", "collection-root-" + index);
 						var pageNo = 1;
-			            if (!$list_root.hasClass('activated')) {
+			            if (!list_root.hasClass('activated')) {
 				    	    $.ajax({
-				    	    	url:  "/getCollection?pageNo=" + pageNo + "&facet.in.collection=\"" + collection + "\"",
+				    	    	url:  "/getCollection?page=" + pageNo + "&facet.in.crawl_year=\"" + collection_name + "\"",
 				    	    	dataType: 'json',
 				    	    	success: function(data) {
 				    	    		var items = [];
-				    	    		$.each( data, function( key, val ) {
-					    	    		console.log(key + " - " + val);
+				    	    		$.each( data.urls, function( key, val ) {
 				    	    		    items.push( "<li id='collection-" + key + "' style='display: list-item;'>" 
-				    	    			+ "<span><i class='icon-leaf'></i>" + val + "</span></li>" );
+						    	    			+ "<span><i class='icon-leaf'></i>" + val.url + "</span></li>" );
 				    	    		});
+				    	    		var pages = data.pages;
+				    	    		console.log(pages);
 				    	    		
-				    	    		var loadmore = "load-more-" + index;
-				    	    		var ajaxloader = "ajax-loader-" + index;
-				    	    		var startIndex = "pageNo-" + pageNo;
-				    	    		
-			    	    		    items.push( "<li id='collection-load-more-" + index + "' style='display: list-item;'>" 
-					    	    			+ "<span class='load-more' id='" + loadmore + "'><i class='icon-leaf'></i>Load more...<img id='" + ajaxloader + "' src='/assets/images/ajax-loader.gif' /></span>"
-					    	    			+ "<span style='display:none;' id='" + startIndex + "'>" + pageNo + "</span>"
-					    	    			+ "</li>" );
-									$list_root.append(items.join('')).addClass('activated');			            
-									applyLoadMore(collection, index, pageNo, $list_root);
+				    	    		// first page already loaded
+				    	    		for (var i=2; i <= pages; i++) {
+					    	    		var loadmore = "load-more-" + i;
+					    	    		var display = 'display:none;';
+					    	    		if (i==2) display = 'display: list-item;'
+					    	    		var ajaxloader = "ajax-loader-" + i;
+				    	    		    items.push( "<li id='collection-load-more-" + i + "' style='" + display + "'>" 
+						    	    			+ "<span class='load-more' id='" + loadmore + "'><span style='display:none;'>" + i + "</span>Load more...<img id='" + ajaxloader + "' src='/assets/images/ajax-loader.gif' style='display:none' /></span>"
+						    	    			+ "</li>" );
+				    	    		}
+									list_root.append(items.join('')).addClass('activated');			  
+									applyClicks(collection_name, list_root);
 				    	    	},
 				    	    	error: function(jqXHR, textStatus, errorThrown) {
 				    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
@@ -145,45 +146,38 @@
 				});
 		    });
 		    
-		    function applyLoadMore(collection, index, pageNo, list_root) {
-	    		var loadmore = "load-more-" + index;
-	    		var ajaxloader = "ajax-loader-" + index;
-		    	pageNo++;
-		    	console.log("pageNo: " + pageNo);
-		    	$('#' + ajaxloader).hide();
-		    	$('#' + loadmore).click(function(event) {
-		    		console.log('clicked ' + loadmore + " " + start);
-			    	$('#' + ajaxloader).show();
+		    function applyClicks(collection_name, attach_to_element) {
+		    	$('.load-more').click(function(event) {
+			    	$(this).find('img').show();
+			    	var pageNo = $(this).find('span:nth-child(1)').text();
+			    	console.log("loading page " + pageNo);
+			    	loadNext(pageNo);
 			    	// go get more data with starting points to get more
-			    	
-/*		    	    $.ajax({
-		    	    	url:  "/getCollection?start=" + start + "&facet.in.collection=\"" + collection + "\"",
+			    	// get page number from the element
+			    	    //http://localhost:9000/search?query=*%3A*&page=2&sort=content_type_norm&facet.in.collection=%22Acute%20Trusts%22
+
+ 		    	    $.ajax({
+		    	    	url:  "/getCollection?page=" + pageNo + "&facet.in.crawl_year=\"" + collection_name + "\"",
 		    	    	dataType: 'json',
 		    	    	success: function(data) {
 		    	    		var items = [];
-		    	    		$.each( data, function( key, val ) {
+		    	    		$.each( data.urls, function( key, val ) {
 		    	    		    items.push( "<li id='collection-" + key + "' style='display: list-item;'>" 
-		    	    			+ "<span><i class='icon-leaf'></i>" + val + "</span></li>" );
+				    	    			+ "<span><i class='icon-leaf'></i>" + val.url + "</span></li>" );
 		    	    		});
-		    	    		
-		    	    		var loadmore = "load-more-" + index;
-		    	    		var ajaxloader = "ajax-loader-" + index;
-		    	    		var startIndex = "start-" + index;
-		    	    		
-		    	    		start = 0;
-		    	    		
-	    	    		    items.push( "<li id='collection-load-more-" + index + "' style='display: list-item;'>" 
-			    	    			+ "<span class='load-more' id='" + loadmore + "'><i class='icon-leaf'></i>Load more...<img id='" + ajaxloader + "' src='/assets/images/ajax-loader.gif' /></span>"
-			    	    			+ "<span style='display:none;' id='" + startIndex + "'>" + start + "</span>"
-			    	    			+ "</li>" );
-							list_root.append(items.join('')).addClass('activated');			            
-							applyLoadMore(index, start);
+		    	    		attach_to_element.append(items.join('')).addClass('activated');			  
 		    	    	},
 		    	    	error: function(jqXHR, textStatus, errorThrown) {
 		    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
 		    	    	}
-		    	    });*/
+		    	    });
 		    	});
+		    }
+		    
+		    function loadNext(pageNo) {
+				$('#collection-load-more-' + pageNo).hide();
+				var nextPage = parseInt(pageNo) + 1;
+				$('#collection-load-more-' + nextPage).show();
 		    }
 		});
 	</script>
@@ -261,7 +255,6 @@
 	<div class="row">
 		<div class="col-md-12 col-sm-12">
 			<div class="padding-20">
-		
 				@helper.form(action=routes.Application.browse(), 'class -> "form-horizontal") {
 					<div>
 						<div class="tree">
