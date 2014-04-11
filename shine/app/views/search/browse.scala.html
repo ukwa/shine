@@ -73,6 +73,11 @@
 			color: #FFFFFF;
 		    text-decoration:none;
 		}
+		
+		.load-more {
+			background-color: #428BCA;
+			color: #FFFFFF;
+		}
 	</style>
 }
 
@@ -116,24 +121,12 @@
 				    	    	url:  getUrl(facet_value, page),
 				    	    	dataType: 'json',
 				    	    	success: function(data) {
-				    	    		var items = [];
-				    	    		$.each( data.urls, function(key, val) {
-				    	    		    items.push( "<li style='display: list-item;'>" 
-						    	    			+ "<span><i class='icon-leaf'></i>" + val.url + "</span></li>" );
-				    	    		});
+				    	    		var items = processData(data);
 				    	    		var pages = data.pages;
-				    	    		console.log(pages);
 				    	    		
 				    	    		// first page already loaded
-				    	    		for (var i=2; i <= pages; i++) {
-					    	    		var loadmore = "load-more-" + i;
-					    	    		var display = 'display:none;';
-					    	    		if (i==2) display = 'display: list-item;'
-					    	    		var ajaxloader = "ajax-loader-" + i;
-				    	    		    items.push( "<li id='list-load-more-" + i + "' class='more-button' style='" + display + "'>" 
-						    	    			+ "<span class='load-more' id='" + loadmore + "'><span style='display:none;'>" + i + "</span>Load more...<img id='" + ajaxloader + "' src='/assets/images/ajax-loader.gif' style='display:none' /></span>"
-						    	    			+ "</li>" );
-				    	    		}
+				    	    		items = processMoreButtons(items, pages);
+				    	    		
 				    	    		// append first page of results plus 'more buttons'
 									list_root.append(items.join('')).addClass('activated');			  
 									applyClicks(facet_value, list_root);
@@ -148,13 +141,37 @@
 				});
 		    });
 		    
+		    function processData(data) {
+	    		var items = [];
+	    		$.each( data.urls, function( key, val ) {
+	    		    items.push( "<li style='display: list-item;'>" 
+	    	    			+ "<span><i class='icon-leaf'></i>" + val.url + "</span></li>" );
+	    		});
+	    		return items;
+		    }
+		    
+		    function processMoreButtons(items, pages) {
+	    		for (var i=2; i<=pages; i++) {
+    	    		var loadmore = "load-more-" + i;
+    	    		var display = 'display:none;';
+    	    		if (i==2) display = 'display: list-item;'
+    	    		var ajaxloader = "ajax-loader-" + i;
+	    		    items.push( "<li id='list-load-more-" + i + "' class='more-button' style='" + display + "'>" 
+	    	    			+ "<span class='load-more' id='" + loadmore + "'><span style='display:none;'>" + i + "</span>Load more...<img id='" + ajaxloader + "' src='/assets/images/ajax-loader.gif' style='display:none' /></span>"
+	    	    			+ "</li>" );
+	    		}
+	    		return items;
+		    }
+		    
 		    function applyClicks(facet_value, attach_to_element) {
 		    	$('.load-more').click(function(event) {
-			    	$(this).find('img').show();
 			    	var page = $(this).find('span:nth-child(1)').text();
-			    	console.log("loading page " + page);
-			    	loadNext(page);
-			    	// go get more data with starting points to get more
+			    	
+					$('#list-load-more-' + page).hide();
+					var nextPage = parseInt(page) + 1;
+					$('#list-load-more-' + nextPage).show();
+
+					// go get more data with starting points to get more
 			    	// get page number from the element
 			    	    //http://localhost:9000/search?query=*%3A*&page=2&sort=content_type_norm&facet.in.collection=%22Acute%20Trusts%22
 
@@ -162,28 +179,16 @@
 		    	    	url:  getUrl(facet_value, page),
 		    	    	dataType: 'json',
 		    	    	success: function(data) {
-		    	    		var items = [];
-		    	    		$.each( data.urls, function( key, val ) {
-		    	    		    items.push( "<li style='display: list-item;'>" 
-				    	    			+ "<span><i class='icon-leaf'></i>" + val.url + "</span></li>" );
-		    	    		});
+		    	    		var items = processData(data);
 		    	    		var str = items.join('');
-		    	    		$(str).insertBefore(".more-button").addClass('activated');
-							attach_to_element.append($('.more-button'));			  
-
-//		    				$( "<p>Test</p>" ).insertBefore( ".inner" );
+		    	    		$(".more-button").first().addClass("first");
+		    	    		$(str).insertBefore('li.first');
 		    	    	},
 		    	    	error: function(jqXHR, textStatus, errorThrown) {
 		    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
 		    	    	}
 		    	    });
 		    	});
-		    }
-		    
-		    function loadNext(page) {
-				$('#list-load-more-' + page).hide();
-				var nextPage = parseInt(page) + 1;
-				$('#list-load-more-' + nextPage).show();
 		    }
 		    
 		    function getUrl(facet_value, page) {
@@ -296,62 +301,6 @@
 							</ul>
 						</div>
 						}
-					</div>
-
-					<div class="padding-20 hide" id="max-view-reached">
-						<div class="alert alert-danger alert-dismissable">
-							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-							Maximum number of results reached
-						</div>
-					</div>
-								
-					<div class="panel panel-default">
-						<div class="panel-heading filter-heading">
-		                    <h4 class="panel-title pull-left filter-heading-title">
-		                        Results @currentPage.getDisplayXtoYofZ(" to "," of ")
-		                    </h4>
-		                    <div class="form-inline pull-right">
-								<div class="form-group">
-									<select class="form-control" name="sort" id="sort">
-										<option value="content_type_norm">Title</option>
-										<option value="crawl_date">Crawl Date</option>
-										<option value="content_type_norm">Content</option>
-										<option value="domain">Domain</option>
-										<option value="sentiment_score">Score</option>
-									</select>
-								</div>
-								<div class="form-group">
-									<select class="form-control" name="order" id="order">
-										<option value="asc">Asc</option>
-										<option value="desc">Desc</option>
-									</select>
-								</div>
-							</div>
-						</div>
-		
-						<div class="panel-body">
-							@pagination
-		
-							@for((d, index) <- q.res.getResults().zipWithIndex) {
-								<div class="list-group">
-									<span class="list-group-item" href="#">
-										<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) 
-											<a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">
-												"@d.getFirstValue("title")"
-											</a>
-										</h4>
-										<p class="list-group-item-text">
-												@d.getFirstValue("crawl_date")<br />
-												@d.getFirstValue("content_type_norm")<br />
-												@d.getFirstValue("domain")<br />
-												@d.getFirstValue("sentiment_score")
-										</p>
-									</span>
-								</div>
-							}
-		
-							@pagination
-						</div>
 					</div>
 				}
 			</div>

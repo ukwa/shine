@@ -289,7 +289,7 @@ object Application extends Controller {
     var collectionJson = 
       Json.obj(
           "urls" -> resultList,
-          "pages" -> JsNumber(pagination.getPagesList().size()))
+          "pages" -> JsNumber(pagination.getTotalPages))
           
     println("collectionJson: " + collectionJson)
 
