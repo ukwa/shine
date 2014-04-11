@@ -66,7 +66,7 @@ object Application extends Controller {
         solr.removeFacet(facetValue)
       }
     }
-    val q = doSearch(query, parameters, pageNo, sort, order)
+    val q = doSearch(query, parameters)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -81,7 +81,7 @@ object Application extends Controller {
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     println("advanced_search")
 
-    val q = doAdvanced(query, request.queryString, pageNo, sort, order)
+    val q = doAdvanced(query, request.queryString)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -94,7 +94,7 @@ object Application extends Controller {
 
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     println("browse")
-    val q = doBrowse(query, request.queryString, pageNo, sort, order)
+    val q = doBrowse(query, request.queryString)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -117,7 +117,7 @@ object Application extends Controller {
     if (StringUtils.isBlank(yearEnd)) {
       yearEnd = config.getString("default_end_year")
     }
-    val q = doSearch(query, request.queryString, 0, "", "")
+    val q = doSearch(query, request.queryString)
     val totalRecords = q.res.getResults().getNumFound().intValue()
     println("totalRecords: " + totalRecords);
 
@@ -140,28 +140,28 @@ object Application extends Controller {
     Ok(views.html.graphs.plot("Plot Graph Test", query, "Years", "label Y", data, yearStart, yearEnd))
   }
 
-  def doInit(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
-    val map = queryString
+  def doInit(query: String, parameters: Map[String, Seq[String]]) = {
+    val map = parameters
     val parametersAsJava = map.map { case (k, v) => (k, v.asJava) }.asJava;
     println("doInit: " + parametersAsJava);
     new Query(query, parametersAsJava)
   }
 
-  def doSearch(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
-    val q = doInit(query, queryString, pageNo, sort, order)
-    q.processQueryResponse(solr.search(q, pageNo, sort, order))
+  def doSearch(query: String, parameters: Map[String, Seq[String]]) = {
+    val q = doInit(query, parameters)
+    q.processQueryResponse(solr.search(q))
     q
   }
 
-  def doAdvanced(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
-    val q = doInit(query, queryString, pageNo, sort, order)
-    q.processQueryResponse(solr.advancedSearch(q, pageNo, sort, order))
+  def doAdvanced(query: String, parameters: Map[String, Seq[String]]) = {
+    val q = doInit(query, parameters)
+    q.processQueryResponse(solr.advancedSearch(q))
     q
   }
 
-  def doBrowse(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
-    val q = doInit(query, queryString, pageNo, sort, order)
-    q.processQueryResponse(solr.browse(q, pageNo, sort, order))
+  def doBrowse(query: String, parameters: Map[String, Seq[String]]) = {
+    val q = doInit(query, parameters)
+    q.processQueryResponse(solr.browse(q))
     q
   }
 
@@ -237,23 +237,32 @@ object Application extends Controller {
     Ok(result.toString)
   }
 
-  def getCollection = Action { implicit request =>
+  def getFacets = Action { implicit request =>
     println("queryString: " + request.queryString)
-    val parameter = request.getQueryString("page")
-    var pageNo = 1
-    println("pageNo: " + pageNo)
-    if (parameter != None) {
-      pageNo = parameter.get.toInt
+    val pageParameter = request.getQueryString("page")
+    val sortParameter = request.getQueryString("sort")
+    val orderParameter = request.getQueryString("order")
+    var page = 1
+    var sort = "crawl_date"
+    var order = "asc"
+    //{page=[1], query=[*:*], order=[asc], facet.in.collection=["Acute Trusts"], selected.facet=[author], sort=[content_type_norm]}
+    if (pageParameter != None) {
+      page = pageParameter.get.toInt
     }
-    var results = doSearch("*:*", request.queryString, pageNo, "crawl_date", "asc").res.getResults()
-    
-    //parseParams: {query=[*:*], sort=[crawl_date], facet.in.crawl_year=["2013"]}    
+    if (sortParameter != None) {
+      sort = sortParameter.get
+    }
+    if (orderParameter != None) {
+      order = orderParameter.get
+    }
+
+    var results = doSearch("*:*", request.queryString).res.getResults()
     
     val totalRecords = results.getNumFound().intValue()
 
     println("totalRecords #: " + totalRecords)
 
-    pagination.update(totalRecords, pageNo)
+    pagination.update(totalRecords, page)
 
     //    http://192.168.1.204:8983/solr/ldwa/select?start=0&sort=crawl_date+asc&q=*%3A*&fq={!tag%3Dcollection}collection%3A%28%22Acute+Trusts%22%29
     //    http://192.168.1.204:8983/solr/ldwa/select?start=0&sort=crawl_date+asc&q=*%3A*&facet.mincount=1&fq=%7B%21tag%3Dcollection%7Dcollection%3A%28%22Acute+Trusts%22%29
@@ -300,7 +309,7 @@ object Application extends Controller {
         routes.javascript.Application.suggestAuthor,
         routes.javascript.Application.suggestCollection,
         routes.javascript.Application.suggestCollections,
-        routes.javascript.Application.getCollection)).as("text/javascript")
+        routes.javascript.Application.getFacets)).as("text/javascript")
   }
 
   def resetParameters(parameters: collection.immutable.Map[String, Seq[String]]) = {

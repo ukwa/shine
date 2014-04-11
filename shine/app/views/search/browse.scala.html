@@ -81,6 +81,7 @@
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
+
 			$('#sort').val('@(currentSortBy)')
 	  		$('#order').val('@(currentOrder)')
 
@@ -106,18 +107,18 @@
 			        	// go retrieve collections
 			            children.show('fast');
 			            $(this).attr('title', 'Collapse').addClass('glyphicon-minus').removeClass('glyphicon-plus');
-			            var collection_name = $(this).parent().find('a').text();
+			            var facet_value = $(this).parent().find('a').text();
 			            var list_root = $(this).parent().parent('li.parent_li').find('ul:nth-child(2)')
 			            list_root.attr("id", "collection-root-" + index);
-						var pageNo = 1;
+						var page = 1;
 			            if (!list_root.hasClass('activated')) {
 				    	    $.ajax({
-				    	    	url:  "/getCollection?page=" + pageNo + "&facet.in.crawl_year=\"" + collection_name + "\"",
+				    	    	url:  getUrl(facet_value, page),
 				    	    	dataType: 'json',
 				    	    	success: function(data) {
 				    	    		var items = [];
-				    	    		$.each( data.urls, function( key, val ) {
-				    	    		    items.push( "<li id='collection-" + key + "' style='display: list-item;'>" 
+				    	    		$.each( data.urls, function(key, val) {
+				    	    		    items.push( "<li style='display: list-item;'>" 
 						    	    			+ "<span><i class='icon-leaf'></i>" + val.url + "</span></li>" );
 				    	    		});
 				    	    		var pages = data.pages;
@@ -129,12 +130,13 @@
 					    	    		var display = 'display:none;';
 					    	    		if (i==2) display = 'display: list-item;'
 					    	    		var ajaxloader = "ajax-loader-" + i;
-				    	    		    items.push( "<li id='collection-load-more-" + i + "' style='" + display + "'>" 
+				    	    		    items.push( "<li id='list-load-more-" + i + "' class='more-button' style='" + display + "'>" 
 						    	    			+ "<span class='load-more' id='" + loadmore + "'><span style='display:none;'>" + i + "</span>Load more...<img id='" + ajaxloader + "' src='/assets/images/ajax-loader.gif' style='display:none' /></span>"
 						    	    			+ "</li>" );
 				    	    		}
+				    	    		// append first page of results plus 'more buttons'
 									list_root.append(items.join('')).addClass('activated');			  
-									applyClicks(collection_name, list_root);
+									applyClicks(facet_value, list_root);
 				    	    	},
 				    	    	error: function(jqXHR, textStatus, errorThrown) {
 				    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
@@ -146,26 +148,30 @@
 				});
 		    });
 		    
-		    function applyClicks(collection_name, attach_to_element) {
+		    function applyClicks(facet_value, attach_to_element) {
 		    	$('.load-more').click(function(event) {
 			    	$(this).find('img').show();
-			    	var pageNo = $(this).find('span:nth-child(1)').text();
-			    	console.log("loading page " + pageNo);
-			    	loadNext(pageNo);
+			    	var page = $(this).find('span:nth-child(1)').text();
+			    	console.log("loading page " + page);
+			    	loadNext(page);
 			    	// go get more data with starting points to get more
 			    	// get page number from the element
 			    	    //http://localhost:9000/search?query=*%3A*&page=2&sort=content_type_norm&facet.in.collection=%22Acute%20Trusts%22
 
  		    	    $.ajax({
-		    	    	url:  "/getCollection?page=" + pageNo + "&facet.in.crawl_year=\"" + collection_name + "\"",
+		    	    	url:  getUrl(facet_value, page),
 		    	    	dataType: 'json',
 		    	    	success: function(data) {
 		    	    		var items = [];
 		    	    		$.each( data.urls, function( key, val ) {
-		    	    		    items.push( "<li id='collection-" + key + "' style='display: list-item;'>" 
+		    	    		    items.push( "<li style='display: list-item;'>" 
 				    	    			+ "<span><i class='icon-leaf'></i>" + val.url + "</span></li>" );
 		    	    		});
-		    	    		attach_to_element.append(items.join('')).addClass('activated');			  
+		    	    		var str = items.join('');
+		    	    		$(str).insertBefore(".more-button").addClass('activated');
+							attach_to_element.append($('.more-button'));			  
+
+//		    				$( "<p>Test</p>" ).insertBefore( ".inner" );
 		    	    	},
 		    	    	error: function(jqXHR, textStatus, errorThrown) {
 		    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
@@ -174,10 +180,15 @@
 		    	});
 		    }
 		    
-		    function loadNext(pageNo) {
-				$('#collection-load-more-' + pageNo).hide();
-				var nextPage = parseInt(pageNo) + 1;
-				$('#collection-load-more-' + nextPage).show();
+		    function loadNext(page) {
+				$('#list-load-more-' + page).hide();
+				var nextPage = parseInt(page) + 1;
+				$('#list-load-more-' + nextPage).show();
+		    }
+		    
+		    function getUrl(facet_value, page) {
+				var facet_name = "collection";
+				return "/getFacets?page=" + page + "&facet.in." + facet_name + "=\"" + facet_value + "\"";
 		    }
 		});
 	</script>

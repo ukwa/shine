@@ -67,6 +67,11 @@ public class Query {
 	public String linkedTo;
 	// Resources that link to (should match the values in the 'url', 'host', 'domain' or 'public_suffix' fields).
 
+	public Integer page;
+	
+	public String sort;
+	
+	public String order;
 	
 	public Query(String query, Map<String,List<String>> params) {
 		facets = new HashMap<String, FacetValue>();
@@ -105,6 +110,17 @@ public class Query {
 			proximity.setPhrase2(params.get("proximity").get(1));
 			proximity.setProximity(params.get("proximity").get(2));
 			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
+		}
+		if (params.get("page") != null) {
+			page = Integer.parseInt(params.get("page").get(0));
+		} else {
+			page = 1;
+		}
+		if (params.get("sort") != null) {
+			sort = params.get("sort").get(0);
+		}
+		if (params.get("order") != null) {
+			order = params.get("order").get(0);
 		}
 	}
 	

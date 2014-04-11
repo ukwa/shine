@@ -46,21 +46,17 @@ public class Shine extends Solr {
 		this.perPage = config.getInt("per_page");
 	}
 
-	public QueryResponse search(Query query) throws SolrServerException {
-		return this.search(query, null);
-	}
-
-	private SolrQuery buildInitialParameters(int pageNo, String sort, String order) {
+	private SolrQuery buildInitialParameters(Query query) {
 		ORDER orderSolr = ORDER.asc;
 
-		if (StringUtils.equalsIgnoreCase(order, "desc")) {
+		if (StringUtils.equalsIgnoreCase(query.order, "desc")) {
 			orderSolr = ORDER.desc;
 		}
-		if (StringUtils.isEmpty(sort)) {
-			sort = "crawl_date";
+		if (StringUtils.isEmpty(query.sort)) {
+			query.sort = "crawl_date";
 		}
 
-		Integer start = ((pageNo - 1) * perPage);
+		Integer start = ((query.page - 1) * perPage);
 		if (start < 0) {
 			start = 0;
 		}
@@ -68,24 +64,24 @@ public class Shine extends Solr {
 		SolrQuery parameters = new SolrQuery();
 		parameters.set("start", start);
 		// Sorts:
-		parameters.setSort(sort, orderSolr);
+		parameters.setSort(query.sort, orderSolr);
 		// parameters.setSort("sentiment_score", ORDER.asc);
 		Logger.info("params: " + parameters);
 		
 		return parameters;
 	}
 	
-	public QueryResponse search(Query query, int pageNo, String sort, String order) throws SolrServerException {
-		QueryResponse res = this.search(query, buildInitialParameters(pageNo, sort, order));
+	public QueryResponse search(Query query) throws SolrServerException {
+		QueryResponse res = this.search(query, buildInitialParameters(query));
 		return res;
 	}
 	
-	public QueryResponse advancedSearch(Query query, int pageNo, String sort, String order) throws SolrServerException {
-		return this.advancedSearch(query, buildInitialParameters(pageNo, sort, order));
+	public QueryResponse advancedSearch(Query query) throws SolrServerException {
+		return this.advancedSearch(query, buildInitialParameters(query));
 	}
 	
-	public QueryResponse browse(Query query, int pageNo, String sort, String order) throws SolrServerException {
-		return this.browse(query, buildInitialParameters(pageNo, sort, order));
+	public QueryResponse browse(Query query) throws SolrServerException {
+		return this.browse(query, buildInitialParameters(query));
 	}
 	
 	// usually for faceted search
@@ -110,7 +106,7 @@ public class Shine extends Solr {
 	private QueryResponse browse(Query query, SolrQuery parameters) throws SolrServerException {
 		// facets available on the advanced search fields
 		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
-		FacetValue collectionsFacetValue = new FacetValue("crawl_year", "Crawl Year");
+		FacetValue collectionsFacetValue = new FacetValue("collection", "Collection");
 		facetValues.put(collectionsFacetValue.getName(), collectionsFacetValue);
 		// build up the facets and add to map to pass on 
 		Logger.info("browse facetValues: " + facetValues);
