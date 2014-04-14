@@ -256,8 +256,13 @@ object Application extends Controller {
       order = orderParameter.get
     }
 
-    var results = doSearch("*:*", request.queryString).res.getResults()
+    val queryResponse = doBrowse("*:*", request.queryString).res
+    var results = queryResponse.getResults()
     
+    val subCollections = queryResponse.getFacetField("collections")
+    println("facetQuery: " + subCollections)
+    
+
     val totalRecords = results.getNumFound().intValue()
 
     println("totalRecords #: " + totalRecords)
@@ -268,22 +273,30 @@ object Application extends Controller {
     //    http://192.168.1.204:8983/solr/ldwa/select?start=0&sort=crawl_date+asc&q=*%3A*&facet.mincount=1&fq=%7B%21tag%3Dcollection%7Dcollection%3A%28%22Acute+Trusts%22%29
     //http://localhost:9000/search?query=*%3A*&page=2&sort=content_type_norm&facet.in.collection=%22Acute%20Trusts%22
 
+    
+    //  for sub collections
+    ///select?start=0&q=*%3A*&fq={!tag%3Dcollections}collections%3A("Acute Trusts")&facet=true&facet.field=collections&facet.mincount=1&rows=0
     var resultList = List[JsObject]()
 
-    println("size >>> " + results.size())
-
-    var jsonArray = Json.arr()
-
+    val it = subCollections.getValues().iterator()
+    while (it.hasNext) {
+   		val subCollection = it.next
+    	println("subCollection: " + subCollection.getName() + " " + subCollection.getCount())
+   		val jsonObject = Json.obj("url" -> JsString(subCollection.getName()))
+        resultList = jsonObject :: resultList
+    }
+    
     for (i <- 1 until results.size()) {
       val result = results.get(i)
       val url = result.getFirstValue("url")
+      println("title: " + result.getFirstValue("title"))
       if (url ne null) {
         //	    	resultList = result.getFirstValue("url").toString() :: resultList
         val jsonObject = Json.obj("url" -> JsString(result.getFirstValue("url").toString()))
         resultList = jsonObject :: resultList
       }
     }
-    //	jsonArray = Json.arr(resultList)
+    
     val jsonPages = Json.obj()
     println("jsonPages: " + jsonPages)
     var collectionJson = 
