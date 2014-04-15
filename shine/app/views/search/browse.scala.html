@@ -103,6 +103,7 @@
 	            $(this).attr('title', 'Expand').addClass('glyphicon-plus').removeClass('glyphicon-minus');
 		        var children = $(this).parent().parent('li.parent_li').find(' > ul > li');
 				children.find('ul li').hide('fast');
+				
 				$(this).click(function(event) {
 			        if (children.is(":visible")) {
 			            children.hide('fast');
@@ -130,6 +131,7 @@
 				    	    		// append first page of results plus 'more buttons'
 									list_root.append(items.join('')).addClass('activated');			  
 									applyClicks(facet_value, list_root);
+									applyToggle();
 				    	    	},
 				    	    	error: function(jqXHR, textStatus, errorThrown) {
 				    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
@@ -140,6 +142,23 @@
 			        event.stopPropagation();
 				});
 		    });
+		    
+		    function applyToggle() {
+			    $('.tree li.parent_li > span i').each(function(index) {
+			        var children = $(this).parent().parent('li.parent_li').find(' > ul > li');
+					$(this).click(function(event) {
+				        if (children.is(":visible")) {
+				            children.hide();
+				            $(this).attr('title', 'Expand').addClass('glyphicon-plus').removeClass('glyphicon-minus');
+				        } else {
+				        	// go retrieve collections
+				            children.show();
+				            $(this).attr('title', 'Collapse').addClass('glyphicon-minus').removeClass('glyphicon-plus');
+				        }
+				        event.stopPropagation();
+					});
+			    });
+			}
 		    
 		    function getUrl(facet_name, facet_value, page) {
 				return "/getFacets?page=" + page + "&facet.in." + facet_name + "=\"" + facet_value + "\"";
@@ -157,7 +176,6 @@
 		    function processData(data) {
 	    		var items = [];
 	    		$.each( data.collection, function( key, val ) {
-	    			console.log(val);
 	    			var name = "";
 	    			var count = "";
 	    			var styleClass = "";
@@ -306,26 +324,16 @@
 						            <ul>
 										@for((f, i) <- fc.getValues().zipWithIndex) {
 							                <li>
-							                <!-- 
-							                http://localhost:9000/search?facet.in.collection=%22NHS%22&query=*%3A*
-							                
-							                <input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-							                 
-							               	-->
 												<span class="label-success"><i class="glyphicon glyphicon-minus"></i> <a href="@(routes.Application.search(q.query))&facet.in.collections=&#34;@(Html(q.formatFacet(fc,f)))&#34;">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span></span>
 							                    <ul class="root">
-<!-- 							                        <li id="@(index)">
-								                        <span><i class="icon-leaf"></i>collection children here</span>
-								                        <input type="hidden" name="collectionType" value="@(Html(q.formatFacet(fc,f)))" />
-							                        </li> -->
 							                	</ul>
 											</li>
 										}
 						            </ul>
 								</li>
+								}
 							</ul>
 						</div>
-						}
 					</div>
 				}
 			</div>
