@@ -75,7 +75,6 @@
 		}
 		
 		.load-more {
-			background-color: #428BCA;
 			color: #FFFFFF;
 		}
 	</style>
@@ -157,9 +156,24 @@
 
 		    function processData(data) {
 	    		var items = [];
-	    		$.each( data.urls, function( key, val ) {
-	    		    items.push( "<li style='display: list-item;'>" 
-	    	    			+ "<span><i class='icon-leaf'></i>" + val.url + "</span></li>" );
+	    		$.each( data.collection, function( key, val ) {
+	    			console.log(val);
+	    			var name = "";
+	    			var count = "";
+	    			var styleClass = "";
+	    			if (val.url) {
+	    				name = val.url;
+		    		    items.push( "<li style='display: list-item;'>" 
+		    	    			+ "<span class='"+ styleClass + "'><i class='icon-leaf'></i>" + name + count + "</span></li>" );
+	    			} else if (val.subcollection) {
+	    	    		$.each( val.subcollection, function( k, v ) {
+	    	    			name = v.name;
+	    	    			count = " <span class='badge'>" + v.count + "</span>";
+		    				styleClass = "label-warning"
+	    	    		    items.push( "<li style='display: list-item;'>" 
+	    	    	    			+ "<span class='"+ styleClass + "'><i class='icon-leaf'></i>" + name + count + "</span></li>" );
+	    	    		});
+	    			}
 	    		});
 	    		return items;
 		    }
@@ -171,7 +185,7 @@
     	    		if (i==2) display = 'display: list-item;'
     	    		var ajaxloader = "ajax-loader-" + i;
 	    		    items.push( "<li id='list-load-more-" + i + "' class='more-button' style='" + display + "'>" 
-	    	    			+ "<span class='load-more' id='" + loadmore + "'><span style='display:none;'>" + i + "</span>Load more...<img id='" + ajaxloader + "' src='/assets/images/ajax-loader.gif' style='display:none' /></span>"
+	    	    			+ "<span class='load-more label-primary' id='" + loadmore + "'><span style='display:none;'>" + i + "</span>Load more...<img id='" + ajaxloader + "' src='/assets/images/ajax-loader.gif' style='display:none' /></span>"
 	    	    			+ "</li>" );
 	    		}
 	    		return items;

@@ -276,15 +276,22 @@ object Application extends Controller {
     
     //  for sub collections
     ///select?start=0&q=*%3A*&fq={!tag%3Dcollections}collections%3A("Acute Trusts")&facet=true&facet.field=collections&facet.mincount=1&rows=0
-    var resultList = List[JsObject]()
+//    var resultList = List[JsObject]()
+    var resultList = Json.arr()
 
-    val it = subCollections.getValues().iterator()
-    while (it.hasNext) {
-   		val subCollection = it.next
-    	println("subCollection: " + subCollection.getName() + " " + subCollection.getCount())
-   		val jsonObject = Json.obj("url" -> JsString(subCollection.getName()))
-        resultList = jsonObject :: resultList
+    if (page == 1) {
+	    val it = subCollections.getValues().iterator()
+	    var jsArray = Json.arr()
+	    while (it.hasNext) {
+	   		val subCollection = it.next
+	   		val jsonSub = Json.obj("name" -> JsString(subCollection.getName()), "count" -> JsNumber(subCollection.getCount()))
+	   		jsArray = jsArray :+ jsonSub
+	    }
+   		val jsonObject = Json.obj("subcollection" -> jsArray)
+   		resultList = resultList :+ jsonObject 
+	    println("jsArray: " + jsArray)
     }
+    
     
     for (i <- 1 until results.size()) {
       val result = results.get(i)
@@ -293,7 +300,7 @@ object Application extends Controller {
       if (url ne null) {
         //	    	resultList = result.getFirstValue("url").toString() :: resultList
         val jsonObject = Json.obj("url" -> JsString(result.getFirstValue("url").toString()))
-        resultList = jsonObject :: resultList
+        resultList = resultList :+ jsonObject
       }
     }
     
@@ -301,7 +308,7 @@ object Application extends Controller {
     println("jsonPages: " + jsonPages)
     var collectionJson = 
       Json.obj(
-          "urls" -> resultList,
+          "collection" -> resultList,
           "pages" -> JsNumber(pagination.getTotalPages))
           
     println("collectionJson: " + collectionJson)
