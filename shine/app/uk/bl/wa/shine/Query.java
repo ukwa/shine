@@ -91,6 +91,7 @@ public class Query {
 		
 		Logger.info("filters: " + filters);
 		
+		// non facets
 		if (params.get("datestart") != null) {
 			dateStart = params.get("datestart").get(0);
 		}

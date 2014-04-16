@@ -267,7 +267,9 @@
 					var name = $(element).attr('name');
 					var inputName = "input[name='" + name + "']"; 
 					console.log(index + " " + inputName);
-					$(inputName).val(getURLParameter(name));
+					if (getURLParameter(name) !== undefined) {
+						$(inputName).val(unescape(getURLParameter(name)));
+					}
 				}
 			});
 		});
