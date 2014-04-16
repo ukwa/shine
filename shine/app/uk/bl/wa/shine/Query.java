@@ -49,8 +49,6 @@ public class Query {
 	
 	public String fileFormat;
 	
-	public String collection;
-	
 	public String dateStart; // (this should select a date range for the crawl_date or crawl_dates field).
 	
 	public String dateEnd;
@@ -58,14 +56,6 @@ public class Query {
 	public String excluded;
 	
 	public Proximity proximity;
-
-    // The text-field should match the values in the 'host', 'domain' or 'public_suffix' fields.
-	public String hostedOn;
-    // Resources hosted on (should match the values in the 'host', 'domain' or 'public_suffix' fields).
-	// <str name="host">telegraph.co.uk</str><str name="domain">telegraph.co.uk</str><str name="public_suffix">co.uk</str>
-	// The text-field should match the values in the 'url', 'host', 'domain' or 'public_suffix' fields.
-	public String linkedTo;
-	// Resources that link to (should match the values in the 'url', 'host', 'domain' or 'public_suffix' fields).
 
 	public Integer page;
 	
@@ -84,12 +74,18 @@ public class Query {
 		Logger.info("parseParams: " + params);
 		filters = new HashMap<String, List<String>>();
 		for( String param : params.keySet() ) {
-			if( param.startsWith("facet.in.")) {
-			    filters.put(param.replace("facet.in.", ""), params.get(param));
-			} else if( param.startsWith("facet.out.")) {
-			    filters.put("-"+param.replace("facet.out.", ""), params.get(param));
-			} else if( param.equals("facet.sort") ) {
-			    filters.put(param, params.get(param));
+			List<String> values = params.get(param);
+			if (!values.isEmpty()) {
+				if( param.startsWith("facet.in.") && values.get(0).length() > 0) {
+					filters.put(param.replace("facet.in.", ""), values);
+					Logger.info(" facet in values: " + values);
+				} else if( param.startsWith("facet.out.") && values.get(0).length() > 0) {
+				    filters.put("-"+param.replace("facet.out.", ""), values);
+					Logger.info(" facet out values: " + values);
+				} else if( param.equals("facet.sort")  && values.get(0).length() > 0) {
+				    filters.put(param, values);
+					Logger.info(" facet other values: " + values);
+				}
 			}
 		}
 		
@@ -237,7 +233,7 @@ public class Query {
 			String sortValue = getFacetSortValue(facetSort);
 			parameters.append("&").append(facetSort).append("=").append(sortValue);
 		}
-		Logger.info(parameters.toString());
+		Logger.info("processFacetsAsParamValues: " + parameters.toString());
 		this.facetParameters = parameters.toString();
 	}
 

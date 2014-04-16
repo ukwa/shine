@@ -96,10 +96,9 @@ public class Shine extends Solr {
 	private QueryResponse advancedSearch(Query query, SolrQuery parameters) throws SolrServerException {
 		// facets available on the advanced search fields
 		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
-//		FacetValue collectionsFacetValue = new FacetValue("collections", "Collections");
-//		facetValues.put(collectionsFacetValue.getName(), collectionsFacetValue);
-		// build up the facets and add to map to pass on 
-//		parameters.setRows(perPage);
+		// build up facetValues with parameters
+		Logger.info("advancedSearch parameters: " + query.filters + " - " + parameters);
+		parameters.setRows(perPage);
 		return search(query, parameters, facetValues);
 	}
 
@@ -132,9 +131,10 @@ public class Shine extends Solr {
 		if (facetValues != null) {
 			for (String key : facetValues.keySet()) {
 				FacetValue facetValue = facetValues.get(key);
-				if (facetValue != null)
+				if (facetValue != null && StringUtils.isNotEmpty(facetValue.getValue())) {
 					parameters.addFacetField("{!ex=" + facetValue.getName() + "}"
 							+ facetValue.getName());
+				}
 			}
 		}
 		
@@ -193,7 +193,6 @@ public class Shine extends Solr {
 	private void processDateRange(SolrQuery parameters, String dateStart,
 			String dateEnd) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		Logger.info("dateEnd: " + dateEnd);
 		Date dateObjStart = null;
 		Date dateObjEnd = null;
 		if (StringUtils.isNotEmpty(dateStart)) {

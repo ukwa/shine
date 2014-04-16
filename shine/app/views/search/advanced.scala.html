@@ -250,6 +250,26 @@
 			}
 			
 			$('.search-field').css('z-index', '0');
+			
+			function getURLParameter(param) {
+				var pageUrl = window.location.search.substring(1);
+				var urlVariables = pageUrl.split('&');
+				for (var i=0; i<urlVariables.length; i++) {
+					var parameterName = urlVariables[i].split('=');
+					if (parameterName[0] == param) {
+						return parameterName[1];
+					}
+				}				
+			}
+			
+			$("form :input.search-field").each(function(index, element) {
+				if ($(element).attr('name') !== undefined) {
+					var name = $(element).attr('name');
+					var inputName = "input[name='" + name + "']"; 
+					console.log(index + " " + inputName);
+					$(inputName).val(getURLParameter(name));
+				}
+			});
 		});
 	</script>
 }
@@ -408,7 +428,7 @@
 									Collection:
 								</label>
 								<div class="col-sm-6" id="collection">
-									<input type="text" class="typeahead form-control search-field" name="collection" value="@(q.collection)" placeholder="Collection" />
+									<input type="text" class="typeahead form-control search-field" name="facet.in.collection" value="" placeholder="Collection" />
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Collection</p>
@@ -461,7 +481,7 @@
 									Host, Domain or Public Suffix
 								</label>
 								<div class="col-sm-6" id="host-domain-public-suffix">
-									<input type="text" class="typeahead form-control search-field" name="hostDomainPublicSuffix" placeholder="Host, Domain or Public Suffix" value="@(q.hostedOn)">
+									<input type="text" class="typeahead form-control search-field" name="facet.in.links_public_suffixes" placeholder="Host, Domain or Public Suffix" value="">
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Match the values in the 'host', 'domain' or 'public_suffix' fields</p>
@@ -472,7 +492,7 @@
 									URL, Host, Domain or Public Suffix
 								</label>
 								<div class="col-sm-6" id="links-to">
-									<input type="text" class="typeahead form-control search-field" name="linksTo" placeholder="URL, Host, Domain or Public Suffix" value="@(q.linkedTo)">
+									<input type="text" class="typeahead form-control search-field" name="facet.in.links_hosts" placeholder="URL, Host, Domain or Public Suffix" value="">
 								</div>
 								<div class="col-sm-4">
 									<p class="text-success">Match the values in the 'url', 'host', 'domain' or 'public_suffix' fields.</p>
