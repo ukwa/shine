@@ -89,7 +89,16 @@ public class Shine extends Solr {
 		// selected facets
 		parameters.setRows(perPage);
 		//parameters.setParam("wt", "json");
-		return search(query, parameters, facetService.getSelected());
+		// get the defaults
+		query.facetValues = facetService.getSelected();
+		// facets that come from url parameters
+		for (String facet : query.facets) {
+			FacetValue facetValue = facetService.getOptionals().get(facet);
+			query.facetValues.put(facetValue.getName(), facetValue);
+		}
+		// add to them
+		Logger.info("query.facets: " + query.facetValues);
+		return doSearch(query, parameters);
 	}
 
 
@@ -99,7 +108,8 @@ public class Shine extends Solr {
 		// build up facetValues with parameters
 		Logger.info("advancedSearch parameters: " + query.filters + " - " + parameters);
 		parameters.setRows(perPage);
-		return search(query, parameters, facetValues);
+		query.facetValues = facetValues;
+		return doSearch(query, parameters);
 	}
 
 	private QueryResponse browse(Query query, SolrQuery parameters) throws SolrServerException {
@@ -112,12 +122,12 @@ public class Shine extends Solr {
 		// build up the facets and add to map to pass on 
 		Logger.info("browse facetValues: " + facetValues);
 		parameters.setRows(perPage);
-		return search(query, parameters, facetValues);
+		query.facetValues = facetValues;
+		return doSearch(query, parameters);
 	}
 
 	// for advanced search using own facets
-	private QueryResponse search(Query query, SolrQuery parameters, Map<String, FacetValue> facetValues)
-			throws SolrServerException {
+	private QueryResponse doSearch(Query query, SolrQuery parameters) throws SolrServerException {
 
 		// add everything to parameters for solr
 		if (parameters == null)
@@ -126,6 +136,8 @@ public class Shine extends Solr {
 		// ?start=0&sort=content_type_norm+asc&q=wikipedia+crawl_date:[2009-06-01T00%3A00%3A00Z+TO+2011-06-01T00%3A00%3A00Z]&facet.field={!ex%3Dcrawl_year}crawl_year&facet.field={!ex%3Dpublic_suffix}public_suffix&facet=true&facet.mincount=1&rows=10
 		parameters.add("q", query.query);
 
+		Map<String, FacetValue> facetValues = query.facetValues;
+		
 		// should get updated list of added/removed facet values
 		Logger.info("facetValues: " + facetValues);
 		if (facetValues != null) {
@@ -138,6 +150,12 @@ public class Shine extends Solr {
 			}
 		}
 		
+//		for(String facet : query.facets) {
+//			parameters.addFacetField("{!ex=" + facet + "}" + facet);
+//		}
+		
+		Logger.info("parameters: " + parameters);
+
 		Map<String, List<String>> params = query.filters;
 
 		parameters.setFacetMinCount(1);

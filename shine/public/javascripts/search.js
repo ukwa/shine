@@ -71,6 +71,7 @@ $(function () {
 			event.preventDefault();
 			// change +/-
 			facetClickToggle($link_span_include, $input_include);
+			alert($('form'));
  			$('form').submit();
 		});
 		

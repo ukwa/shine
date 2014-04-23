@@ -6,6 +6,7 @@ package uk.bl.wa.shine;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +36,12 @@ public class Query {
 	
 	public QueryResponse res;
 	
-	public String facetParameters;
+	public String responseParameters;
 
-	public Map<String, FacetValue> facets;
-
+	public Map<String, FacetValue> facetValues;
+	
+	public List<String> facets;
+	
 	public String websiteTitle;
 	
 	public String pageTitle;
@@ -64,7 +67,8 @@ public class Query {
 	public String order;
 	
 	public Query(String query, Map<String,List<String>> params) {
-		facets = new HashMap<String, FacetValue>();
+		facetValues = new HashMap<String, FacetValue>();
+		facets = new ArrayList<String>();
 		this.query = query;
 		this.proximity = new Proximity();
 		this.parseParams(params);
@@ -85,18 +89,23 @@ public class Query {
 				} else if( param.equals("facet.sort")  && values.get(0).length() > 0) {
 				    filters.put(param, values);
 					Logger.info(" facet other values: " + values);
+				} else if (param.equals("facet.fields")) {
+					for (String value : values) {
+						facets.add(value);
+					}
 				}
 			}
 		}
 		
+		Logger.info("facets: " + facets);
 		Logger.info("filters: " + filters);
 		
 		// non facets
 		if (params.get("datestart") != null) {
-			dateStart = params.get("datestart").get(0);
+			dateStart = params.get("datestart").get(0).replace("\"", "");
 		}
 		if (params.get("dateend") != null) {
-			dateEnd = params.get("dateend").get(0);
+			dateEnd = params.get("dateend").get(0).replace("\"", "");
 		}
 		if (params.get("excluded") != null) {
 			excluded = params.get("excluded").get(0);
@@ -235,7 +244,7 @@ public class Query {
 			parameters.append("&").append(facetSort).append("=").append(sortValue);
 		}
 		Logger.info("processFacetsAsParamValues: " + parameters.toString());
-		this.facetParameters = parameters.toString();
+		this.responseParameters = parameters.toString();
 	}
 
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {

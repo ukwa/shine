@@ -123,7 +123,7 @@
 				    	    	//url: getAppendedUrl("collections", facet_value, page),
 				    	    	dataType: 'json',
 				    	    	success: function(data) {
-				    	    		var items = processData(data);
+				    	    		var items = processData(data, facet_value);
 				    	    		var pages = data.pages;
 				    	    		
 				    	    		// first page already loaded
@@ -173,7 +173,7 @@
 				return url + "&facet.in." + parent_facet_name + "=\"" + facet_value + "\"&facet.mincount=1";
 		    }
 
-		    function processData(data) {
+		    function processData(data, facet_value) {
 	    		var items = [];
 	    		$.each( data.collection, function( key, val ) {
 	    			var name = "";
@@ -181,8 +181,12 @@
 	    			var styleClass = "";
 	    			if (val.url) {
 	    				name = val.url;
-		    		    items.push( "<li style='display: list-item;'>" 
-		    	    			+ "<span class='"+ styleClass + "'><i class='icon-leaf'></i>" + name + count + "</span></li>" );
+	    				styleClass = "label-warning"
+	    				console.log(facet_value);
+		    		    items.push("<li style='display: list-item;'>" 
+		    	    				+ "<span class='"+ styleClass + "'><i class='icon-leaf'></i><a href='/search?query=*%3A*&facet.in.collection=\""
+		    	    				+ facet_value + "\"'>" + name + count + "</a></span>"
+		    	    				+ "</li>" );
 	    			} else if (val.subcollection) {
 	    	    		$.each( val.subcollection, function( k, v ) {
 	    	    			name = v.name;
@@ -227,7 +231,7 @@
 		    	    	url:  getUrl(facet_name, facet_value, page),
 		    	    	dataType: 'json',
 		    	    	success: function(data) {
-		    	    		var items = processData(data);
+		    	    		var items = processData(data, facet_value);
 		    	    		var str = items.join('');
 		    	    		$(".more-button").first().addClass("first");
 		    	    		$(str).insertBefore('li.first');
