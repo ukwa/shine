@@ -8,13 +8,14 @@ import uk.bl.wa.shine.Query
 import uk.bl.wa.shine.Pagination
 import uk.bl.wa.shine.GraphData
 import uk.bl.wa.shine.model.FacetValue
-
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import org.apache.commons.lang3.StringUtils
 import scala.collection.mutable.ListBuffer
 import scala.collection.immutable.Map
+import scala.collection.mutable.MutableList
 import play.api.libs.json._
+import scala.util.parsing.json.JSONObject
 
 object Application extends Controller {
 
@@ -58,7 +59,7 @@ object Application extends Controller {
         solr.removeFacet(facetValue)
       }
     }
-    val q = doSearch(query, parameters, pageNo, sort, order)
+    val q = doSearch(query, parameters)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -73,7 +74,7 @@ object Application extends Controller {
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     println("advanced_search")
 
-    val q = doAdvanced(query, request.queryString, pageNo, sort, order)
+    val q = doAdvanced(query, request.queryString)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -83,10 +84,10 @@ object Application extends Controller {
     pagination.update(totalRecords, pageNo)
     Ok(views.html.search.advanced("Advanced Search", q, pagination, sort, order))
   }
-  
+
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     println("browse")
-    val q = doBrowse(query, request.queryString, pageNo, sort, order)
+    val q = doBrowse(query, request.queryString)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -94,7 +95,7 @@ object Application extends Controller {
     println("totalRecords #: " + totalRecords)
 
     pagination.update(totalRecords, pageNo)
-    
+
     Ok(views.html.search.browse("Browse", q, pagination, sort, order))
   }
 
@@ -109,7 +110,7 @@ object Application extends Controller {
     if (StringUtils.isBlank(yearEnd)) {
       yearEnd = config.getString("default_end_year")
     }
-    val q = doSearch(query, request.queryString, 0, "", "")
+    val q = doSearch(query, request.queryString)
     val totalRecords = q.res.getResults().getNumFound().intValue()
     println("totalRecords: " + totalRecords);
 
@@ -132,27 +133,28 @@ object Application extends Controller {
     Ok(views.html.graphs.plot("Plot Graph Test", query, "Years", "label Y", data, yearStart, yearEnd))
   }
 
-  def doInit(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
-    val map = queryString
+  def doInit(query: String, parameters: Map[String, Seq[String]]) = {
+    val map = parameters
     val parametersAsJava = map.map { case (k, v) => (k, v.asJava) }.asJava;
+    println("doInit: " + parametersAsJava);
     new Query(query, parametersAsJava)
   }
-  
-  def doSearch(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
-    val q = doInit(query, queryString, pageNo, sort, order)
-    q.processQueryResponse(solr.search(q, pageNo, sort, order))
-    q
-  }
-  
-  def doAdvanced(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
-    val q = doInit(query, queryString, pageNo, sort, order)
-    q.processQueryResponse(solr.advancedSearch(q, pageNo, sort, order))
+
+  def doSearch(query: String, parameters: Map[String, Seq[String]]) = {
+    val q = doInit(query, parameters)
+    q.processQueryResponse(solr.search(q))
     q
   }
 
-  def doBrowse(query: String, queryString: Map[String, Seq[String]], pageNo: Int, sort: String, order: String) = {
-    val q = doInit(query, queryString, pageNo, sort, order)
-    q.processQueryResponse(solr.browse(q, pageNo, sort, order))
+  def doAdvanced(query: String, parameters: Map[String, Seq[String]]) = {
+    val q = doInit(query, parameters)
+    q.processQueryResponse(solr.advancedSearch(q))
+    q
+  }
+
+  def doBrowse(query: String, parameters: Map[String, Seq[String]]) = {
+    val q = doInit(query, parameters)
+    q.processQueryResponse(solr.browse(q))
     q
   }
 
@@ -172,77 +174,155 @@ object Application extends Controller {
     val result = solr.suggestFileFormat(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
+  }
 
   def suggestHost(name: String) = Action { implicit request =>
     val result = solr.suggestHost(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
+  }
 
   def suggestDomain(name: String) = Action { implicit request =>
     val result = solr.suggestDomain(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
+  }
 
   def suggestPublicSuffix(name: String) = Action { implicit request =>
     val result = solr.suggestPublicSuffix(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
+  }
 
   def suggestLinksHosts(name: String) = Action { implicit request =>
     val result = solr.suggestLinksHosts(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
+  }
 
   def suggestLinksDomains(name: String) = Action { implicit request =>
     val result = solr.suggestLinksDomains(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
+  }
 
   def suggestLinksPublicSuffixes(name: String) = Action { implicit request =>
     val result = solr.suggestLinksPublicSuffixes(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
+  }
 
   def suggestAuthor(name: String) = Action { implicit request =>
     val result = solr.suggestAuthor(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
-  
+  }
+
   def suggestCollection(name: String) = Action { implicit request =>
     val result = solr.suggestCollection(name)
     println("result: " + result.toString)
     Ok(result.toString)
-  }  
+  }
 
   def suggestCollections(name: String) = Action { implicit request =>
     val result = solr.suggestCollections(name)
     println("result: " + result.toString)
     Ok(result.toString)
   }
-  
+
+  def getFacets = Action { implicit request =>
+    println("queryString: " + request.queryString)
+    val pageParameter = request.getQueryString("page")
+    val sortParameter = request.getQueryString("sort")
+    val orderParameter = request.getQueryString("order")
+    var page = 1
+    var sort = "crawl_date"
+    var order = "asc"
+    //{page=[1], query=[*:*], order=[asc], facet.in.collection=["Acute Trusts"], selected.facet=[author], sort=[content_type_norm]}
+    if (pageParameter != None) {
+      page = pageParameter.get.toInt
+    }
+    if (sortParameter != None) {
+      sort = sortParameter.get
+    }
+    if (orderParameter != None) {
+      order = orderParameter.get
+    }
+
+    val queryResponse = doBrowse("*:*", request.queryString).res
+    var results = queryResponse.getResults()
+    
+    val subCollections = queryResponse.getFacetField("collections")
+    println("facetQuery: " + subCollections)
+    
+
+    val totalRecords = results.getNumFound().intValue()
+
+    println("totalRecords #: " + totalRecords)
+
+    pagination.update(totalRecords, page)
+
+    //    http://192.168.1.204:8983/solr/ldwa/select?start=0&sort=crawl_date+asc&q=*%3A*&fq={!tag%3Dcollection}collection%3A%28%22Acute+Trusts%22%29
+    //    http://192.168.1.204:8983/solr/ldwa/select?start=0&sort=crawl_date+asc&q=*%3A*&facet.mincount=1&fq=%7B%21tag%3Dcollection%7Dcollection%3A%28%22Acute+Trusts%22%29
+    //http://localhost:9000/search?query=*%3A*&page=2&sort=content_type_norm&facet.in.collection=%22Acute%20Trusts%22
+
+    
+    //  for sub collections
+    ///select?start=0&q=*%3A*&fq={!tag%3Dcollections}collections%3A("Acute Trusts")&facet=true&facet.field=collections&facet.mincount=1&rows=0
+//    var resultList = List[JsObject]()
+    var resultList = Json.arr()
+
+    if (page == 1) {
+	    val it = subCollections.getValues().iterator()
+	    var jsArray = Json.arr()
+	    while (it.hasNext) {
+	   		val subCollection = it.next
+	   		val jsonSub = Json.obj("name" -> JsString(subCollection.getName()), "count" -> JsNumber(subCollection.getCount()))
+	   		jsArray = jsArray :+ jsonSub
+	    }
+   		val jsonObject = Json.obj("subcollection" -> jsArray)
+   		resultList = resultList :+ jsonObject 
+	    println("jsArray: " + jsArray)
+    }
+    
+    
+    for (i <- 1 until results.size()) {
+      val result = results.get(i)
+      val url = result.getFirstValue("url")
+      println("title: " + result.getFirstValue("title"))
+      if (url ne null) {
+        //	    	resultList = result.getFirstValue("url").toString() :: resultList
+        val jsonObject = Json.obj("url" -> JsString(result.getFirstValue("url").toString()))
+        resultList = resultList :+ jsonObject
+      }
+    }
+    
+    val jsonPages = Json.obj()
+    println("jsonPages: " + jsonPages)
+    var collectionJson = 
+      Json.obj(
+          "collection" -> resultList,
+          "pages" -> JsNumber(pagination.getTotalPages))
+          
+    println("collectionJson: " + collectionJson)
+
+    Ok(collectionJson)
+  }
+
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-          routes.javascript.Application.suggestTitle,
-          routes.javascript.Application.suggestUrl,
-          routes.javascript.Application.suggestFileFormat,
-          routes.javascript.Application.suggestLinksHosts,
-          routes.javascript.Application.suggestLinksDomains,
-          routes.javascript.Application.suggestLinksPublicSuffixes,
-          routes.javascript.Application.suggestAuthor,
-          routes.javascript.Application.suggestCollection,
-          routes.javascript.Application.suggestCollections
-      )
-    ).as("text/javascript")
+        routes.javascript.Application.suggestTitle,
+        routes.javascript.Application.suggestUrl,
+        routes.javascript.Application.suggestFileFormat,
+        routes.javascript.Application.suggestLinksHosts,
+        routes.javascript.Application.suggestLinksDomains,
+        routes.javascript.Application.suggestLinksPublicSuffixes,
+        routes.javascript.Application.suggestAuthor,
+        routes.javascript.Application.suggestCollection,
+        routes.javascript.Application.suggestCollections,
+        routes.javascript.Application.getFacets)).as("text/javascript")
   }
 
   def resetParameters(parameters: collection.immutable.Map[String, Seq[String]]) = {

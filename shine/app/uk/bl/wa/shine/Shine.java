@@ -46,23 +46,17 @@ public class Shine extends Solr {
 		this.perPage = config.getInt("per_page");
 	}
 
-	public QueryResponse search(Query query) throws SolrServerException {
-		return this.search(query, null);
-	}
-
-	private SolrQuery buildInitialParameters(int pageNo, String sort, String order) {
+	private SolrQuery buildInitialParameters(Query query) {
 		ORDER orderSolr = ORDER.asc;
 
-		if (StringUtils.equalsIgnoreCase(order, "desc")) {
+		if (StringUtils.equalsIgnoreCase(query.order, "desc")) {
 			orderSolr = ORDER.desc;
 		}
-		if (StringUtils.isEmpty(sort)) {
-			sort = "crawl_date";
+		if (StringUtils.isEmpty(query.sort)) {
+			query.sort = "crawl_date";
 		}
 
-		Logger.info("per_page: " + perPage);
-
-		Integer start = ((pageNo - 1) * perPage);
+		Integer start = ((query.page - 1) * perPage);
 		if (start < 0) {
 			start = 0;
 		}
@@ -70,58 +64,70 @@ public class Shine extends Solr {
 		SolrQuery parameters = new SolrQuery();
 		parameters.set("start", start);
 		// Sorts:
-		parameters.setSort(sort, orderSolr);
+		parameters.setSort(query.sort, orderSolr);
 		// parameters.setSort("sentiment_score", ORDER.asc);
 		Logger.info("params: " + parameters);
 		
 		return parameters;
 	}
 	
-	public QueryResponse search(Query query, int pageNo, String sort, String order) throws SolrServerException {
-		QueryResponse res = this.search(query, buildInitialParameters(pageNo, sort, order));
+	public QueryResponse search(Query query) throws SolrServerException {
+		QueryResponse res = this.search(query, buildInitialParameters(query));
 		return res;
 	}
 	
-	public QueryResponse advancedSearch(Query query, int pageNo, String sort, String order) throws SolrServerException {
-		return this.advancedSearch(query, buildInitialParameters(pageNo, sort, order));
+	public QueryResponse advancedSearch(Query query) throws SolrServerException {
+		return this.advancedSearch(query, buildInitialParameters(query));
 	}
 	
-	public QueryResponse browse(Query query, int pageNo, String sort, String order) throws SolrServerException {
-		return this.browse(query, buildInitialParameters(pageNo, sort, order));
+	public QueryResponse browse(Query query) throws SolrServerException {
+		return this.browse(query, buildInitialParameters(query));
 	}
 	
 	// usually for faceted search
 	private QueryResponse search(Query query, SolrQuery parameters) throws SolrServerException {
 		// selected facets
 		parameters.setRows(perPage);
-		return search(query, parameters, facetService.getSelected());
+		//parameters.setParam("wt", "json");
+		// get the defaults
+		query.facetValues = facetService.getSelected();
+		// facets that come from url parameters
+		for (String facet : query.facets) {
+			FacetValue facetValue = facetService.getOptionals().get(facet);
+			query.facetValues.put(facetValue.getName(), facetValue);
+		}
+		// add to them
+		Logger.info("query.facets: " + query.facetValues);
+		return doSearch(query, parameters);
 	}
 
 
 	private QueryResponse advancedSearch(Query query, SolrQuery parameters) throws SolrServerException {
 		// facets available on the advanced search fields
 		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
-		FacetValue collectionsFacetValue = new FacetValue("collections", "Collections");
-		facetValues.put(collectionsFacetValue.getName(), collectionsFacetValue);
-		// build up the facets and add to map to pass on 
+		// build up facetValues with parameters
+		Logger.info("advancedSearch parameters: " + query.filters + " - " + parameters);
 		parameters.setRows(perPage);
-		return search(query, parameters, facetValues);
+		query.facetValues = facetValues;
+		return doSearch(query, parameters);
 	}
 
 	private QueryResponse browse(Query query, SolrQuery parameters) throws SolrServerException {
 		// facets available on the advanced search fields
 		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
-		FacetValue collectionsFacetValue = new FacetValue("collection", "Collection");
+		FacetValue collectionFacetValue = new FacetValue("collection", "Collection");
+		FacetValue collectionsFacetValue = new FacetValue("collections", "Collections");
+		facetValues.put(collectionFacetValue.getName(), collectionFacetValue);
 		facetValues.put(collectionsFacetValue.getName(), collectionsFacetValue);
 		// build up the facets and add to map to pass on 
 		Logger.info("browse facetValues: " + facetValues);
-		parameters.setRows(0);
-		return search(query, parameters, facetValues);
+		parameters.setRows(perPage);
+		query.facetValues = facetValues;
+		return doSearch(query, parameters);
 	}
 
 	// for advanced search using own facets
-	private QueryResponse search(Query query, SolrQuery parameters, Map<String, FacetValue> facetValues)
-			throws SolrServerException {
+	private QueryResponse doSearch(Query query, SolrQuery parameters) throws SolrServerException {
 
 		// add everything to parameters for solr
 		if (parameters == null)
@@ -130,17 +136,26 @@ public class Shine extends Solr {
 		// ?start=0&sort=content_type_norm+asc&q=wikipedia+crawl_date:[2009-06-01T00%3A00%3A00Z+TO+2011-06-01T00%3A00%3A00Z]&facet.field={!ex%3Dcrawl_year}crawl_year&facet.field={!ex%3Dpublic_suffix}public_suffix&facet=true&facet.mincount=1&rows=10
 		parameters.add("q", query.query);
 
+		Map<String, FacetValue> facetValues = query.facetValues;
+		
 		// should get updated list of added/removed facet values
 		Logger.info("facetValues: " + facetValues);
 		if (facetValues != null) {
 			for (String key : facetValues.keySet()) {
 				FacetValue facetValue = facetValues.get(key);
-				if (facetValue != null)
+				if (facetValue != null && StringUtils.isNotEmpty(facetValue.getValue())) {
 					parameters.addFacetField("{!ex=" + facetValue.getName() + "}"
 							+ facetValue.getName());
+				}
 			}
 		}
 		
+//		for(String facet : query.facets) {
+//			parameters.addFacetField("{!ex=" + facet + "}" + facet);
+//		}
+		
+		Logger.info("parameters: " + parameters);
+
 		Map<String, List<String>> params = query.filters;
 
 		parameters.setFacetMinCount(1);
@@ -178,8 +193,6 @@ public class Shine extends Solr {
 			parameters.setFilterQueries(fq.toArray(new String[fq.size()]));
 		}
 
-		Logger.info("Pre Query: " + parameters.toString());
-
 		try {
 			processDateRange(parameters, query.dateStart, query.dateEnd);
 			processProximity(parameters, query.proximity);
@@ -192,14 +205,12 @@ public class Shine extends Solr {
 		QueryResponse res = solr.query(parameters);
 		Logger.info("QTime: " + res.getQTime());
 		Logger.info("Response Header: " + res.getResponseHeader());
-		Logger.info("facet fields: " + res.getFacetFields());
 		return res;
 	}
 
 	private void processDateRange(SolrQuery parameters, String dateStart,
 			String dateEnd) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		Logger.info("dateEnd: " + dateEnd);
 		Date dateObjStart = null;
 		Date dateObjEnd = null;
 		if (StringUtils.isNotEmpty(dateStart)) {

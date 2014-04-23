@@ -6,6 +6,7 @@ package uk.bl.wa.shine;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +36,12 @@ public class Query {
 	
 	public QueryResponse res;
 	
-	public String facetParameters;
+	public String responseParameters;
 
-	public Map<String, FacetValue> facets;
-
+	public Map<String, FacetValue> facetValues;
+	
+	public List<String> facets;
+	
 	public String websiteTitle;
 	
 	public String pageTitle;
@@ -49,8 +52,6 @@ public class Query {
 	
 	public String fileFormat;
 	
-	public String collection;
-	
 	public String dateStart; // (this should select a date range for the crawl_date or crawl_dates field).
 	
 	public String dateEnd;
@@ -59,17 +60,15 @@ public class Query {
 	
 	public Proximity proximity;
 
-    // The text-field should match the values in the 'host', 'domain' or 'public_suffix' fields.
-	public String hostedOn;
-    // Resources hosted on (should match the values in the 'host', 'domain' or 'public_suffix' fields).
-	// <str name="host">telegraph.co.uk</str><str name="domain">telegraph.co.uk</str><str name="public_suffix">co.uk</str>
-	// The text-field should match the values in the 'url', 'host', 'domain' or 'public_suffix' fields.
-	public String linkedTo;
-	// Resources that link to (should match the values in the 'url', 'host', 'domain' or 'public_suffix' fields).
-
+	public Integer page;
+	
+	public String sort;
+	
+	public String order;
 	
 	public Query(String query, Map<String,List<String>> params) {
-		facets = new HashMap<String, FacetValue>();
+		facetValues = new HashMap<String, FacetValue>();
+		facets = new ArrayList<String>();
 		this.query = query;
 		this.proximity = new Proximity();
 		this.parseParams(params);
@@ -79,22 +78,34 @@ public class Query {
 		Logger.info("parseParams: " + params);
 		filters = new HashMap<String, List<String>>();
 		for( String param : params.keySet() ) {
-			if( param.startsWith("facet.in.")) {
-			    filters.put(param.replace("facet.in.", ""), params.get(param));
-			} else if( param.startsWith("facet.out.")) {
-			    filters.put("-"+param.replace("facet.out.", ""), params.get(param));
-			} else if( param.equals("facet.sort") ) {
-			    filters.put(param, params.get(param));
+			List<String> values = params.get(param);
+			if (!values.isEmpty()) {
+				if( param.startsWith("facet.in.") && values.get(0).length() > 0) {
+					filters.put(param.replace("facet.in.", ""), values);
+					Logger.info(" facet in values: " + values);
+				} else if( param.startsWith("facet.out.") && values.get(0).length() > 0) {
+				    filters.put("-"+param.replace("facet.out.", ""), values);
+					Logger.info(" facet out values: " + values);
+				} else if( param.equals("facet.sort")  && values.get(0).length() > 0) {
+				    filters.put(param, values);
+					Logger.info(" facet other values: " + values);
+				} else if (param.equals("facet.fields")) {
+					for (String value : values) {
+						facets.add(value);
+					}
+				}
 			}
 		}
 		
+		Logger.info("facets: " + facets);
 		Logger.info("filters: " + filters);
 		
+		// non facets
 		if (params.get("datestart") != null) {
-			dateStart = params.get("datestart").get(0);
+			dateStart = params.get("datestart").get(0).replace("\"", "");
 		}
 		if (params.get("dateend") != null) {
-			dateEnd = params.get("dateend").get(0);
+			dateEnd = params.get("dateend").get(0).replace("\"", "");
 		}
 		if (params.get("excluded") != null) {
 			excluded = params.get("excluded").get(0);
@@ -105,6 +116,17 @@ public class Query {
 			proximity.setPhrase2(params.get("proximity").get(1));
 			proximity.setProximity(params.get("proximity").get(2));
 			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
+		}
+		if (params.get("page") != null) {
+			page = Integer.parseInt(params.get("page").get(0));
+		} else {
+			page = 1;
+		}
+		if (params.get("sort") != null) {
+			sort = params.get("sort").get(0);
+		}
+		if (params.get("order") != null) {
+			order = params.get("order").get(0);
 		}
 	}
 	
@@ -221,8 +243,8 @@ public class Query {
 			String sortValue = getFacetSortValue(facetSort);
 			parameters.append("&").append(facetSort).append("=").append(sortValue);
 		}
-		Logger.info(parameters.toString());
-		this.facetParameters = parameters.toString();
+		Logger.info("processFacetsAsParamValues: " + parameters.toString());
+		this.responseParameters = parameters.toString();
 	}
 
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {
