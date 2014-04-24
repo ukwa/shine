@@ -10,6 +10,7 @@ object ApplicationBuild extends Build {
   val appDependencies = Seq(
     // Add your project dependencies here,
     jdbc,
+    cache,
     anorm,
     "org.xerial" % "sqlite-jdbc" % "3.7.2",
     "org.apache.solr" % "solr-solrj" % "4.4.0",

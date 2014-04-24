@@ -71,7 +71,6 @@ $(function () {
 			event.preventDefault();
 			// change +/-
 			facetClickToggle($link_span_include, $input_include);
-			alert($('form'));
  			$('form').submit();
 		});
 		
@@ -281,7 +280,7 @@ $(function () {
 	$('.facet-remove').each(function() {
 		$(this).click(function(event) {
 			event.preventDefault();
-			var value = $(this).parent().find("a strong").html();
+			var value = $(this).parent().find("input").val();
 			console.log(value);
 			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("remove-facet");
 			var input = $("<input>").attr("type", "hidden").attr("name", "remove.facet").val(value);
@@ -291,3 +290,14 @@ $(function () {
 		});
 	});
 });
+
+function getURLParameter(param) {
+	var pageUrl = window.location.search.substring(1);
+	var urlVariables = pageUrl.split('&');
+	for (var i=0; i<urlVariables.length; i++) {
+		var parameterName = urlVariables[i].split('=');
+		if (parameterName[0] == param) {
+			return parameterName[1];
+		}
+	}				
+}

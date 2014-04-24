@@ -17,14 +17,16 @@ import scala.collection.immutable.Map
 import scala.collection.mutable.MutableList
 import play.api.libs.json._
 import scala.util.parsing.json.JSONObject
+import play.api.Play.current
+import play.api.cache.Cache
 
 object Application extends Controller {
 
-  val config = play.Play.application().configuration().getConfig("shine");
+  val config = play.Play.application().configuration().getConfig("shine")
 
-  val solr = new Shine(config);
+  val solr = new Shine(config)
 
-  val rescued = new Rescued(config);
+  val rescued = new Rescued(config)
 
   val recordsPerPage = solr.getPerPage()
   val maxNumberOfLinksOnPage = config.getInt("max_number_of_links_on_page")
@@ -32,6 +34,10 @@ object Application extends Controller {
   val facetLimit = config.getInt("facet_limit")
 
   var pagination = new Pagination(recordsPerPage, maxNumberOfLinksOnPage, maxViewablePages);
+
+  var facetValues: Map[String, FacetValue] = Cache.getOrElse[Map[String, FacetValue]]("facet.values") {
+    solr.getFacetValues.asScala.toMap
+  }
 
   def index = Action {
     Ok(views.html.index("Shine Application"))
@@ -43,29 +49,28 @@ object Application extends Controller {
   }
 
   def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
+
     val action = request.getQueryString("action")
     val selectedFacet = request.getQueryString("selected.facet")
     val removeFacet = request.getQueryString("remove.facet")
     var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 
-    println("action: " + action)
-    if (action != None) {
-      val parameter = action.get
-      println("action " + parameter)
-      if (parameter.equals("reset-facets")) {
-        println("resetting facets")
-        solr.resetFacets()
-        parameters = collection.immutable.Map(resetParameters(parameters).toSeq: _*)
-        // also remove this stuff - facet.in.crawl_year="2008"&facet.out.public_suffix="co.uk"
-      } else if (parameter.equals("add-facet") && selectedFacet != None) {
-        val facetValue = selectedFacet.get
-        solr.addFacet(facetValue)
-      } else if (parameter.equals("remove-facet") && removeFacet != None) {
-        val facetValue = removeFacet.get
-        println("removing facet: " + facetValue)
-        solr.removeFacet(facetValue)
-      }
-    }
+    action match {
+		case Some(parameter) => {
+			println("parameter: " + parameter)
+			println("action " + parameter)
+			if (parameter.equals("reset-facets")) {
+				println("resetting facets")
+				solr.resetFacets()
+				parameters = collection.immutable.Map(resetParameters(parameters).toSeq: _*)
+				// also remove this stuff - facet.in.crawl_year="2008"&facet.out.public_suffix="co.uk"
+			} 
+		}
+		case None => {
+			println("None")
+		}
+	}
+
     val q = doSearch(query, parameters)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
@@ -75,7 +80,16 @@ object Application extends Controller {
 
     pagination.update(totalRecords, pageNo)
 
-    Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap))
+    Cache.getAs[Map[String, FacetValue]]("facet.values") match {
+	    case Some(value) => {
+	    	play.api.Logger.debug("getting value from cache ...")
+	    	Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value))
+		}
+		case None => {
+			println("None")
+	    	Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null))
+		}
+    }
   }
 
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -149,6 +163,47 @@ object Application extends Controller {
 
   def doSearch(query: String, parameters: Map[String, Seq[String]]) = {
     val q = doInit(query, parameters)
+    val action = parameters.get("action")
+    val selectedFacet = parameters.get("selected.facet")
+    val removeFacet = parameters.get("remove.facet")
+
+    // TODO: do all this in Shina.java
+	action match {
+		case Some(buffer) => {
+			val parameter = buffer.last
+			
+			if (parameter.equals("add-facet")) {
+				selectedFacet match {
+					case Some(buffer) => {
+						val facetValue = buffer.last
+						solr.addFacet(q, facetValue)
+					}
+					case None => {
+						println("None")
+					}
+				}
+			} else if (parameter.equals("remove-facet")) {
+				removeFacet match {
+					case Some(buffer) => {
+						val facetValue = buffer.last
+						println("removing: " + parameter + " " + removeFacet)
+						println("removing facet: " + facetValue)
+						solr.removeFacet(q, facetValue)
+					}
+					case None => {
+						println("None")
+					}
+				}
+			}    
+
+			
+			
+		}
+		case None => {
+			println("None")
+		}
+	}
+    // TODO: refactor
     q.processQueryResponse(solr.search(q))
     q
   }
@@ -258,10 +313,9 @@ object Application extends Controller {
 
     val queryResponse = doBrowse("*:*", request.queryString).res
     var results = queryResponse.getResults()
-    
+
     val subCollections = queryResponse.getFacetField("collections")
     println("facetQuery: " + subCollections)
-    
 
     val totalRecords = results.getNumFound().intValue()
 
@@ -273,26 +327,24 @@ object Application extends Controller {
     //    http://192.168.1.204:8983/solr/ldwa/select?start=0&sort=crawl_date+asc&q=*%3A*&facet.mincount=1&fq=%7B%21tag%3Dcollection%7Dcollection%3A%28%22Acute+Trusts%22%29
     //http://localhost:9000/search?query=*%3A*&page=2&sort=content_type_norm&facet.in.collection=%22Acute%20Trusts%22
 
-    
     //  for sub collections
     ///select?start=0&q=*%3A*&fq={!tag%3Dcollections}collections%3A("Acute Trusts")&facet=true&facet.field=collections&facet.mincount=1&rows=0
-//    var resultList = List[JsObject]()
+    //    var resultList = List[JsObject]()
     var resultList = Json.arr()
 
     if (page == 1) {
-	    val it = subCollections.getValues().iterator()
-	    var jsArray = Json.arr()
-	    while (it.hasNext) {
-	   		val subCollection = it.next
-	   		val jsonSub = Json.obj("name" -> JsString(subCollection.getName()), "count" -> JsNumber(subCollection.getCount()))
-	   		jsArray = jsArray :+ jsonSub
-	    }
-   		val jsonObject = Json.obj("subcollection" -> jsArray)
-   		resultList = resultList :+ jsonObject 
-	    println("jsArray: " + jsArray)
+      val it = subCollections.getValues().iterator()
+      var jsArray = Json.arr()
+      while (it.hasNext) {
+        val subCollection = it.next
+        val jsonSub = Json.obj("name" -> JsString(subCollection.getName()), "count" -> JsNumber(subCollection.getCount()))
+        jsArray = jsArray :+ jsonSub
+      }
+      val jsonObject = Json.obj("subcollection" -> jsArray)
+      resultList = resultList :+ jsonObject
+      println("jsArray: " + jsArray)
     }
-    
-    
+
     for (i <- 1 until results.size()) {
       val result = results.get(i)
       val url = result.getFirstValue("url")
@@ -303,14 +355,14 @@ object Application extends Controller {
         resultList = resultList :+ jsonObject
       }
     }
-    
+
     val jsonPages = Json.obj()
     println("jsonPages: " + jsonPages)
-    var collectionJson = 
+    var collectionJson =
       Json.obj(
-          "collection" -> resultList,
-          "pages" -> JsNumber(pagination.getTotalPages))
-          
+        "collection" -> resultList,
+        "pages" -> JsNumber(pagination.getTotalPages))
+
     println("collectionJson: " + collectionJson)
 
     Ok(collectionJson)

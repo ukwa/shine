@@ -72,8 +72,7 @@ public class Shine extends Solr {
 	}
 	
 	public QueryResponse search(Query query) throws SolrServerException {
-		QueryResponse res = this.search(query, buildInitialParameters(query));
-		return res;
+		return this.search(query, buildInitialParameters(query));
 	}
 	
 	public QueryResponse advancedSearch(Query query) throws SolrServerException {
@@ -94,7 +93,10 @@ public class Shine extends Solr {
 		// facets that come from url parameters
 		for (String facet : query.facets) {
 			FacetValue facetValue = facetService.getOptionals().get(facet);
-			query.facetValues.put(facetValue.getName(), facetValue);
+			if (facetValue != null) {
+				query.facetValues.put(facetValue.getName(), facetValue);
+				facetService.add(facetValue.getName());
+			}
 		}
 		// add to them
 		Logger.info("query.facets: " + query.facetValues);
@@ -205,6 +207,15 @@ public class Shine extends Solr {
 		QueryResponse res = solr.query(parameters);
 		Logger.info("QTime: " + res.getQTime());
 		Logger.info("Response Header: " + res.getResponseHeader());
+		
+		
+		
+//		List<FacetField> fields = res.getFacetFields();
+//		for (FacetField field : fields) {
+//			FacetValue fv = facetService.getAll().get(field.getName());
+//			Logger.info("fv: " + fv.getName() + " - " + fv.getValue());
+//		}
+				
 		return res;
 	}
 
@@ -355,12 +366,20 @@ public class Shine extends Solr {
 		return this.facetService.getOptionals();
 	}
 
-	public void addFacet(String facetName) {
-		facetService.add(facetName);
+	public void addFacet(Query query, String facetName) {
+		FacetValue facetValue = facetService.getOptionals().get(facetName);
+		if (facetValue != null) {
+			query.facetValues.put(facetValue.getName(), facetValue);
+			facetService.add(facetName);
+		}
 	}
 
-	public void removeFacet(String facetName) {
-		facetService.remove(facetName);
+	public void removeFacet(Query query, String facetName) {
+		if (query.facetValues.containsKey(facetName)) {
+			query.facetValues.remove(facetName);
+			facetService.remove(facetName);
+		}
+		// need to remove it from parameter list
 	}
 
 	public void resetFacets() {
@@ -379,6 +398,10 @@ public class Shine extends Solr {
 		return perPage;
 	}
 
+	public Map<String, FacetValue> getFacetValues() {
+		return facetService.getAll();
+	}
+	
 	/**
 	 * @param args
 	 */

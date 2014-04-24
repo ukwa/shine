@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue])
+@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -16,6 +16,13 @@
 
 		});
 	</script>
+}
+
+@getName(facetName: String) = @{
+	cachedFacets.get(facetName) match {
+      case Some(value) => { value.getValue }
+      case None => { println("nothing") }
+	}
 }
 
 @****************************************
@@ -104,7 +111,8 @@
 						@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 							<div class="panel-body">
 			    				<div>
-		        					<a><strong>@(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
+		        					<a><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
+		        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
 		        					<button class="btn btn-primary btn-xs facet-remove" type="button" name="action" value="remove-facet">
 		        						<span class="glyphicon glyphicon-remove"></span>
 		        					</button>
@@ -165,7 +173,7 @@
 	  									<div class="form-group">
 											<select class="form-control" name="selected.facet" id="facet-values">
 												@for((key, value) <- optionalFacets) {
-													<option value="@key">@value.getValue</option>
+													<option value="@key">@value.getValue()</option>
 												}
 											</select>
 										</div>

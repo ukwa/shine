@@ -5,7 +5,6 @@ import java.util.Map;
 
 import play.Configuration;
 import play.Logger;
-
 import uk.bl.wa.shine.model.FacetValue;
 
 /**
@@ -66,6 +65,7 @@ public class FacetServiceImpl implements FacetService {
 		// get the facet value based on key
 		FacetValue facetValue = this.optionals.get(key);
 		selectedFacets.put(key, facetValue);
+		Logger.info("facetValue added: " + facetValue.getName());
 		optionals.remove(key);
 	}
 
@@ -88,5 +88,13 @@ public class FacetServiceImpl implements FacetService {
 	public void reset() {
 		this.selectedFacets = new HashMap<String, FacetValue>(this.defaults);
 		this.optionals = new HashMap<String, FacetValue>(this.defaultOptionals);
+	}
+
+	@Override
+	public Map<String, FacetValue> getAll() {
+        Map<String, FacetValue> retval = new HashMap<String, FacetValue>();
+        retval.putAll(this.defaults);
+        retval.putAll(this.optionals);
+        return retval;
 	}		
 }
