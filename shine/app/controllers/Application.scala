@@ -154,7 +154,7 @@ object Application extends Controller {
     Ok(views.html.graphs.plot("Plot Graph Test", query, "Years", "label Y", data, yearStart, yearEnd))
   }
 
-  def doInit(query: String, parameters: Map[String, Seq[String]]) = {
+  def createQuery(query: String, parameters: Map[String, Seq[String]]) = {
     val map = parameters
     val parametersAsJava = map.map { case (k, v) => (k, v.asJava) }.asJava;
     println("doInit: " + parametersAsJava);
@@ -162,62 +162,20 @@ object Application extends Controller {
   }
 
   def doSearch(query: String, parameters: Map[String, Seq[String]]) = {
-    val q = doInit(query, parameters)
-    val action = parameters.get("action")
-    val selectedFacet = parameters.get("selected.facet")
-    val removeFacet = parameters.get("remove.facet")
+    // parses parameters and creates me a query object
+    var q = createQuery(query, parameters)
+    solr.search(q)
 
-    // TODO: do all this in Shina.java
-	action match {
-		case Some(buffer) => {
-			val parameter = buffer.last
-			
-			if (parameter.equals("add-facet")) {
-				selectedFacet match {
-					case Some(buffer) => {
-						val facetValue = buffer.last
-						solr.addFacet(q, facetValue)
-					}
-					case None => {
-						println("None")
-					}
-				}
-			} else if (parameter.equals("remove-facet")) {
-				removeFacet match {
-					case Some(buffer) => {
-						val facetValue = buffer.last
-						println("removing: " + parameter + " " + removeFacet)
-						println("removing facet: " + facetValue)
-						solr.removeFacet(q, facetValue)
-					}
-					case None => {
-						println("None")
-					}
-				}
-			}    
-
-			
-			
-		}
-		case None => {
-			println("None")
-		}
-	}
-    // TODO: refactor
-    q.processQueryResponse(solr.search(q))
-    q
   }
 
   def doAdvanced(query: String, parameters: Map[String, Seq[String]]) = {
-    val q = doInit(query, parameters)
-    q.processQueryResponse(solr.advancedSearch(q))
-    q
+    val q = createQuery(query, parameters)
+    solr.advancedSearch(q)
   }
 
   def doBrowse(query: String, parameters: Map[String, Seq[String]]) = {
-    val q = doInit(query, parameters)
-    q.processQueryResponse(solr.browse(q))
-    q
+    val q = createQuery(query, parameters)
+    solr.browse(q)
   }
 
   def suggestTitle(name: String) = Action { implicit request =>

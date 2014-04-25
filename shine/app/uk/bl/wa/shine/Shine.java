@@ -71,20 +71,41 @@ public class Shine extends Solr {
 		return parameters;
 	}
 	
-	public QueryResponse search(Query query) throws SolrServerException {
+	private void buildFacetParameters(Query query) {
+	    // TODO: do all this in Shine.java
+		Map<String, List<String>> parameters = query.getParameters();
+		
+	    List<String> actionParameters = parameters.get("action");
+	    if (actionParameters == null || actionParameters.isEmpty()) {
+	    	return;
+	    }
+	    String action = actionParameters.get(0);
+		if (action.equals("add-facet")) {
+		    String selectedFacet = parameters.get("selected.facet").get(0);
+			this.addFacet(query, selectedFacet);
+		} else if (action.equals("remove-facet")) {
+		    String removeFacet = parameters.get("remove.facet").get(0);
+			this.removeFacet(query, removeFacet);
+		}
+	    // TODO: refactor
+//	    q.processQueryResponse(solr.search(q))
+	}
+	
+	public Query search(Query query) throws SolrServerException {
+		buildFacetParameters(query);
 		return this.search(query, buildInitialParameters(query));
 	}
 	
-	public QueryResponse advancedSearch(Query query) throws SolrServerException {
+	public Query advancedSearch(Query query) throws SolrServerException {
 		return this.advancedSearch(query, buildInitialParameters(query));
 	}
 	
-	public QueryResponse browse(Query query) throws SolrServerException {
+	public Query browse(Query query) throws SolrServerException {
 		return this.browse(query, buildInitialParameters(query));
 	}
 	
 	// usually for faceted search
-	private QueryResponse search(Query query, SolrQuery parameters) throws SolrServerException {
+	private Query search(Query query, SolrQuery parameters) throws SolrServerException {
 		// selected facets
 		parameters.setRows(perPage);
 		//parameters.setParam("wt", "json");
@@ -100,11 +121,12 @@ public class Shine extends Solr {
 		}
 		// add to them
 		Logger.info("query.facets: " + query.facetValues);
+
 		return doSearch(query, parameters);
 	}
 
 
-	private QueryResponse advancedSearch(Query query, SolrQuery parameters) throws SolrServerException {
+	private Query advancedSearch(Query query, SolrQuery parameters) throws SolrServerException {
 		// facets available on the advanced search fields
 		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
 		// build up facetValues with parameters
@@ -114,7 +136,7 @@ public class Shine extends Solr {
 		return doSearch(query, parameters);
 	}
 
-	private QueryResponse browse(Query query, SolrQuery parameters) throws SolrServerException {
+	private Query browse(Query query, SolrQuery parameters) throws SolrServerException {
 		// facets available on the advanced search fields
 		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
 		FacetValue collectionFacetValue = new FacetValue("collection", "Collection");
@@ -129,7 +151,7 @@ public class Shine extends Solr {
 	}
 
 	// for advanced search using own facets
-	private QueryResponse doSearch(Query query, SolrQuery parameters) throws SolrServerException {
+	private Query doSearch(Query query, SolrQuery parameters) throws SolrServerException {
 
 		// add everything to parameters for solr
 		if (parameters == null)
@@ -215,8 +237,9 @@ public class Shine extends Solr {
 //			FacetValue fv = facetService.getAll().get(field.getName());
 //			Logger.info("fv: " + fv.getName() + " - " + fv.getValue());
 //		}
-				
-		return res;
+		query.res = res;
+		query.processQueryResponse();
+		return query;
 	}
 
 	private void processDateRange(SolrQuery parameters, String dateStart,
