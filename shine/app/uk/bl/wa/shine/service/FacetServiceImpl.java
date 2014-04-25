@@ -65,7 +65,6 @@ public class FacetServiceImpl implements FacetService {
 		// get the facet value based on key
 		FacetValue facetValue = this.optionals.get(key);
 		selectedFacets.put(key, facetValue);
-		Logger.info("facetValue added: " + facetValue.getName());
 		optionals.remove(key);
 	}
 
