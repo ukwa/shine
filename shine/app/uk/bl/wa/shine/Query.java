@@ -66,19 +66,22 @@ public class Query {
 	
 	public String order;
 	
-	public Query(String query, Map<String,List<String>> params) {
-		facetValues = new HashMap<String, FacetValue>();
+	private Map<String, List<String>> parameters;
+	
+	public Query(String query, Map<String,List<String>> parameters) {
 		facets = new ArrayList<String>();
+		this.parameters = parameters;
+		this.parseParameters();
+		facetValues = new HashMap<String, FacetValue>();
 		this.query = query;
 		this.proximity = new Proximity();
-		this.parseParams(params);
 	}
 	
-	public void parseParams(Map<String,List<String>> params) {
-		Logger.info("parseParams: " + params);
+	private void parseParameters() {
+		Logger.info("parseParams: " + this.parameters);
 		filters = new HashMap<String, List<String>>();
-		for( String param : params.keySet() ) {
-			List<String> values = params.get(param);
+		for( String param : parameters.keySet() ) {
+			List<String> values = parameters.get(param);
 			if (!values.isEmpty()) {
 				if( param.startsWith("facet.in.") && values.get(0).length() > 0) {
 					filters.put(param.replace("facet.in.", ""), values);
@@ -101,32 +104,32 @@ public class Query {
 		Logger.info("filters: " + filters);
 		
 		// non facets
-		if (params.get("datestart") != null) {
-			dateStart = params.get("datestart").get(0).replace("\"", "");
+		if (parameters.get("datestart") != null) {
+			dateStart = parameters.get("datestart").get(0).replace("\"", "");
 		}
-		if (params.get("dateend") != null) {
-			dateEnd = params.get("dateend").get(0).replace("\"", "");
+		if (parameters.get("dateend") != null) {
+			dateEnd = parameters.get("dateend").get(0).replace("\"", "");
 		}
-		if (params.get("excluded") != null) {
-			excluded = params.get("excluded").get(0);
+		if (parameters.get("excluded") != null) {
+			excluded = parameters.get("excluded").get(0);
 		}
-		if (params.get("proximity") != null) {
+		if (parameters.get("proximity") != null) {
 			proximity = new Proximity();
-			proximity.setPhrase1(params.get("proximity").get(0));
-			proximity.setPhrase2(params.get("proximity").get(1));
-			proximity.setProximity(params.get("proximity").get(2));
+			proximity.setPhrase1(parameters.get("proximity").get(0));
+			proximity.setPhrase2(parameters.get("proximity").get(1));
+			proximity.setProximity(parameters.get("proximity").get(2));
 			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
 		}
-		if (params.get("page") != null) {
-			page = Integer.parseInt(params.get("page").get(0));
+		if (parameters.get("page") != null) {
+			page = Integer.parseInt(parameters.get("page").get(0));
 		} else {
 			page = 1;
 		}
-		if (params.get("sort") != null) {
-			sort = params.get("sort").get(0);
+		if (parameters.get("sort") != null) {
+			sort = parameters.get("sort").get(0);
 		}
-		if (params.get("order") != null) {
-			order = params.get("order").get(0);
+		if (parameters.get("order") != null) {
+			order = parameters.get("order").get(0);
 		}
 	}
 	
@@ -215,12 +218,7 @@ public class Query {
 		return "";
 	}
 	
-	public void processQueryResponse(QueryResponse response) {
-		this.res = response;
-		this.processFacetsAsParamValues();
-	}
-
-	private void processFacetsAsParamValues() {
+	public void processQueryResponse() {
 		StringBuilder parameters = new StringBuilder("");
 		if (res.getFacetFields() != null) {
 			for (FacetField facetField : res.getFacetFields()) {
@@ -275,5 +273,9 @@ public class Query {
 		    }
 		}
 		return newString.toString();
+	}
+
+	public Map<String, List<String>> getParameters() {
+		return parameters;
 	}
 }
