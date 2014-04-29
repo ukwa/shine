@@ -47,6 +47,8 @@ public class Shine extends Solr {
 	}
 
 	private SolrQuery buildInitialParameters(Query query) {
+		SolrQuery parameters = new SolrQuery();
+
 		ORDER orderSolr = ORDER.asc;
 
 		if (StringUtils.equalsIgnoreCase(query.order, "desc")) {
@@ -55,16 +57,16 @@ public class Shine extends Solr {
 		if (StringUtils.isEmpty(query.sort)) {
 			query.sort = "crawl_date";
 		}
+		
+		parameters.setSort(query.sort, orderSolr);
 
 		Integer start = ((query.page - 1) * perPage);
 		if (start < 0) {
 			start = 0;
 		}
 
-		SolrQuery parameters = new SolrQuery();
 		parameters.set("start", start);
 		// Sorts:
-		parameters.setSort(query.sort, orderSolr);
 		// parameters.setSort("sentiment_score", ORDER.asc);
 		Logger.info("params: " + parameters);
 		
@@ -104,12 +106,15 @@ public class Shine extends Solr {
 			    selectedFacet = parameters.get("selected.facet").get(0);
 			    FacetValue selectedFacetValue = getFacetValueByName(selectedFacet);
 			    
-			    // from url parameters
-			    query.facets.add(selectedFacet);
-			    // for filtering
-			    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
-			    // for dropdown list
-			    facetService.getOptionals().remove(selectedFacet);
+			    // TODO: if it doesn't already haveit in there
+			    if (!query.facets.contains(selectedFacet)) {
+				    // from url parameters
+				    query.facets.add(selectedFacet);
+				    // for filtering
+				    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
+				    // for dropdown list
+				    facetService.getOptionals().remove(selectedFacet);
+			    }
 			    
 			} else if (action.equals("remove-facet")) {
 			    removeFacet = parameters.get("remove.facet").get(0);
@@ -185,6 +190,9 @@ public class Shine extends Solr {
 			parameters = new SolrQuery();
 		// The query:
 		// ?start=0&sort=content_type_norm+asc&q=wikipedia+crawl_date:[2009-06-01T00%3A00%3A00Z+TO+2011-06-01T00%3A00%3A00Z]&facet.field={!ex%3Dcrawl_year}crawl_year&facet.field={!ex%3Dpublic_suffix}public_suffix&facet=true&facet.mincount=1&rows=10
+		if (StringUtils.isEmpty(query.query)) {
+			query.query = "*:*";
+		}
 		parameters.add("q", query.query);
 
 		Map<String, FacetValue> facetValues = query.facetValues;
