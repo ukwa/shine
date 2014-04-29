@@ -25,8 +25,6 @@ object Application extends Controller {
 
   val solr = new Shine(config)
 
-  val rescued = new Rescued(config)
-
   val recordsPerPage = solr.getPerPage()
   val maxNumberOfLinksOnPage = config.getInt("max_number_of_links_on_page")
   val maxViewablePages = config.getInt("max_viewable_pages")
