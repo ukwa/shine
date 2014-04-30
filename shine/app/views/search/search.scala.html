@@ -107,62 +107,63 @@
 							<a id="facet-sort-value" class="facet-sort" href=""><span class="label label-primary">value</span></a>
 							<a id="facet-sort-count" class="facet-sort" href=""><span class="label label-primary">count</span></a> 
 						</div>
-						
-						@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
-							<div class="panel-body">
-			    				<div>
-		        					<a><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
-		        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
-		        					<button class="btn btn-primary btn-xs facet-remove" type="button" name="action" value="remove-facet">
-		        						<span class="glyphicon glyphicon-remove"></span>
-		        					</button>
-			    				</div>
-			    				<div class="facet-index">
-		      						<ul class="list-unstyled">
-										@for((f, i) <- fc.getValues().zipWithIndex) {
-											@if(i >= facetLimit) {
-		        								<li class="facet-options hide">
-											} else {
-		        								<li class="facet-options show" data-attr="default">
+						@if(q.res.getFacetFields() != null) {
+							@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
+								<div class="panel-body">
+				    				<div>
+			        					<a><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
+			        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
+			        					<button class="btn btn-primary btn-xs facet-remove" type="button" name="action" value="remove-facet">
+			        						<span class="glyphicon glyphicon-remove"></span>
+			        					</button>
+				    				</div>
+				    				<div class="facet-index">
+			      						<ul class="list-unstyled">
+											@for((f, i) <- fc.getValues().zipWithIndex) {
+												@if(i >= facetLimit) {
+			        								<li class="facet-options hide">
+												} else {
+			        								<li class="facet-options show" data-attr="default">
+												}
+			        								<a class="facet include" href="" title="Include" id="include_@(fc.getName())"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
+			        								<a class="facet exclude" href="" title="Exclude" id="exclude_@(fc.getName())"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
+			          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
+			          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
+			          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
+												</li>
+										        <!-- dynamically add checked="true"? -->
+										        <!-- OR use some kind of link constructor? -->
 											}
-		        								<a class="facet include" href="" title="Include" id="include_@(fc.getName())"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
-		        								<a class="facet exclude" href="" title="Exclude" id="exclude_@(fc.getName())"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-		          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
-		          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-		          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
+											@if((fc.getValues().size - facetLimit) > 0) {
+												<li> 
+		        									<a class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
+		        								</li>
+	        								}
+											<li>
+	        									<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
 											</li>
-									        <!-- dynamically add checked="true"? -->
-									        <!-- OR use some kind of link constructor? -->
-										}
-										@if((fc.getValues().size - facetLimit) > 0) {
-											<li> 
-	        									<a class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
-	        								</li>
-        								}
-										<li>
-        									<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
-										</li>
-										
-		    						</ul>
-									<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
-										<span class="input-group-btn">
-        									<button class="add-facet-button btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
-      									</span>
-										<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
-										<span class="input-group-sm input-group-addon">
-											<a href="#" title="Include" class="add-facet-value">
-												<span class="glyphicon glyphicon-plus-sign"></span>
-											</a>&nbsp;
-											<a href="#" title="Exclude" class="remove-facet-value">
-												<span class="glyphicon glyphicon-minus-sign"></span>
-											</a>
-										</span>
-										<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
-										</span>
-
-									</div>
-			    				</div>
-			  				</div>
+											
+			    						</ul>
+										<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
+											<span class="input-group-btn">
+	        									<button class="add-facet-button btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+	      									</span>
+											<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
+											<span class="input-group-sm input-group-addon">
+												<a href="#" title="Include" class="add-facet-value">
+													<span class="glyphicon glyphicon-plus-sign"></span>
+												</a>&nbsp;
+												<a href="#" title="Exclude" class="remove-facet-value">
+													<span class="glyphicon glyphicon-minus-sign"></span>
+												</a>
+											</span>
+											<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
+											</span>
+	
+										</div>
+				    				</div>
+				  				</div>
+							}
 						}
 						<div class="panel-body">
 							<button class="btn btn-primary btn-xs" type="submit" name="action" value="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>

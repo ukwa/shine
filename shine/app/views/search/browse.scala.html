@@ -99,7 +99,7 @@
 			
 		    $('.tree li:has(ul)').addClass('parent_li').find(' > span i').attr('title', 'Collapse');
 		    
-		    $('.tree li.parent_li > span i').each(function(index) {
+		    $('.tree li.parent_li > span i.child').each(function(index) {
 	            $(this).attr('title', 'Expand').addClass('glyphicon-plus').removeClass('glyphicon-minus');
 		        var children = $(this).parent().parent('li.parent_li').find(' > ul > li');
 				children.find('ul li').hide('fast');
@@ -328,12 +328,12 @@
 						    <ul>
 						    	@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 						        <li>
-						            <span><i class="icon-folder-open"></i> <strong>@(fc.getName())</strong> <span class="badge">@(fc.getValueCount())</span></span>
+						            <span><i class="icon-folder-open root"></i> <strong>@(fc.getName())</strong> <span class="badge">@(fc.getValueCount())</span></span>
 						            <ul>
 										@for((f, i) <- fc.getValues().zipWithIndex) {
 							                <li>
 												<span class="label-success">
-													<i class="glyphicon glyphicon-minus"></i> 
+													<i class="child glyphicon glyphicon-minus"></i> 
 													<a href="@(routes.Application.search(q.query))&facet.fields=@(fc.getName())&facet.in.@(fc.getName())=&#34;@(Html(q.formatFacet(fc,f)))&#34;&action=search">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span>
 												</span>
 							                    <ul class="root"></ul>
