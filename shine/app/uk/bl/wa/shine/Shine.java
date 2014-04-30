@@ -95,37 +95,57 @@ public class Shine extends Solr {
 
 	    query.facetValues = facetService.getSelected();
 	    
+	    // check incoming parameter list
+	    Logger.info("pre-adding>>>> " + query.facetValues);
+	    
 	    if (actionParameters != null) {
 		    String action = actionParameters.get(0);
 			if (action.equals("add-facet")) {
 			    selectedFacet = parameters.get("selected.facet").get(0);
-			    FacetValue selectedFacetValue = facetService.getAll().get(selectedFacet);
+			    FacetValue selectedFacetValue = getFacetValueByName(selectedFacet);
+			    
+			    // from url parameters
 			    query.facets.add(selectedFacet);
+			    // for filtering
 			    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
+			    // for dropdown list
+			    facetService.getOptionals().remove(selectedFacet);
+			    
 			} else if (action.equals("remove-facet")) {
-			    Logger.info("removing>>>> " + removeFacet);
 			    removeFacet = parameters.get("remove.facet").get(0);
+			    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
+			    
+			    // from url parameters
 				query.facets.remove(removeFacet);
+			    // for filtering
 			    query.facetValues.remove(removeFacet);
+			    // for dropdown list
+			    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
+			    
+			    Logger.info("removing>>>> " + selectedFacetValue.getName());
+			} else if (action.equals("search")) {
+				//parameters.setParam("wt", "json");
+				// get the defaults
+				// facets that come from url parameters
+			    String[] facets = query.facets.toArray(new String[query.facets.size()]);
+			    
+			    Logger.info("searching....");
+			    
+				for (String facet : facets) {
+//					if (StringUtils.isNotEmpty(removeFacet) && !removeFacet.equals(facet)) {
+						Logger.info("facet >>>>>>>>>>>>>>> " + facet);
+					    FacetValue selectedFacetValue = getFacetValueByName(facet);
+						Logger.info("selectedFacetValue >>>>>>>>>>>>>>> " + selectedFacetValue.getValue());
+					    query.facets.add(facet);
+					    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
+						Logger.info("query.facetValues >>> " + query.facetValues);
+//					}
+				}
 			}
+		    Logger.info("post: query.facets: " + query.facets);
+		    Logger.info("post: query.facetValues: " + query.facetValues);
 	    }
 		
-		//parameters.setParam("wt", "json");
-		// get the defaults
-		// facets that come from url parameters
-	    String[] facets = query.facets.toArray(new String[query.facets.size()]);
-	    
-		for (String facet : facets) {
-//			if (StringUtils.isNotEmpty(removeFacet) && !removeFacet.equals(facet)) {
-			    FacetValue selectedFacetValue = facetService.getAll().get(facet);
-				Logger.info("facet >>>>>>>>>>>>>>> " + selectedFacetValue.getValue());
-			    query.facets.add(facet);
-			    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
-				Logger.info("query.facetValues >>> " + query.facetValues);
-//			}
-		}
-
-		Logger.info("query.facetValues >>> " + query.facetValues);
 		
 		solrParameters.setRows(perPage);
 		
@@ -170,7 +190,7 @@ public class Shine extends Solr {
 		Map<String, FacetValue> facetValues = query.facetValues;
 		
 		// should get updated list of added/removed facet values
-		Logger.info("facetValues: " + facetValues);
+		Logger.info("doSearch:facetValues: " + facetValues);
 		if (facetValues != null) {
 			for (String key : facetValues.keySet()) {
 				FacetValue facetValue = facetValues.get(key);
@@ -396,24 +416,6 @@ public class Shine extends Solr {
 		return this.facetService.getOptionals();
 	}
 
-//	public void addFacet(Query query, String facetName) {
-//		FacetValue facetValue = facetService.getOptionals().get(facetName);
-//		if (facetValue != null) {
-//			query.facetValues.put(facetValue.getName(), facetValue);
-//			facetService.add(facetName);
-//
-//		}
-//	}
-//
-//	public void removeFacet(Query query, String facetName) {
-//		Logger.info("removing >>> " + facetName);
-//		if (query.facetValues.containsKey(facetName)) {
-//			query.facetValues.remove(facetName);
-//			facetService.remove(facetName);
-//		}
-//		// need to remove it from parameter list
-//	}
-
 	public void resetFacets() {
 		facetService.reset();
 	}
@@ -433,7 +435,11 @@ public class Shine extends Solr {
 	public Map<String, FacetValue> getFacetValues() {
 		return facetService.getAll();
 	}
-	
+
+	public FacetValue getFacetValueByName(String facetName) {
+    	return facetService.getAll().get(facetName);
+	}
+
 	/**
 	 * @param args
 	 */

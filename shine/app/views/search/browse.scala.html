@@ -123,7 +123,7 @@
 				    	    	//url: getAppendedUrl("collections", facet_value, page),
 				    	    	dataType: 'json',
 				    	    	success: function(data) {
-				    	    		var items = processData(data, facet_value);
+				    	    		var items = processData(data, facet_name, facet_value);
 				    	    		var pages = data.pages;
 				    	    		
 				    	    		// first page already loaded
@@ -173,7 +173,7 @@
 				return url + "&facet.in." + parent_facet_name + "=\"" + facet_value + "\"&facet.mincount=1";
 		    }
 
-		    function processData(data, facet_value) {
+		    function processData(data, facet_name, facet_value) {
 	    		var items = [];
 	    		$.each( data.collection, function( key, val ) {
 	    			var name = "";
@@ -184,8 +184,8 @@
 	    				styleClass = "label-warning"
 	    				console.log(facet_value);
 		    		    items.push("<li style='display: list-item;'>" 
-		    	    				+ "<span class='"+ styleClass + "'><i class='icon-leaf'></i><a href='/search?query=*%3A*&facet.in.collection=\""
-		    	    				+ facet_value + "\"'>" + name + count + "</a></span>"
+		    	    				+ "<span class='"+ styleClass + "'><i class='icon-leaf'></i><a href='"
+		    	    				+ name + "'>" + name + "</a></span>"
 		    	    				+ "</li>" );
 	    			} else if (val.subcollection) {
 	    	    		$.each( val.subcollection, function( k, v ) {
@@ -193,7 +193,11 @@
 	    	    			count = " <span class='badge'>" + v.count + "</span>";
 		    				styleClass = "label-warning"
 	    	    		    items.push( "<li style='display: list-item;'>" 
-	    	    	    			+ "<span class='"+ styleClass + "'><i class='icon-leaf'></i>" + name + count + "</span></li>" );
+	    	    	    			+ "<span class='"+ styleClass + "'><i class='icon-leaf'></i><a href='/search?query=*%3A*&facet.fields=" + facet_name + "&facet.in.collection=\""
+		    	    				+ facet_value + "\"&action=search'>" + name + count +  "</a></span>"
+		    	    				+ "</li>" );
+
+		    				
 	    	    		});
 	    			}
 	    		});
@@ -328,9 +332,11 @@
 						            <ul>
 										@for((f, i) <- fc.getValues().zipWithIndex) {
 							                <li>
-												<span class="label-success"><i class="glyphicon glyphicon-minus"></i> <a href="@(routes.Application.search(q.query))&facet.in.collections=&#34;@(Html(q.formatFacet(fc,f)))&#34;">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span></span>
-							                    <ul class="root">
-							                	</ul>
+												<span class="label-success">
+													<i class="glyphicon glyphicon-minus"></i> 
+													<a href="@(routes.Application.search(q.query))&facet.fields=@(fc.getName())&facet.in.@(fc.getName())=&#34;@(Html(q.formatFacet(fc,f)))&#34;&action=search">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span>
+												</span>
+							                    <ul class="root"></ul>
 											</li>
 										}
 						            </ul>

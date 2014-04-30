@@ -156,6 +156,7 @@ object Application extends Controller {
   def doSearch(query: String, parameters: Map[String, Seq[String]]) = {
     // parses parameters and creates me a query object
     var q = createQuery(query, parameters)
+    println("new query created: " + q.facets)
     solr.search(q)
 
   }

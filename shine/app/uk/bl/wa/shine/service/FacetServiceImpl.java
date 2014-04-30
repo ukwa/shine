@@ -93,7 +93,7 @@ public class FacetServiceImpl implements FacetService {
 	public Map<String, FacetValue> getAll() {
         Map<String, FacetValue> retval = new HashMap<String, FacetValue>();
         retval.putAll(this.defaults);
-        retval.putAll(this.optionals);
+        retval.putAll(this.defaultOptionals);
         return retval;
 	}		
 }

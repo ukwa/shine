@@ -1,5 +1,12 @@
 $(function () {
 
+	$('#query').keypress(function(event){
+		var keycode = (event.keyCode ? event.keyCode : event.which);
+		if(keycode == '13'){
+		    $('#search').click();
+		}
+	});
+	
 	$('#reset').click(function(event) {
 		$('.search-field').each(function() {
 			$(this).attr('value', ''); 
