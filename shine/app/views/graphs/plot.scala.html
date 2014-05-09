@@ -23,16 +23,18 @@
 				points.push([@(graphData.getYear), @(graphData.getData)]);
 			}
 			
-	    	@(year_start)
-			@(year_end)
-
 			var plotter = $.jqplot('chart-search', [points], {
 				
 			    title:'Ngram',
 				axes:{
 			        xaxis:{
 			            renderer:$.jqplot.DateAxisRenderer,
-					  	label:'@(labelX)'
+			            min: @(year_start),
+			            max: @(year_end),
+                        tickOptions: {
+                            formatString: '%d',
+                        },
+                        label:'@(labelX)'
 					},
 					yaxis:{
 					  label:'@(labelY)'
