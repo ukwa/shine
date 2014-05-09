@@ -16,70 +16,76 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			
-			// Some simple loops to build up data arrays.
 			var points = [];
-
 			@for(graphData <- data) {
 				points.push([@(graphData.getYear), @(graphData.getData)]);
 			}
 			
-			var plotter = $.jqplot('chart-search', [points], {
-				
-			    title:'Ngram',
-				axes:{
-			        xaxis:{
-			            renderer:$.jqplot.DateAxisRenderer,
-			            min: @(year_start),
-			            max: @(year_end),
-                        tickOptions: {
-                            formatString: '%d',
-                        },
-                        label:'@(labelX)'
+			runGraph(points);
+			
+			function runGraph(points) {
+				// Some simple loops to build up data arrays.
+	
+				var plotter = $.jqplot('chart-search', [points], {
+					
+				    title:'Ngram',
+					axes:{
+				        xaxis:{
+				            renderer:$.jqplot.DateAxisRenderer,
+				            min: @(year_start),
+				            max: @(year_end),
+	                        tickOptions: {
+	                            formatString: '%d',
+	                        },
+	                        label:'@(labelX)'
+						},
+						yaxis:{
+						  label:'@(labelY)'
+						}
 					},
-					yaxis:{
-					  label:'@(labelY)'
-					}
-				},
-			    highlighter: {
-					show: true,
-					sizeAdjust: 7.5,
-					formatString: '<h2>@(q.query) %d (%d)</h2>'
-		        },
-				cursor:{ 
-				   	show: true,
-					zoom: true, 
-					showTooltip: false
-				}, 
-			    // Series options are specified as an array of objects, one object
-			    // for each series.
-			    series:[ 
-			        {
-			          // Change our line width and use a diamond shaped marker.
-			          lineWidth:2, 
-			          markerOptions: { style:'diamond' }
-			        }, 
-			        {
-			          // Don't show a line, just show markers.
-			          // Make the markers 7 pixels with an 'x' style
-			          showLine:false, 
-			          markerOptions: { size: 7, style:"x" }
+				    highlighter: {
+						show: true,
+						sizeAdjust: 7.5,
+						formatString: '<h2>@(q.query) %d (%d)</h2>'
 			        },
-			        { 
-			          // Use (open) circlular markers.
-			          markerOptions: { style:"circle" }
-			        }, 
-			        {
-			          // Use a thicker, 5 pixel line and 10 pixel
-			          // filled square markers.
-			          lineWidth:5, 
-			          markerOptions: { style:"filledSquare", size:10 }
-			        }
-			    ]
-			});
-			$('.button-reset').click(function() { 
-				plotter.resetZoom(); 
-				console.log("cleared");
-			});
+					cursor:{ 
+					   	show: true,
+						zoom: true, 
+						showTooltip: false
+					}, 
+				    // Series options are specified as an array of objects, one object
+				    // for each series.
+				    series:[ 
+				        {
+				          // Change our line width and use a diamond shaped marker.
+				          lineWidth:2, 
+				          markerOptions: { style:'diamond' }
+				        }, 
+				        {
+				          // Don't show a line, just show markers.
+				          // Make the markers 7 pixels with an 'x' style
+				          showLine:false, 
+				          markerOptions: { size: 7, style:"x" }
+				        },
+				        { 
+				          // Use (open) circlular markers.
+				          markerOptions: { style:"circle" }
+				        }, 
+				        {
+				          // Use a thicker, 5 pixel line and 10 pixel
+				          // filled square markers.
+				          lineWidth:5, 
+				          markerOptions: { style:"filledSquare", size:10 }
+				        }
+				    ]
+				});
+				$('.button-reset').on('click', function() {
+					plotter.resetZoom(); 
+					console.log("cleared");
+					$('#chart-search').empty();
+				});
+			}
+			
 			$("#year-start").val(@(year_start));
 			$("#year-end").val(@(year_end));
 		});
