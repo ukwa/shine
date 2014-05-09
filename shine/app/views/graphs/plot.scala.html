@@ -1,4 +1,4 @@
-@(title: String, query: String, labelX: String, labelY: String, data: scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData], year_start: String, year_end: String)
+@(title: String, q: uk.bl.wa.shine.Query, labelX: String, labelY: String, data: scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData], year_start: String, year_end: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" href="@routes.Assets.at("jqplot/jquery.jqplot.min.css")">
@@ -17,25 +17,18 @@
 		$(document).ready(function(){
 			
 			// Some simple loops to build up data arrays.
-			var cosPoints = [];
+			var points = [];
 
 			@for(graphData <- data) {
-				cosPoints.push([@(graphData.getYear), @(graphData.getData)]);
+				points.push([@(graphData.getYear), @(graphData.getData)]);
 			}
 			
-			var powPoints1 = []; 
-			@for(graphData <- data) {
-			    powPoints1.push([@(graphData.getYear), 2.5 + Math.pow(@(graphData.getData)/4, 2)]); 
-			}
-			  
-			var powPoints2 = []; 
-			@for(graphData <- data) {
-			    powPoints2.push([@(graphData.getYear), -2.5 - Math.pow(@(graphData.getData)/4, 2)]); 
-			} 
-			
-			var plot1 = $.jqplot('chart-search', [cosPoints, powPoints1, powPoints2], {
+	    	@(year_start)
+			@(year_end)
+
+			var plotter = $.jqplot('chart-search', [points], {
 				
-			    title:'Ngram Example',
+			    title:'Ngram',
 				axes:{
 			        xaxis:{
 			            renderer:$.jqplot.DateAxisRenderer,
@@ -48,7 +41,7 @@
 			    highlighter: {
 					show: true,
 					sizeAdjust: 7.5,
-					formatString: '<h1>@(query) %d %d</h1>'
+					formatString: '<h2>@(q.query) %d (%d)</h2>'
 		        },
 				cursor:{ 
 				   	show: true,
@@ -82,7 +75,7 @@
 			    ]
 			});
 			$('.button-reset').click(function() { 
-				plot1.resetZoom(); 
+				plotter.resetZoom(); 
 				console.log("cleared");
 			});
 			$("#year-start").val(@(year_start));
@@ -101,7 +94,7 @@
 		@helper.form(action=routes.Application.plot_graph()) {
 			<div class="row padding-10">
 				<div class="col-md-12 text-center">
-					<input type="text" class="form-control" name="query" placeholder="Search Term" value="@(query)" id="query" />
+					<input type="text" class="form-control" name="query" placeholder="Search Term" value="@(q.query)" id="query" />
 				</div>
 			</div>
 			<div class="row padding-10 text-center">

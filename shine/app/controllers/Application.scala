@@ -123,27 +123,30 @@ object Application extends Controller {
     if (StringUtils.isBlank(yearEnd)) {
       yearEnd = config.getString("default_end_year")
     }
+    println("yearEnd: " + yearEnd)
+    // we want this: http://localhost:9001/search?facet.fields=crawl_year&query=nhs&action=search
     val q = doSearch(query, request.queryString)
     val totalRecords = q.res.getResults().getNumFound().intValue()
     println("totalRecords: " + totalRecords);
 
-    val from_year: Int = yearStart.toInt
-    val to_year: Int = yearEnd.toInt
-
     var data = new ListBuffer[GraphData]()
+    // only crawl_year required
+    val facetFields = q.res.getFacetFields()
+	for( i <- 0 until facetFields.size() ) {
+	  val fc = facetFields.get(i)
+	    if (fc.getName().equals("crawl_year")) {
+			for(x <- 0 until  fc.getValues().size()) {
+			  val f = fc.getValues().get(x)
+				var i = f.getName().toInt
+				var j = f.getCount().toInt
+				var graphData = new GraphData(i, j, q.query)
+			  	println(graphData.getYear + " " + graphData.getData + " " + graphData.getName)
+			  	data += graphData
+			}
+	    }
+	}
 
-    var j = 1
-    for (i <- from_year.to(to_year).by(scala.math.pow(20, j).toInt)) {
-      // i = year
-      // j = data
-      j = j + 1
-      var graphData = new GraphData(i, j, query)
-      println(graphData.getYear + " " + graphData.getData + " " + graphData.getName)
-      data += graphData
-    }
-    println("plotting.... " + data + " " + query + " " + yearStart + " " + yearEnd)
-
-    Ok(views.html.graphs.plot("Plot Graph Test", query, "Years", "label Y", data, yearStart, yearEnd))
+    Ok(views.html.graphs.plot("Plot Graph Test", q, "Years", "label Y", data, yearStart, yearEnd))
   }
 
   def createQuery(query: String, parameters: Map[String, Seq[String]]) = {
