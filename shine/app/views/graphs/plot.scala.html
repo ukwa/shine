@@ -79,6 +79,15 @@
 				        }
 				    ]
 				});
+				
+		        $('#chart-search').bind('jqplotDataClick', 
+	                function (ev, seriesIndex, pointIndex, data) {
+	        			var year = data[0];
+	        			var count = data[1];
+	        			var url = "/search?facet.fields=crawl_year&facet.in.crawl_year=\"" + year + "\"&query=@q.query&action=search&sort=content_type_norm&order=asc";
+	        			window.location.href = url;
+	                }
+	            );
 				$('.button-reset').on('click', function() {
 					plotter.resetZoom(); 
 					console.log("cleared");
