@@ -6,9 +6,14 @@ package uk.bl.wa.shine;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.commons.codec.DecoderException;
@@ -17,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.RangeFacet;
 
 import play.Logger;
 import uk.bl.wa.shine.model.FacetValue;
@@ -218,7 +224,7 @@ public class Query {
 		return "";
 	}
 	
-	public void processQueryResponse() {
+	public void processQueryResponse() throws ParseException {
 		StringBuilder parameters = new StringBuilder("");
 		if (res.getFacetFields() != null) {
 			for (FacetField facetField : res.getFacetFields()) {
@@ -243,6 +249,40 @@ public class Query {
 		}
 		Logger.info("processFacetsAsParamValues: " + parameters.toString());
 		this.responseParameters = parameters.toString();
+		// 1980-01-01T12:00:00Z
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss'Z'");
+		Calendar cal = Calendar.getInstance();
+		List<RangeFacet.Count> counts = null;
+		for (RangeFacet<String, RangeFacet.Count> range : res.getFacetRanges()) {
+			Logger.info("range >>>> " + range.getName() + " ---------------");
+			counts = range.getCounts();
+			ListIterator<RangeFacet.Count> listItr = counts.listIterator();
+			// remove the empties
+			while(listItr.hasNext()){
+				RangeFacet.Count count = listItr.next();
+				// remove
+				if (count.getCount() == 0) {
+					listItr.remove();
+				}
+			}
+		}
+		
+		sdf = new SimpleDateFormat("yyyy");
+		if (counts != null && counts.size() > 0) {
+			RangeFacet.Count first = counts.get(0);
+			Date firstDate = sdf.parse(first.getValue());
+			cal.setTime(firstDate);
+			cal.roll(Calendar.YEAR, false);
+			dateStart = sdf.format(cal.getTime());
+			Logger.info(dateStart + " >>> " + first.getCount());
+
+			RangeFacet.Count last = counts.get(counts.size()-1);
+			Date lastDate = sdf.parse(last.getValue());
+			cal.setTime(lastDate);
+			cal.roll(Calendar.YEAR, true);
+			dateEnd = sdf.format(cal.getTime());
+			Logger.info(dateEnd + " >>> " + last.getCount());
+		}
 	}
 
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {

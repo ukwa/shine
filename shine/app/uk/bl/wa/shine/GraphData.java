@@ -2,37 +2,29 @@ package uk.bl.wa.shine;
 
 public class GraphData {
 
-	private int year;
-	private int data;
-	private String name;
+	private String value;
+	private int count;
 	
-	public GraphData(int year, int data, String name) {
-		this.year = year;
-		this.data = data;
-		this.name = name;
+	public GraphData(String value, int count) {
+		this.value = value;
+		this.count = count;
 	}
 
-	public int getYear() {
-		return year;
+	public String getValue() {
+		return value;
 	}
 
-	public void setYear(int year) {
-		this.year = year;
+	public void setValue(String value) {
+		this.value = value;
 	}
 
-	public int getData() {
-		return data;
+	public int getCount() {
+		return count;
 	}
 
-	public void setData(int data) {
-		this.data = data;
+	public void setCount(int count) {
+		this.count = count;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
+	
 }

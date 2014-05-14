@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, labelX: String, labelY: String, data: scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData], year_start: String, year_end: String)
+@(title: String, q: uk.bl.wa.shine.Query, labelX: String, labelY: String, listMap: scala.collection.immutable.Map[String, scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]], year_start: String, year_end: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" href="@routes.Assets.at("jqplot/jquery.jqplot.min.css")">
@@ -15,122 +15,155 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function(){
-			
+
 			var points = [];
-			@for(graphData <- data) {
-				points.push([@(graphData.getYear), @(graphData.getData)]);
-			}
+
+			// each key has a tab/page
+			// also need to set chartgraph id to key
+			@for((key, data) <- listMap) {
+				console.log("@key");
+				var @key = [];
+
+				//if ("@key" == 'crawl_year') {
+					//var @key = [];
+					@data.map { graphData =>
+						//var @key = []
+						//var arr = @key;
+						points.push(["@(graphData.getValue)", @(graphData.getCount)]);
+					}
+					//points.push(arr);
+					//console.log(arr);
+				//}
 			
-			runGraph(points);
-			
-			function runGraph(points) {
-				// Some simple loops to build up data arrays.
-	
-				var plotter = $.jqplot('chart-search', [points], {
-					
-				    title:'Ngram',
-					axes:{
-				        xaxis:{
-				            renderer:$.jqplot.DateAxisRenderer,
-				            min: @(year_start),
-				            max: @(year_end),
-	                        tickOptions: {
-	                            formatString: '%d',
-	                        },
-	                        label:'@(labelX)'
-						},
-						yaxis:{
-						  label:'@(labelY)'
-						}
-					},
-				    highlighter: {
-						show: true,
-						sizeAdjust: 7.5,
-						formatString: '<h2>@(q.query) %d (%d)</h2>'
-			        },
-					cursor:{ 
-					   	show: true,
-						zoom: true, 
-						showTooltip: false
-					}, 
-				    // Series options are specified as an array of objects, one object
-				    // for each series.
-				    series:[ 
-				        {
-				          // Change our line width and use a diamond shaped marker.
-				          lineWidth:2, 
-				          markerOptions: { style:'diamond' }
-				        }, 
-				        {
-				          // Don't show a line, just show markers.
-				          // Make the markers 7 pixels with an 'x' style
-				          showLine:false, 
-				          markerOptions: { size: 7, style:"x" }
-				        },
-				        { 
-				          // Use (open) circlular markers.
-				          markerOptions: { style:"circle" }
-				        }, 
-				        {
-				          // Use a thicker, 5 pixel line and 10 pixel
-				          // filled square markers.
-				          lineWidth:5, 
-				          markerOptions: { style:"filledSquare", size:10 }
-				        }
-				    ]
-				});
+				runGraph(points);
 				
-		        $('#chart-search').bind('jqplotDataClick', 
-	                function (ev, seriesIndex, pointIndex, data) {
-	        			var year = data[0];
-	        			var count = data[1];
-	        			var url = "/search?facet.fields=crawl_year&facet.in.crawl_year=\"" + year + "\"&query=@q.query&action=search&sort=content_type_norm&order=asc";
-	        			window.location.href = url;
-	                }
-	            );
-				$('.button-reset').on('click', function() {
-					plotter.resetZoom(); 
-					console.log("cleared");
-					$('#chart-search').empty();
-				});
+				function runGraph(points) {
+					// Some simple loops to build up data arrays.
+		
+					var plotter = $.jqplot('chart-search', [points], {
+						
+					    title:'Ngram',
+						axes:{
+					        xaxis:{
+					            renderer:$.jqplot.DateAxisRenderer,
+					            min: @(year_start),
+					            max: @(year_end),
+		                        tickOptions: {
+		                            formatString: '%d',
+		                        },
+		                        label:'@(labelX)'
+							},
+							yaxis:{
+							  label:'@(labelY)'
+							}
+						},
+					    highlighter: {
+							show: true,
+							sizeAdjust: 7.5,
+							formatString: '<h2>@(q.query) %d (%d)</h2>'
+				        },
+						cursor:{ 
+						   	show: true,
+							zoom: true, 
+							showTooltip: false
+						}, 
+					    // Series options are specified as an array of objects, one object
+					    // for each series.
+					    series:[ 
+					        {
+					          // Change our line width and use a diamond shaped marker.
+					          lineWidth:2, 
+					          markerOptions: { style:'diamond' }
+					        }, 
+					        {
+					          // Don't show a line, just show markers.
+					          // Make the markers 7 pixels with an 'x' style
+					          showLine:false, 
+					          markerOptions: { size: 7, style:"x" }
+					        },
+					        { 
+					          // Use (open) circlular markers.
+					          markerOptions: { style:"circle" }
+					        }, 
+					        {
+					          // Use a thicker, 5 pixel line and 10 pixel
+					          // filled square markers.
+					          lineWidth:5, 
+					          markerOptions: { style:"filledSquare", size:10 }
+					        }
+					    ]
+					});
+					
+			        $('#chart-search').on('jqplotDataClick', 
+		                function (ev, seriesIndex, pointIndex, data) {
+		        			var year = data[0];
+		        			var count = data[1];
+		        			var url = "/search?facet.fields=crawl_year&facet.in.crawl_year=\"" + year + "\"&query=@q.query&action=search&sort=content_type_norm&order=asc";
+		        			window.location.href = url;
+		                }
+		            );
+			        
+			        $('#chart-search').on('jqplotDataMouseOver', function (ev, seriesIndex, pointIndex, data, radius) {
+			        	$('.jqplot-event-canvas').css( 'cursor', 'pointer' );
+			       	});
+			        
+			        $('#chart-search').on('jqplotDataUnhighlight', function() {
+			            $('.jqplot-event-canvas').css('cursor', 'auto');
+			        });
+			        
+					$('.button-reset').on('click', function() {
+						plotter.resetZoom(); 
+						console.log("cleared");
+						$('#chart-search').empty();
+					});
+				}
+				
+				$("#year-start").val(@(year_start));
+				$("#year-end").val(@(year_end));
 			}
-			
-			$("#year-start").val(@(year_start));
-			$("#year-end").val(@(year_end));
 		});
 	</script>
 }
 
 @main(title, scripts, styles) {
 
+	<!-- Nav tabs -->
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="#">Plot</a></li>
+		<li class="active"><a href="#plot" data-toggle="tab">Plot</a></li>
+		<li><a href="#profile" data-toggle="tab">Profile</a></li>
 	</ul>
-
-	<div class="padding-20" id="graph-container">
-		@helper.form(action=routes.Application.plot_graph()) {
-			<div class="row padding-10">
-				<div class="col-md-12 text-center">
-					<input type="text" class="form-control" name="query" placeholder="Search Term" value="@(q.query)" id="query" />
-				</div>
-			</div>
-			<div class="row padding-10 text-center">
-				<div class="col-md-12">
-					<div class="form-inline">
-						<div class="form-group">
-							<label class="sr-only" for="from-date">From:</label>
-							<input type="text" class="form-control field-right" id="year-start" name="year_start">
+	
+	<!-- Tab panes -->
+	<div class="tab-content">
+  		<div class="tab-pane active" id="plot">
+			<div class="padding-20" id="graph-container">
+				@helper.form(action=routes.Application.plot_graph()) {
+					<div class="row padding-10">
+						<div class="col-md-12 text-center">
+							<input type="text" class="form-control" name="query" placeholder="Search Term" value="@(q.query)" id="query" />
 						</div>
-						<div class="form-group">
-							<label class="sr-only" for="to-date">To:</label>
-							<input type="text" class="form-control field-right" id="year-end" name="year_end">
-						</div>
-						<button type="submit" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
-						<button type="reset" class="btn btn-primary button-reset" id="reset" name="action" value="reset">Reset All</button>
 					</div>
-				</div>
+					<div class="row padding-10 text-center">
+						<div class="col-md-12">
+							<div class="form-inline">
+								<div class="form-group">
+									<label class="sr-only" for="from-date">From:</label>
+									<input type="text" class="form-control field-right" id="year-start" name="year_start">
+								</div>
+								<div class="form-group">
+									<label class="sr-only" for="to-date">To:</label>
+									<input type="text" class="form-control field-right" id="year-end" name="year_end">
+								</div>
+								<button type="submit" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
+								<button type="reset" class="btn btn-primary button-reset" id="reset" name="action" value="reset">Reset All</button>
+							</div>
+						</div>
+					</div>
+			    }
+		    	<div id="chart-search"></div>
 			</div>
-	    }
-	    <div id="chart-search"></div>
-	</div>
+		</div>
+  		<div class="tab-pane" id="profile">2nd tab data</div>
+  	</div>
+
 }

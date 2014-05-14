@@ -114,6 +114,9 @@ object Application extends Controller {
 
   def plot_graph(query: String, year_start: String, year_end: String) = Action { implicit request =>
 
+    // public suffixes and domains too?
+    
+    // select?q=*:*&facet=true&facet.date=crawl_date&facet.date.gap=%2B1YEAR&facet.date.start=1994-01-01T00:00:00.00Z&facet.date.end=NOW%2B1YEAR
     var yearStart = year_start
     var yearEnd = year_end
 
@@ -125,28 +128,39 @@ object Application extends Controller {
     }
     println("yearEnd: " + yearEnd)
     // we want this: http://localhost:9001/search?facet.fields=crawl_year&query=nhs&action=search
-    val q = doSearch(query, request.queryString)
+    val q = doGraph(query, request.queryString)
     val totalRecords = q.res.getResults().getNumFound().intValue()
     println("totalRecords: " + totalRecords);
 
-    var data = new ListBuffer[GraphData]()
-    // only crawl_year required
+    var listMap:Map[String,ListBuffer[GraphData]] = Map()
+
     val facetFields = q.res.getFacetFields()
-	for( i <- 0 until facetFields.size() ) {
-	  val fc = facetFields.get(i)
-	    if (fc.getName().equals("crawl_year")) {
-			for(x <- 0 until  fc.getValues().size()) {
-			  val f = fc.getValues().get(x)
-				var i = f.getName().toInt
-				var j = f.getCount().toInt
-				var graphData = new GraphData(i, j, q.query)
-			  	println(graphData.getYear + " " + graphData.getData + " " + graphData.getName)
+	for(i <- 0 until facetFields.size()) {
+		val fc = facetFields.get(i)
+		val facetName = fc.getName()
+		println("facetName: " + facetName)
+		// 	only crawl_year at the moment
+		if (facetName == "crawl_year") {
+			var data = new ListBuffer[GraphData]()
+			for(x <- 0 until fc.getValues().size()) {
+				val f = fc.getValues().get(x)
+				var value = f.getName()
+				var count = f.getCount().toInt
+				var graphData = new GraphData(value, count)
 			  	data += graphData
 			}
-	    }
+	  		listMap += (facetName -> data)
+		}
 	}
+    if (StringUtils.isNotEmpty(q.dateStart)) {
+      yearStart = q.dateStart
+    }
+    if (StringUtils.isNotEmpty(q.dateEnd)) {
+      yearEnd = q.dateEnd
+    }
+    println(">>>> " + listMap)
 
-    Ok(views.html.graphs.plot("Plot Graph Test", q, "Years", "label Y", data, yearStart, yearEnd))
+    Ok(views.html.graphs.plot("Plot Graph Test", q, "Years", "Count", listMap, yearStart, yearEnd))
   }
 
   def createQuery(query: String, parameters: Map[String, Seq[String]]) = {
@@ -172,6 +186,11 @@ object Application extends Controller {
   def doBrowse(query: String, parameters: Map[String, Seq[String]]) = {
     val q = createQuery(query, parameters)
     solr.browse(q)
+  }
+
+  def doGraph(query: String, parameters: Map[String, Seq[String]]) = {
+    val q = createQuery(query, parameters)
+    solr.graph(q)
   }
 
   def suggestTitle(name: String) = Action { implicit request =>

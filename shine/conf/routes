@@ -14,7 +14,7 @@ GET     /browse            					controllers.Application.browse(query ?= "*:*", p
  
 # TBD: The main hook for the explore/trend analysis/delve UI.
 
-GET     /graph								controllers.Application.plot_graph(query ?= "*:*", year_start ?= "1800", year_end ?= "2000")
+GET     /graph								controllers.Application.plot_graph(query ?= "*:*", year_start ?= "2000", year_end ?= "2015")
 
 # The web half-life/rescued visualisation:
 GET     /halflife                   controllers.Shiner.halflife

@@ -6,6 +6,7 @@ package uk.bl.wa.shine;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +85,11 @@ public class Shine extends Solr {
 	public Query browse(Query query) throws SolrServerException {
 		return this.browse(query, buildInitialParameters(query));
 	}
-	
+
+	public Query graph(Query query) throws SolrServerException {
+		return this.graph(query, buildInitialParameters(query));
+	}
+
 	// usually for faceted search
 	private Query search(Query query, SolrQuery solrParameters) throws SolrServerException {
 		
@@ -182,98 +187,135 @@ public class Shine extends Solr {
 		return doSearch(query, parameters);
 	}
 
+	private Query graph(Query query, SolrQuery solrParameters) throws SolrServerException {
+
+		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
+		FacetValue crawlDateFacetValue = new FacetValue("crawl_year", "Crawl Year");
+		facetValues.put(crawlDateFacetValue.getName(), crawlDateFacetValue);
+		query.facetValues = facetValues;
+	    // select?q=*:*&facet=true&facet.date=crawl_date&facet.date.gap=%2B1YEAR&facet.date.start=1994-01-01T00:00:00.00Z&facet.date.end=NOW%2B1YEAR
+		// select?sort=content_type_norm+asc&start=0&rows=10&q=nhs&facet.mincount=1&fq=crawl_date%3A%5B2005-05-14T00%3A00%3A00Z+TO+2014-05-14T00%3A00%3A00Z%5D
+	    
+		//parameters.setParam("wt", "json");
+		// get the defaults
+		// facets that come from url parameters
+
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 1980);
+		cal.set(Calendar.MONTH, Calendar.JANUARY);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.HOUR, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date start = cal.getTime();
+		
+		// for +1 year
+		cal.setTime(new Date());
+		cal.add(Calendar.YEAR, 1); // to get previous year add -1
+		Date end = cal.getTime();
+		Logger.info("start date: " + start);
+		Logger.info("end date: " + end);
+		solrParameters.addDateRangeFacet("crawl_date", start, end, "+1YEAR");
+		return doSearch(query, solrParameters);
+	}
+
 	// for advanced search using own facets
 	private Query doSearch(Query query, SolrQuery parameters) throws SolrServerException {
 
-		// add everything to parameters for solr
-		if (parameters == null)
-			parameters = new SolrQuery();
-		// The query:
-		// ?start=0&sort=content_type_norm+asc&q=wikipedia+crawl_date:[2009-06-01T00%3A00%3A00Z+TO+2011-06-01T00%3A00%3A00Z]&facet.field={!ex%3Dcrawl_year}crawl_year&facet.field={!ex%3Dpublic_suffix}public_suffix&facet=true&facet.mincount=1&rows=10
-		if (StringUtils.isEmpty(query.query)) {
-			query.query = "*:*";
-		}
-		parameters.add("q", query.query);
-
-		Map<String, FacetValue> facetValues = query.facetValues;
-		
-		// should get updated list of added/removed facet values
-		Logger.info("doSearch:facetValues: " + facetValues);
-		if (facetValues != null) {
-			for (String key : facetValues.keySet()) {
-				FacetValue facetValue = facetValues.get(key);
-				if (facetValue != null && StringUtils.isNotEmpty(facetValue.getValue())) {
-					parameters.addFacetField("{!ex=" + facetValue.getName() + "}"
-							+ facetValue.getName());
-				}
-			}
-		}
-		
-//		for(String facet : query.facets) {
-//			parameters.addFacetField("{!ex=" + facet + "}" + facet);
-//		}
-		
-		Logger.info("parameters: " + parameters);
-
-		Map<String, List<String>> params = query.filters;
-
-		parameters.setFacetMinCount(1);
-		List<String> fq = new ArrayList<String>();
-		for (String param : params.keySet()) {
-			String field = param;
-			if (param.equals("facet.sort")) {
-				// there's only one sort
-				parameters.setFacetSort(params.get(param).get(0));
-			}
-			// Excluded tags are ANDed together:
-			else if (param.startsWith("-")) {
-				field = field.replaceFirst("-", "");
-				for (String val : params.get(param)) {
-					fq.add("{!tag=" + field + "}" + param + ":" + val); // TODO
-																		// Escape
-																		// correctly?
-				}
-			} else {
-				// Included tags are ORed together:
-				String filter = "{!tag=" + field + "}" + param + ":(";
-				int counter = 0;
-				for (String val : params.get(param)) {
-					if (counter > 0)
-						filter += " OR ";
-					filter += "" + val + ""; // TODO Escape correctly?
-					counter++;
-
-				}
-				filter += ")";
-				fq.add(filter);
-			}
-		}
-		if (fq.size() > 0) {
-			parameters.setFilterQueries(fq.toArray(new String[fq.size()]));
-		}
-
 		try {
-			processDateRange(parameters, query.dateStart, query.dateEnd);
-			processProximity(parameters, query.proximity);
-		} catch (ParseException e) {
+			// add everything to parameters for solr
+			if (parameters == null)
+				parameters = new SolrQuery();
+			// The query:
+			// ?start=0&sort=content_type_norm+asc&q=wikipedia+crawl_date:[2009-06-01T00%3A00%3A00Z+TO+2011-06-01T00%3A00%3A00Z]&facet.field={!ex%3Dcrawl_year}crawl_year&facet.field={!ex%3Dpublic_suffix}public_suffix&facet=true&facet.mincount=1&rows=10
+			if (StringUtils.isEmpty(query.query)) {
+				query.query = "*:*";
+			}
+			parameters.add("q", query.query);
+	
+			Map<String, FacetValue> facetValues = query.facetValues;
+			
+			// should get updated list of added/removed facet values
+			Logger.info("doSearch:facetValues: " + facetValues);
+			if (facetValues != null) {
+				for (String key : facetValues.keySet()) {
+					FacetValue facetValue = facetValues.get(key);
+					if (facetValue != null && StringUtils.isNotEmpty(facetValue.getValue())) {
+						parameters.addFacetField("{!ex=" + facetValue.getName() + "}"
+								+ facetValue.getName());
+					}
+				}
+			}
+			
+	//		for(String facet : query.facets) {
+	//			parameters.addFacetField("{!ex=" + facet + "}" + facet);
+	//		}
+			
+			Logger.info("parameters: " + parameters);
+	
+			Map<String, List<String>> params = query.filters;
+	
+			parameters.setFacetMinCount(1);
+			List<String> fq = new ArrayList<String>();
+			for (String param : params.keySet()) {
+				String field = param;
+				if (param.equals("facet.sort")) {
+					// there's only one sort
+					parameters.setFacetSort(params.get(param).get(0));
+				}
+				// Excluded tags are ANDed together:
+				else if (param.startsWith("-")) {
+					field = field.replaceFirst("-", "");
+					for (String val : params.get(param)) {
+						fq.add("{!tag=" + field + "}" + param + ":" + val); // TODO
+																			// Escape
+																			// correctly?
+					}
+				} else {
+					// Included tags are ORed together:
+					String filter = "{!tag=" + field + "}" + param + ":(";
+					int counter = 0;
+					for (String val : params.get(param)) {
+						if (counter > 0)
+							filter += " OR ";
+						filter += "" + val + ""; // TODO Escape correctly?
+						counter++;
+	
+					}
+					filter += ")";
+					fq.add(filter);
+				}
+			}
+			if (fq.size() > 0) {
+				parameters.setFilterQueries(fq.toArray(new String[fq.size()]));
+			}
+	
+			try {
+				processDateRange(parameters, query.dateStart, query.dateEnd);
+				processProximity(parameters, query.proximity);
+			} catch (ParseException e) {
+				throw new SolrServerException(e);
+			}
+	
+			Logger.info("Query: " + parameters.toString());
+			// Perform the query:
+			QueryResponse res = solr.query(parameters);
+			Logger.info("QTime: " + res.getQTime());
+			Logger.info("Response Header: " + res.getResponseHeader());
+			
+			
+			
+	//		List<FacetField> fields = res.getFacetFields();
+	//		for (FacetField field : fields) {
+	//			FacetValue fv = facetService.getAll().get(field.getName());
+	//			Logger.info("fv: " + fv.getName() + " - " + fv.getValue());
+	//		}
+			query.res = res;
+			query.processQueryResponse();
+		} catch(ParseException e) {
 			throw new SolrServerException(e);
 		}
-
-		Logger.info("Query: " + parameters.toString());
-		// Perform the query:
-		QueryResponse res = solr.query(parameters);
-		Logger.info("QTime: " + res.getQTime());
-		Logger.info("Response Header: " + res.getResponseHeader());
-		
-		
-		
-//		List<FacetField> fields = res.getFacetFields();
-//		for (FacetField field : fields) {
-//			FacetValue fv = facetService.getAll().get(field.getName());
-//			Logger.info("fv: " + fv.getName() + " - " + fv.getValue());
-//		}
-		query.res = res;
-		query.processQueryResponse();
 		return query;
 	}
 
