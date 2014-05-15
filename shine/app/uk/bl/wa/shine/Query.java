@@ -268,16 +268,18 @@ public class Query {
 			dateStart = yearStart;
 			dateEnd = yearEnd;
 		} else {
-			for (FacetField facetField : res.getFacetFields()) {
-				if (facetField.getName().equals("crawl_year")) {
-					List<FacetField.Count> fieldCounts = facetField.getValues();
-					if (!fieldCounts.isEmpty()) {
-						FacetField.Count first = fieldCounts.get(0);
-						dateStart = first.getName();
-						FacetField.Count last = fieldCounts.get(fieldCounts.size()-1);
-						dateEnd = last.getName();
-						Logger.info("first >>>> " + dateStart);
-						Logger.info("last >>>> " + dateEnd);
+			if (res.getFacetFields() != null) {
+				for (FacetField facetField : res.getFacetFields()) {
+					if (facetField.getName().equals("crawl_year")) {
+						List<FacetField.Count> fieldCounts = facetField.getValues();
+						if (!fieldCounts.isEmpty()) {
+							FacetField.Count first = fieldCounts.get(0);
+							dateStart = first.getName();
+							FacetField.Count last = fieldCounts.get(fieldCounts.size()-1);
+							dateEnd = last.getName();
+							Logger.info("first >>>> " + dateStart);
+							Logger.info("last >>>> " + dateEnd);
+						}
 					}
 				}
 			}

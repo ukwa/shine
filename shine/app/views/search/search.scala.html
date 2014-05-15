@@ -22,7 +22,7 @@
 				array.forEach(function(value) {
 					var link = 'a#' + value;
 					console.log(">>> " + link);
-					$(link).click();
+					$(link).trigger("click");
 				});
 	  			
 	  		}
