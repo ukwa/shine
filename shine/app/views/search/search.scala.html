@@ -14,6 +14,18 @@
 			$('#sort').val('@(currentSortBy)')
 	  		$('#order').val('@(currentOrder)')
 
+	  		// if facet.show=crawl_year
+	  		var facetShow = getURLParameter("facet.show");
+			console.log(facetShow);
+	  		if (facetShow) {
+				var array = facetShow.split(",");
+				array.forEach(function(value) {
+					var link = 'a#' + value;
+					console.log(">>> " + link);
+					$(link).click();
+				});
+	  			
+	  		}
 		});
 	</script>
 }
@@ -136,7 +148,7 @@
 											}
 											@if((fc.getValues().size - facetLimit) > 0) {
 												<li> 
-		        									<a class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
+		        									<a id="@(fc.getName())" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
 		        								</li>
 	        								}
 											<li>
