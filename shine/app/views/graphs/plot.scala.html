@@ -22,20 +22,19 @@
 			// also need to set chartgraph id to key
 			@for((key, data) <- listMap) {
 				console.log("@key");
-				var @key = [];
 
 				//if ("@key" == 'crawl_year') {
-					//var @key = [];
+					var @key = [];
 					@data.map { graphData =>
 						//var @key = []
-						//var arr = @key;
-						points.push(["@(graphData.getValue)", @(graphData.getCount)]);
+						var arr = @key;
+						arr.push(["@(graphData.getValue)", @(graphData.getCount)]);
+						points.push(arr);
 					}
-					//points.push(arr);
-					//console.log(arr);
 				//}
 			
-				runGraph(points);
+				console.log(arr);
+				runGraph(arr);
 				
 				function runGraph(points) {
 					// Some simple loops to build up data arrays.
@@ -113,8 +112,7 @@
 			        
 					$('.button-reset').on('click', function() {
 						plotter.resetZoom(); 
-						console.log("cleared");
-						$('#chart-search').empty();
+						console.log("reset");
 					});
 				}
 				

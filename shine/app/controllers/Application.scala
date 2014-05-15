@@ -140,7 +140,7 @@ object Application extends Controller {
 		val facetName = fc.getName()
 		println("facetName: " + facetName)
 		// 	only crawl_year at the moment
-		if (facetName == "crawl_year") {
+//		if (facetName == "crawl_year") {
 			var data = new ListBuffer[GraphData]()
 			for(x <- 0 until fc.getValues().size()) {
 				val f = fc.getValues().get(x)
@@ -150,7 +150,7 @@ object Application extends Controller {
 			  	data += graphData
 			}
 	  		listMap += (facetName -> data)
-		}
+//		}
 	}
     if (StringUtils.isNotEmpty(q.dateStart)) {
       yearStart = q.dateStart

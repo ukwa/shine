@@ -217,6 +217,7 @@ public class Shine extends Solr {
 		Logger.info("start date: " + start);
 		Logger.info("end date: " + end);
 		solrParameters.addDateRangeFacet("crawl_date", start, end, "+1YEAR");
+		solrParameters.setFacetSort("index");
 		return doSearch(query, solrParameters);
 	}
 
@@ -260,6 +261,9 @@ public class Shine extends Solr {
 			List<String> fq = new ArrayList<String>();
 			for (String param : params.keySet()) {
 				String field = param;
+				if (!param.equals("facet.sort")) {
+					parameters.setFacetSort("index");
+				}
 				if (param.equals("facet.sort")) {
 					// there's only one sort
 					parameters.setFacetSort(params.get(param).get(0));
