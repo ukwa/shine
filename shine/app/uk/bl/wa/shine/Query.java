@@ -10,10 +10,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.commons.codec.DecoderException;
@@ -61,6 +59,10 @@ public class Query {
 	public String dateStart; // (this should select a date range for the crawl_date or crawl_dates field).
 	
 	public String dateEnd;
+	
+	public String yearStart;
+	
+	public String yearEnd;
 	
 	public String excluded;
 	
@@ -116,6 +118,14 @@ public class Query {
 		if (parameters.get("dateend") != null) {
 			dateEnd = parameters.get("dateend").get(0).replace("\"", "");
 		}
+		if (parameters.get("year_start") != null) {
+			yearStart = parameters.get("year_start").get(0);
+		}
+		if (parameters.get("year_end") != null) {
+			yearEnd = parameters.get("year_end").get(0);
+		}
+		Logger.info("Dates: " + yearStart + " " + yearEnd);
+		
 		if (parameters.get("excluded") != null) {
 			excluded = parameters.get("excluded").get(0);
 		}
@@ -250,20 +260,25 @@ public class Query {
 		Logger.info("processFacetsAsParamValues: " + parameters.toString());
 		this.responseParameters = parameters.toString();
 		// 1980-01-01T12:00:00Z
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss'Z'");
-		Calendar cal = Calendar.getInstance();
-		List<RangeFacet.Count> counts = null;
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss'Z'");
+//		Calendar cal = Calendar.getInstance();
+//		List<RangeFacet.Count> counts = null;
 		
-		for (FacetField facetField : res.getFacetFields()) {
-			if (facetField.getName().equals("crawl_year")) {
-				List<FacetField.Count> fieldCounts = facetField.getValues();
-				if (!fieldCounts.isEmpty()) {
-					FacetField.Count first = fieldCounts.get(0);
-					dateStart = first.getName();
-					FacetField.Count last = fieldCounts.get(fieldCounts.size()-1);
-					dateEnd = last.getName();
-					Logger.info("first >>>> " + dateStart);
-					Logger.info("last >>>> " + dateEnd);
+		if (StringUtils.isNotEmpty(yearStart) && StringUtils.isNotBlank(yearEnd)) {
+			dateStart = yearStart;
+			dateEnd = yearEnd;
+		} else {
+			for (FacetField facetField : res.getFacetFields()) {
+				if (facetField.getName().equals("crawl_year")) {
+					List<FacetField.Count> fieldCounts = facetField.getValues();
+					if (!fieldCounts.isEmpty()) {
+						FacetField.Count first = fieldCounts.get(0);
+						dateStart = first.getName();
+						FacetField.Count last = fieldCounts.get(fieldCounts.size()-1);
+						dateEnd = last.getName();
+						Logger.info("first >>>> " + dateStart);
+						Logger.info("last >>>> " + dateEnd);
+					}
 				}
 			}
 		}
