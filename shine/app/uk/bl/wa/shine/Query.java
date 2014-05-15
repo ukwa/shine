@@ -253,36 +253,51 @@ public class Query {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss'Z'");
 		Calendar cal = Calendar.getInstance();
 		List<RangeFacet.Count> counts = null;
-		for (RangeFacet<String, RangeFacet.Count> range : res.getFacetRanges()) {
-			Logger.info("range >>>> " + range.getName() + " ---------------");
-			counts = range.getCounts();
-			ListIterator<RangeFacet.Count> listItr = counts.listIterator();
-			// remove the empties
-			while(listItr.hasNext()){
-				RangeFacet.Count count = listItr.next();
-				// remove
-				if (count.getCount() == 0) {
-					listItr.remove();
+		
+		for (FacetField facetField : res.getFacetFields()) {
+			if (facetField.getName().equals("crawl_year")) {
+				List<FacetField.Count> fieldCounts = facetField.getValues();
+				if (!fieldCounts.isEmpty()) {
+					FacetField.Count first = fieldCounts.get(0);
+					dateStart = first.getName();
+					FacetField.Count last = fieldCounts.get(fieldCounts.size()-1);
+					dateEnd = last.getName();
+					Logger.info("first >>>> " + dateStart);
+					Logger.info("last >>>> " + dateEnd);
 				}
 			}
 		}
 		
-		sdf = new SimpleDateFormat("yyyy");
-		if (counts != null && counts.size() > 0) {
-			RangeFacet.Count first = counts.get(0);
-			Date firstDate = sdf.parse(first.getValue());
-			cal.setTime(firstDate);
-			cal.roll(Calendar.YEAR, false);
-			dateStart = sdf.format(cal.getTime());
-			Logger.info(dateStart + " >>> " + first.getCount());
-
-			RangeFacet.Count last = counts.get(counts.size()-1);
-			Date lastDate = sdf.parse(last.getValue());
-			cal.setTime(lastDate);
-			cal.roll(Calendar.YEAR, true);
-			dateEnd = sdf.format(cal.getTime());
-			Logger.info(dateEnd + " >>> " + last.getCount());
-		}
+//		for (RangeFacet<String, RangeFacet.Count> range : res.getFacetRanges()) {
+//			Logger.info("range >>>> " + range.getName() + " ---------------");
+//			counts = range.getCounts();
+//			ListIterator<RangeFacet.Count> listItr = counts.listIterator();
+//			// remove the empties
+//			while(listItr.hasNext()){
+//				RangeFacet.Count count = listItr.next();
+//				// remove
+//				if (count.getCount() == 0) {
+//					listItr.remove();
+//				}
+//			}
+//		}
+//		
+//		sdf = new SimpleDateFormat("yyyy");
+//		if (counts != null && counts.size() > 0) {
+//			RangeFacet.Count first = counts.get(0);
+//			Date firstDate = sdf.parse(first.getValue());
+//			cal.setTime(firstDate);
+////			cal.roll(Calendar.YEAR, false);
+//			dateStart = sdf.format(cal.getTime());
+//			Logger.info(dateStart + " >>> " + first.getCount());
+//
+//			RangeFacet.Count last = counts.get(counts.size()-1);
+//			Date lastDate = sdf.parse(last.getValue());
+//			cal.setTime(lastDate);
+////			cal.roll(Calendar.YEAR, true);
+//			dateEnd = sdf.format(cal.getTime());
+//			Logger.info(dateEnd + " >>> " + last.getCount());
+//		}
 	}
 
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {

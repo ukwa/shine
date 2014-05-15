@@ -45,8 +45,8 @@
 						axes:{
 					        xaxis:{
 					            renderer:$.jqplot.DateAxisRenderer,
-					            min: @(year_start),
-					            max: @(year_end),
+					            min: @(year_start)-1,
+					            max: @(year_end)+1,
 		                        tickOptions: {
 		                            formatString: '%d',
 		                        },
