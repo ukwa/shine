@@ -195,13 +195,26 @@ public class Shine extends Solr {
 		query.facetValues = facetValues;
 	    // select?q=*:*&facet=true&facet.date=crawl_date&facet.date.gap=%2B1YEAR&facet.date.start=1994-01-01T00:00:00.00Z&facet.date.end=NOW%2B1YEAR
 		// select?sort=content_type_norm+asc&start=0&rows=10&q=nhs&facet.mincount=1&fq=crawl_date%3A%5B2005-05-14T00%3A00%3A00Z+TO+2014-05-14T00%3A00%3A00Z%5D
-	    
+		
+		//select?
+		//facet.range=crawl_date
+		//&f.crawl_date.facet.range.start=2000-01-01T12%3A00%3A00.000Z
+		//&f.crawl_date.facet.range.end=2005-05-15T12%3A17%3A56.632Z
+		//&f.crawl_date.facet.range.gap=%2B1YEAR
+		//&facet=true
+		//&facet.sort=index
+		//&q=*%3A*
+
 		//parameters.setParam("wt", "json");
 		// get the defaults
 		// facets that come from url parameters
 
+		if (StringUtils.isEmpty(query.yearStart)) {
+			query.yearStart = "1980";
+		}
+
 		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.YEAR, 1980);
+		cal.set(Calendar.YEAR, Integer.parseInt(query.yearStart));
 		cal.set(Calendar.MONTH, Calendar.JANUARY);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		cal.set(Calendar.HOUR, 0);
@@ -212,12 +225,18 @@ public class Shine extends Solr {
 		
 		// for +1 year
 		cal.setTime(new Date());
+		if (StringUtils.isEmpty(query.yearEnd)) {
+			query.yearEnd = String.valueOf(cal.get(Calendar.YEAR));
+		}
+		cal.set(Calendar.YEAR, Integer.parseInt(query.yearEnd));
 		cal.add(Calendar.YEAR, 1); // to get previous year add -1
 		Date end = cal.getTime();
 		Logger.info("start date: " + start);
 		Logger.info("end date: " + end);
 		solrParameters.addDateRangeFacet("crawl_date", start, end, "+1YEAR");
 		solrParameters.setFacetSort("index");
+		Logger.info("start date: " + query.yearStart);
+		Logger.info("start end: " + query.yearEnd);
 		return doSearch(query, solrParameters);
 	}
 
@@ -253,8 +272,6 @@ public class Shine extends Solr {
 	//			parameters.addFacetField("{!ex=" + facet + "}" + facet);
 	//		}
 			
-			Logger.info("parameters: " + parameters);
-	
 			Map<String, List<String>> params = query.filters;
 	
 			parameters.setFacetMinCount(1);

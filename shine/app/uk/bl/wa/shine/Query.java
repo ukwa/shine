@@ -10,8 +10,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.commons.codec.DecoderException;
@@ -260,61 +262,71 @@ public class Query {
 		Logger.info("processFacetsAsParamValues: " + parameters.toString());
 		this.responseParameters = parameters.toString();
 		// 1980-01-01T12:00:00Z
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss'Z'");
-//		Calendar cal = Calendar.getInstance();
-//		List<RangeFacet.Count> counts = null;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss'Z'");
+		Calendar cal = Calendar.getInstance();
+		List<RangeFacet.Count> counts = null;
 		
 		if (StringUtils.isNotEmpty(yearStart) && StringUtils.isNotBlank(yearEnd)) {
 			dateStart = yearStart;
 			dateEnd = yearEnd;
-		} else {
-			if (res.getFacetFields() != null) {
-				for (FacetField facetField : res.getFacetFields()) {
-					if (facetField.getName().equals("crawl_year")) {
-						List<FacetField.Count> fieldCounts = facetField.getValues();
-						if (!fieldCounts.isEmpty()) {
-							FacetField.Count first = fieldCounts.get(0);
-							dateStart = first.getName();
-							FacetField.Count last = fieldCounts.get(fieldCounts.size()-1);
-							dateEnd = last.getName();
-							Logger.info("first >>>> " + dateStart);
-							Logger.info("last >>>> " + dateEnd);
-						}
-					}
+			Logger.info("yearStart: " + yearStart);
+			Logger.info("yearEnd: " + yearEnd);
+		}
+		
+//		if (res.getFacetFields() != null) {
+//			for (FacetField facetField : res.getFacetFields()) {
+//				if (facetField.getName().equals("crawl_year")) {
+//					List<FacetField.Count> fieldCounts = facetField.getValues();
+//					if (!fieldCounts.isEmpty()) {
+//						FacetField.Count first = fieldCounts.get(0);
+//						if (StringUtils.isEmpty(dateStart)) {
+//							dateStart = first.getName();
+//						}
+//						FacetField.Count last = fieldCounts.get(fieldCounts.size()-1);
+//						if (StringUtils.isEmpty(dateEnd)) {
+//							dateEnd = last.getName();
+//						}
+//						Logger.info("first >>>> " + dateStart);
+//						Logger.info("last >>>> " + dateEnd);
+//					}
+//				}
+//			}
+//		}
+		
+		for (RangeFacet<String, RangeFacet.Count> range : res.getFacetRanges()) {
+			Logger.info("range >>>> " + range.getName() + " ---------------");
+			counts  = range.getCounts();
+			ListIterator<RangeFacet.Count> listItr = counts.listIterator();
+			// remove the empties
+			while(listItr.hasNext()){
+				RangeFacet.Count count = listItr.next();
+				Logger.info("+++++ " + count.getValue() + " " + count.getClass());
+				// remove
+				if (count.getCount() == 0) {
+					listItr.remove();
 				}
 			}
 		}
 		
-//		for (RangeFacet<String, RangeFacet.Count> range : res.getFacetRanges()) {
-//			Logger.info("range >>>> " + range.getName() + " ---------------");
-//			counts = range.getCounts();
-//			ListIterator<RangeFacet.Count> listItr = counts.listIterator();
-//			// remove the empties
-//			while(listItr.hasNext()){
-//				RangeFacet.Count count = listItr.next();
-//				// remove
-//				if (count.getCount() == 0) {
-//					listItr.remove();
-//				}
-//			}
-//		}
-//		
-//		sdf = new SimpleDateFormat("yyyy");
-//		if (counts != null && counts.size() > 0) {
-//			RangeFacet.Count first = counts.get(0);
-//			Date firstDate = sdf.parse(first.getValue());
-//			cal.setTime(firstDate);
-////			cal.roll(Calendar.YEAR, false);
-//			dateStart = sdf.format(cal.getTime());
-//			Logger.info(dateStart + " >>> " + first.getCount());
-//
-//			RangeFacet.Count last = counts.get(counts.size()-1);
-//			Date lastDate = sdf.parse(last.getValue());
-//			cal.setTime(lastDate);
-////			cal.roll(Calendar.YEAR, true);
-//			dateEnd = sdf.format(cal.getTime());
-//			Logger.info(dateEnd + " >>> " + last.getCount());
-//		}
+		sdf = new SimpleDateFormat("yyyy");
+		if (counts != null && counts.size() > 0) {
+			RangeFacet.Count first = counts.get(0);
+			Date firstDate = sdf.parse(first.getValue());
+			cal.setTime(firstDate);
+//			cal.roll(Calendar.YEAR, false);
+			if (StringUtils.isEmpty(dateStart)) {
+				dateStart = sdf.format(cal.getTime());
+			}
+
+			RangeFacet.Count last = counts.get(counts.size()-1);
+			Date lastDate = sdf.parse(last.getValue());
+			cal.setTime(lastDate);
+//			cal.roll(Calendar.YEAR, true);
+			if (StringUtils.isEmpty(dateEnd)) {
+				dateEnd = sdf.format(cal.getTime());
+			}
+		}
+		Logger.info(dateStart + " " + dateEnd);
 	}
 
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {

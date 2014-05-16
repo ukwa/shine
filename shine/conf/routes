@@ -49,3 +49,5 @@ GET    	/suggestCollection/:name			controllers.Application.suggestCollection(nam
 GET    	/suggestCollections/:name			controllers.Application.suggestCollections(name)
 
 GET    	/getFacets							controllers.Application.getFacets
+
+GET		/processChart						controllers.Application.processChart

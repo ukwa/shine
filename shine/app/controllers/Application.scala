@@ -18,6 +18,8 @@ import play.api.libs.json._
 import scala.util.parsing.json.JSONObject
 import play.api.Play.current
 import play.api.cache.Cache
+import org.apache.solr.client.solrj.response.QueryResponse
+import org.apache.solr.client.solrj.response.RangeFacet
 
 object Application extends Controller {
 
@@ -132,26 +134,8 @@ object Application extends Controller {
     val totalRecords = q.res.getResults().getNumFound().intValue()
     println("totalRecords: " + totalRecords);
 
-    var listMap:Map[String,ListBuffer[GraphData]] = Map()
-
-    val facetFields = q.res.getFacetFields()
-	for(i <- 0 until facetFields.size()) {
-		val fc = facetFields.get(i)
-		val facetName = fc.getName()
-		println("facetName: " + facetName)
-		// 	only crawl_year at the moment
-//		if (facetName == "crawl_year") {
-			var data = new ListBuffer[GraphData]()
-			for(x <- 0 until fc.getValues().size()) {
-				val f = fc.getValues().get(x)
-				var value = f.getName()
-				var count = f.getCount().toInt
-				var graphData = new GraphData(value, count)
-			  	data += graphData
-			}
-	  		listMap += (facetName -> data)
-//		}
-	}
+    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q.res)
+    
     if (StringUtils.isNotEmpty(q.dateStart)) {
       yearStart = q.dateStart
     }
@@ -163,6 +147,67 @@ object Application extends Controller {
     Ok(views.html.graphs.plot("Plot Graph Test", q, "Years", "Count", listMap, yearStart, yearEnd))
   }
 
+  def getGraphData(res: QueryResponse) = {
+
+	var data:Map[String,ListBuffer[GraphData]] = {
+		var map:Map[String,ListBuffer[GraphData]] = Map()
+		
+		var ranges:List[RangeFacet[String, RangeFacet.Count]] = List()
+
+		for (i <- 0 until res.getFacetRanges().size) {
+		  val range = res.getFacetRanges().get(i)
+		  val facetName = range.getName()
+		  val counts = range.getCounts()
+		  val iterator = counts.iterator()
+		  var data = new ListBuffer[GraphData]()
+		  while(iterator.hasNext()) {
+		    val count = iterator.next()
+		    var value = count.getValue().split("-")(0)
+		    var graphData = new GraphData(value, count.getCount().toInt)
+		  	data += graphData
+		  }
+		  map += (facetName -> data)
+		}
+
+//		for (RangeFacet<String, RangeFacet.Count> range : res.getFacetRanges()) {
+//			Logger.info("range >>>> " + range.getName() + " ---------------");
+//			counts  = range.getCounts();
+//			ListIterator<RangeFacet.Count> listItr = counts.listIterator();
+//			// remove the empties
+//			while(listItr.hasNext()){
+//				RangeFacet.Count count = listItr.next();
+//				Logger.info("+++++ " + count.getValue() + " " + count.getClass());
+//				// remove
+//				if (count.getCount() == 0) {
+//					listItr.remove();
+//				}
+//			}
+//		}
+//		
+		
+//		for(i <- 0 until facetFields.size) {
+//			val fc = facetFields.get(i)
+//			val facetName = fc.getName()
+//			println("facetName: " + facetName)
+//			// 	only crawl_year at the moment
+//	//		if (facetName == "crawl_year") {
+//				var data = new ListBuffer[GraphData]()
+//				for(x <- 0 until fc.getValues().size()) {
+//					val f = fc.getValues().get(x)
+//					var value = f.getName()
+//					var count = f.getCount().toInt
+//					var graphData = new GraphData(value, count)
+//					println(">>>>>>> " + value + " " + count)
+//				  	data += graphData
+//				}
+//		  		map += (facetName -> data)
+//	//		}
+//		}
+		map
+	}
+	data
+  }
+  
   def createQuery(query: String, parameters: Map[String, Seq[String]]) = {
     val map = parameters
     val parametersAsJava = map.map { case (k, v) => (k, v.asJava) }.asJava;
@@ -175,7 +220,6 @@ object Application extends Controller {
     var q = createQuery(query, parameters)
     println("new query created: " + q.facets)
     solr.search(q)
-
   }
 
   def doAdvanced(query: String, parameters: Map[String, Seq[String]]) = {
@@ -340,6 +384,51 @@ object Application extends Controller {
 
     Ok(collectionJson)
   }
+  
+  def processChart = Action { implicit request =>
+    println("processChart: " + request.queryString)
+    val query = request.getQueryString("query")
+    val yearStart = request.getQueryString("year_start")
+    val yearEnd = request.getQueryString("year_end")
+    println("query: " + query)
+    println("yearStart" + yearStart)
+    println("yearEnd: " + yearEnd)
+
+    var queryString: String = {
+    	var value = " "
+	    query match {
+			case Some(parameter) => {
+				println("parameter: " + parameter)
+				value = parameter
+			}
+			case None => {
+				println("None")
+			}
+		}
+    	value
+    }
+    
+    val q = doGraph(queryString, request.queryString)
+    println("doGraph called: " + q)
+    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q.res)
+    // product json
+    
+    var result:JsArray = { 
+	    var array = Json.arr() 
+	    for ((key, value) <- listMap) { 
+	    	println (key + "-->" + value)
+	    	value.map(graphData => {
+	    	  val jsonObject = Json.obj("value" -> JsString(graphData.getValue()), "count" -> JsNumber(graphData.getCount()))
+	    	  println(graphData.getValue() + " " + graphData.getCount())
+	    	  array = array :+ jsonObject
+	    	})
+	    }
+	    array
+    }
+    
+    println("resultList: " + result)
+    Ok(result)
+  }
 
   def javascriptRoutes = Action { implicit request =>
     import routes.javascript._
@@ -354,7 +443,9 @@ object Application extends Controller {
         routes.javascript.Application.suggestAuthor,
         routes.javascript.Application.suggestCollection,
         routes.javascript.Application.suggestCollections,
-        routes.javascript.Application.getFacets)).as("text/javascript")
+        routes.javascript.Application.getFacets,
+        routes.javascript.Application.processChart
+        )).as("text/javascript")
   }
 
   def resetParameters(parameters: collection.immutable.Map[String, Seq[String]]) = {
