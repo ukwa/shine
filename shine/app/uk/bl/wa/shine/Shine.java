@@ -229,7 +229,7 @@ public class Shine extends Solr {
 			query.yearEnd = String.valueOf(cal.get(Calendar.YEAR));
 		}
 		cal.set(Calendar.YEAR, Integer.parseInt(query.yearEnd));
-		cal.add(Calendar.YEAR, 1); // to get previous year add -1
+		//cal.add(Calendar.YEAR, 1); // to get previous year add -1
 		Date end = cal.getTime();
 		Logger.info("start date: " + start);
 		Logger.info("end date: " + end);

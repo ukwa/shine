@@ -134,7 +134,7 @@ object Application extends Controller {
     val totalRecords = q.res.getResults().getNumFound().intValue()
     println("totalRecords: " + totalRecords);
 
-    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q.res)
+    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q)
     
     if (StringUtils.isNotEmpty(q.dateStart)) {
       yearStart = q.dateStart
@@ -147,19 +147,18 @@ object Application extends Controller {
     Ok(views.html.graphs.plot("Plot Graph Test", q, "Years", "Count", listMap, yearStart, yearEnd))
   }
 
-  def getGraphData(res: QueryResponse) = {
+  def getGraphData(q: Query) = {
 
 	var data:Map[String,ListBuffer[GraphData]] = {
 		var map:Map[String,ListBuffer[GraphData]] = Map()
 		
-		var ranges:List[RangeFacet[String, RangeFacet.Count]] = List()
-
-		for (i <- 0 until res.getFacetRanges().size) {
-		  val range = res.getFacetRanges().get(i)
+		for (i <- 0 until q.res.getFacetRanges().size) {
+		  val range = q.res.getFacetRanges().get(i)
 		  val facetName = range.getName()
 		  val counts = range.getCounts()
 		  val iterator = counts.iterator()
 		  var data = new ListBuffer[GraphData]()
+		  
 		  while(iterator.hasNext()) {
 		    val count = iterator.next()
 		    var value = count.getValue().split("-")(0)
@@ -168,30 +167,26 @@ object Application extends Controller {
 		  }
 		  map += (facetName -> data)
 		}
-
-//		for (RangeFacet<String, RangeFacet.Count> range : res.getFacetRanges()) {
-//			Logger.info("range >>>> " + range.getName() + " ---------------");
-//			counts  = range.getCounts();
-//			ListIterator<RangeFacet.Count> listItr = counts.listIterator();
-//			// remove the empties
-//			while(listItr.hasNext()){
-//				RangeFacet.Count count = listItr.next();
-//				Logger.info("+++++ " + count.getValue() + " " + count.getClass());
-//				// remove
-//				if (count.getCount() == 0) {
-//					listItr.remove();
-//				}
-//			}
-//		}
-//		
 		
-//		for(i <- 0 until facetFields.size) {
-//			val fc = facetFields.get(i)
+//		for(i <- 0 until q.res.getFacetFields().size) {
+//			val fc = q.res.getFacetFields().get(i)
 //			val facetName = fc.getName()
 //			println("facetName: " + facetName)
 //			// 	only crawl_year at the moment
 //	//		if (facetName == "crawl_year") {
 //				var data = new ListBuffer[GraphData]()
+//				
+//
+//				if (fc.getValues() != null && fc.getValues().size() > 0) {
+//					var first:String = {
+//						fc.getValues().get(0).getName()
+//					}
+//					var last:String = {
+//						fc.getValues().get(fc.getValues().size() -1).getName()
+//					}
+//					q.dateStart = first
+//					q.dateEnd = last
+//				}
 //				for(x <- 0 until fc.getValues().size()) {
 //					val f = fc.getValues().get(x)
 //					var value = f.getName()
@@ -203,6 +198,7 @@ object Application extends Controller {
 //		  		map += (facetName -> data)
 //	//		}
 //		}
+		println("date: " + q.dateStart + " - " + q.dateEnd)
 		map
 	}
 	data
@@ -410,7 +406,7 @@ object Application extends Controller {
     
     val q = doGraph(queryString, request.queryString)
     println("doGraph called: " + q)
-    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q.res)
+    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q)
     // product json
     
     var result:JsArray = { 

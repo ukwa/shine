@@ -35,8 +35,6 @@
 				var year_start = $("#year-start").val();
 				var year_end = $("#year-end").val();
 
-				console.log(query + " " + year_start + " " + year_end);
-				
 				var url = "/processChart?query=" + query + "&year_start=" + year_start + "&year_end=" + year_end;
 
 				$.ajax({
@@ -48,9 +46,9 @@
 		    	    		console.log("data: " + val.value + " " + val.count);
 							results.push([val.value, val.count]);
 	    	    		});
-	    		    	var start = $("#year-start").val();
-	    	    		var end = $("#year-end").val();
-
+	    		    	var start = parseInt($("#year-start").val())-1;
+	    	    		var end = parseInt($("#year-end").val())+1;
+	    	    		
 	    	    		runGraph(results, start, end);
 	    	    		
 	    	    	},
@@ -86,7 +84,8 @@
 			function runGraph(points, start, end) {
 				// Some simple loops to build up data arrays.
 
-	    		
+	    		console.log("x axis: " + start + " " + end);
+
 				var plotter = $.jqplot('chart-search', [points], {
 					
 				    title:'Ngram',
@@ -95,9 +94,7 @@
 				            renderer:$.jqplot.DateAxisRenderer,
 				            min: start,
 				            max: end,
-	                        tickOptions: {
-	                            formatString: '%d',
-	                        },
+	                        tickInterval: 1,
 	                        label:'@(labelX)'
 						},
 						yaxis:{

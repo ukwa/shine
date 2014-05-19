@@ -269,15 +269,17 @@ public class Query {
 		if (StringUtils.isNotEmpty(yearStart) && StringUtils.isNotBlank(yearEnd)) {
 			dateStart = yearStart;
 			dateEnd = yearEnd;
-			Logger.info("yearStart: " + yearStart);
-			Logger.info("yearEnd: " + yearEnd);
 		}
-		
+//		
 //		if (res.getFacetFields() != null) {
 //			for (FacetField facetField : res.getFacetFields()) {
 //				if (facetField.getName().equals("crawl_year")) {
 //					List<FacetField.Count> fieldCounts = facetField.getValues();
 //					if (!fieldCounts.isEmpty()) {
+//						for (FacetField.Count count : fieldCounts) {
+//							Logger.info("ff count >>> " + count.getName() + " " + count.getCount());
+//						}
+//						
 //						FacetField.Count first = fieldCounts.get(0);
 //						if (StringUtils.isEmpty(dateStart)) {
 //							dateStart = first.getName();
@@ -294,13 +296,11 @@ public class Query {
 //		}
 		
 		for (RangeFacet<String, RangeFacet.Count> range : res.getFacetRanges()) {
-			Logger.info("range >>>> " + range.getName() + " ---------------");
 			counts  = range.getCounts();
 			ListIterator<RangeFacet.Count> listItr = counts.listIterator();
 			// remove the empties
 			while(listItr.hasNext()){
 				RangeFacet.Count count = listItr.next();
-				Logger.info("+++++ " + count.getValue() + " " + count.getClass());
 				// remove
 				if (count.getCount() == 0) {
 					listItr.remove();
@@ -326,7 +326,7 @@ public class Query {
 				dateEnd = sdf.format(cal.getTime());
 			}
 		}
-		Logger.info(dateStart + " " + dateEnd);
+		Logger.info("dates: " + dateStart + " - " + dateEnd);
 	}
 
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {
