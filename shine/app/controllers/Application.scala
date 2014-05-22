@@ -129,21 +129,33 @@ object Application extends Controller {
       yearEnd = config.getString("default_end_year")
     }
     println("yearEnd: " + yearEnd)
-    // we want this: http://localhost:9001/search?facet.fields=crawl_year&query=nhs&action=search
-    val q = doGraph(query, request.queryString)
-    val totalRecords = q.res.getResults().getNumFound().intValue()
-    println("totalRecords: " + totalRecords);
-
-    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q)
     
-    if (StringUtils.isNotEmpty(q.dateStart)) {
-      yearStart = q.dateStart
-    }
-    if (StringUtils.isNotEmpty(q.dateEnd)) {
-      yearEnd = q.dateEnd
-    }
-    println(">>>> " + listMap)
+    var values = query.split(",")
+    
+    var graphMap:Map[Query,Map[String,ListBuffer[GraphData]]] = Map()
 
+    for(text <- values) {
+        val value = text.trim
+    	println(value);
+        val q = doGraph(value, request.queryString)
+	    val totalRecords = q.res.getResults().getNumFound().intValue()
+	    println("totalRecords: " + totalRecords);
+	
+	    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q)
+	    
+	    if (StringUtils.isNotEmpty(q.dateStart)) {
+	      yearStart = q.dateStart
+	    }
+	    if (StringUtils.isNotEmpty(q.dateEnd)) {
+	      yearEnd = q.dateEnd
+	    }
+
+	   graphMap += (q -> listMap)
+    }
+
+    val head = graphMap.head
+    val q = head._1
+    val listMap = head._2
     Ok(views.html.graphs.plot("Plot Graph Test", q, "Years", "Count", listMap, yearStart, yearEnd))
   }
 
