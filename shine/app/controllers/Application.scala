@@ -132,27 +132,30 @@ object Application extends Controller {
     
     var values = query.split(",")
     
-    var graphMap:Map[Query,Map[String,ListBuffer[GraphData]]] = Map()
+    var graphMap:Map[Query,Map[String,ListBuffer[GraphData]]] = {
+      
+		var map:Map[Query,Map[String,ListBuffer[GraphData]]] = Map()
 
-    for(text <- values) {
-        val value = text.trim
-    	println(value);
-        val q = doGraph(value, request.queryString)
-	    val totalRecords = q.res.getResults().getNumFound().intValue()
-	    println("totalRecords: " + totalRecords);
-	
-	    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q)
-	    
-	    if (StringUtils.isNotEmpty(q.dateStart)) {
-	      yearStart = q.dateStart
-	    }
-	    if (StringUtils.isNotEmpty(q.dateEnd)) {
-	      yearEnd = q.dateEnd
-	    }
-
-	   graphMap += (q -> listMap)
+		for(text <- values) {
+		    val value = text.trim
+			println(value);
+		    val q = doGraph(value, request.queryString)
+		    val totalRecords = q.res.getResults().getNumFound().intValue()
+		    println("totalRecords: " + totalRecords);
+		
+		    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q)
+		    
+		    if (StringUtils.isNotEmpty(q.dateStart)) {
+		      yearStart = q.dateStart
+		    }
+		    if (StringUtils.isNotEmpty(q.dateEnd)) {
+		      yearEnd = q.dateEnd
+		    }
+		    map += (q -> listMap)
+		}
+		map
     }
-
+    
     val head = graphMap.head
     val q = head._1
     val listMap = head._2
@@ -160,57 +163,25 @@ object Application extends Controller {
   }
 
   def getGraphData(q: Query) = {
-
+    
 	var data:Map[String,ListBuffer[GraphData]] = {
 		var map:Map[String,ListBuffer[GraphData]] = Map()
-		
+	
 		for (i <- 0 until q.res.getFacetRanges().size) {
-		  val range = q.res.getFacetRanges().get(i)
-		  val facetName = range.getName()
-		  val counts = range.getCounts()
-		  val iterator = counts.iterator()
-		  var data = new ListBuffer[GraphData]()
-		  
-		  while(iterator.hasNext()) {
-		    val count = iterator.next()
-		    var value = count.getValue().split("-")(0)
-		    var graphData = new GraphData(value, count.getCount().toInt)
-		  	data += graphData
-		  }
-		  map += (facetName -> data)
+			val range = q.res.getFacetRanges().get(i)
+			val facetName = range.getName()
+			val counts = range.getCounts()
+			val iterator = counts.iterator()
+			var data = new ListBuffer[GraphData]()
+			  
+			while(iterator.hasNext()) {
+				val count = iterator.next()
+				var value = count.getValue().split("-")(0)
+				var graphData = new GraphData(value, count.getCount().toInt)
+				data += graphData
+			}
+			map += (facetName -> data)
 		}
-		
-//		for(i <- 0 until q.res.getFacetFields().size) {
-//			val fc = q.res.getFacetFields().get(i)
-//			val facetName = fc.getName()
-//			println("facetName: " + facetName)
-//			// 	only crawl_year at the moment
-//	//		if (facetName == "crawl_year") {
-//				var data = new ListBuffer[GraphData]()
-//				
-//
-//				if (fc.getValues() != null && fc.getValues().size() > 0) {
-//					var first:String = {
-//						fc.getValues().get(0).getName()
-//					}
-//					var last:String = {
-//						fc.getValues().get(fc.getValues().size() -1).getName()
-//					}
-//					q.dateStart = first
-//					q.dateEnd = last
-//				}
-//				for(x <- 0 until fc.getValues().size()) {
-//					val f = fc.getValues().get(x)
-//					var value = f.getName()
-//					var count = f.getCount().toInt
-//					var graphData = new GraphData(value, count)
-//					println(">>>>>>> " + value + " " + count)
-//				  	data += graphData
-//				}
-//		  		map += (facetName -> data)
-//	//		}
-//		}
-		println("date: " + q.dateStart + " - " + q.dateEnd)
 		map
 	}
 	data
@@ -326,15 +297,36 @@ object Application extends Controller {
     var sort = "crawl_date"
     var order = "asc"
     //{page=[1], query=[*:*], order=[asc], facet.in.collection=["Acute Trusts"], selected.facet=[author], sort=[content_type_norm]}
-    if (pageParameter != None) {
-      page = pageParameter.get.toInt
-    }
-    if (sortParameter != None) {
-      sort = sortParameter.get
-    }
-    if (orderParameter != None) {
-      order = orderParameter.get
-    }
+      
+    pageParameter match {
+		case Some(parameter) => {
+			page = pageParameter.get.toInt
+			println("page: " + page)
+		}
+		case None => {
+			println("None")
+		}
+	}
+
+    sortParameter match {
+		case Some(parameter) => {
+			sort = sortParameter.get
+			println("sort: " + sort)
+		}
+		case None => {
+			println("None")
+		}
+	}
+
+    orderParameter match {
+		case Some(parameter) => {
+			order = orderParameter.get
+			println("order: " + order)
+		}
+		case None => {
+			println("None")
+		}
+	}
 
     val queryResponse = doBrowse("*:*", request.queryString).res
     var results = queryResponse.getResults()
