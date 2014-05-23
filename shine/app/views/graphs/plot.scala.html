@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, labelX: String, labelY: String, listMap: scala.collection.immutable.Map[String, scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]], year_start: String, year_end: String)
+@(title: String, q: uk.bl.wa.shine.Query, labelX: String, labelY: String, listMap: scala.collection.immutable.Map[String, scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]], year_start: String, year_end: String, graphMap:scala.collection.immutable.Map[uk.bl.wa.shine.Query,scala.collection.immutable.Map[String,scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]]])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" href="@routes.Assets.at("jqplot/jquery.jqplot.min.css")">
@@ -12,6 +12,7 @@
 	<script src="@routes.Assets.at("jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("jqplot/plugins/jqplot.cursor.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("jqplot/plugins/jqplot.highlighter.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	
 	<script type="text/javascript">
 	
@@ -29,6 +30,8 @@
 				$('form').submit();				
 			});
 		
+/* 			$('#query').val(getURLParameter('query'));
+ */			
 			function processChart() {
 
 				var query = $("#query").val();
@@ -62,10 +65,12 @@
 
 			// each key has a tab/page
 			// also need to set chartgraph id to key
-			@if(listMap != null) {
-				@for((key, data) <- listMap) {
-	
-					//if ("@key" == 'crawl_year') {
+			
+			@if(graphMap != null) {
+				@for((query, map) <- graphMap) {
+					console.log("@(query) @(map)");
+					@for((key, data) <- map) {
+						console.log("k d: @key @data");
 						var @key = [];
 						@data.map { graphData =>
 							//var @key = []
@@ -73,18 +78,14 @@
 							arr.push(["@(graphData.getValue)", @(graphData.getCount)]);
 							points.push(arr);
 						}
-					//}
-				
-					console.log(arr);
-					runGraph(arr, @(year_start)-1, @(year_end)+1);
+						runGraph(arr, @(year_start)-1, @(year_end)+1);
+					}
 				}
 			}
 			
-			
 			function runGraph(points, start, end) {
 				// Some simple loops to build up data arrays.
-
-	    		console.log("x axis: " + start + " " + end);
+	    		console.log("x axis: " + start + " " + end + " p:" + points);
 
 				var plotter = $.jqplot('chart-search', [points], {
 					

@@ -151,7 +151,9 @@ object Application extends Controller {
 		    if (StringUtils.isNotEmpty(q.dateEnd)) {
 		      yearEnd = q.dateEnd
 		    }
-		    map += (q -> listMap)
+		    if (!listMap.isEmpty) {
+			    map += (q -> listMap)
+		    }
 		}
 		map
     }
@@ -159,7 +161,7 @@ object Application extends Controller {
     val head = graphMap.head
     val q = head._1
     val listMap = head._2
-    Ok(views.html.graphs.plot("Plot Graph Test", q, "Years", "Count", listMap, yearStart, yearEnd))
+    Ok(views.html.graphs.plot("Plot Graph Test", q, "Years", "Count", listMap, yearStart, yearEnd, graphMap))
   }
 
   def getGraphData(q: Query) = {
@@ -180,7 +182,9 @@ object Application extends Controller {
 				var graphData = new GraphData(value, count.getCount().toInt)
 				data += graphData
 			}
-			map += (facetName -> data)
+			if (!data.isEmpty) {
+				map += (facetName -> data)
+			}
 		}
 		map
 	}
