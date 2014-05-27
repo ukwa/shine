@@ -18,14 +18,14 @@
 	
 		$(document).ready(function(){
 
+			/*
 			$('#query').keypress(function(event){
 				var keycode = (event.keyCode ? event.keyCode : event.which);
 				if(keycode == '13'){
-				    //$('#update').trigger("click");
 				    processChart();
 				}
 			});
-
+			*/
 			$('#update').on('click', function() {
 				$('form').submit();				
 			});
@@ -113,32 +113,8 @@
 					   	show: true,
 						zoom: true, 
 						showTooltip: false
-					}, 
-				    // Series options are specified as an array of objects, one object
-				    // for each series.
-				    series:[ 
-				        {
-				          // Change our line width and use a diamond shaped marker.
-				          lineWidth:2, 
-				          markerOptions: { style:'diamond' }
-				        }, 
-				        {
-				          // Don't show a line, just show markers.
-				          // Make the markers 7 pixels with an 'x' style
-				          showLine:false, 
-				          markerOptions: { size: 7, style:"x" }
-				        },
-				        { 
-				          // Use (open) circlular markers.
-				          markerOptions: { style:"circle" }
-				        }, 
-				        {
-				          // Use a thicker, 5 pixel line and 10 pixel
-				          // filled square markers.
-				          lineWidth:5, 
-				          markerOptions: { style:"filledSquare", size:10 }
-				        }
-				    ]
+					}
+					
 				}).replot();
 				
 		        $('#chart-search').on('jqplotDataClick', 
@@ -186,7 +162,7 @@
 				@helper.form(action=routes.Application.plot_graph()) {
 					<div class="row padding-10">
 						<div class="col-md-12 text-center">
-							<input type="text" class="form-control" name="query" placeholder="Search Term" value="@(q)" id="query" />
+							<input type="text" class="form-control" name="query" placeholder="Comma separated terms" value="@(q)" id="query" />
 						</div>
 					</div>
 					<div class="row padding-10 text-center">
@@ -200,7 +176,7 @@
 									<label class="sr-only" for="to-date">To:</label>
 									<input type="text" class="form-control field-right" id="year-end" name="year_end">
 								</div>
-								<button type="button" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
+								<button type="submit" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
 								<button type="reset" class="btn btn-primary button-reset" id="reset" name="action" value="reset">Reset All</button>
 							</div>
 						</div>
