@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, labelX: String, labelY: String, listMap: scala.collection.immutable.Map[String, scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]], year_start: String, year_end: String, graphMap:scala.collection.immutable.Map[uk.bl.wa.shine.Query,scala.collection.immutable.Map[String,scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]]])
+@(title: String, q: String, labelX: String, labelY: String, year_start: String, year_end: String, graphMap:scala.collection.immutable.Map[uk.bl.wa.shine.Query,scala.collection.immutable.Map[String,scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]]])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" href="@routes.Assets.at("jqplot/jquery.jqplot.min.css")">
@@ -67,27 +67,27 @@
 			// also need to set chartgraph id to key
 			
 			@if(graphMap != null) {
-				@for((query, map) <- graphMap) {
-					console.log("@(query) @(map)");
+				@for(((search, map), index) <- graphMap.zipWithIndex) {
+					console.log("q: @(search.query)");
+					var array@(index) = [];
 					@for((key, data) <- map) {
-						console.log("k d: @key @data");
+						//console.log("k d: @key @data");
 						var @key = [];
 						@data.map { graphData =>
-							//var @key = []
-							var arr = @key;
-							arr.push(["@(graphData.getValue)", @(graphData.getCount)]);
-							points.push(arr);
+							array@(index).push(["@(graphData.getValue)", @(graphData.getCount), "@(search.query)"]);
 						}
-						runGraph(arr, @(year_start)-1, @(year_end)+1);
 					}
+					points.push(array@(index));
 				}
 			}
+
+			runGraph(points, @(year_start)-1, @(year_end)+1);
 			
 			function runGraph(points, start, end) {
 				// Some simple loops to build up data arrays.
-	    		console.log("x axis: " + start + " " + end + " p:" + points);
+	    		console.log("x axis: " + start + " " + end + " p:" + points.length);
 
-				var plotter = $.jqplot('chart-search', [points], {
+				var plotter = $.jqplot('chart-search', points, {
 					
 				    title:'Ngram',
 					axes:{
@@ -99,13 +99,15 @@
 	                        label:'@(labelX)'
 						},
 						yaxis:{
+	                      tickInterval: 1000,
 						  label:'@(labelY)'
 						}
 					},
 				    highlighter: {
 						show: true,
 						sizeAdjust: 7.5,
-						formatString: '<h2>@(q.query) %d (%d)</h2>'
+						yvalues: 4,
+						formatString: '<h2>%d (%d) %s</h2>'
 			        },
 					cursor:{ 
 					   	show: true,
@@ -143,7 +145,8 @@
 	                function (ev, seriesIndex, pointIndex, data) {
 	        			var year = data[0];
 	        			var count = data[1];
-	        			var url = "/search?facet.fields=crawl_year&facet.in.crawl_year=\"" + year + "\"&query=@q.query&action=search&sort=content_type_norm&order=asc&facet.show=crawl_year";
+	        			var query = data[2];
+	        			var url = "/search?facet.fields=crawl_year&facet.in.crawl_year=\"" + year + "\"&query=" + query + "&action=search&sort=content_type_norm&order=asc&facet.show=crawl_year";
 	        			window.location.href = url;
 	                }
 	            );
@@ -183,7 +186,7 @@
 				@helper.form(action=routes.Application.plot_graph()) {
 					<div class="row padding-10">
 						<div class="col-md-12 text-center">
-							<input type="text" class="form-control" name="query" placeholder="Search Term" value="@(q.query)" id="query" />
+							<input type="text" class="form-control" name="query" placeholder="Search Term" value="@(q)" id="query" />
 						</div>
 					</div>
 					<div class="row padding-10 text-center">

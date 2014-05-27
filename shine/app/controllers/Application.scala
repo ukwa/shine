@@ -140,8 +140,10 @@ object Application extends Controller {
 
 		for(text <- values) {
 		    val value = text.trim
-			println(value);
 		    val q = doGraph(value, request.queryString)
+
+		    println("query: " + q.query);
+
 		    val totalRecords = q.res.getResults().getNumFound().intValue()
 		    println("totalRecords: " + totalRecords);
 		
@@ -160,10 +162,11 @@ object Application extends Controller {
 		map
     }
     
-    val head = graphMap.head
-    val q = head._1
-    val listMap = head._2
-    Ok(views.html.graphs.plot("Plot Graph Test", q, "Years", "Count", listMap, yearStart, yearEnd, graphMap))
+//    val head = graphMap.head
+//    val q = head._1
+//    val listMap = head._2
+//    q.query = query
+    Ok(views.html.graphs.plot("Plot Graph Test", query, "Years", "Count", yearStart, yearEnd, graphMap))
   }
 
   def getGraphData(q: Query) = {

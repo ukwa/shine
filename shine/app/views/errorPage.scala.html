@@ -1,0 +1,6 @@
+@(ex: Throwable) @main("Error Page") {
+	<h1><span class="label label-warning">Exception - Error Message</span></h1>
+	<div>
+		@ex.getMessage
+	</div>	
+}
