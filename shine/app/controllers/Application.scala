@@ -108,6 +108,8 @@ object Application extends Controller {
 
     println("Page #: " + pageNo)
     println("totalRecords #: " + totalRecords)
+    println("sort #: " + sort)
+    println("order #: " + order)
 
     pagination.update(totalRecords, pageNo)
 

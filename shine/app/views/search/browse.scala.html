@@ -326,21 +326,23 @@
 					<div>
 						<div class="tree">
 						    <ul>
-						    	@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
-						        <li>
-						            <span><i class="icon-folder-open root"></i> <strong>@(fc.getName())</strong> <span class="badge">@(fc.getValueCount())</span></span>
-						            <ul>
-										@for((f, i) <- fc.getValues().zipWithIndex) {
-							                <li>
-												<span class="label-success">
-													<i class="child glyphicon glyphicon-minus"></i> 
-													<a href="@(routes.Application.search(q.query))&facet.fields=@(fc.getName())&facet.in.@(fc.getName())=&#34;@(Html(q.formatFacet(fc,f)))&#34;&action=search">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span>
-												</span>
-							                    <ul class="root"></ul>
-											</li>
-										}
-						            </ul>
-								</li>
+						    	@if(q.res.getFacetFields != null) {
+							    	@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
+							        <li>
+							            <span><i class="icon-folder-open root"></i> <strong>@(fc.getName())</strong> <span class="badge">@(fc.getValueCount())</span></span>
+							            <ul>
+											@for((f, i) <- fc.getValues().zipWithIndex) {
+								                <li>
+													<span class="label-success">
+														<i class="child glyphicon glyphicon-minus"></i> 
+														<a href="@(routes.Application.search(q.query))&facet.fields=@(fc.getName())&facet.in.@(fc.getName())=&#34;@(Html(q.formatFacet(fc,f)))&#34;&action=search">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span>
+													</span>
+								                    <ul class="root"></ul>
+												</li>
+											}
+							            </ul>
+									</li>
+									}
 								}
 							</ul>
 						</div>
