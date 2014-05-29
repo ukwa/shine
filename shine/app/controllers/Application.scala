@@ -169,6 +169,76 @@ object Application extends Controller {
     Ok(views.html.graphs.plot("Plot Graph Test", query, "Years", "Count", yearStart, yearEnd, graphMap))
   }
 
+  def processChart = Action { implicit request =>
+    println("processChart: " + request.queryString)
+    val query = request.getQueryString("query")
+    val yearStart = request.getQueryString("year_start")
+    val yearEnd = request.getQueryString("year_end")
+    println("query: " + query)
+    println("yearStart" + yearStart)
+    println("yearEnd: " + yearEnd)
+
+    var queryString: String = {
+    	var value = " "
+	    query match {
+			case Some(parameter) => {
+				println("parameter: " + parameter)
+				value = parameter
+
+			}
+			case None => {
+				println("None")
+			}
+		}
+    	value
+    }
+    
+	val values = queryString.split(",")
+
+	val result:JsArray = {
+		// query : 'nhs', data : array
+		var jsonArray = Json.arr()
+		
+		for(text <- values) {
+		  
+		    val value = text.trim
+		    val q = doGraph(value, request.queryString)
+
+		    println("query: " + q.query);
+
+		    val totalRecords = q.res.getResults().getNumFound().intValue()
+		    println("totalRecords: " + totalRecords);
+		
+		    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q)
+		    
+		    // val.value + " " + val.count + " " + val.query
+
+		    var graphData:JsArray = {
+	    		// "nhs" -> array
+		    	var array = Json.arr()
+			    for ((key, value) <- listMap) {
+			    	println (key + "-->" + value)
+			    	value.map(graphData => {
+						val jsonObject = Json.obj("value" -> JsString(graphData.getValue()), "count" -> JsNumber(graphData.getCount()))
+						println(graphData.getValue() + " " + graphData.getCount())
+						array = array :+ jsonObject
+			    	})
+			    }
+		    	array
+		    }
+		    
+		    val jsonObjArray = Json.obj("query" -> JsString(text), "data" -> graphData)
+		    jsonArray = jsonArray :+ jsonObjArray;
+
+		}
+		jsonArray
+	}
+	
+    println("resultList: " + result)
+    Ok(result)
+  }
+  
+  
   def getGraphData(q: Query) = {
     
 	var data:Map[String,ListBuffer[GraphData]] = {
@@ -392,51 +462,6 @@ object Application extends Controller {
     println("collectionJson: " + collectionJson)
 
     Ok(collectionJson)
-  }
-  
-  def processChart = Action { implicit request =>
-    println("processChart: " + request.queryString)
-    val query = request.getQueryString("query")
-    val yearStart = request.getQueryString("year_start")
-    val yearEnd = request.getQueryString("year_end")
-    println("query: " + query)
-    println("yearStart" + yearStart)
-    println("yearEnd: " + yearEnd)
-
-    var queryString: String = {
-    	var value = " "
-	    query match {
-			case Some(parameter) => {
-				println("parameter: " + parameter)
-				value = parameter
-			}
-			case None => {
-				println("None")
-			}
-		}
-    	value
-    }
-    
-    val q = doGraph(queryString, request.queryString)
-    println("doGraph called: " + q)
-    var listMap:Map[String,ListBuffer[GraphData]] = getGraphData(q)
-    // product json
-    
-    var result:JsArray = { 
-	    var array = Json.arr() 
-	    for ((key, value) <- listMap) { 
-	    	println (key + "-->" + value)
-	    	value.map(graphData => {
-	    	  val jsonObject = Json.obj("value" -> JsString(graphData.getValue()), "count" -> JsNumber(graphData.getCount()))
-	    	  println(graphData.getValue() + " " + graphData.getCount())
-	    	  array = array :+ jsonObject
-	    	})
-	    }
-	    array
-    }
-    
-    println("resultList: " + result)
-    Ok(result)
   }
 
   def javascriptRoutes = Action { implicit request =>

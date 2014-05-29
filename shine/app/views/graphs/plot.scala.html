@@ -18,20 +18,22 @@
 	
 		$(document).ready(function(){
 
-			/*
+			
 			$('#query').keypress(function(event){
 				var keycode = (event.keyCode ? event.keyCode : event.which);
 				if(keycode == '13'){
 				    processChart();
 				}
 			});
-			*/
+			
 			$('#update').on('click', function() {
-				$('form').submit();				
+				//$('form').submit();
+				processChart();
 			});
 		
 /* 			$('#query').val(getURLParameter('query'));
  */			
+
 			function processChart() {
 
 				var query = $("#query").val();
@@ -40,20 +42,26 @@
 
 				var url = "/processChart?query=" + query + "&year_start=" + year_start + "&year_end=" + year_end;
 
+				//	[{"query":"nhs","data":[{"value":"1994","count":3},{"value":"1995","count":1},{"value":"1996","count":439},{"value":"1997","count":2529},{"value":"1998","count":2792},{"value":"1999","count":7345},{"value":"2000","count":9946},{"value":"2001","count":36838},{"value":"2002","count":97371},{"value":"2003","count":236514},{"value":"2004","count":277319},{"value":"2005","count":207931}]},{"query":" wikipedia","data":[{"value":"2001","count":12},{"value":"2002","count":67},{"value":"2003","count":464},{"value":"2004","count":8030},{"value":"2005","count":64540}]}]
 				$.ajax({
 	    	    	url: url,
 	    	    	dataType: 'json',
 	    	    	success: function(data) {
-	    	    		var results = [];
-	    	    		$.each( data, function( key, val ) {
-		    	    		console.log("data: " + val.value + " " + val.count);
-							results.push([val.value, val.count]);
+	    	    		var graphPoints = [];
+	    	    		$.each( data, function( index, obj ) {
+		    	    		console.log("query: " + obj.query);
+		    	    		var results = [];
+		    	    		$.each( obj.data, function( index, value) {
+			    	    		console.log(">>> : " + value.value + " " + value.count);
+			    	    		results.push([value.value, value.count, obj.query]);
+		    	    		});
+		    	    		graphPoints.push(results)
 	    	    		});
+	    	    		console.log(points);
 	    		    	var start = parseInt($("#year-start").val())-1;
 	    	    		var end = parseInt($("#year-end").val())+1;
 	    	    		
-	    	    		runGraph(results, start, end);
-	    	    		
+	    				runGraph(graphPoints, start, end);
 	    	    	},
 	    	    	error: function(jqXHR, textStatus, errorThrown) {
 	    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
@@ -61,10 +69,9 @@
 	    	    });
 			}
 			
-			var points = [];
-
 			// each key has a tab/page
 			// also need to set chartgraph id to key
+			var points = [];
 			
 			@if(graphMap != null) {
 				@for(((search, map), index) <- graphMap.zipWithIndex) {
@@ -176,7 +183,7 @@
 									<label class="sr-only" for="to-date">To:</label>
 									<input type="text" class="form-control field-right" id="year-end" name="year_end">
 								</div>
-								<button type="submit" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
+								<button type="button" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
 								<button type="reset" class="btn btn-primary button-reset" id="reset" name="action" value="reset">Reset All</button>
 							</div>
 						</div>
