@@ -31,11 +31,29 @@
 				processChart();
 			});
 		
-/* 			$('#query').val(getURLParameter('query'));
- */			
+			$('#ajax-loader').hide();
 
+			function disableForm() {
+				console.log("disabling form");
+				$('#ajax-loader').show();
+				$('#query').attr('disabled', 'disabled');
+				$('#year-start').attr('disabled', 'disabled');
+				$('#year-end').attr('disabled', 'disabled');
+				$('#update').attr('disabled', 'disabled');
+				$('#reset').attr('disabled', 'disabled');
+			}
+			
+			function enableForm() {
+				$('#ajax-loader').hide();
+				$('#query').removeAttr('disabled');
+				$('#year-start').removeAttr('disabled');
+				$('#year-end').removeAttr('disabled');
+				$('#update').removeAttr('disabled');
+				$('#reset').removeAttr('disabled');
+			}
+			
 			function processChart() {
-
+				disableForm();
 				var query = $("#query").val();
 				var year_start = $("#year-start").val();
 				var year_end = $("#year-end").val();
@@ -62,6 +80,7 @@
 	    	    		var end = parseInt($("#year-end").val())+1;
 	    	    		
 	    				runGraph(graphPoints, start, end);
+	    				enableForm();
 	    	    	},
 	    	    	error: function(jqXHR, textStatus, errorThrown) {
 	    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
@@ -185,6 +204,7 @@
 								</div>
 								<button type="button" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
 								<button type="reset" class="btn btn-primary button-reset" id="reset" name="action" value="reset">Reset All</button>
+								<img id="ajax-loader" src="assets/images/ajax-loader.gif">
 							</div>
 						</div>
 					</div>
