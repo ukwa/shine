@@ -25,7 +25,21 @@
 				    processChart();
 				}
 			});
-			
+
+			$('#year-start').keypress(function(event){
+				var keycode = (event.keyCode ? event.keyCode : event.which);
+				if(keycode == '13'){
+				    processChart();
+				}
+			});
+
+			$('#year-end').keypress(function(event){
+				var keycode = (event.keyCode ? event.keyCode : event.which);
+				if(keycode == '13'){
+				    processChart();
+				}
+			});
+
 			$('#update').on('click', function() {
 				//$('form').submit();
 				processChart();
@@ -34,7 +48,6 @@
 			$('#ajax-loader').hide();
 
 			function disableForm() {
-				console.log("disabling form");
 				$('#ajax-loader').show();
 				$('#query').attr('disabled', 'disabled');
 				$('#year-start').attr('disabled', 'disabled');
@@ -67,15 +80,13 @@
 	    	    	success: function(data) {
 	    	    		var graphPoints = [];
 	    	    		$.each( data, function( index, obj ) {
-		    	    		console.log("query: " + obj.query);
 		    	    		var results = [];
 		    	    		$.each( obj.data, function( index, value) {
-			    	    		console.log(">>> : " + value.value + " " + value.count);
+//			    	    		console.log(">>> : " + value.value + " " + value.count);
 			    	    		results.push([value.value, value.count, obj.query]);
 		    	    		});
 		    	    		graphPoints.push(results)
 	    	    		});
-	    	    		console.log(points);
 	    		    	var start = parseInt($("#year-start").val())-1;
 	    	    		var end = parseInt($("#year-end").val())+1;
 	    	    		
@@ -88,26 +99,30 @@
 	    	    });
 			}
 			
-			// each key has a tab/page
-			// also need to set chartgraph id to key
-			var points = [];
 			
-			@if(graphMap != null) {
-				@for(((search, map), index) <- graphMap.zipWithIndex) {
-					console.log("q: @(search.query)");
-					var array@(index) = [];
-					@for((key, data) <- map) {
-						//console.log("k d: @key @data");
-						var @key = [];
-						@data.map { graphData =>
-							array@(index).push(["@(graphData.getValue)", @(graphData.getCount), "@(search.query)"]);
+			function initialGraphLoad() {
+				// each key has a tab/page
+				// also need to set chartgraph id to key
+				var points = [];
+				
+				@if(graphMap != null) {
+					@for(((search, map), index) <- graphMap.zipWithIndex) {
+						var array@(index) = [];
+						@for((key, data) <- map) {
+							//console.log("k d: @key @data");
+							var @key = [];
+							@data.map { graphData =>
+								array@(index).push(["@(graphData.getValue)", @(graphData.getCount), "@(search.query)"]);
+							}
 						}
+						points.push(array@(index));
 					}
-					points.push(array@(index));
 				}
+	
+				runGraph(points, @(year_start)-1, @(year_end)+1);
 			}
-
-			runGraph(points, @(year_start)-1, @(year_end)+1);
+			
+			initialGraphLoad();
 			
 			function runGraph(points, start, end) {
 				// Some simple loops to build up data arrays.
@@ -121,7 +136,7 @@
 				            renderer:$.jqplot.DateAxisRenderer,
 				            min: start,
 				            max: end,
-	                        tickInterval: 1,
+	                        tickInterval: 2,
 	                        label:'@(labelX)'
 						},
 						yaxis:{
@@ -175,12 +190,6 @@
 
 @main(title, scripts, styles) {
 
-	<!-- Nav tabs -->
-	<ul class="nav nav-tabs">
-		<li class="active"><a href="#plot" data-toggle="tab">Plot</a></li>
-		<li><a href="#profile" data-toggle="tab">Profile</a></li>
-	</ul>
-	
 	<!-- Tab panes -->
 	<div class="tab-content">
   		<div class="tab-pane active" id="plot">
@@ -212,7 +221,6 @@
 		    	<div id="chart-search"></div>
 			</div>
 		</div>
-  		<div class="tab-pane" id="profile">2nd tab data</div>
   	</div>
 
 }
