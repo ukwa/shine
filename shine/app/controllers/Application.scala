@@ -166,7 +166,7 @@ object Application extends Controller {
 //    val q = head._1
 //    val listMap = head._2
 //    q.query = query
-    Ok(views.html.graphs.plot("Plot Graph Test", query, "Years", "Count", yearStart, yearEnd, graphMap))
+    Ok(views.html.graphs.plot("NGram", query, "Years", "Count", yearStart, yearEnd, graphMap))
   }
 
   def processChart = Action { implicit request =>

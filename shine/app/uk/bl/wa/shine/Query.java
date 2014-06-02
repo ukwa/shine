@@ -295,38 +295,40 @@ public class Query {
 //			}
 //		}
 		
-		for (RangeFacet<String, RangeFacet.Count> range : res.getFacetRanges()) {
-			counts  = range.getCounts();
-			ListIterator<RangeFacet.Count> listItr = counts.listIterator();
-			// remove the empties
-			while(listItr.hasNext()){
-				RangeFacet.Count count = listItr.next();
-				// remove
-				if (count.getCount() == 0) {
-					listItr.remove();
+		if (res.getFacetRanges() != null) {
+			for (RangeFacet<String, RangeFacet.Count> range : res.getFacetRanges()) {
+				counts  = range.getCounts();
+				ListIterator<RangeFacet.Count> listItr = counts.listIterator();
+				// remove the empties
+				while(listItr.hasNext()){
+					RangeFacet.Count count = listItr.next();
+					// remove
+					if (count.getCount() == 0) {
+						listItr.remove();
+					}
 				}
 			}
-		}
-		
-		sdf = new SimpleDateFormat("yyyy");
-		if (counts != null && counts.size() > 0) {
-			RangeFacet.Count first = counts.get(0);
-			Date firstDate = sdf.parse(first.getValue());
-			cal.setTime(firstDate);
-//			cal.roll(Calendar.YEAR, false);
-			if (StringUtils.isEmpty(dateStart)) {
-				dateStart = sdf.format(cal.getTime());
+			
+			sdf = new SimpleDateFormat("yyyy");
+			if (counts != null && counts.size() > 0) {
+				RangeFacet.Count first = counts.get(0);
+				Date firstDate = sdf.parse(first.getValue());
+				cal.setTime(firstDate);
+	//			cal.roll(Calendar.YEAR, false);
+				if (StringUtils.isEmpty(dateStart)) {
+					dateStart = sdf.format(cal.getTime());
+				}
+	
+				RangeFacet.Count last = counts.get(counts.size()-1);
+				Date lastDate = sdf.parse(last.getValue());
+				cal.setTime(lastDate);
+	//			cal.roll(Calendar.YEAR, true);
+				if (StringUtils.isEmpty(dateEnd)) {
+					dateEnd = sdf.format(cal.getTime());
+				}
 			}
-
-			RangeFacet.Count last = counts.get(counts.size()-1);
-			Date lastDate = sdf.parse(last.getValue());
-			cal.setTime(lastDate);
-//			cal.roll(Calendar.YEAR, true);
-			if (StringUtils.isEmpty(dateEnd)) {
-				dateEnd = sdf.format(cal.getTime());
-			}
+			Logger.info("dates: " + dateStart + " - " + dateEnd);
 		}
-		Logger.info("dates: " + dateStart + " - " + dateEnd);
 	}
 
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {
