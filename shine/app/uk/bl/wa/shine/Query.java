@@ -167,18 +167,18 @@ public class Query {
 	public String getParamsPlusFilter(String facet_name, String facet_value) {
 		String qp = "";
 //		Logger.info("---- ----");
-		for( String key : res.getFacetQuery().keySet() ) {
-//			Logger.info(key+">"+res.getFacetQuery().get(key));
-		}
-		for( FacetField fc: res.getLimitingFacets() ) {
-//			Logger.info("LF: "+fc);
-		}
-		for( FacetField fc : this.res.getFacetFields() ) {
-//			Logger.info("FF: "+fc);
-			if( fc.getName().equals(facet_name) ) {
-				
-			}
-		}
+//		for( String key : res.getFacetQuery().keySet() ) {
+////			Logger.info(key+">"+res.getFacetQuery().get(key));
+//		}
+//		for( FacetField fc: res.getLimitingFacets() ) {
+////			Logger.info("LF: "+fc);
+//		}
+//		for( FacetField fc : this.res.getFacetFields() ) {
+////			Logger.info("FF: "+fc);
+//			if( fc.getName().equals(facet_name) ) {
+//				
+//			}
+//		}
 		return qp;
 	}
 
@@ -236,6 +236,7 @@ public class Query {
 		return "";
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void processQueryResponse() throws ParseException {
 		StringBuilder parameters = new StringBuilder("");
 		if (res.getFacetFields() != null) {

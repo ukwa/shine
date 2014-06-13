@@ -136,12 +136,18 @@
 				            renderer:$.jqplot.DateAxisRenderer,
 				            min: start,
 				            max: end,
-	                        tickInterval: 2,
+                            autoscale:true,
+                            tickOptions:{
+                                formatString:'%d'
+                            }, 
 	                        label:'@(labelX)'
 						},
 						yaxis:{
-	                      tickInterval: 1000,
-						  label:'@(labelY)'
+	                        autoscale:true,
+	                        tickOptions:{
+	                            formatString:'%d'
+	                        }, 
+							label:'@(labelY)'
 						}
 					},
 				    highlighter: {
