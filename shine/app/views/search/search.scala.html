@@ -25,6 +25,36 @@
 				});
 	  			
 	  		}
+
+			$('#search').on('click', function() {
+				$('form').submit();
+				//processSearch();
+			});
+			
+			function processSearch() {
+				var query = $("#query").val();
+
+				var url = "/ajaxSearch?q=" + query + "&facet=true&sort=crawl_date+asc&start=0&rows=10&facet.mincount=1"
+						
+				 //&facet.field=%7B%21ex%3Dcrawl_year%7Dcrawl_year
+				 //&facet.field=%7B%21ex%3Dpublic_suffix%7Dpublic_suffix
+				 //&facet.sort=index
+
+				//	[{"query":"nhs","data":[{"value":"1994","count":3},{"value":"1995","count":1},{"value":"1996","count":439},{"value":"1997","count":2529},{"value":"1998","count":2792},{"value":"1999","count":7345},{"value":"2000","count":9946},{"value":"2001","count":36838},{"value":"2002","count":97371},{"value":"2003","count":236514},{"value":"2004","count":277319},{"value":"2005","count":207931}]},{"query":" wikipedia","data":[{"value":"2001","count":12},{"value":"2002","count":67},{"value":"2003","count":464},{"value":"2004","count":8030},{"value":"2005","count":64540}]}]
+				$.ajax({
+	    	    	url: url,
+	    	    	dataType: 'json',
+	    	    	success: function(data) {
+	    	    		$.each( data, function( index, obj ) {
+		    	    		var results = [];
+		    	    		console.log("result: " + index + " " + obj);
+	    	    		});
+	    	    	},
+	    	    	error: function(jqXHR, textStatus, errorThrown) {
+	    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
+	    	    	}
+	    	    });
+			}
 		});
 	</script>
 }
@@ -203,7 +233,7 @@
 				   			<div class="input-group">
 								<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="query" placeholder="Enter search term" />
 								<span class="input-group-btn">
-									<button type="submit" class="btn btn-primary" id="search" name="action" value="search">Search</button>
+									<button type="button" class="btn btn-primary" id="search" name="action" value="search">Search</button>
 									<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
 								</span>
 							</div>

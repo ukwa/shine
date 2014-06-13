@@ -51,3 +51,5 @@ GET    	/suggestCollections/:name			controllers.Application.suggestCollections(n
 GET    	/getFacets							controllers.Application.getFacets
 
 GET		/processChart						controllers.Application.processChart
+
+GET		/ajaxSearch							controllers.Application.ajaxSearch

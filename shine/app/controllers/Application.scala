@@ -238,7 +238,6 @@ object Application extends Controller {
     Ok(result)
   }
   
-  
   def getGraphData(q: Query) = {
     
 	var data:Map[String,ListBuffer[GraphData]] = {
@@ -266,6 +265,17 @@ object Application extends Controller {
 	data
   }
   
+  def ajaxSearch = Action { implicit request =>
+//	var q = createQuery(query, parameters)
+//    println("new query created: " + q.facets)
+//    solr.search(q)
+    println("request: " + request)
+    println("queryString: " + request.queryString)
+
+	val result:JsArray = Json.arr()
+    Ok(result)
+  }
+
   def createQuery(query: String, parameters: Map[String, Seq[String]]) = {
     val map = parameters
     val parametersAsJava = map.map { case (k, v) => (k, v.asJava) }.asJava;
@@ -478,7 +488,8 @@ object Application extends Controller {
         routes.javascript.Application.suggestCollection,
         routes.javascript.Application.suggestCollections,
         routes.javascript.Application.getFacets,
-        routes.javascript.Application.processChart
+        routes.javascript.Application.processChart,
+        routes.javascript.Application.ajaxSearch
         )).as("text/javascript")
   }
 
