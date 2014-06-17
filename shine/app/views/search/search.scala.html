@@ -25,17 +25,36 @@
 				});
 	  			
 	  		}
+	  		
+			$('#ajax-loader').hide();
 
+			function disableForm() {
+				$('#ajax-loader').show();
+				$('#query').attr('disabled', 'disabled');
+				$('#search').attr('disabled', 'disabled');
+				$('#reset').attr('disabled', 'disabled');
+			}
+			
+			function enableForm() {
+				$('#ajax-loader').hide();
+				$('#query').removeAttr('disabled');
+				$('#search').removeAttr('disabled');
+				$('#reset').removeAttr('disabled');
+			}
+			
 			$('#search').on('click', function() {
-				$('form').submit();
-				//processSearch();
+				//$('form').submit();
+				disableForm();
+				processSearch();
+				
 			});
 			
 			function processSearch() {
 				var query = $("#query").val();
 
-				var url = "/ajaxSearch?q=" + query + "&facet=true&sort=crawl_date+asc&start=0&rows=10&facet.mincount=1"
-						
+				var url = "/ajaxSearch?query=" + query + "&page="+@currentPage.getCurrentPage;
+				//&sort=crawl_date+asc&start=0&rows=10
+				 //"&facet=true&facet.mincount=1"
 				 //&facet.field=%7B%21ex%3Dcrawl_year%7Dcrawl_year
 				 //&facet.field=%7B%21ex%3Dpublic_suffix%7Dpublic_suffix
 				 //&facet.sort=index
@@ -49,6 +68,7 @@
 		    	    		var results = [];
 		    	    		console.log("result: " + index + " " + obj);
 	    	    		});
+	    	    		enableForm();
 	    	    	},
 	    	    	error: function(jqXHR, textStatus, errorThrown) {
 	    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
@@ -235,6 +255,7 @@
 								<span class="input-group-btn">
 									<button type="button" class="btn btn-primary" id="search" name="action" value="search">Search</button>
 									<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
+									<img id="ajax-loader" src="assets/images/ajax-loader.gif">
 								</span>
 							</div>
 						</div>
@@ -255,6 +276,7 @@
                             <div class="form-inline pull-right">
 								<div class="form-group">
 									<select class="form-control" name="sort" id="sort">
+										<!-- get from some where -->
 										<option value="content_type_norm">Title</option>
 										<option value="crawl_date">Crawl Date</option>
 										<option value="content_type_norm">Content</option>

@@ -266,12 +266,41 @@ object Application extends Controller {
   }
   
   def ajaxSearch = Action { implicit request =>
-//	var q = createQuery(query, parameters)
-//    println("new query created: " + q.facets)
-//    solr.search(q)
+    val query = request.getQueryString("query")
+    
     println("request: " + request)
     println("queryString: " + request.queryString)
+    
+    var queryString: String = {
+    	var value = " "
+	    query match {
+			case Some(parameter) => {
+				println("parameter: " + parameter)
+				value = parameter
 
+			}
+			case None => {
+				println("None")
+			}
+		}
+    	value
+    }
+
+    println("query: " + queryString)
+
+
+    var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
+
+    val q = doSearch(queryString, parameters)
+
+    val totalRecords = q.res.getResults().getNumFound().intValue()
+
+//    println("Page #: " + pageNo)
+    println("totalRecords #: " + totalRecords)
+
+//    pagination.update(totalRecords, pageNo)
+    
+    
 	val result:JsArray = Json.arr()
     Ok(result)
   }
