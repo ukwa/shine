@@ -52,22 +52,40 @@
 			function processSearch() {
 				var query = $("#query").val();
 
-				var url = "/ajaxSearch?query=" + query + "&page="+@currentPage.getCurrentPage;
-				//&sort=crawl_date+asc&start=0&rows=10
+				var url = "/ajaxSearch?query=" + query + "&start=0&rows=10&page="+@currentPage.getCurrentPage;
+				//&sort=crawl_date+asc
 				 //"&facet=true&facet.mincount=1"
 				 //&facet.field=%7B%21ex%3Dcrawl_year%7Dcrawl_year
 				 //&facet.field=%7B%21ex%3Dpublic_suffix%7Dpublic_suffix
 				 //&facet.sort=index
-
 				//	[{"query":"nhs","data":[{"value":"1994","count":3},{"value":"1995","count":1},{"value":"1996","count":439},{"value":"1997","count":2529},{"value":"1998","count":2792},{"value":"1999","count":7345},{"value":"2000","count":9946},{"value":"2001","count":36838},{"value":"2002","count":97371},{"value":"2003","count":236514},{"value":"2004","count":277319},{"value":"2005","count":207931}]},{"query":" wikipedia","data":[{"value":"2001","count":12},{"value":"2002","count":67},{"value":"2003","count":464},{"value":"2004","count":8030},{"value":"2005","count":64540}]}]
 				$.ajax({
 	    	    	url: url,
 	    	    	dataType: 'json',
 	    	    	success: function(data) {
+	    	    		var results = [];
+	    	    		$('#result-set').empty();
 	    	    		$.each( data, function( index, obj ) {
-		    	    		var results = [];
-		    	    		console.log("result: " + index + " " + obj);
+		    	    		$listGroup = $('<div>').addClass('list-group');
+		    	    		$spanGroup = $('<span>').addClass('list-group-item').attr('href', '#')
+		    	    			.append('<span>').addClass('list-group-item').attr('href', '#');
+		    	    		
+		    	    		var title = obj.title;
+		    	    		if (obj.title == '') {
+		    	    			title = "no title";
+		    	    		}
+		    	    			
+		    	    		$heading = $('<h4>').addClass('list-group-item-heading').html("<a href='" + obj.url + "'>" + title + "</a>");
+		    	    		$paragraph = $('<p>').addClass('list-group-item-text');
+		    	    		var paraData = obj.crawl_date + "<br />" + obj.content_type_norm + "<br />" + obj.domain + "<br />" + obj.sentiment_score;
+		    	    		$paragraph.html(paraData);
+							$spanGroup.append($heading);
+							$spanGroup.append($paragraph);
+		    	    		$listGroup.append($spanGroup);
+		    	    		console.log(obj.title + " - " + obj.url);
+		    	    		$('#result-set').append($listGroup);
 	    	    		});
+	    	    		console.log(results);
 	    	    		enableForm();
 	    	    	},
 	    	    	error: function(jqXHR, textStatus, errorThrown) {
@@ -296,20 +314,21 @@
 						<div class="panel-body">
 							@pagination
 	
-							@for((d, index) <- q.res.getResults().zipWithIndex) {
-								<div class="list-group">
-									<span class="list-group-item" href="#">
-										<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a></h4>
-										<p class="list-group-item-text">
-												@d.getFirstValue("crawl_date")<br />
-												@d.getFirstValue("content_type_norm")<br />
-												@d.getFirstValue("domain")<br />
-												@d.getFirstValue("sentiment_score")
-										</p>
-									</span>
-								</div>
-							}
-	
+							<div id="result-set">
+								@for((d, index) <- q.res.getResults().zipWithIndex) {
+									<div class="list-group">
+										<span class="list-group-item" href="#">
+											<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a></h4>
+											<p class="list-group-item-text">
+													@d.getFirstValue("crawl_date")<br />
+													@d.getFirstValue("content_type_norm")<br />
+													@d.getFirstValue("domain")<br />
+													@d.getFirstValue("sentiment_score")
+											</p>
+										</span>
+									</div>
+								}
+							</div>
 							@pagination
 						</div>
 					</div>

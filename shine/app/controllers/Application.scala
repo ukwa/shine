@@ -20,6 +20,7 @@ import play.api.Play.current
 import play.api.cache.Cache
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.apache.solr.client.solrj.response.RangeFacet
+import org.apache.solr.common.SolrDocument
 
 object Application extends Controller {
 
@@ -267,12 +268,13 @@ object Application extends Controller {
   
   def ajaxSearch = Action { implicit request =>
     val query = request.getQueryString("query")
+    val page = request.getQueryString("page")
     
     println("request: " + request)
     println("queryString: " + request.queryString)
     
     var queryString: String = {
-    	var value = " "
+    	var value = ""
 	    query match {
 			case Some(parameter) => {
 				println("parameter: " + parameter)
@@ -286,8 +288,22 @@ object Application extends Controller {
     	value
     }
 
-    println("query: " + queryString)
+	var pageNo: Int = {
+    	var value = ""
+	    page match {
+			case Some(parameter) => {
+				println("parameter: " + parameter)
+				value = parameter
 
+			}
+			case None => {
+				println("None")
+			}
+		}
+    	value.toInt
+    }
+
+    println("query: " + queryString)
 
     var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 
@@ -295,14 +311,39 @@ object Application extends Controller {
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
-//    println("Page #: " + pageNo)
+    println("Page #: " + pageNo)
     println("totalRecords #: " + totalRecords)
 
-//    pagination.update(totalRecords, pageNo)
+    pagination.update(totalRecords, pageNo)
     
+    val results = q.res.getResults()							
     
-	val result:JsArray = Json.arr()
-    Ok(result)
+    var resultList = Json.arr()
+
+    // should be based on pageNo
+    for (i <- 0 to (results.size()-1)) {
+      val result = results.get(i)
+      
+      val url = JsString("http://web.archive.org/web/"+ notBlank(result.getFirstValue("wayback_date")) + "/" + notBlank(result.getFirstValue("url")))
+      val jsonObject = Json.obj("title" -> JsString(notBlank(result.getFirstValue("title"))), "url" -> url, "crawl_date" -> JsString(notBlank(result.getFirstValue("crawl_date"))), 
+    		  				"content_type_norm" -> JsString(notBlank(result.getFirstValue("content_type_norm"))), 
+    		  				"domain" -> JsString(notBlank(result.getFirstValue("domain"))), 
+    		  				"sentiment_score" -> JsString(notBlank(result.getFirstValue("sentiment_score"))))
+ 
+//      val jsonSub = Json.obj("result" -> jsonObject)
+
+      resultList = resultList :+ jsonObject
+    }
+
+    Ok(resultList)
+  }
+
+  def notBlank(x: Object) = {
+    if (x != null) {
+    	x.toString()
+    } else {
+      ""
+    }
   }
 
   def createQuery(query: String, parameters: Map[String, Seq[String]]) = {
