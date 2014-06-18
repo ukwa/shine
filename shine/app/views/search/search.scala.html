@@ -84,6 +84,9 @@
 		    	    		$listGroup.append($spanGroup);
 		    	    		console.log(obj.title + " - " + obj.url);
 		    	    		$('#result-set').append($listGroup);
+		    	    		query = $('#query').val();
+		    	    		window.history.pushState("", "", "/search?query=" + query + "&start=0&rows=10&page=1");
+		    	    		
 	    	    		});
 	    	    		console.log(results);
 	    	    		enableForm();
