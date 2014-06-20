@@ -41,18 +41,41 @@
 				$('#search').removeAttr('disabled');
 				$('#reset').removeAttr('disabled');
 			}
+
+			function getUrl() {
+				return "/ajaxSearch?query=" + $("#query").val() + "&start=0&rows=10";
+			}
 			
-			$('#search').on('click', function() {
+			$('#search').on('click', function(event) {
+				event.preventDefault();
 				//$('form').submit();
 				disableForm();
 				processSearch();
-				
 			});
 			
-			function processSearch() {
-				var query = $("#query").val();
-
-				var url = "/ajaxSearch?query=" + query + "&start=0&rows=10&page="+@currentPage.getCurrentPage;
+			$('.paging').each(function() {
+				var $link = $(this);
+				// build up a next page ref via ajax
+//				$link.attr('href', '#');
+				$link.on('click', function(event) {
+					event.preventDefault();
+					var page = $link.attr('id').split('-')[1];
+					console.log(page + " " + $link.attr('href'));
+					processSearch(page)
+				});
+			});
+			
+			function processSearch(page) {
+				console.log(page);
+				
+				var url = getUrl();
+				
+				if (page === undefined) {
+					url += "&page=1";
+				} else {
+					url += "&page="+page;
+				}
+				
 				//&sort=crawl_date+asc
 				 //"&facet=true&facet.mincount=1"
 				 //&facet.field=%7B%21ex%3Dcrawl_year%7Dcrawl_year
@@ -82,7 +105,6 @@
 							$spanGroup.append($heading);
 							$spanGroup.append($paragraph);
 		    	    		$listGroup.append($spanGroup);
-		    	    		console.log(obj.title + " - " + obj.url);
 		    	    		$('#result-set').append($listGroup);
 		    	    		query = $('#query').val();
 		    	    		window.history.pushState("", "", "/search?query=" + query + "&start=0&rows=10&page=1");
@@ -138,7 +160,7 @@
 			<ul class="pagination">
 				@if(currentPage.hasPreviousPage) {
 	            	<li class="prev">
-	            		<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)">&laquo;</a>
+	            		<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage-1)" class="paging">&laquo;</a>
 	                </li>
 	            } else {
 	                <li class="prev disabled">
@@ -152,12 +174,12 @@
 						}
 						<li class="active current"><a href="#">@(currentPage.getCurrentPage) <span class="sr-only">(current)</span></a></li>
 					} else {
-						<li><a href="@link(index, null)@(q.responseParameters)">@(index)</a></li>
+						<li><a href="@link(index, null)@(q.responseParameters)" id="page-@(index)" class="paging">@(index)</a></li>
 					}
 				}
 	        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
 	                <li class="next">
-	                    <a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)">&raquo;</a>
+	                    <a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage+1)" class="paging">&raquo;</a>
 	                </li>
 	            } else {
 	                <li class="next disabled">
