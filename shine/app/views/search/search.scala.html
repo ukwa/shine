@@ -49,24 +49,27 @@
 			$('#search').on('click', function(event) {
 				event.preventDefault();
 				//$('form').submit();
-				disableForm();
 				processSearch();
 			});
 			
-			$('.paging').each(function() {
-				var $link = $(this);
-				// build up a next page ref via ajax
-//				$link.attr('href', '#');
-				$link.on('click', function(event) {
-					event.preventDefault();
-					var page = $link.attr('id').split('-')[1];
-					console.log(page + " " + $link.attr('href'));
-					processSearch(page)
-					// remove all classes from list
-					removeActive();
- 					$link.parent().attr("class", "active current");
+			paging();
+			
+			function paging() {
+				$('.paging').each(function() {
+					var $link = $(this);
+					// build up a next page ref via ajax
+	//				$link.attr('href', '#');
+					$link.on('click', function(event) {
+						event.preventDefault();
+						var page = $link.attr('id').split('-')[1];
+						console.log(page + " " + $link.attr('href'));
+						processSearch(page)
+						// remove all classes from list
+						removeActive();
+	 					$link.parent().attr("class", "active current");
+					});
 				});
-			});
+			}
 			
 			function removeActive() {
 				$('.paging').each(function() {
@@ -75,8 +78,16 @@
 
 			}
 			
+			function clearPager() {
+	    		$('.pagination').each(function() {
+	    			$(this).empty();
+	    		});
+			}
+			
 			function processSearch(page) {
 				console.log(page);
+				
+				disableForm();
 				
 				var url = getUrl();
 				
@@ -98,7 +109,7 @@
 	    	    	success: function(data) {
 	    	    		var results = [];
 	    	    		$('#result-set').empty();
-	    	    		$.each( data, function( index, obj ) {
+	    	    		$.each( data.results, function( index, obj ) {
 		    	    		$listGroup = $('<div>').addClass('list-group');
 		    	    		$spanGroup = $('<span>').addClass('list-group-item').attr('href', '#')
 		    	    			.append('<span>').addClass('list-group-item').attr('href', '#');
@@ -118,8 +129,82 @@
 		    	    		$('#result-set').append($listGroup);
 		    	    		query = $('#query').val();
 		    	    		window.history.pushState("", "", "/search?query=" + query + "&start=0&rows=10&page=1");
-		    	    		
 	    	    		});
+	    	    		
+	    	    		clearPager();
+	    	    		
+	    	    		$('.pagination').each(function(index) {
+	    	    			$page = $(this);
+	    	    			$list = $('<li>');
+	    	    			$anchor = $('<a>');
+	    	    			console.log("hasPreviousPage: " + data.pager.hasPreviousPage);
+	    	    			if(data.pager.hasPreviousPage) {
+	    	    				$list.addClass('prev');
+	    	    				$prev_page = getUrl() + "&page=" + data.pager.currentPage-1;
+	    	    				$anchor.addClass('paging').attr('href', $prev_page);
+	    	    				$anchor.attr('id','page-' + data.pager.currentPage-1);
+								$anchor.html('&laquo;');
+	            			} else {
+	    	    				$list.addClass('prev disabled');
+	    	    				$anchor.addClass('paging');
+								$anchor.html('&laquo;');
+	            			}
+	    	    			$list.append($anchor);
+	    	    			$page.append($list);
+	    	    			
+	    	    			
+	    	    			$(data.pager.pagesList).each(function(index) {
+		    	    			console.log(index + "-" + $(this));
+	    	    				index = index+1;
+								if (index == data.pager.currentPage) {
+	    							if(index == data.pager.currentPage.getMaxViewablePages) {
+	    								$span = $('<span>').addClass('max-viewable-reached hide');
+	    							}
+	    							$list_loop = $('<li>').addClass('active current').attr('id', 'list-' + index);
+	    							$anchor_loop = $('<a>').addClass('paging').attr('id', 'page-' + index).attr('href', '#');
+	    							$anchor_loop.html(data.pager.currentPage);
+	    							$span_inner = $('<span>').addClass('sr-only').html('(current)');
+	    							$anchor_loop.append($span_inner);
+	    							$list_loop.append($anchor_loop);
+								} else {
+									$list_loop = $('<li>').attr('id', 'list-' + index);
+									$url = getUrl() + "&page=" + index;
+	    							$anchor_loop = $('<a>').addClass('paging').attr('id', 'page-' + index).attr('href', url);
+	    							$anchor_loop.html(index);
+	    							$list_loop.append($anchor_loop);
+								}	    	    				
+								$page.append($list_loop);
+    	    				});
+	    	    			
+	    	    			$list = $('<li>');
+	    	    			$anchor = $('<a>');
+	    	    			console.log("hasPreviousPage: " + data.pager.hasPreviousPage);
+	    		        	if(data.pager.hasNextPage && !data.pager.hasMaxViewablePagedReached) {
+	    	    				$list.addClass('next');
+	    	    				$prev_page = getUrl() + "&page=" + data.pager.currentPage+1;
+	    	    				$anchor.addClass('paging').attr('href', $prev_page);
+	    	    				$anchor.attr('id','page-' + data.pager.currentPage+1);
+								$anchor.html('&raquo;');
+	            			} else {
+	    	    				$list.addClass('next disabled');
+	    	    				$anchor.addClass('paging');
+								$anchor.html('&raquo;');
+	            			}
+	    	    			$list.append($anchor);
+	    	    			$page.append($list);
+	    	    			
+		    	    		console.log("pager: " 
+		    	    				+ data.pager.totalItems + " - "
+		    	    				+ data.pager.hasPreviousPage + " - "
+		    	    				+ data.pager.currentPage + " - "
+		    	    				+ data.pager.pagesList + " - "
+		    	    				+ data.pager.maxViewablePages + " - "
+		    	    				+ data.pager.hasNextPage + " - "
+		    	    				+ data.pager.hasMaxViewablePagedReached);
+	    	    		});
+							
+	    	    		paging();
+	    	    		
 	    	    		console.log(results);
 	    	    		enableForm();
 	    	    	},
@@ -166,7 +251,7 @@
 
 @pagination = {
 	@if(currentPage.getTotalItems > 0) {
-		<div class="text-center">
+		<div class="text-center paging-tabs">
 			<ul class="pagination">
 				@if(currentPage.hasPreviousPage) {
 	            	<li class="prev">

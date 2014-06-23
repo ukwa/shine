@@ -15,12 +15,12 @@ import scala.collection.mutable.ListBuffer
 import scala.collection.immutable.Map
 import scala.collection.mutable.MutableList
 import play.api.libs.json._
-import scala.util.parsing.json.JSONObject
 import play.api.Play.current
 import play.api.cache.Cache
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.apache.solr.client.solrj.response.RangeFacet
 import org.apache.solr.common.SolrDocument
+import scala.collection.JavaConverters._
 
 object Application extends Controller {
 
@@ -330,12 +330,32 @@ object Application extends Controller {
     		  				"domain" -> JsString(notBlank(result.getFirstValue("domain"))), 
     		  				"sentiment_score" -> JsString(notBlank(result.getFirstValue("sentiment_score"))))
  
-//      val jsonSub = Json.obj("result" -> jsonObject)
-
       resultList = resultList :+ jsonObject
     }
+    val jsonSub = Json.obj("result" -> resultList)
+    
+    // add pagination to json
+    var pageList = Json.arr()
+    for (page <- pagination.getPagesList().toArray()) {
+	  pageList = pageList :+ JsNumber(page.##)
+    }
 
-    Ok(resultList)
+    println("pagesList: " + pageList)
+    
+	val jsonPager = Json.obj("totalItems" -> JsNumber(pagination.getTotalItems()),
+				"hasPreviousPage" -> JsBoolean(pagination.hasPreviousPage()),
+				"currentPage" -> JsNumber(pagination.getCurrentPage()),
+				"pagesList" -> pageList,
+				"maxViewablePages" -> JsNumber(pagination.getMaxViewablePages()),
+				"hasNextPage" -> JsBoolean(pagination.hasNextPage()),
+				"hasMaxViewablePagedReached" -> JsBoolean(pagination.hasMaxViewablePagedReached()))
+				
+	var jsonData =
+      Json.obj(
+        "results" -> resultList,
+        "pager" -> jsonPager)
+
+    Ok(jsonData)
   }
 
   def notBlank(x: Object) = {
