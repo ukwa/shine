@@ -194,15 +194,7 @@
 	    	    			$list.append($anchor);
 	    	    			$page.append($list);
 	    	    			
-		    	    		console.log("pager: " 
-		    	    				+ data.pager.totalItems + " - "
-		    	    				+ data.pager.hasPreviousPage + " - "
-		    	    				+ data.pager.currentPage + " - "
-		    	    				+ data.pager.pagesList + " - "
-		    	    				+ data.pager.maxViewablePages + " - "
-		    	    				+ data.pager.hasNextPage + " - "
-		    	    				+ data.pager.hasMaxViewablePagedReached + " - "
-		    	    				+ data.pager.maxNumberOfLinksOnPage);
+		    	    		$('#displayingXOfY').html(data.pager.displayingXOfY);
 	    	    		});
 							
 	    	    		paging();
@@ -411,7 +403,7 @@
 					<div class="panel panel-default">
 						<div class="panel-heading filter-heading">
                             <h4 class="panel-title pull-left filter-heading-title">
-                                Results @currentPage.getDisplayXtoYofZ(" to "," of ")
+                                Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
                             </h4>
                             <div class="form-inline pull-right">
 								<div class="form-group">

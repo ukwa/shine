@@ -349,7 +349,8 @@ object Application extends Controller {
 				"maxViewablePages" -> JsNumber(pagination.getMaxViewablePages()),
 				"hasNextPage" -> JsBoolean(pagination.hasNextPage()),
 				"hasMaxViewablePagedReached" -> JsBoolean(pagination.hasMaxViewablePagedReached()),
-				"maxNumberOfLinksOnPage" -> JsNumber(pagination.getMaxNumberOfLinksOnPage()))
+				"maxNumberOfLinksOnPage" -> JsNumber(pagination.getMaxNumberOfLinksOnPage()),
+				"displayingXOfY" -> JsString(pagination.getDisplayXtoYofZ(" to "," of ")))
 				
 	var jsonData =
       Json.obj(
