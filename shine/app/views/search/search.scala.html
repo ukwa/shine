@@ -137,12 +137,13 @@
 	    	    			$page = $(this);
 	    	    			$list = $('<li>');
 	    	    			$anchor = $('<a>');
-	    	    			console.log("hasPreviousPage: " + data.pager.hasPreviousPage);
+	    	    			var prevPageNo = data.pager.currentPage - 1;
+	    	    			console.log("hasPreviousPage: " + data.pager.hasPreviousPage + " " + prevPageNo);
 	    	    			if(data.pager.hasPreviousPage) {
 	    	    				$list.addClass('prev');
-	    	    				$prev_page = getUrl() + "&page=" + data.pager.currentPage-1;
+	    	    				$prev_page = getUrl() + "&page=" + prevPageNo;
 	    	    				$anchor.addClass('paging').attr('href', $prev_page);
-	    	    				$anchor.attr('id','page-' + data.pager.currentPage-1);
+	    	    				$anchor.attr('id','page-' + prevPageNo);
 								$anchor.html('&laquo;');
 	            			} else {
 	    	    				$list.addClass('prev disabled');
@@ -152,10 +153,9 @@
 	    	    			$list.append($anchor);
 	    	    			$page.append($list);
 	    	    			
-	    	    			
-	    	    			$(data.pager.pagesList).each(function(index) {
-		    	    			console.log(index + "-" + $(this));
-	    	    				index = index+1;
+	    	    		    for ( var i = 0; i < data.pager.pagesList.length; i++) {
+	    	    		        var index = data.pager.pagesList[i];
+		    	    			console.log(index + "-" + data.pager.currentPage);
 								if (index == data.pager.currentPage) {
 	    							if(index == data.pager.currentPage.getMaxViewablePages) {
 	    								$span = $('<span>').addClass('max-viewable-reached hide');
@@ -174,16 +174,17 @@
 	    							$list_loop.append($anchor_loop);
 								}	    	    				
 								$page.append($list_loop);
-    	    				});
+    	    				}
 	    	    			
 	    	    			$list = $('<li>');
 	    	    			$anchor = $('<a>');
-	    	    			console.log("hasPreviousPage: " + data.pager.hasPreviousPage);
+	    	    			var nextPageNo = data.pager.currentPage + 1;
+	    	    			console.log("hasNextPage: " + data.pager.hasNextPage + " " + nextPageNo);
 	    		        	if(data.pager.hasNextPage && !data.pager.hasMaxViewablePagedReached) {
 	    	    				$list.addClass('next');
-	    	    				$prev_page = getUrl() + "&page=" + data.pager.currentPage+1;
+	    	    				$prev_page = getUrl() + "&page=" + nextPageNo;
 	    	    				$anchor.addClass('paging').attr('href', $prev_page);
-	    	    				$anchor.attr('id','page-' + data.pager.currentPage+1);
+	    	    				$anchor.attr('id','page-' + nextPageNo);
 								$anchor.html('&raquo;');
 	            			} else {
 	    	    				$list.addClass('next disabled');
@@ -200,7 +201,8 @@
 		    	    				+ data.pager.pagesList + " - "
 		    	    				+ data.pager.maxViewablePages + " - "
 		    	    				+ data.pager.hasNextPage + " - "
-		    	    				+ data.pager.hasMaxViewablePagedReached);
+		    	    				+ data.pager.hasMaxViewablePagedReached + " - "
+		    	    				+ data.pager.maxNumberOfLinksOnPage);
 	    	    		});
 							
 	    	    		paging();
