@@ -77,6 +77,8 @@ $(function () {
 		$(this).find('a.facet.include').click(function(event) {
 			event.preventDefault();
 			// change +/-
+			// TODO: grab current url from somewhere
+			//alert('test');
 			facetClickToggle($link_span_include, $input_include);
  			$('form').submit();
 		});

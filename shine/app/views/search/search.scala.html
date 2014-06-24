@@ -14,6 +14,8 @@
 			$('#sort').val('@(currentSortBy)')
 	  		$('#order').val('@(currentOrder)')
 
+	  		$('#current-url').text(window.location.search);
+	  		
 	  		// if facet.show=crawl_year
 	  		var facetShow = getURLParameter("facet.show");
 	  		if (facetShow) {
@@ -88,7 +90,6 @@
 				console.log(page);
 				
 				disableForm();
-				
 				var url = getUrl();
 				
 				if (page === undefined) {
@@ -96,6 +97,8 @@
 				} else {
 					url += "&page="+page;
 				}
+				
+		  		$('#current-url').text(url);
 				
 				//&sort=crawl_date+asc
 				 //"&facet=true&facet.mincount=1"
@@ -318,8 +321,8 @@
 												} else {
 			        								<li class="facet-options show" data-attr="default">
 												}
-			        								<a class="facet include" href="" title="Include" id="include_@(fc.getName())"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
-			        								<a class="facet exclude" href="" title="Exclude" id="exclude_@(fc.getName())"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
+			        								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
+			        								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
 			          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
 			          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 			          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
@@ -404,7 +407,7 @@
 						<div class="panel-heading filter-heading">
                             <h4 class="panel-title pull-left filter-heading-title">
                                 Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
-                            </h4>
+                            </h4><span class="hide" id="current-url"></span>
                             <div class="form-inline pull-right">
 								<div class="form-group">
 									<select class="form-control" name="sort" id="sort">
