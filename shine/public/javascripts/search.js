@@ -11,6 +11,7 @@ $(function () {
 		$('.search-field').each(function() {
 			$(this).attr('value', ''); 
 		});
+		//clearFacets();
 	});
 	
 	$('#sort').change(function() {
@@ -36,62 +37,6 @@ $(function () {
 		});
 	});
 	
-	function facetToggle($element, $button) {
-		if ($element.attr('checked') !== undefined) {
-			$button.removeClass('facet-deselected');
-			$button.addClass('facet-selected');
-		} else {
-			$button.removeClass('facet-selected');
-			$button.addClass('facet-deselected');
-		}
-	}
-
-	function facetClickToggle($button, $element) {
-		if ($button.hasClass('facet-deselected')) {
-			// SELECTED
-			$button.removeClass('facet-deselected');
-			$button.addClass('facet-selected');
-			$element.attr('checked', '');
-		} else {
-			// DESELECTED
-			$button.removeClass('facet-selected');
-			$button.addClass('facet-deselected');
-			$element.removeAttr('checked');
-		}
-	}
-	
-	$(".facet-options").each(function(index) {
-		// check form fields
-		var $facet_option = $(this);
-		var $input_include = $facet_option.find('input.include');
-		var $input_exclude = $facet_option.find('input.exclude');
-
-		var $link_span_include = $facet_option.find('a.facet.include span');
-		var $link_span_exclude = $facet_option.find('a.facet.exclude span');
-
-		// to read back facet options after submit
-		facetToggle($input_include, $link_span_include);
-		facetToggle($input_exclude, $link_span_exclude);
-
-		// for clicking on facet options (includes)
-		$(this).find('a.facet.include').click(function(event) {
-			event.preventDefault();
-			// change +/-
-			// TODO: grab current url from somewhere
-			//alert('test');
-			facetClickToggle($link_span_include, $input_include);
- 			$('form').submit();
-		});
-		
-		// for clicking on facet options (excludes)
-		$(this).find('a.facet.exclude').click(function(event) {
-			event.preventDefault();
-			facetClickToggle($link_span_exclude, $input_exclude);
- 			$('form').submit();
-		});
-		
-	});
-
 	$('.show-more').each(function(index) {
 		var $show_more = $(this);
 		$(this).click(function(event) {
@@ -309,4 +254,25 @@ function getURLParameter(param) {
 			return parameterName[1];
 		}
 	}				
+}
+
+function clearFacets() {
+	$(".facet-options").each(function(index) {
+		// check form fields
+		var $facet_option = $(this);
+		var $input_include = $facet_option.find('input.include');
+		var $input_exclude = $facet_option.find('input.exclude');
+
+		var $link_span_include = $facet_option.find('a.facet.include span');
+		var $link_span_exclude = $facet_option.find('a.facet.exclude span');
+
+		$link_span_include.removeClass('facet-selected');
+		$link_span_include.addClass('facet-deselected');
+
+		$link_span_exclude.removeClass('facet-selected');
+		$link_span_exclude.addClass('facet-deselected');
+
+		$input_include.removeAttr('checked');
+		$input_exclude.removeAttr('checked');
+	});			
 }

@@ -45,7 +45,11 @@
 			}
 
 			function getUrl() {
-				return "/ajaxSearch?query=" + $("#query").val() + "&start=0&rows=10";
+				return "/search?facet.sort=index&query=" + $("#query").val();
+			}
+
+			function getAjaxUrl() {
+				return "/ajaxSearch?facet.sort=index&query=" + $("#query").val();
 			}
 			
 			$('#search').on('click', function(event) {
@@ -87,24 +91,31 @@
 			}
 			
 			function processSearch(page) {
-				console.log(page);
 				
 				disableForm();
-				var url = getUrl();
+				var url = getAjaxUrl();
 				
-				if (page === undefined) {
-					url += "&page=1";
-				} else {
-					url += "&page="+page;
+				if (typeof page === "undefined") {
+					page = 1;
 				}
 				
+				url += "&page="+page;
+				
+				console.log("page: " + page);
+			
 		  		$('#current-url').text(url);
 				
 				//&sort=crawl_date+asc
 				 //"&facet=true&facet.mincount=1"
 				 //&facet.field=%7B%21ex%3Dcrawl_year%7Dcrawl_year
 				 //&facet.field=%7B%21ex%3Dpublic_suffix%7Dpublic_suffix
-				 //&facet.sort=index
+
+				 
+				//&facet.fields=public_suffix
+				//&facet.in.public_suffix=%22org%22&facet.fields=crawl_year
+				//&selected.facet=author
+				//&sort=content_type_norm&order=asc
+
 				//	[{"query":"nhs","data":[{"value":"1994","count":3},{"value":"1995","count":1},{"value":"1996","count":439},{"value":"1997","count":2529},{"value":"1998","count":2792},{"value":"1999","count":7345},{"value":"2000","count":9946},{"value":"2001","count":36838},{"value":"2002","count":97371},{"value":"2003","count":236514},{"value":"2004","count":277319},{"value":"2005","count":207931}]},{"query":" wikipedia","data":[{"value":"2001","count":12},{"value":"2002","count":67},{"value":"2003","count":464},{"value":"2004","count":8030},{"value":"2005","count":64540}]}]
 				$.ajax({
 	    	    	url: url,
@@ -130,8 +141,6 @@
 							$spanGroup.append($paragraph);
 		    	    		$listGroup.append($spanGroup);
 		    	    		$('#result-set').append($listGroup);
-		    	    		query = $('#query').val();
-		    	    		window.history.pushState("", "", "/search?query=" + query + "&start=0&rows=10&page=1");
 	    	    		});
 	    	    		
 	    	    		clearPager();
@@ -144,7 +153,7 @@
 	    	    			console.log("hasPreviousPage: " + data.pager.hasPreviousPage + " " + prevPageNo);
 	    	    			if(data.pager.hasPreviousPage) {
 	    	    				$list.addClass('prev');
-	    	    				$prev_page = getUrl() + "&page=" + prevPageNo;
+	    	    				$prev_page = getAjaxUrl() + "&page=" + prevPageNo;
 	    	    				$anchor.addClass('paging').attr('href', $prev_page);
 	    	    				$anchor.attr('id','page-' + prevPageNo);
 								$anchor.html('&laquo;');
@@ -156,7 +165,7 @@
 	    	    			$list.append($anchor);
 	    	    			$page.append($list);
 	    	    			
-	    	    		    for ( var i = 0; i < data.pager.pagesList.length; i++) {
+	    	    		    for (var i=0; i < data.pager.pagesList.length; i++) {
 	    	    		        var index = data.pager.pagesList[i];
 		    	    			console.log(index + "-" + data.pager.currentPage);
 								if (index == data.pager.currentPage) {
@@ -171,7 +180,7 @@
 	    							$list_loop.append($anchor_loop);
 								} else {
 									$list_loop = $('<li>').attr('id', 'list-' + index);
-									$url = getUrl() + "&page=" + index;
+									$url = getAjaxUrl() + "&page=" + index;
 	    							$anchor_loop = $('<a>').addClass('paging').attr('id', 'page-' + index).attr('href', url);
 	    							$anchor_loop.html(index);
 	    							$list_loop.append($anchor_loop);
@@ -185,7 +194,7 @@
 	    	    			console.log("hasNextPage: " + data.pager.hasNextPage + " " + nextPageNo);
 	    		        	if(data.pager.hasNextPage && !data.pager.hasMaxViewablePagedReached) {
 	    	    				$list.addClass('next');
-	    	    				$prev_page = getUrl() + "&page=" + nextPageNo;
+	    	    				$prev_page = getAjaxUrl() + "&page=" + nextPageNo;
 	    	    				$anchor.addClass('paging').attr('href', $prev_page);
 	    	    				$anchor.attr('id','page-' + nextPageNo);
 								$anchor.html('&raquo;');
@@ -204,11 +213,77 @@
 	    	    		
 	    	    		console.log(results);
 	    	    		enableForm();
+	    	    		// TODO: pushState not working in IE9
+	    	    		window.history.pushState("", "", getUrl() + "&page=" + page);
 	    	    	},
 	    	    	error: function(jqXHR, textStatus, errorThrown) {
 	    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
 	    	    	}
 	    	    });
+			}
+			
+			$(".facet-options").each(function(index) {
+				// check form fields
+				var $facet_option = $(this);
+				var $input_include = $facet_option.find('input.include');
+				var $input_exclude = $facet_option.find('input.exclude');
+
+				var $link_span_include = $facet_option.find('a.facet.include span');
+				var $link_span_exclude = $facet_option.find('a.facet.exclude span');
+
+				// to read back facet options after submit
+				facetToggle($input_include, $link_span_include);
+				facetToggle($input_exclude, $link_span_exclude);
+
+				// for clicking on facet options (includes)
+				$(this).find('a.facet.include').click(function(event) {
+					event.preventDefault();
+					// change +/-
+					facetClickToggle($link_span_include, $input_include);
+					// TODO: grab current url from somewhere
+					//alert('test');
+					var facet_name = $input_include.attr('name');
+					var facet_value = $input_include.val();
+					console.log(facet_name + " " + facet_value);
+//					var url = $('#current-url') + 
+
+		 			//$('form').submit();
+				});
+				
+				// for clicking on facet options (excludes)
+				$(this).find('a.facet.exclude').click(function(event) {
+					event.preventDefault();
+					facetClickToggle($link_span_exclude, $input_exclude);
+					var facet_name = $input_exclude.attr('name');
+					var facet_value = $input_exclude.val();
+					console.log(facet_name + " " + facet_value);
+		 			//$('form').submit();
+				});
+				
+			});
+			
+			function facetToggle($element, $button) {
+				if ($element.attr('checked') !== undefined) {
+					$button.removeClass('facet-deselected');
+					$button.addClass('facet-selected');
+				} else {
+					$button.removeClass('facet-selected');
+					$button.addClass('facet-deselected');
+				}
+			}
+
+			function facetClickToggle($button, $element) {
+				if ($button.hasClass('facet-deselected')) {
+					// SELECTED
+					$button.removeClass('facet-deselected');
+					$button.addClass('facet-selected');
+					$element.attr('checked', '');
+				} else {
+					// DESELECTED
+					$button.removeClass('facet-selected');
+					$button.addClass('facet-deselected');
+					$element.removeAttr('checked');
+				}
 			}
 		});
 	</script>
