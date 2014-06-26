@@ -200,7 +200,7 @@
 	<div class="tab-content">
   		<div class="tab-pane active" id="plot">
 			<div class="padding-20" id="graph-container">
-				@helper.form(action=routes.Application.plot_graph()) {
+				@helper.form(action=routes.Search.plot_graph()) {
 					<div class="row padding-10">
 						<div class="col-md-12 text-center">
 							<input type="text" class="form-control" name="query" placeholder="Comma separated terms" value="@(q)" id="query" />

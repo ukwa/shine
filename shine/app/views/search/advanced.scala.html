@@ -299,7 +299,7 @@
     }
 
     // Generate the link
-    routes.Application.advanced_search(q.query, pageNo, sortBy, order)
+    routes.Search.advanced_search(q.query, pageNo, sortBy, order)
     
 }
 
@@ -341,9 +341,9 @@
 @main(title, styles, scripts) {
 
 	<ul class="nav nav-tabs" contextmenu="">
-		<li><a href="@routes.Application.search()">Search</a></li>
+		<li><a href="@routes.Search.search()">Search</a></li>
 		<li class="active"><a href="#">Advanced Search</a></li>
-		<li><a href="@routes.Application.browse()">Browse Collections</a></li>
+		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
 	</ul>
 
 	<div class="row">
@@ -354,7 +354,7 @@
 					<a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 				</div>
 			
-				@helper.form(action=routes.Application.advanced_search(), 'class -> "form-horizontal") {
+				@helper.form(action=routes.Search.advanced_search(), 'class -> "form-horizontal") {
 			
 				<div id="filter-panel" class="panel-collapse collapse">
 					<div class="row">

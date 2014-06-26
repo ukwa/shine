@@ -27,16 +27,16 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="@routes.Application.index()">
+				<a class="navbar-brand" href="@routes.Application.index">
 					<image src="@routes.Assets.at("images/ukwa-icon-nobg-16.png")" />
 						UK Web Archive
 				</a>
 			</div>
   			<div class="collapse navbar-collapse">
   				<ul class="nav navbar-nav">
-					<li><a id="nav-search" href="@routes.Application.search()?facet.sort=index">Search</a></li>
-            		<li><a href="@routes.Application.plot_graph()">Trends</a></li>
-            		<li><a href="@routes.Shiner.halflife()">Half-life</a></li>
+					<li><a id="nav-search" href="@routes.Search.search()?facet.sort=index">Search</a></li>
+	           		<li><a href="@routes.Search.plot_graph()">Trends</a></li>
+	           		<li><a href="@routes.Shiner.halflife()">Half-life</a></li>
 				</ul>
 			</div>
 		</nav>

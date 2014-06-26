@@ -5,16 +5,21 @@
 # Home page
 GET     /                           		controllers.Application.index
 
+# Authentication
+GET     /login                              controllers.Application.login
+POST    /login                              controllers.Application.authenticate
+GET     /logout                             controllers.Application.logout
+
 # Main facets search interface. The query parameter is optional, defaulting to /search?query=*:*
-GET     /search                     		controllers.Application.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /search                     		controllers.Search.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
 
-GET     /advanced_search            		controllers.Application.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /advanced_search            		controllers.Search.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
 
-GET     /browse            					controllers.Application.browse(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /browse            					controllers.Search.browse(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
  
 # TBD: The main hook for the explore/trend analysis/delve UI.
 
-GET     /graph								controllers.Application.plot_graph(query ?= "*:*", year_start ?= "2000", year_end ?= "2015")
+GET     /graph								controllers.Search.plot_graph(query ?= "*:*", year_start ?= "2000", year_end ?= "2015")
 
 # The web half-life/rescued visualisation:
 GET     /halflife                   controllers.Shiner.halflife
@@ -24,32 +29,32 @@ GET     /assets/*file               		controllers.Assets.at(path="/public", file
 
 GET 	/javascriptRoutes    				controllers.Application.javascriptRoutes
 
-GET    	/suggestTitle/:name					controllers.Application.suggestTitle(name)
+GET    	/suggestTitle/:name					controllers.Search.suggestTitle(name)
 
-GET    	/suggestUrl/:name					controllers.Application.suggestUrl(name)
+GET    	/suggestUrl/:name					controllers.Search.suggestUrl(name)
 
-GET    	/suggestFileFormat/:name			controllers.Application.suggestFileFormat(name)
+GET    	/suggestFileFormat/:name			controllers.Search.suggestFileFormat(name)
 
-GET    	/suggestHost/:name					controllers.Application.suggestHost(name)
+GET    	/suggestHost/:name					controllers.Search.suggestHost(name)
 
-GET    	/suggestDomain/:name				controllers.Application.suggestDomain(name)
+GET    	/suggestDomain/:name				controllers.Search.suggestDomain(name)
 
-GET    	/suggestPublicSuffix/:name			controllers.Application.suggestPublicSuffix(name)
+GET    	/suggestPublicSuffix/:name			controllers.Search.suggestPublicSuffix(name)
 
-GET    	/suggestLinksHosts/:name			controllers.Application.suggestLinksHosts(name)
+GET    	/suggestLinksHosts/:name			controllers.Search.suggestLinksHosts(name)
 
-GET    	/suggestLinksDomains/:name			controllers.Application.suggestLinksDomains(name)
+GET    	/suggestLinksDomains/:name			controllers.Search.suggestLinksDomains(name)
 
-GET    	/suggestLinksPublicSuffixes/:name	controllers.Application.suggestLinksPublicSuffixes(name)
+GET    	/suggestLinksPublicSuffixes/:name	controllers.Search.suggestLinksPublicSuffixes(name)
 
-GET    	/suggestAuthor/:name				controllers.Application.suggestAuthor(name)
+GET    	/suggestAuthor/:name				controllers.Search.suggestAuthor(name)
 
-GET    	/suggestCollection/:name			controllers.Application.suggestCollection(name)
+GET    	/suggestCollection/:name			controllers.Search.suggestCollection(name)
 
-GET    	/suggestCollections/:name			controllers.Application.suggestCollections(name)
+GET    	/suggestCollections/:name			controllers.Search.suggestCollections(name)
 
-GET    	/getFacets							controllers.Application.getFacets
+GET    	/getFacets							controllers.Search.getFacets
 
-GET		/processChart						controllers.Application.processChart
+GET		/processChart						controllers.Search.processChart
 
-GET		/ajaxSearch							controllers.Application.ajaxSearch
+GET		/ajaxSearch							controllers.Search.ajaxSearch

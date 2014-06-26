@@ -272,7 +272,7 @@
     }
 
     // Generate the link
-    routes.Application.advanced_search(q.query, pageNo, sortBy, order)
+    routes.Search.advanced_search(q.query, pageNo, sortBy, order)
     
 }
 
@@ -314,15 +314,15 @@
 @main(title, styles, scripts) {
 
 	<ul class="nav nav-tabs" contextmenu="">
-		<li><a href="@routes.Application.search()">Search</a></li>
-		<li><a href="@routes.Application.advanced_search()">Advanced Search</a></li>
-		<li class="active"><a href="@routes.Application.browse()">Browse Collections</a></li>
+		<li><a href="@routes.Search.search()">Search</a></li>
+		<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
+		<li class="active"><a href="@routes.Search.browse()">Browse Collections</a></li>
 	</ul>
 
 	<div class="row">
 		<div class="col-md-12 col-sm-12">
 			<div class="padding-20">
-				@helper.form(action=routes.Application.browse(), 'class -> "form-horizontal") {
+				@helper.form(action=routes.Search.browse(), 'class -> "form-horizontal") {
 					<div>
 						<div class="tree">
 						    <ul>
@@ -335,7 +335,7 @@
 								                <li>
 													<span class="label-success">
 														<i class="child glyphicon glyphicon-minus"></i> 
-														<a href="@(routes.Application.search(q.query))&facet.fields=@(fc.getName())&facet.in.@(fc.getName())=&#34;@(Html(q.formatFacet(fc,f)))&#34;&action=search">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span>
+														<a href="@(routes.Search.search(q.query))&facet.fields=@(fc.getName())&facet.in.@(fc.getName())=&#34;@(Html(q.formatFacet(fc,f)))&#34;&action=search">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span>
 													</span>
 								                    <ul class="root"></ul>
 												</li>

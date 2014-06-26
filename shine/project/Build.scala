@@ -9,7 +9,9 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     // Add your project dependencies here,
-    jdbc,
+	javaCore,
+    javaJdbc,
+    javaEbean,
     cache,
     anorm,
     "org.xerial" % "sqlite-jdbc" % "3.7.2",
@@ -18,6 +20,7 @@ object ApplicationBuild extends Build {
     "org.jbehave" % "jbehave-core" % "3.9.1",
     "org.codehaus.plexus" % "plexus-archiver" % "1.2",
     "org.apache.maven.wagon" % "wagon-provider-api" % "2.6",
+    "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
     "org.jbehave" % "jbehave-maven-plugin" % "3.9.1"
   )
 

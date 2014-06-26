@@ -247,7 +247,7 @@
 					console.log(facet_name + " " + facet_value);
 //					var url = $('#current-url') + 
 
-		 			//$('form').submit();
+		 			$('form').submit();
 				});
 				
 				// for clicking on facet options (excludes)
@@ -257,7 +257,7 @@
 					var facet_name = $input_exclude.attr('name');
 					var facet_value = $input_exclude.val();
 					console.log(facet_name + " " + facet_value);
-		 			//$('form').submit();
+		 			$('form').submit();
 				});
 				
 			});
@@ -318,7 +318,7 @@
     }
 
     // Generate the link
-    routes.Application.search(q.query, pageNo, sortBy, order)
+    routes.Search.search(q.query, pageNo, sortBy, order)
 }
 
 @pagination = {
@@ -362,12 +362,12 @@
 
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="#">Search</a></li>
-		<li><a href="@routes.Application.advanced_search()">Advanced Search</a></li>
-		<li><a href="@routes.Application.browse()">Browse Collections</a></li>
+		<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
+		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
 	</ul>
 
 	<div class="padding-20">
-		@helper.form(action=routes.Application.search()) {
+		@helper.form(action=routes.Search.search()) {
 	
 			<div class="row">
 				<div class="col-md-4 col-sm-4">
@@ -398,7 +398,7 @@
 												}
 			        								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
 			        								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-			          								<a href="@(routes.Application.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
+			          								<a href="@(routes.Search.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
 			          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 			          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 												</li>
