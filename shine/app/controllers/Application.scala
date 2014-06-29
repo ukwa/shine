@@ -37,6 +37,10 @@ object Application extends Controller {
 	Account.authenticate(email, storedPassword).isDefined
   }
   
+  def testUser(username: String, password: String) = {
+    (username == "admin@test.com" && password == "secret")  
+  }
+  
   /**
    * Login page.
    */
