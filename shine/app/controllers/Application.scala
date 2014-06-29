@@ -4,9 +4,10 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-
 import models._
 import views._
+import org.apache.commons.lang.StringUtils
+import uk.bl.wa.shine._
 
 object Application extends Controller {
 
@@ -21,10 +22,21 @@ object Application extends Controller {
       "email" -> text,
       "password" -> text
     ) verifying ("Invalid email or password", result => result match {
-      case (email, password) => Account.authenticate(email, password).isDefined
+      case (email, password) => validate(email, password)
     })
   )
-
+  
+  /**
+   * We only store lowercase emails and transform user input to lowercase for this field.
+   * @return null if authentication ok.
+   */
+  
+  def validate(email: String, password: String) = {
+    val account = Account.findByEmail(email.toLowerCase())
+	val storedPassword = account.get.password
+	Account.authenticate(email, storedPassword).isDefined
+  }
+  
   /**
    * Login page.
    */
