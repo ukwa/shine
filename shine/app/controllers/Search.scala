@@ -71,14 +71,16 @@ object Search extends Controller {
 
     pagination.update(totalRecords, pageNo)
 
+	val user = null
+
     Cache.getAs[Map[String, FacetValue]]("facet.values") match {
 	    case Some(value) => {
 	    	play.api.Logger.debug("getting value from cache ...")
-	    	Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value))
+	    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value))
 		}
 		case None => {
 			println("None")
-	    	Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null))
+	    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null))
 		}
     }
   }
@@ -94,7 +96,10 @@ object Search extends Controller {
     println("totalRecords #: " + totalRecords)
 
     pagination.update(totalRecords, pageNo)
-    Ok(views.html.search.advanced("Advanced Search", q, pagination, sort, order))
+    
+    val user = null
+    
+    Ok(views.html.search.advanced("Advanced Search", user, q, pagination, sort, order))
   }
 
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -110,7 +115,8 @@ object Search extends Controller {
 
     pagination.update(totalRecords, pageNo)
 
-    Ok(views.html.search.browse("Browse", q, pagination, sort, order))
+	val user = null
+    Ok(views.html.search.browse("Browse", user, q, pagination, sort, order))
   }
 
   def plot_graph(query: String, year_start: String, year_end: String) = Action { implicit request =>
@@ -163,7 +169,9 @@ object Search extends Controller {
 //    val q = head._1
 //    val listMap = head._2
 //    q.query = query
-    Ok(views.html.graphs.plot("NGram", query, "Years", "Count", yearStart, yearEnd, graphMap))
+
+    val user = null
+    Ok(views.html.graphs.plot("NGram", user, query, "Years", "Count", yearStart, yearEnd, graphMap))
   }
 
   def processChart = Action { implicit request =>

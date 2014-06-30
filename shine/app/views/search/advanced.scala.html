@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
+@(title: String, user: Account, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -338,7 +338,7 @@
 	</div>
 }
 
-@main(title, styles, scripts) {
+@main(title, styles, scripts, user) {
 
 	<ul class="nav nav-tabs" contextmenu="">
 		<li><a href="@routes.Search.search()">Search</a></li>

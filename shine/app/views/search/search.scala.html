@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue])
+@(title: String, user: Account, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue])
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -358,7 +358,7 @@
 	}
 }
 
-@main(title, styles, scripts) {
+@main(title, styles, scripts, user) {
 
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="#">Search</a></li>
