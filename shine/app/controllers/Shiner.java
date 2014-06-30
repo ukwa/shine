@@ -31,7 +31,7 @@ public class Shiner extends Controller {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ok( views.html.vis.rescued.render("Half-life...") );
+		return ok( views.html.vis.rescued.render("Half-life...", "halflife") );
 	}
 	
 }

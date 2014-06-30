@@ -1,4 +1,4 @@
-@(title: String, styles: Html = Html(""), scripts: Html = Html(""), user: User = null)(content: Html)
+@(title: String, styles: Html = Html(""), scripts: Html = Html(""), user: User = null, pageName: String = null)(content: Html)
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -18,9 +18,6 @@
 		@styles
 		@scripts
 		
-		@activeLink(currentPath:String) = @{
-			"active"
-		}
 	</head>
 	<body>
 		<nav class="navbar navbar-default" role="navigation">
@@ -39,9 +36,9 @@
   			<div class="collapse navbar-collapse">
   				<ul class="nav navbar-nav">
   					@if(user != null) {
-						<li class="@activeLink("/search")"><a class="white-text" id="nav-search" href="@routes.Search.search()?facet.sort=index">Search</a></li>
-		           		<li class="@activeLink("/graph")"><a class="white-text"  href="@routes.Search.plot_graph()">Trends</a></li>
-		           		<li class="@activeLink("/halflife")"><a class="white-text"  href="@routes.Shiner.halflife()">Half-life</a></li>
+						<li class="@("active".when(pageName == "search"))"><a class="white-text" id="nav-search" href="@routes.Search.search()?facet.sort=index">Search</a></li>
+		           		<li class="@("active".when(pageName == "graph"))"><a class="white-text"  href="@routes.Search.plot_graph()">Trends</a></li>
+		           		<li class="@("active".when(pageName == "halflife"))"><a class="white-text"  href="@routes.Shiner.halflife()">Half-life</a></li>
 		           	}
 				</ul>
 				<div class="navbar-right">

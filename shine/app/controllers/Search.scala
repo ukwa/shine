@@ -78,11 +78,11 @@ object Search extends Controller {
 	    Cache.getAs[Map[String, FacetValue]]("facet.values") match {
 		    case Some(value) => {
 		    	play.api.Logger.debug("getting value from cache ...")
-		    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value))
+		    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search"))
 			}
 			case None => {
 				println("None")
-		    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null))
+		    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null, "search"))
 			}
 	    }
 	}.getOrElse {
@@ -187,7 +187,7 @@ object Search extends Controller {
 	    
 		val user = User.findByEmail(username.toLowerCase())
 
-	    Ok(views.html.graphs.plot("NGram", user, query, "Years", "Count", yearStart, yearEnd, graphMap))
+	    Ok(views.html.graphs.plot("NGram", user, query, "Years", "Count", yearStart, yearEnd, graphMap, "graph"))
   	}.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	}
