@@ -32,9 +32,10 @@ object Application extends Controller {
    */
   
   def validate(email: String, password: String) = {
-    val account = Account.findByEmail(email.toLowerCase())
-	val storedPassword = account.get.password
-	Account.authenticate(email, storedPassword).isDefined
+	val authenticate = User.authenticate(email, password) == true
+	println("validating: " + authenticate)
+	authenticate
+	//testUser(email, password) == true
   }
   
   def testUser(username: String, password: String) = {
