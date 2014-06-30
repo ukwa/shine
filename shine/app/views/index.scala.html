@@ -1,12 +1,13 @@
-@(title: String)
+@(title: String, user: User)
 
-@styles = {
-}
+@styles = {}
 
-@scripts = {
-}
+@scripts = {}
 
-@main(title, styles, scripts, null) {
+@main(title, styles, scripts, user) {
 	<h1>@title</h1>
+	@if(user != null) {
+		<p>Welcome @user.name</p>
+	}
 }
 

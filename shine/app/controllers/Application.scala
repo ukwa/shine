@@ -11,9 +11,14 @@ import uk.bl.wa.shine._
 
 object Application extends Controller {
 
-  def index = Action {
-    Ok(views.html.index("Shine Application"))
+  def index = Action { request =>
+  request.session.get("username").map { username =>
+	val user = User.findByEmail(username.toLowerCase())
+    Ok(views.html.index("Shine Application", user))
+  }.getOrElse {
+    Unauthorized("Oops, you are not authorized")
   }
+}
 
   // -- Authentication
 
@@ -32,10 +37,11 @@ object Application extends Controller {
    */
   
   def validate(email: String, password: String) = {
-	val authenticate = User.authenticate(email, password) == true
+	val storedPassword = User.findByEmail(email.toLowerCase()).password;
+    val authenticate = PasswordHash.validatePassword(password, storedPassword);
+	//val authenticate = testUser(email, password) == true
 	println("validating: " + authenticate)
 	authenticate
-	//testUser(email, password) == true
   }
   
   def testUser(username: String, password: String) = {
@@ -53,9 +59,10 @@ object Application extends Controller {
    * Handle login form submission.
    */
   def authenticate = Action { implicit request =>
+    println("authenticate")
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors, "Shine Application")),
-      account => Redirect(routes.Application.index).withSession("email" -> account._1)
+      account => Redirect(routes.Application.index).withSession("username" -> account._1)
     )
   }
 

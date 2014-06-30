@@ -49,3 +49,7 @@
 }
 
 a.facet-sort:link    { text-decoration:none; }
+
+.white-text {
+    color: #fff !important;
+}

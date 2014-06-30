@@ -210,16 +210,6 @@ public class User extends Model {
     }
 
     /**
-     * Authenticate a User.
-     */
-    public static User authenticate(String email, String password) {
-        return find.where()
-            .eq("email", email)
-            .eq("password", password)
-            .findUnique();
-    }
-    
-    /**
      * This method calculates memership period for the user.
      * @return
      */
