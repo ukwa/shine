@@ -44,6 +44,7 @@
 				<div class="navbar-right">
 					@if(user != null) {
 						<span class="navbar-text white-text">@user.name (@user.email)&nbsp;&nbsp;</span> 
+						<a class="btn btn-success navbar-btn" href="@routes.Application.changePassword(user.email)">Change Password</a>
 						<a class="btn btn-success navbar-btn" href="@routes.Application.logout()">Logout</a>
 					} else {
 		           		<a class="btn btn-success navbar-btn" href="@routes.Application.login()">Login</a>

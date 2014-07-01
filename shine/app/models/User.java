@@ -1,5 +1,7 @@
 package models;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +29,8 @@ import uk.bl.wa.shine.Const;
 import com.avaje.ebean.ExpressionList;
 import com.avaje.ebean.Page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import uk.bl.wa.shine.PasswordHash;
 
 
 /**
@@ -288,6 +292,15 @@ public class User extends Model {
         		.findPagingList(pageSize)
         		.setFetchAhead(false)
         		.getPage(page);
+    }
+    
+    public static User update(String email, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    	User user = User.findByEmail(email);
+    	String passwordHash = PasswordHash.createHash(password);
+    	Logger.info("convert: " + password + " - " + passwordHash);
+    	user.password = passwordHash;
+    	user.save();
+        return user;
     }
 }
 

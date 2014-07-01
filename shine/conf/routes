@@ -9,6 +9,8 @@ GET     /                           		controllers.Application.index
 GET     /login                              controllers.Application.login
 POST    /login                              controllers.Application.authenticate
 GET     /logout                             controllers.Application.logout
+GET     /changepassword                     controllers.Application.changePassword(email:String)
+POST    /changepassword                     controllers.Application.updatePassword(email:String)
 
 # Main facets search interface. The query parameter is optional, defaulting to /search?query=*:*
 GET     /search                     		controllers.Search.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")

@@ -54,11 +54,12 @@
 			
 			$('#search').on('click', function(event) {
 				event.preventDefault();
-				//$('form').submit();
-				processSearch();
+				$('form').submit();
+				//processSearch();
 			});
 			
-			paging();
+			// ajax paging
+			//paging();
 			
 			function paging() {
 				$('.paging').each(function() {
