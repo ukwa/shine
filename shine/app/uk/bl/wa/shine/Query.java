@@ -81,10 +81,10 @@ public class Query {
 	public Query(String query, Map<String,List<String>> parameters) {
 		facets = new ArrayList<String>();
 		this.parameters = parameters;
-		this.parseParameters();
 		facetValues = new HashMap<String, FacetValue>();
 		this.query = query;
 		this.proximity = new Proximity();
+		this.parseParameters();
 	}
 	
 	private void parseParameters() {

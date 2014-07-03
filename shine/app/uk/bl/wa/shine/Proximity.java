@@ -30,5 +30,9 @@ public class Proximity {
 		this.proximity = proximity;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "Proximity [phrase1=" + phrase1 + ", phrase2=" + phrase2
+				+ ", proximity=" + proximity + "]";
+	}
 }

@@ -1,4 +1,4 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -338,7 +338,7 @@
 	</div>
 }
 
-@main(title, styles, scripts, user) {
+@main(title, styles, scripts, user, pageName) {
 
 	<ul class="nav nav-tabs" contextmenu="">
 		<li><a href="@routes.Search.search()">Search</a></li>
@@ -541,30 +541,31 @@
 								</div>
 							</div>
 						</div>
-		
-						<div class="panel-body">
-							@pagination
-		
-							@for((d, index) <- q.res.getResults().zipWithIndex) {
-								<div class="list-group">
-									<span class="list-group-item" href="#">
-										<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) 
-											<a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">
-												"@d.getFirstValue("title")"
-											</a>
-										</h4>
-										<p class="list-group-item-text">
-												@d.getFirstValue("crawl_date")<br />
-												@d.getFirstValue("content_type_norm")<br />
-												@d.getFirstValue("domain")<br />
-												@d.getFirstValue("sentiment_score")
-										</p>
-									</span>
-								</div>
-							}
-		
-							@pagination
-						</div>
+						@if(!q.res.getResults().isEmpty()) {
+							<div class="panel-body">
+								@pagination
+			
+								@for((d, index) <- q.res.getResults().zipWithIndex) {
+									<div class="list-group">
+										<span class="list-group-item" href="#">
+											<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) 
+												<a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">
+													"@d.getFirstValue("title")"
+												</a>
+											</h4>
+											<p class="list-group-item-text">
+													@d.getFirstValue("crawl_date")<br />
+													@d.getFirstValue("content_type_norm")<br />
+													@d.getFirstValue("domain")<br />
+													@d.getFirstValue("sentiment_score")
+											</p>
+										</span>
+									</div>
+								}
+			
+								@pagination
+							</div>
+						}
 					</div>
 				}
 			</div>

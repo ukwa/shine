@@ -105,7 +105,7 @@ object Search extends Controller {
 	    
 		val user = User.findByEmail(username.toLowerCase())
 	    
-	    Ok(views.html.search.advanced("Advanced Search", user, q, pagination, sort, order))
+	    Ok(views.html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search"))
 	}.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	}
@@ -127,7 +127,7 @@ object Search extends Controller {
 	
 		val user = User.findByEmail(username.toLowerCase())
 
-	    Ok(views.html.search.browse("Browse", user, q, pagination, sort, order))
+	    Ok(views.html.search.browse("Browse", user, q, pagination, sort, order, "search"))
 	}.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	}
@@ -415,6 +415,7 @@ object Search extends Controller {
 
   def doAdvanced(query: String, parameters: Map[String, Seq[String]]) = {
     val q = createQuery(query, parameters)
+    println("doAdvanced: " + q.proximity)
     solr.advancedSearch(q)
   }
 

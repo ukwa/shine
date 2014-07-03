@@ -43,8 +43,15 @@
 				</ul>
 				<div class="navbar-right">
 					@if(user != null) {
-						<span class="navbar-text white-text">@user.name (@user.email)&nbsp;&nbsp;</span> 
-						<a class="btn btn-success navbar-btn" href="@routes.Application.changePassword(user.email)">Change Password</a>
+						<span class="navbar-text white-text">@user.name (@user.email)&nbsp;&nbsp;</span>
+						<ul class="nav navbar-nav">
+							<li class="dropdown">
+								<a class="white-text href="#" class="dropdown-toggle" data-toggle="dropdown">My Account<b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li><a href="@routes.Account.changePassword(user.email)">Change Password</a></li>
+								</ul>
+							</li>
+						</ul>
 						<a class="btn btn-success navbar-btn" href="@routes.Application.logout()">Logout</a>
 					} else {
 		           		<a class="btn btn-success navbar-btn" href="@routes.Application.login()">Login</a>
