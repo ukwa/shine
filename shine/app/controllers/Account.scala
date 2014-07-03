@@ -77,12 +77,12 @@ object Account extends Controller {
       })
   }
   
-  def myAccount = Action { implicit request =>
+  def mySearches = Action { implicit request =>
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
-	    Ok(views.html.index("Shine Application", user))
+	    Ok(views.html.mySearches("My Searches", user))
 	  }.getOrElse {
-	    Ok(views.html.index("Shine Application", null))
+		Unauthorized("Oops, you are not authorized")
 	  }
   }
 }

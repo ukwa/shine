@@ -11,7 +11,7 @@ POST    /login                              controllers.Application.authenticate
 GET     /logout                             controllers.Application.logout
 GET     /changepassword                     controllers.Account.changePassword(email:String)
 POST    /changepassword                     controllers.Account.updatePassword(email:String)
-GET     /myaccount                     		controllers.Account.myAccount
+GET     /mysearches                     	controllers.Account.mySearches
 
 # Main facets search interface. The query parameter is optional, defaulting to /search?query=*:*
 GET     /search                     		controllers.Search.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
