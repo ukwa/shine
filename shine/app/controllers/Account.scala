@@ -92,14 +92,16 @@ object Account extends Controller {
 		Unauthorized("Oops, you are not authorized")
 	  }
   }
-  
-  def saveSearch = Action { implicit request =>
+
+  def saveSearch(name: String, url: String) = Action { implicit request =>
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
-		// insert shit
+		// insert stuff
 	    //Ok(views.html.mySearches("My Searches", user))
 		// redirect back to search you just saved.
-	    Redirect(routes.Account.mySearches).flashing("success" -> "Search was added")
+		println("saved search: " + name + " - " + url)
+		Ok("false")
+	    //Redirect(routes.Account.mySearches).flashing("success" -> "Search was added")
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	  }

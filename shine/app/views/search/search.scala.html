@@ -35,11 +35,25 @@
 				$("#save-search-form").modal('show');
 			    //$('form').attr('action', "/search/save").attr('method', 'post').submit();
 			});
-			
 			$('#dismiss-x').click(function() {
 				$("#save-search-form").modal('hide');
+			});			
+			$('#save-search-save').click(function() {
+				var url = window.location;
+				jsRoutes.controllers.Account.saveSearch($('#save-name').val(), url).ajax({success:successFn, error:errorFn});
+				$("#save-search-form").modal('hide');
+				$('#save-name').val('');
+				// close and reset form
 			});
-			
+			var successFn = function(data) {
+				console.debug("Success of Ajax Call");
+				console.debug(data);
+			};
+			var errorFn = function(err) {
+				console.debug("Error of ajax Call");
+				console.debug(err);
+			}
+
 			function disableForm() {
 				$('#ajax-loader').show();
 				$('#query').attr('disabled', 'disabled');
@@ -552,11 +566,11 @@
 					<h3 class="modal-title" id="modalTitle">Save Search</h3>
 				</div>
 				<div class="modal-body">
-					<textarea id="feedback-message" class="form-control"></textarea>
+					<input type="text" name="save-name" id="save-name" class="form-control" >
 				</div>
 				<div class="modal-footer">
-					<button type="button" id="feedback-close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-					<button type="button" id="feedback-send" class="btn btn-primary">Send</button>
+					<button type="button" id="save-search-close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+					<button type="button" id="save-search-save" class="btn btn-primary">Save</button>
 				</div>
 			</div>
 		</div>
