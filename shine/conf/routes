@@ -9,16 +9,13 @@ GET     /                           		controllers.Application.index
 GET     /login                              controllers.Application.login
 POST    /login                              controllers.Application.authenticate
 GET     /logout                             controllers.Application.logout
-GET     /changepassword                     controllers.Account.changePassword(email:String)
-POST    /changepassword                     controllers.Account.updatePassword(email:String)
-GET     /mysearches                     	controllers.Account.mySearches
 
 # Main facets search interface. The query parameter is optional, defaulting to /search?query=*:*
 GET     /search                     		controllers.Search.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
 
-GET     /advanced_search            		controllers.Search.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /search/advanced            		controllers.Search.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
 
-GET     /browse            					controllers.Search.browse(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /search/browse            			controllers.Search.browse(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
  
 # TBD: The main hook for the explore/trend analysis/delve UI.
 
@@ -26,6 +23,13 @@ GET     /graph								controllers.Search.plot_graph(query ?= "*:*", year_start ?
 
 # The web half-life/rescued visualisation:
 GET     /halflife                   controllers.Shiner.halflife
+
+# user account
+
+GET     /account/password                   controllers.Account.changePassword
+POST    /account/changepassword             controllers.Account.updatePassword
+GET     /search/mysearches                  controllers.Account.mySearches
+POST    /search/save                     	controllers.Account.saveSearch
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)

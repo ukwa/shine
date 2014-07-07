@@ -41,40 +41,47 @@ object Account extends Controller {
     }
   }
 
-  def changePassword(email: String) = Action { implicit request =>
-	val user = User.findByEmail(email.toLowerCase())
-	println("user: " + user)
-	Ok(html.changePassword(passwordForm, "Shine Application", user))
+  def changePassword = Action { implicit request =>
+  	  request.session.get("username").map { username =>
+		val user = User.findByEmail(username.toLowerCase())
+		Ok(html.changePassword(passwordForm, "Shine Application", user))
+	  }.getOrElse {
+		Unauthorized("Oops, you are not authorized")
+	  }
   }
   
-  def updatePassword(email: String) = Action { implicit request =>
+  def updatePassword = Action { implicit request =>
     println("updatePassword")
-	var user = User.findByEmail(email.toLowerCase())
-    passwordForm.bindFromRequest.fold(
-      formWithErrors => {
-        BadRequest(html.changePassword(formWithErrors, "Shine Application", user))
-      },
-      passwordData => {
-        val password = passwordData.currentPassword
-        val newPassword1 = passwordData.newPassword1
-        val newPassword2 = passwordData.newPassword2
-    	val storedPassword = user.password
-    	println(password + " " + newPassword1 + " " + newPassword2)
-	    val authenticate = PasswordHash.validatePassword(password, storedPassword)
-	    if (authenticate) {
-	      println("authenticate: " + authenticate)
-	    	if (newPassword1.equals(newPassword2)) {
-	    		// save password
-	    		user = User.update(email, newPassword1)
-	    		Redirect(routes.Application.index).flashing("success" -> "Your password has been updated successfully")
-	    	} else {
-	    		//passwordForm.fill(passwordData).withGlobalError("Your error message")
-                BadRequest(html.changePassword(passwordForm.fill(passwordData).withGlobalError("New Passwords do not match"), "Shine Application", user))	    	
-            }
-	    } else {
-            BadRequest(html.changePassword(passwordForm.fill(passwordData).withGlobalError("Current Password is incorrect"), "Shine Application", user))	    	
-	    }
-      })
+  	  request.session.get("username").map { username =>
+		var user = User.findByEmail(username.toLowerCase())
+		passwordForm.bindFromRequest.fold(
+	      formWithErrors => {
+	        BadRequest(html.changePassword(formWithErrors, "Shine Application", user))
+	      },
+	      passwordData => {
+	        val password = passwordData.currentPassword
+	        val newPassword1 = passwordData.newPassword1
+	        val newPassword2 = passwordData.newPassword2
+	    	val storedPassword = user.password
+	    	println(password + " " + newPassword1 + " " + newPassword2)
+		    val authenticate = PasswordHash.validatePassword(password, storedPassword)
+		    if (authenticate) {
+		      println("authenticate: " + authenticate)
+		    	if (newPassword1.equals(newPassword2)) {
+		    		// save password
+		    		user = User.update(username, newPassword1)
+		    		Redirect(routes.Application.index).flashing("success" -> "Your password has been updated successfully")
+		    	} else {
+		    		//passwordForm.fill(passwordData).withGlobalError("Your error message")
+	                BadRequest(html.changePassword(passwordForm.fill(passwordData).withGlobalError("New Passwords do not match"), "Shine Application", user))	    	
+	            }
+		    } else {
+	            BadRequest(html.changePassword(passwordForm.fill(passwordData).withGlobalError("Current Password is incorrect"), "Shine Application", user))	    	
+		    }
+	      })
+  	  }.getOrElse {
+		Unauthorized("Oops, you are not authorized")
+	  }
   }
   
   def mySearches = Action { implicit request =>
@@ -85,4 +92,17 @@ object Account extends Controller {
 		Unauthorized("Oops, you are not authorized")
 	  }
   }
+  
+  def saveSearch = Action { implicit request =>
+  	  request.session.get("username").map { username =>
+		val user = User.findByEmail(username.toLowerCase())
+		// insert shit
+	    //Ok(views.html.mySearches("My Searches", user))
+		// redirect back to search you just saved.
+	    Redirect(routes.Account.mySearches).flashing("success" -> "Search was added")
+	  }.getOrElse {
+		Unauthorized("Oops, you are not authorized")
+	  }
+  }
+
 }
