@@ -1,0 +1,1 @@
+insert into creator values (3788744517247810016, 'roman.graf@ait.ac.at','Roman Graf','1000:81f464ffd01d79a95be478bdd6533fec5393f1752c7a1f4f:094aed5922d2d722e4ef7f3c4f03e9a4d653f7f4b33b01b3','act-6564683684229431737','act-3788744517247810016','','','','',0,'en',0,'archivist','','2014-06-12 11:57:55.373')

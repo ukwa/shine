@@ -8,6 +8,7 @@ import models._
 import views._
 import org.apache.commons.lang.StringUtils
 import uk.bl.wa.shine._
+import scala.collection.JavaConversions._
 
 object Account extends Controller {
 
@@ -87,7 +88,8 @@ object Account extends Controller {
   def mySearches = Action { implicit request =>
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
-	    Ok(views.html.mySearches("My Searches", user))
+		val searches = models.Search.findByUser(user)
+	    Ok(views.html.mySearches("My Searches", user, null))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	  }
@@ -99,7 +101,8 @@ object Account extends Controller {
 		// insert stuff
 	    //Ok(views.html.mySearches("My Searches", user))
 		// redirect back to search you just saved.
-		println("saved search: " + name + " - " + url)
+		val search = models.Search.create(name, url, user.uid)
+		println("saved search: " + search.name + " - " + search.url + " - " + search.user_id)
 		Ok("false")
 	    //Redirect(routes.Account.mySearches).flashing("success" -> "Search was added")
 	  }.getOrElse {
