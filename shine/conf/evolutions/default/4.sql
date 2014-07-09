@@ -12,4 +12,4 @@ create table saved_search (
 
 # --- !Downs
 
-drop table if exists saved_search cascade;
+drop table if exists saved_search;

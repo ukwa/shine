@@ -13,4 +13,4 @@ create table role (
 
 # --- !Downs
 
-drop table if exists role cascade;
+drop table if exists role;

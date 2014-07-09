@@ -22,4 +22,4 @@ create table creator (
 
 # --- !Downs
 
-drop table if exists creator cascade;
+drop table if exists creator;

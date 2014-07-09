@@ -12,4 +12,4 @@ create table permission (
 
 # --- !Downs
 
-drop table if exists permission cascade;
+drop table if exists permission;
