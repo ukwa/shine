@@ -16,12 +16,12 @@ import scala.collection.immutable.Map
 import scala.collection.mutable.MutableList
 import play.api.libs.json._
 import play.api.Play.current
-import play.api.cache.Cache
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.apache.solr.client.solrj.response.RangeFacet
 import org.apache.solr.common.SolrDocument
 import scala.collection.JavaConverters._
 import models.User
+import play.api.cache.Cache
 
 object Search extends Controller {
 

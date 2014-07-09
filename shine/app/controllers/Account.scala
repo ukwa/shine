@@ -8,7 +8,7 @@ import models._
 import views._
 import org.apache.commons.lang.StringUtils
 import uk.bl.wa.shine._
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters
 
 object Account extends Controller {
 
@@ -64,10 +64,8 @@ object Account extends Controller {
 	        val newPassword1 = passwordData.newPassword1
 	        val newPassword2 = passwordData.newPassword2
 	    	val storedPassword = user.password
-	    	println(password + " " + newPassword1 + " " + newPassword2)
 		    val authenticate = PasswordHash.validatePassword(password, storedPassword)
 		    if (authenticate) {
-		      println("authenticate: " + authenticate)
 		    	if (newPassword1.equals(newPassword2)) {
 		    		// save password
 		    		user = User.update(username, newPassword1)
@@ -89,7 +87,8 @@ object Account extends Controller {
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
 		val searches = models.Search.findByUser(user)
-	    Ok(views.html.mySearches("My Searches", user, null))
+		val ls = JavaConverters.asScalaBufferConverter(searches).asScala.toList
+	    Ok(views.html.mySearches("My Searches", user, ls))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	  }

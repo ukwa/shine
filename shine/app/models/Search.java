@@ -1,10 +1,14 @@
 package models;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -22,13 +26,14 @@ import play.data.format.*;
 import play.data.validation.*;
 
 
+
 @Entity 
 @Table(name="saved_search")
-public class Search extends play.db.ebean.Model {
-
-	@Id
-    @Constraints.Required
-    @Formats.NonEmpty
+public class Search extends Model {
+    
+    @SequenceGenerator(name="seq_gen_name", sequenceName="saved_search_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_gen_name") 
+    @Id 
     public Long id;
     
     @Constraints.Required
@@ -44,6 +49,9 @@ public class Search extends play.db.ebean.Model {
     @Formats.NonEmpty
     public Long user_id;
     
+    @Version
+    public Timestamp lastUpdate;
+
     public static Model.Finder<String,Search> find = new Model.Finder<String,Search>(String.class, Search.class);
 
     
@@ -59,9 +67,8 @@ public class Search extends play.db.ebean.Model {
      * @return
      */
     public static List<Search> findByUser(User user) {
-        return find.fetch("search")
-                .where()
-                     .eq("search.user_id", user.uid)
+        return find.where()
+                .eq("user_id", user.uid)
                 .findList();
 
     }
