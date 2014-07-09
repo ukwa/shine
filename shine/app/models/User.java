@@ -72,10 +72,6 @@ public class User extends Model {
     @JsonIgnore
     public Long feed_nid;
     
-    // lists
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String roles;
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
     public String revision; 
@@ -91,13 +87,11 @@ public class User extends Model {
     
     public User() {
     	this.revision = "";
-    	this.roles = Const.DEFAULT_ROLE;
     }
 
     public User(String name) {
     	this.name = name;
     	this.revision = "";
-    	this.roles = Const.DEFAULT_ROLE;
     }
 
     public User(String name, String email, String password) {
@@ -105,7 +99,6 @@ public class User extends Model {
     	this.email = email;
     	this.password = password;
     	this.revision = "";
-    	this.roles = Const.DEFAULT_ROLE;
     }
     
     /**
@@ -115,22 +108,12 @@ public class User extends Model {
      */
     public boolean hasRole(String roleName) {
     	boolean res = false;
-//    	Logger.info("hasRole: " + roleName);
-    	if (roleName != null && roleName.length() > 0 
-    			&& roles.contains(roleName)) {
-    		res = true;
-    	}
     	return res;
     }
     
     public List<? extends Role> getRoles()
     {
     	List<Role> res = new ArrayList<Role>();
-		List<String> resList = Arrays.asList(roles.split(Const.COMMA));
-		Iterator<String> itr = resList.iterator();
-		while (itr.hasNext()) {
-			res.add(Role.findByName(itr.next()));
-		}
         return res;
     }
 
@@ -150,18 +133,7 @@ public class User extends Model {
     	User res = find.where().eq(Const.UID, uid).findUnique();
     	return res;
     }
-    
-    /**
-     * This method returns all users alphabetically sorted.
-     * @return user list
-     */
-    public static List<User> findAllSorted() {
-    	List<User> res = new ArrayList<User>();
-    	Page<User> page = page(0, find.all().size(), Const.NAME, Const.ASC, "");
-    	res = page.getList();
-        return res;
-    }
-        
+
     /**
      * Retrieve a User from email.
      */
@@ -195,61 +167,6 @@ public class User extends Model {
     public static User findByUid(Long id) {
         return find.where().eq(Const.UID, id).findUnique();
     }
-
-    /**
-     * This method is used for filtering by URL.
-     * @param url
-     * @return
-     */
-    public static List<User> findFilteredByUrl(String url) {
-    	List<User> ll = new ArrayList<User>();
-//    	Logger.info("user findFilteredByUrl(): " + url);
-    	if (url != null && url.length() > 0  && !url.equals(Const.NONE)) { 
-            User user = find.where().eq(Const.URL, url).findUnique();
-            ll.add(user);            
-    	} else {
-            ll = find.all();
-    	}
-    	return ll;
-    }
-
-    /**
-     * This method calculates memership period for the user.
-     * @return
-     */
-    public String calculate_membership() {
-    	String res = "";
-//    	Logger.info("created: " + created + ", last_access: " + last_access + ", last_login: " + last_login);
-    	try {
-    		long timestampCreated = Long.valueOf(created);
-    		Date dateCreated = new Date(timestampCreated * 1000);
-    		long timestampLastAccess = Long.valueOf(last_access);
-    		Date dateLastAccess = new Date(timestampLastAccess * 1000);
-			Logger.info("date created: " + dateCreated);
-			Logger.info("date last access: " + dateLastAccess);
-			 
-			DateTime dt1 = new DateTime(dateCreated);
-			DateTime dt2 = new DateTime(dateLastAccess);
-	 
-//			Logger.info(Months.monthsBetween(dt1, dt2).getMonths() + " months, ");
-//			Logger.info(Weeks.weeksBetween(dt1, dt2).getWeeks() + " weeks, ");			
-//			Logger.info(Weeks.weeksBetween(dt1, dt2).toPeriod() + " period, ");
-//			Logger.info(Days.daysBetween(dt1, dt2).getDays() + " days, ");
-//			Logger.info(Hours.hoursBetween(dt1, dt2).getHours() % 24 + " hours, ");
-//			Logger.info(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60 + " minutes, ");
-//			Logger.info(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
-			Period period = new Period(dt1, dt2);
-			PeriodFormatterBuilder formaterBuilder = new PeriodFormatterBuilder()
-		        .appendMonths().appendSuffix(" months ")
-		        .appendWeeks().appendSuffix(" weeks");
-			PeriodFormatter pf = formaterBuilder.toFormatter();
-//	        Logger.info(pf.print(period));
-	        res = pf.print(period);
-		} catch (Exception e) {
-			Logger.info("date difference calculation error: " + e);
-		}
-    	return res;
-    }
     
 	/**
 	 * This method filters users by name and returns a list of filtered User objects.
@@ -274,24 +191,6 @@ public class User extends Model {
      */
     public static String showUser(String userUrl) {
         return User.findByUrl(userUrl).name; 
-    }
-            
-    /**
-     * Return a page of User
-     *
-     * @param page Page to display
-     * @param pageSize Number of Users per page
-     * @param sortBy User property used for sorting
-     * @param order Sort order (either or asc or desc)
-     * @param filter Filter applied on the name column
-     */
-    public static Page<User> page(int page, int pageSize, String sortBy, String order, String filter) {
-
-        return find.where().icontains("name", filter)
-        		.orderBy(sortBy + " " + order)
-        		.findPagingList(pageSize)
-        		.setFetchAhead(false)
-        		.getPage(page);
     }
     
     public static User update(String email, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {

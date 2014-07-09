@@ -59,10 +59,6 @@ public class Role extends Model
 
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
-    public String permissions;
-
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
     public String description;
     
     @JsonIgnore
@@ -134,7 +130,7 @@ public class Role extends Model
     public boolean hasPermission(String permissionName) {
     	boolean res = false;
     	if (permissionName != null && permissionName.length() > 0 
-    			&& permissions.contains(permissionName)) {
+    			&& this.getPermissions().contains(permissionName)) {
     		res = true;
     	}
     	return res;
@@ -144,41 +140,8 @@ public class Role extends Model
      * This method returns permissions assigned to this role.
      * @return list of Permission objects
      */
-    public List<Permission> getPermissions()
-    {
+    public List<Permission> getPermissions() {
     	List<Permission> res = new ArrayList<Permission>();
-    	if (permissions != null && permissions.length() > 0) {
-			List<String> resList = Arrays.asList(permissions.split(Const.COMMA + " "));
-			Iterator<String> itr = resList.iterator();
-			while (itr.hasNext()) {
-				res.add(Permission.findByName(itr.next()));
-			}
-    	}
-        return res;
-    }
-    
-    /**
-     * This method returns permissions that are not assigned to this role.
-     * @return list of Permission objects
-     */
-    public static List<Permission> getNotAssignedPermissions(String permissionsStr)
-    {
-    	List<Permission> allPermissionList = Permission.findAll();
-//    	Logger.info("Permissions count: " + allPermissionList.size());
-        List<Permission> res = new ArrayList<Permission>();
-    	if (permissionsStr != null && permissionsStr.length() > 0) {
-			List<String> assignedList = Arrays.asList(permissionsStr.split(Const.COMMA + " "));
-//			Logger.info("original permissions: " + permissionsStr);
-//			Logger.info("assignedList: " + assignedList);
-			Iterator<Permission> itrAllPermissions = allPermissionList.iterator();
-			while (itrAllPermissions.hasNext()) {
-				Permission curPermission = itrAllPermissions.next();
-//		    	Logger.info("curPermission: " + curPermission.name);
-				if (!assignedList.contains(curPermission.name)) {
-					res.add(curPermission);
-				}
-			}
-    	}
         return res;
     }
     
@@ -188,150 +151,8 @@ public class Role extends Model
     public static List<Role> findAll() {
         return find.all();
     }
-
-    /**
-     * This method checks if a given role is included in the list of passed user roles.
-     * Simple "contains" method of string does not help for roles since part of the role name
-     * like "exper_user" could be a name of the other role like "user".
-     * @param roleName The given role name
-     * @param roles The user roles as a string separated by comma
-     * @return true if role name is included
-     */
-    public static boolean isIncluded(String roleName, String roles) {
-    	boolean res = false;
-    	if (roleName != null && roleName.length() > 0 && roles != null && roles.length() > 0 ) {
-    		if (roles.contains(Const.COMMA)) {
-    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
-    			Iterator<String> itr = resList.iterator();
-    			while (itr.hasNext()) {
-        			String currentRoleName = itr.next();
-        			currentRoleName = currentRoleName.replaceAll(" ", "");
-        			if (currentRoleName.equals(roleName)) {
-        				res = true;
-        				break;
-        			}
-    			}
-    		} else {
-    			if (roles.equals(roleName)) {
-    				res = true;
-    			}
-    		}
-    	}
-    	return res;
-    }
-    
-    /**
-     * This method checks if a given role is included in the list of passed user roles.
-     * Simple "contains" method of string does not help for roles since part of the role name
-     * like "exper_user" could be a name of the other role like "user".
-     * @param roleName The given role name
-     * @param roles The user roles as a string separated by comma
-     * @return true if role name is included
-     */
-    public static boolean isIncludedByUrl(String roleName, String url) {
-    	boolean res = false;
-    	Logger.info("isIncludedByUrl() url: " + url);
-    	try {
-	    	if (StringUtils.isNotEmpty(url)) {
-		    	String roles = User.findByUrl(url).roles;
-		    	if (roleName != null && roleName.length() > 0 && roles != null && roles.length() > 0 ) {
-		    		if (roles.contains(Const.COMMA)) {
-		    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
-		    			Iterator<String> itr = resList.iterator();
-		    			while (itr.hasNext()) {
-		        			String currentRoleName = itr.next();
-		        			currentRoleName = currentRoleName.replaceAll(" ", "");
-		        			if (currentRoleName.equals(roleName)) {
-		        				res = true;
-		        				break;
-		        			}
-		    			}
-		    		} else {
-		    			if (roles.equals(roleName)) {
-		    				res = true;
-		    			}
-		    		}
-		    	}
-	    	}
-    	} catch (Exception e) {
-    		Logger.debug("User is not yet stored in database.");
-    	}
-    	return res;
-    }
-    
-    /**
-     * This method evaluates index of the role in the role enumeration.
-     * @param roles
-     * @return
-     */
-    public static int getRoleSeverity(String roles) {
-    	int res = Const.Roles.values().length;
-    	if (roles != null && roles.length() > 0 ) {
-    		if (roles.contains(Const.COMMA)) {
-    			List<String> resList = Arrays.asList(roles.split(Const.COMMA));
-    			Iterator<String> itr = resList.iterator();
-    			while (itr.hasNext()) {
-        			String currentRoleName = itr.next();
-        			currentRoleName = currentRoleName.replaceAll(" ", "");
-    				int currentLevel = Const.Roles.valueOf(currentRoleName).ordinal();
-    				if (currentLevel < res) {
-    					res = currentLevel;
-    				}
-    			}
-    		} else {
-    			if (roles.equals(roles)) {
-    				res = Const.Roles.valueOf(roles).ordinal();
-    			}
-    		}
-    	}
-    	return res;
-    }
-    
-    /**
-     * This method validates whether user is allowed to
-     * change given role.
-     * @param role
-     * @param user
-     * @return true if user is allowed
-     */
-    public static boolean isAllowed(Role role, User user) {
-    	boolean res = false;
-    	if (role != null && role.name != null && role.name.length() > 0) {
-    		try {
-	    		int roleIndex = Const.Roles.valueOf(role.name).ordinal();
-	    		int userIndex = getRoleSeverity(user.roles);
-	    		Logger.debug("roleIndex: " + roleIndex + ", userIndex: " + userIndex);
-	    		if (roleIndex >= userIndex) {
-	    			res = true;
-	    		}  
-    		} catch (Exception e) {
-    			Logger.info("New created role is allowed.");
-    			res = true;
-    		}
-    	}
-    	Logger.debug("role allowance check: " + role + ", user: " + user + ", res: " + res);
-    	return res;
-    }
     
     public String toString() {
         return "Role(" + name + ")" + ", id:" + id;
-    }
-    
-    /**
-     * Return a page of User
-     *
-     * @param page Page to display
-     * @param pageSize Number of Roles per page
-     * @param sortBy User property used for sorting
-     * @param order Sort order (either or asc or desc)
-     * @param filter Filter applied on the name column
-     */
-    public static Page<Role> page(int page, int pageSize, String sortBy, String order, String filter) {
-
-        return find.where().icontains("name", filter)
-        		.orderBy(sortBy + " " + order)
-        		.findPagingList(pageSize)
-        		.setFetchAhead(false)
-        		.getPage(page);
     }
 }
