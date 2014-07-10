@@ -16,7 +16,9 @@ GET     /search                     		controllers.Search.search(query ?= "", pag
 GET     /search/advanced            		controllers.Search.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
 
 GET     /search/browse            			controllers.Search.browse(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
- 
+
+GET     /search/concordance                 controllers.Search.concordance(query ?= "*:*")
+
 # TBD: The main hook for the explore/trend analysis/delve UI.
 
 GET     /graph								controllers.Search.plot_graph(query ?= "*:*", year_start ?= "2000", year_end ?= "2015")

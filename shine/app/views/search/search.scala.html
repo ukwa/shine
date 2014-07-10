@@ -385,11 +385,7 @@
 
 @main(title, styles, scripts, user, pageName) {
 
-	<ul class="nav nav-tabs">
-		<li class="active"><a href="#">Search</a></li>
-		<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
-		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
-	</ul>
+	@searchTabs("search")
 
 	<div class="padding-20">
 		@helper.form(action=routes.Search.search()) {

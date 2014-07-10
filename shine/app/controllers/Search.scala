@@ -193,6 +193,24 @@ object Search extends Controller {
 	}
   }
 
+  def concordance(query: String) = Action { implicit request =>
+	request.session.get("username").map { username =>
+	    println("advanced_search")
+	
+	    val q = doAdvanced(query, request.queryString)
+	
+	    val totalRecords = q.res.getResults().getNumFound().intValue()
+	
+	    println("totalRecords #: " + totalRecords)
+	
+		val user = User.findByEmail(username.toLowerCase())
+	    
+	    Ok(views.html.search.concordance("Concordance", user, q, "concordance"))
+	}.getOrElse {
+		Unauthorized("Oops, you are not authorized")
+	}
+  }
+    
   def processChart = Action { implicit request =>
 	request.session.get("username").map { username =>
 	    println("processChart: " + request.queryString)

@@ -1,0 +1,21 @@
+@(title: String, user: User, q: uk.bl.wa.shine.Query, pageName: String)(implicit flash: play.api.mvc.Flash)
+
+@styles = {}
+
+@scripts = {}
+
+@main(title, styles, scripts, user) {
+
+	@flash.get("success").map { message =>
+		<div class="alert alert-success">
+			@message
+		</div>
+	}
+	
+	@searchTabs("concordance")
+		
+	@if(user != null) {
+
+	}
+}
+
