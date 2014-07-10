@@ -15,15 +15,11 @@
 		
 	@if(user != null) {
 	    <article  class="search">
-			@for(search <- searches) {
-	            <div class="folder" data-folder-id="@search.id">
-	                <header>
-	                </header>
-	                <ul class="list">
-	                	<li>@search.name - @search.url</li>
-	                </ul>
-	            </div>
-	        }
+	        <ol class="list">
+				@for(search <- searches) {
+	               	<li>@(search.name) <a href="@(search.url)">@(search.url)</a></li>
+		        }
+	        </ol>
 	    </article>
 	}
 }

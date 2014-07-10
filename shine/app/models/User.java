@@ -14,6 +14,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.SequenceGenerator;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -36,69 +39,34 @@ import uk.bl.wa.shine.PasswordHash;
 /**
  * User entity managed by Ebean
  */
-@SuppressWarnings("serial")
 @Entity 
 @Table(name="creator")
 public class User extends Model {
+
+    @SequenceGenerator(name="seq_gen_name", sequenceName="creator_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_gen_name") 
+    @Id
+    public Long uid;
 
     @JsonIgnore
     @Constraints.Required
     @Formats.NonEmpty
     public String email;
     
-    @Constraints.Required
-    public String name;
-    
     @JsonIgnore
     public String password;
     
-    @JsonIgnore
-    public String field_affiliation;
-    @Id @JsonIgnore
-    public Long uid;
-    public String url;
-    @JsonIgnore
-    public String edit_url;
-    @JsonIgnore
-    public String last_access;
-    @JsonIgnore
-    public String last_login;
-    @JsonIgnore
-    public String created;
-    @JsonIgnore
-    public Long status;
-    @JsonIgnore
-    public String language;
-    @JsonIgnore
-    public Long feed_nid;
-    
-    @JsonIgnore
-    @Column(columnDefinition = "TEXT")
-    public String revision; 
-
     @JsonIgnore
     @Version
     public Timestamp lastUpdate;
 
     // -- Queries
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Model.Finder<String,User> find = new Model.Finder(String.class, User.class);
-    
-    public User() {
-    	this.revision = "";
-    }
 
-    public User(String name) {
-    	this.name = name;
-    	this.revision = "";
-    }
-
-    public User(String name, String email, String password) {
-    	this.name = name;
+    public User(String email, String password) {
     	this.email = email;
     	this.password = password;
-    	this.revision = "";
     }
     
     /**
@@ -106,7 +74,7 @@ public class User extends Model {
      * @param roleName
      * @return true if exists
      */
-    public boolean hasRole(String roleName) {
+    public boolean hasRole(Role role) {
     	boolean res = false;
     	return res;
     }
@@ -142,24 +110,6 @@ public class User extends Model {
     }
     
     /**
-     * Retrieve a User by name.
-     * @param name
-     * @return
-     */
-    public static User findByName(String name) {
-        return find.where().eq("name", name).findUnique();
-    }
-    
-    /**
-     * Retrieve a User by URL.
-     * @param url
-     * @return user name
-     */
-    public static User findByUrl(String url) {
-        return find.where().eq(Const.URL, url).findUnique();
-    }
-
-    /**
      * Retrieve a User by UID
      * @param id
      * @return
@@ -167,32 +117,15 @@ public class User extends Model {
     public static User findByUid(Long id) {
         return find.where().eq(Const.UID, id).findUnique();
     }
-    
-	/**
-	 * This method filters users by name and returns a list of filtered User objects.
-	 * @param name
-	 * @return
-	 */
-	public static List<User> filterByName(String name) {
-		List<User> res = new ArrayList<User>();
-        ExpressionList<User> ll = find.where().contains(Const.EMAIL, name.toLowerCase());
-    	res = ll.findList();
-		return res;
+    	
+	public static User create(String email, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+		User user = new User(email, password);
+    	String passwordHash = PasswordHash.createHash(password);
+    	user.password = passwordHash;
+		user.save();
+		return user;
 	}
-    
-    public String toString() {
-        return "User(" + name + ")" + ", url:" + url;
-    }
-    
-    /**
-     * This method shows user in HTML page.
-     * @param userUrl The link to user in Target object field 'author'
-     * @return
-     */
-    public static String showUser(String userUrl) {
-        return User.findByUrl(userUrl).name; 
-    }
-    
+	
     public static User update(String email, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
     	User user = User.findByEmail(email);
     	String passwordHash = PasswordHash.createHash(password);
