@@ -4,35 +4,24 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Version;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
-
-import org.joda.time.DateTime;
-import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
+import javax.persistence.Table;
+import javax.persistence.Version;
 
 import play.Logger;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import uk.bl.wa.shine.Const;
-
-import com.avaje.ebean.ExpressionList;
-import com.avaje.ebean.Page;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import uk.bl.wa.shine.PasswordHash;
 
 
@@ -40,29 +29,36 @@ import uk.bl.wa.shine.PasswordHash;
  * User entity managed by Ebean
  */
 @Entity 
-@Table(name="creator")
+@Table(name="account")
 public class User extends Model {
 
-    @SequenceGenerator(name="seq_gen_name", sequenceName="creator_seq")
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_gen_name") 
-    @Id
-    public Long uid;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-    @JsonIgnore
+    @Id
+    @Column(name="id")
+	@SequenceGenerator(name="seq_gen_account", sequenceName="account_seq")
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_gen_account") 
+    public Long id;
+
     @Constraints.Required
-    @Formats.NonEmpty
     public String email;
     
-    @JsonIgnore
+    @Constraints.Required
     public String password;
     
-    @JsonIgnore
     @Version
     public Timestamp lastUpdate;
+    
+//    @ManyToMany
+//    @JoinTable(name = "user_roles")
+//    public List<Role> roles = new ArrayList<Role>(); 
 
     // -- Queries
     
-	public static Model.Finder<String,User> find = new Model.Finder(String.class, User.class);
+	public static Model.Finder<String,User> find = new Finder<String, User>(String.class, User.class);
 
     public User(String email, String password) {
     	this.email = email;
@@ -122,7 +118,6 @@ public class User extends Model {
 		User user = new User(email, password);
     	String passwordHash = PasswordHash.createHash(password);
     	user.password = passwordHash;
-		user.save();
 		return user;
 	}
 	

@@ -6,7 +6,7 @@ create table saved_search (
   url			TEXT,
   last_update   timestamp not null,
   user_id 		bigint NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES creator(uid),
+  FOREIGN KEY (user_id) REFERENCES account(id),
   constraint pk_saved_search primary key (id))
 ;
 

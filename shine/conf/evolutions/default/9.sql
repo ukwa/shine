@@ -1,7 +1,7 @@
 # --- !Ups
 
-create sequence creator_seq start with 1;
+create sequence account_seq start with 1;
 
 # --- !Downs
 
-drop sequence if exists creator_seq;
+drop sequence if exists account_seq;

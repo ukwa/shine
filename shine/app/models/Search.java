@@ -6,34 +6,26 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.SequenceGenerator;
+
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.db.ebean.Model;
 
-import com.avaje.ebean.ExpressionList;
-
 import play.data.validation.Constraints;
 import play.data.format.Formats;
-
-import java.util.*;
-
-import play.db.ebean.*;
-import play.data.format.*;
-import play.data.validation.*;
-
 
 
 @Entity 
 @Table(name="saved_search")
 public class Search extends Model {
     
-    @SequenceGenerator(name="seq_gen_name", sequenceName="saved_search_seq")
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_gen_name") 
-    @Id 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Id 
     public Long id;
     
     @Constraints.Required
@@ -68,7 +60,7 @@ public class Search extends Model {
      */
     public static List<Search> findByUser(User user) {
         return find.where()
-                .eq("user_id", user.uid)
+                .eq("user_id", user.id)
                 .findList();
 
     }

@@ -1,7 +1,7 @@
 # --- !Ups
 
-create table creator (
-  uid                       bigint not null,
+create table account (
+  id                       	bigint not null,
   email                     varchar(255),
   name                      varchar(255),
   password                  varchar(255),
@@ -17,9 +17,9 @@ create table creator (
   roles                     TEXT,
   revision                  TEXT,
   last_update               timestamp not null,
-  constraint pk_creator primary key (uid))
+  constraint pk_account primary key (id))
 ;
 
 # --- !Downs
 
-drop table if exists creator;
+drop table if exists account;
