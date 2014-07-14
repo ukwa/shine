@@ -6,8 +6,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Version;
@@ -38,14 +38,26 @@ public class Role extends Model {
     @Version
     public Timestamp lastUpdate;
 
+//    @OneToMany(cascade=CascadeType.ALL)
+//    @JoinTable(name = "user_roles",
+//              joinColumns = @JoinColumn(name = "role_id"),
+//              inverseJoinColumns = @JoinColumn(name = "user_id"))
+
     @ManyToMany
-    @JoinTable(name = "user_roles")
+    @JoinTable(
+        name="user_roles",
+        joinColumns={@JoinColumn(name="role_id", referencedColumnName="id")},
+        inverseJoinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})
     public List<User> users = new ArrayList<User>();
     
+    
     @ManyToMany
-    @JoinTable(name = "role_permissions")
+    @JoinTable(
+        name="role_permissions",
+        joinColumns={@JoinColumn(name="role_id", referencedColumnName="id")},
+        inverseJoinColumns={@JoinColumn(name="permission_id", referencedColumnName="id")})
     public List<Permission> permissions = new ArrayList<Permission>(); 
-
+    
     public static final Finder<Long, Role> find = new Finder<Long, Role>(Long.class, Role.class);
 
     public Role(String name, String description) {

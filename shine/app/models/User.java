@@ -16,9 +16,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.persistence.JoinColumn;
 
 import play.Logger;
-import play.data.format.Formats;
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
 import uk.bl.wa.shine.Const;
@@ -52,9 +52,12 @@ public class User extends Model {
     @Version
     public Timestamp lastUpdate;
     
-//    @ManyToMany
-//    @JoinTable(name = "user_roles")
-//    public List<Role> roles = new ArrayList<Role>(); 
+    @ManyToMany
+    @JoinTable(
+        name="user_roles",
+        joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
+        inverseJoinColumns={@JoinColumn(name="role_id", referencedColumnName="id")})
+    public List<Role> roles = new ArrayList<Role>(); 
 
     // -- Queries
     

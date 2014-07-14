@@ -94,13 +94,13 @@ object Account extends Controller {
 	  }
   }
 
-  def saveSearch(name: String, url: String) = Action { implicit request =>
+  def saveSearch(name: String, description: String, url: String) = Action { implicit request =>
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
 		// insert stuff
 	    //Ok(views.html.mySearches("My Searches", user))
 		// redirect back to search you just saved.
-		val search = models.Search.create(name, url, user.id)
+		val search = models.Search.create(name, description, url, user.id)
 		println("saved search: " + search.name + " - " + search.url + " - " + search.user_id)
 		Ok("false")
 	    //Redirect(routes.Account.mySearches).flashing("success" -> "Search was added")

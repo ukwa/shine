@@ -33,7 +33,7 @@ GET     /assets/javascripts/routes          controllers.Application.javascriptRo
 GET     /account/password                   controllers.Account.changePassword
 POST    /account/changepassword             controllers.Account.updatePassword
 GET     /search/mysearches                  controllers.Account.mySearches
-GET     /search/save                     	controllers.Account.saveSearch(name, url)
+GET     /search/save                     	controllers.Account.saveSearch(name, description, url)
 
 # Map static resources from the /public folder to the /assets URL path
 

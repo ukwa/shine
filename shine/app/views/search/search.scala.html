@@ -40,7 +40,7 @@
 			});			
 			$('#save-search-save').click(function() {
 				var url = window.location;
-				jsRoutes.controllers.Account.saveSearch($('#save-name').val(), url).ajax({success:successFn, error:errorFn});
+				jsRoutes.controllers.Account.saveSearch($('#save-name').val(), $('#save-description').val(), url).ajax({success:successFn, error:errorFn});
 				$("#save-search-form").modal('hide');
 				$('#save-name').val('');
 				// close and reset form
@@ -562,7 +562,20 @@
 					<h3 class="modal-title" id="modalTitle">Save Search</h3>
 				</div>
 				<div class="modal-body">
-					<input type="text" name="save-name" id="save-name" class="form-control" >
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label for="save-name" class="col-sm-2 control-label">Name</label>
+						    <div class="col-sm-10">
+								<input type="text" name="save-name" id="save-name" class="form-control">
+						    </div>
+						</div>
+						<div class="form-group">				
+				    		<label for="save-description" class="col-sm-2 control-label">Description</label>
+				    		<div class="col-sm-10">
+								<textarea id="save-description" name="save-description" class="form-control"></textarea>
+				    		</div>
+				   		</div>
+					 </form>
 				</div>
 				<div class="modal-footer">
 					<button type="button" id="save-search-close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>

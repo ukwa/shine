@@ -34,14 +34,16 @@ object InitialData {
     	delete.save()
     	
     	val role = new Role("Admin", "Admin")
-    	role.save()
 
     	role.permissions.add(create)
     	role.permissions.add(read)
     	role.permissions.add(update)
     	role.permissions.add(delete)
+
+    	role.save()
     	
     	val user = User.create("kinman.li@bl.uk", "secret")
+    	user.roles.add(role)
     	user.save()
     }
     

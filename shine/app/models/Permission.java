@@ -10,8 +10,8 @@ import uk.bl.wa.shine.Const;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Version;
@@ -37,9 +37,12 @@ public class Permission extends Model {
     public Timestamp lastUpdate;
 
     @ManyToMany
-    @JoinTable(name = "role_permissions")
+    @JoinTable(
+        name="role_permissions",
+        joinColumns={@JoinColumn(name="permission_id", referencedColumnName="id")},
+        inverseJoinColumns={@JoinColumn(name="role_id", referencedColumnName="id")})
     public List<Role> roles = new ArrayList<Role>(); 
-
+    
     public static final Model.Finder<Long, Permission> find = new Model.Finder<Long, Permission>(Long.class, Permission.class);
 
     public Permission(String name, String description) {
