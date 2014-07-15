@@ -32,8 +32,6 @@ public class Search extends Model {
     @Formats.NonEmpty
     public String name;
 
-    @Constraints.Required
-    @Formats.NonEmpty
     @Column(columnDefinition = "TEXT")
     public String description;
 
@@ -42,6 +40,11 @@ public class Search extends Model {
     @Column(columnDefinition = "TEXT")
     public String url;
     
+    @Constraints.Required
+    @Formats.NonEmpty
+    @Column(columnDefinition = "TEXT")
+    public String summary;
+
     @Constraints.Required
     @Formats.NonEmpty
     public Long user_id;

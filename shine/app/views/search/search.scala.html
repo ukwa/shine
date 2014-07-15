@@ -78,7 +78,7 @@
 			
 			$('#search').on('click', function(event) {
 				event.preventDefault();
-				$('form').submit();
+				$('#search-form').submit();
 				//processSearch();
 			});
 			
@@ -272,7 +272,7 @@
 					console.log(facet_name + " " + facet_value);
 //					var url = $('#current-url') + 
 
-		 			$('form').submit();
+		 			$('#search-form').submit();
 				});
 				
 				// for clicking on facet options (excludes)
@@ -282,10 +282,12 @@
 					var facet_name = $input_exclude.attr('name');
 					var facet_value = $input_exclude.val();
 					console.log(facet_name + " " + facet_value);
-		 			$('form').submit();
+		 			$('#search-form').submit();
 				});
 				
 			});
+			
+			createSummary();
 			
 			function facetToggle($element, $button) {
 				if ($element.attr('checked') !== undefined) {
@@ -309,6 +311,25 @@
 					$button.addClass('facet-deselected');
 					$element.removeAttr('checked');
 				}
+			}
+			
+			function createSummary() {
+				$(".facet-options").each(function(index) {
+					// check form fields
+					var $facet_option = $(this);
+					var $input_include = $facet_option.find('input.include');
+					var $input_exclude = $facet_option.find('input.exclude');
+
+					var $link_span_include = $facet_option.find('a.facet.include span');
+					var $link_span_exclude = $facet_option.find('a.facet.exclude span');
+					if ($link_span_include.hasClass("facet-selected")) {
+						// go get me the facet title
+						var value = $input_include.val();
+						var name = $facet_option.parent().parent().parent().find('div:nth-child(1)').find('a strong').html();
+						$summary = $('<li>').html(name + ": " + value);
+						$('#search-summary').append($summary);
+					}
+				});
 			}
 		});
 	</script>
@@ -388,7 +409,8 @@
 	@searchTabs("search")
 
 	<div class="padding-20">
-		@helper.form(action=routes.Search.search()) {
+
+		@helper.form(action=routes.Search.search(), 'id -> "search-form") {
 	
 			<div class="row">
 				<div class="col-md-4 col-sm-4">
@@ -494,7 +516,14 @@
 							</div>
 						</div>
 					</div>
-					
+
+					<div class="padding-20">
+						<div class="alert alert-info">
+							<ul id="search-summary">
+							</ul>
+						</div>
+					</div>
+
 					<div class="padding-20 hide" id="max-view-reached">
 						<div class="alert alert-danger alert-dismissable">
 							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -562,7 +591,7 @@
 					<h3 class="modal-title" id="modalTitle">Save Search</h3>
 				</div>
 				<div class="modal-body">
-					<form class="form-horizontal" role="form">
+					<form class="form-horizontal" role="form" id="modal-form">
 						<div class="form-group">
 							<label for="save-name" class="col-sm-2 control-label">Name</label>
 						    <div class="col-sm-10">

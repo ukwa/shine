@@ -338,6 +338,18 @@
 	</div>
 }
 
+@showOption(tab: String) = @{
+	play.api.Play.current.configuration.getConfig("shine") match {
+	      case Some(config) => { 
+	      	config.getBoolean(tab) match {
+				case Some(option) => { option.asInstanceOf[Boolean] }
+				case None => { false } 
+			}
+	      }
+	      case None => { false } 
+	}
+}
+
 @main(title, styles, scripts, user, pageName) {
 
 	@searchTabs("advanced_search")
@@ -422,17 +434,19 @@
 									<p class="text-success">File format</p>
 								</div>
 							</div>
-							<div class="form-group">
-								<label for="option1" class="col-sm-2 control-label">
-									Collection:
-								</label>
-								<div class="col-sm-6" id="collection">
-									<input type="text" class="typeahead form-control search-field" name="facet.in.collection" value="" placeholder="Collection" />
+							@if(showOption("show_browse")) {
+								<div class="form-group">
+									<label for="option1" class="col-sm-2 control-label">
+										Collection:
+									</label>
+									<div class="col-sm-6" id="collection">
+										<input type="text" class="typeahead form-control search-field" name="facet.in.collection" value="" placeholder="Collection" />
+									</div>
+									<div class="col-sm-4">
+										<p class="text-success">Collection</p>
+									</div>
 								</div>
-								<div class="col-sm-4">
-									<p class="text-success">Collection</p>
-								</div>
-							</div>
+							}
 							<div class="form-group">
 								<label for="" class="col-sm-2 control-label">
 									Proximity:
