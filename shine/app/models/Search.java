@@ -55,9 +55,10 @@ public class Search extends Model {
     public static Model.Finder<String,Search> find = new Model.Finder<String,Search>(String.class, Search.class);
 
     
-    public Search(String name, String description, String url, Long userId) {
+    public Search(String name, String description, String summary, String url, Long userId) {
         this.name = name;
         this.description = description;
+        this.summary = summary;
         this.url = url;
         this.user_id = userId;
     }
@@ -84,8 +85,8 @@ public class Search extends Model {
     /**
      * Create a new search.
      */
-    public static Search create(String name, String description, String url, Long userId) {
-		Search search = new Search(name, description, url, userId);
+    public static Search create(String name, String description, String summary, String url, Long userId) {
+		Search search = new Search(name, description, summary, url, userId);
 		search.save();
 		return search;
    }

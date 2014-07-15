@@ -17,7 +17,13 @@
 	    <article  class="search">
 	        <ol class="list">
 				@for(search <- searches) {
-	               	<li>@(search.name) <a href="@(search.url)">@(search.url)</a></li>
+	               	<li>@(search.name)
+	               		<ul>
+	               			<a href="@(search.url)">
+	               				@Html(search.summary)
+	               			</a>
+	               		</ul>
+	               	</li>
 		        }
 	        </ol>
 	    </article>

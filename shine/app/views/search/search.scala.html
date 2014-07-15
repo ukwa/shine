@@ -30,30 +30,6 @@
 	  		
 			//$('#ajax-loader').hide();
 
-			$('#save-search').on('click', function(event) {
-				event.preventDefault();
-				$("#save-search-form").modal('show');
-			    //$('form').attr('action', "/search/save").attr('method', 'post').submit();
-			});
-			$('#dismiss-x').click(function() {
-				$("#save-search-form").modal('hide');
-			});			
-			$('#save-search-save').click(function() {
-				var url = window.location;
-				jsRoutes.controllers.Account.saveSearch($('#save-name').val(), $('#save-description').val(), url).ajax({success:successFn, error:errorFn});
-				$("#save-search-form").modal('hide');
-				$('#save-name').val('');
-				// close and reset form
-			});
-			var successFn = function(data) {
-				console.debug("Success of Ajax Call");
-				console.debug(data);
-			};
-			var errorFn = function(err) {
-				console.debug("Error of ajax Call");
-				console.debug(err);
-			}
-
 			function disableForm() {
 				$('#ajax-loader').show();
 				$('#query').attr('disabled', 'disabled');
@@ -314,6 +290,8 @@
 			}
 			
 			function createSummary() {
+				$query = $('<li>').html("Search Term(s): " + $("#query").val());
+				$('#search-summary').append($query);
 				$(".facet-options").each(function(index) {
 					// check form fields
 					var $facet_option = $(this);
@@ -331,6 +309,32 @@
 					}
 				});
 			}
+			
+			$('#save-search').on('click', function(event) {
+				event.preventDefault();
+				$("#save-search-form").modal('show');
+			    //$('form').attr('action', "/search/save").attr('method', 'post').submit();
+			});
+			$('#dismiss-x').click(function() {
+				$("#save-search-form").modal('hide');
+			});			
+			$('#save-search-save').click(function() {
+				var url = window.location;
+				var summary = $.trim($('#search-summary').html());
+				jsRoutes.controllers.Account.saveSearch($('#save-name').val(), $('#save-description').val(), summary, url).ajax({success:successFn, error:errorFn});
+				$("#save-search-form").modal('hide');
+				$('#save-name').val('');
+				$('#save-description').val('');
+				// close and reset form
+			});
+			var successFn = function(data) {
+				console.debug("Success of Ajax Call");
+				console.debug(data);
+			};
+			var errorFn = function(err) {
+				console.debug("Error of ajax Call");
+				console.debug(err);
+			}			
 		});
 	</script>
 }
