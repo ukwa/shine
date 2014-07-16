@@ -334,7 +334,9 @@
 			var errorFn = function(err) {
 				console.debug("Error of ajax Call");
 				console.debug(err);
-			}			
+			}
+			
+			$('#csv-export').attr("href", "/search/export/csv" + $('#current-url').text());
 		});
 	</script>
 }
@@ -541,6 +543,9 @@
                                 Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
                             </h4><span class="hide" id="current-url"></span>
                             <div class="form-inline pull-right">
+                            	<div class="form-group">
+                            		<a href="" id="csv-export"><img id="ajax-loader" src="assets/images/csv.png"></a>
+                            	</div>
 								<div class="form-group">
 									<select class="form-control" name="sort" id="sort">
 										<!-- get from some where -->

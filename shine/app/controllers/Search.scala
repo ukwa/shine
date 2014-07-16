@@ -21,7 +21,9 @@ import org.apache.solr.client.solrj.response.RangeFacet
 import org.apache.solr.common.SolrDocument
 import scala.collection.JavaConverters._
 import models.User
+import views.Csv
 import play.api.cache.Cache
+import play.api.http.HeaderNames
 
 object Search extends Controller {
 
@@ -47,7 +49,7 @@ object Search extends Controller {
 	    val selectedFacet = request.getQueryString("selected.facet")
 	    val removeFacet = request.getQueryString("remove.facet")
 	    var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
-	
+
 	    action match {
 			case Some(parameter) => {
 				println("parameter: " + parameter)
@@ -75,6 +77,8 @@ object Search extends Controller {
 	
 	    val user = User.findByEmail(username.toLowerCase())
 
+	    var format = request.getQueryString("format")
+	      
 	    Cache.getAs[Map[String, FacetValue]]("facet.values") match {
 		    case Some(value) => {
 		    	play.api.Logger.debug("getting value from cache ...")
@@ -85,6 +89,19 @@ object Search extends Controller {
 		    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null, "search"))
 			}
 	    }
+  	}.getOrElse {
+		Unauthorized("Oops, you are not authorized")
+	}
+  }
+  
+  def exportSearch(query: String) = Action { implicit request =>
+	request.session.get("username").map { username =>
+		val user = User.findByEmail(username.toLowerCase())    
+		var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
+		val q = doSearch(query, parameters)
+		val totalRecords = q.res.getResults().getNumFound().intValue()
+		println("exporting to CSV #: " + totalRecords)
+		Ok(views.csv.export("Search", user, q)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
 	}.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	}

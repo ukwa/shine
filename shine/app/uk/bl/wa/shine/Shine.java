@@ -156,7 +156,7 @@ public class Shine extends Solr {
 		    Logger.info("post: query.facetValues: " + query.facetValues);
 	    }
 		
-		
+		// TODO: what if you need all results for exporting?
 		solrParameters.setRows(perPage);
 		
 		return doSearch(query, solrParameters);
