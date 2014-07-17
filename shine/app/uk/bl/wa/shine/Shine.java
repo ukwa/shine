@@ -313,8 +313,25 @@ public class Shine extends Solr {
 			}
 	
 			try {
+				processWebsiteTitle(parameters, query.websiteTitle);
+				if (StringUtils.isNotEmpty(query.pageTitle)) {
+					parameters.addFilterQuery("title:" + query.pageTitle);
+				}
+				if (StringUtils.isNotEmpty(query.name)) {
+					parameters.add("author", query.name);
+				}
+				if (StringUtils.isNotEmpty(query.url)) {
+					parameters.add("url", query.url);
+				}
+				if (StringUtils.isNotEmpty(query.fileFormat)) {
+					parameters.add("content_type", query.fileFormat);
+				}
 				processDateRange(parameters, query.dateStart, query.dateEnd);
 				processProximity(parameters, query.proximity);
+				
+//				processExcluded(parameters, query.excluded);
+				processHostDomainPublicSuffix(parameters, query.hostDomainPublicSuffix);
+//				processUrlHostDomainPublicSuffix(parameters, query.urlHostDomainPublicSuffix);
 			} catch (ParseException e) {
 				throw new SolrServerException(e);
 			}
@@ -381,10 +398,35 @@ public class Shine extends Solr {
 			parameters.setQuery(builder.toString());
 		}
 	}
-	
-	private void processFacetField(SolrQuery parameters, String facetField) {
-		// facet.in.public_suffix="co.uk"
+
+	private void processWebsiteTitle(SolrQuery parameters, String websiteTitle) {
+//		Website Title = 'title' where 'url_type'='SLASHPAGE' (i.e. not all pages)
+		if (StringUtils.isNotEmpty(websiteTitle)) {
+			parameters.addFilterQuery("title:" + websiteTitle);
+			parameters.addFilterQuery("url_type:SLASHPAGE");
+		}
 	}
+
+	private void processExcluded(SolrQuery parameters, String excluded) {
+		if (StringUtils.isNotEmpty(excluded)) {
+			parameters.add("NOT", "excluded");
+		}
+	}
+
+	private void processHostDomainPublicSuffix(SolrQuery parameters, String hostDomainPublicSuffix) {
+//		Host = 'host' or 'domain' depending on Solr index schema version.
+		if (StringUtils.isNotEmpty(hostDomainPublicSuffix)) {
+			parameters.add("domain", hostDomainPublicSuffix);
+		}
+	}
+
+//	private void processUrlHostDomainPublicSuffix(SolrQuery parameters, String urlHostDomainPublicSuffix) {
+//		
+//	}
+//	
+//	private void processFacetField(SolrQuery parameters, String facetField) {
+//		// facet.in.public_suffix="co.uk"
+//	}
 
 	public JsonNode suggestTitle(String name) throws SolrServerException {
 		return suggest(name, "/suggestTitle"); 

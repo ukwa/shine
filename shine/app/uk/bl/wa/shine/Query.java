@@ -69,6 +69,10 @@ public class Query {
 	public String excluded;
 	
 	public Proximity proximity;
+	
+	public String hostDomainPublicSuffix;
+	
+	public String urlHostDomainPublicSuffix;
 
 	public Integer page;
 	
@@ -114,12 +118,7 @@ public class Query {
 		Logger.info("filters: " + filters);
 		
 		// non facets
-		if (parameters.get("datestart") != null) {
-			dateStart = parameters.get("datestart").get(0).replace("\"", "");
-		}
-		if (parameters.get("dateend") != null) {
-			dateEnd = parameters.get("dateend").get(0).replace("\"", "");
-		}
+
 		if (parameters.get("year_start") != null) {
 			yearStart = parameters.get("year_start").get(0);
 		}
@@ -128,16 +127,6 @@ public class Query {
 		}
 		Logger.info("Dates: " + yearStart + " " + yearEnd);
 		
-		if (parameters.get("excluded") != null) {
-			excluded = parameters.get("excluded").get(0);
-		}
-		if (parameters.get("proximity") != null) {
-			proximity = new Proximity();
-			proximity.setPhrase1(parameters.get("proximity").get(0));
-			proximity.setPhrase2(parameters.get("proximity").get(1));
-			proximity.setProximity(parameters.get("proximity").get(2));
-			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
-		}
 		if (parameters.get("page") != null) {
 			page = Integer.parseInt(parameters.get("page").get(0));
 		} else {
@@ -148,6 +137,44 @@ public class Query {
 		}
 		if (parameters.get("order") != null) {
 			order = parameters.get("order").get(0);
+		}
+		
+		if (parameters.get("websiteTitle") != null) {
+			websiteTitle = parameters.get("websiteTitle").get(0);
+		}
+		if (parameters.get("pageTitle") != null) {
+			pageTitle = parameters.get("pageTitle").get(0);
+		}
+		if (parameters.get("name") != null) {
+			name = parameters.get("name").get(0);
+		}
+		if (parameters.get("url") != null) {
+			url = parameters.get("url").get(0);
+		}
+		if (parameters.get("fileFormat") != null) {
+			fileFormat = parameters.get("fileFormat").get(0);
+		}
+		if (parameters.get("proximity") != null) {
+			proximity = new Proximity();
+			proximity.setPhrase1(parameters.get("proximity").get(0));
+			proximity.setPhrase2(parameters.get("proximity").get(1));
+			proximity.setProximity(parameters.get("proximity").get(2));
+			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
+		}
+		if (parameters.get("datestart") != null) {
+			dateStart = parameters.get("datestart").get(0).replace("\"", "");
+		}
+		if (parameters.get("dateend") != null) {
+			dateEnd = parameters.get("dateend").get(0).replace("\"", "");
+		}
+		if (parameters.get("excluded") != null) {
+			excluded = parameters.get("excluded").get(0);
+		}		
+		if (parameters.get("hostDomainPublicSuffix") != null) {
+			hostDomainPublicSuffix = parameters.get("hostDomainPublicSuffix").get(0);
+		}
+		if (parameters.get("urlHostDomainPublicSuffix") != null) {
+			urlHostDomainPublicSuffix = parameters.get("urlHostDomainPublicSuffix").get(0);
 		}
 	}
 	
