@@ -335,11 +335,23 @@
 			function paging() {
 				$('.paging').each(function() {
 					var $link = $(this);
-					console.log($link);
+					//console.log($link);
 					var currentUrl = window.location.search;
+					//console.log(currentUrl);
 					// remove page number and add the others
-					var page = $link.attr('id').split('-')[1];
-					$link.attr('href', currentUrl + '&page=' + page);
+					var page = 1;
+					if (typeof $link.attr('id') !== "undefined") {
+						//console.log($link.attr('id'));
+						page = $link.attr('id').split('-')[1];
+					} else {
+						page = 1;
+						currentUrl += "&page=" + page;
+					}
+					// replace page parameter
+					var regEx = /page=\d+/;
+					var newUrl = currentUrl.replace(regEx, "page=" + page);
+					console.log(newUrl);
+					$link.attr('href', newUrl);
 				});
 			}
 		});

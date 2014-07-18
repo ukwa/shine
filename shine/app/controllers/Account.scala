@@ -23,12 +23,11 @@ object Account extends Controller {
   )
 
   def index = Action { implicit request =>
-	  request.session.get("username").map { username =>
-		val user = User.findByEmail(username.toLowerCase())
-	    Ok(views.html.index("Shine Application", user))
-	  }.getOrElse {
-	    Ok(views.html.index("Shine Application", null))
-	  }
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+    Ok(views.html.index("Shine Application", user))
   }
 
   def validatePassword(email: String, currentPassword: String, newPassword1: String, newPassword2: String) = {

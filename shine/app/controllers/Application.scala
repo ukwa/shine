@@ -12,12 +12,11 @@ import uk.bl.wa.shine._
 object Application extends Controller {
 
   def index = Action { implicit request =>
-	  request.session.get("username").map { username =>
-		val user = User.findByEmail(username.toLowerCase())
-	    Ok(views.html.index("Shine Application", user))
-	  }.getOrElse {
-	    Ok(views.html.index("Shine Application", null))
-	  }
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+	Ok(views.html.index("Shine Application", user))
   }
 
   // -- Authentication

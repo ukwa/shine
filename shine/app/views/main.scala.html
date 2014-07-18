@@ -39,11 +39,9 @@
 			</div>
   			<div class="collapse navbar-collapse">
   				<ul class="nav navbar-nav">
-  					@if(user != null) {
-						<li class="@("active".when(pageName == "search"))"><a class="white-text" id="nav-search" href="@routes.Search.search()?facet.sort=index">Search</a></li>
-		           		<li class="@("active".when(pageName == "graph"))"><a class="white-text"  href="@routes.Search.plot_graph()">Trends</a></li>
-		           		<li class="@("active".when(pageName == "halflife"))"><a class="white-text"  href="@routes.Shiner.halflife()">Half-life</a></li>
-		           	}
+					<li class="@("active".when(pageName == "search"))"><a class="white-text" id="nav-search" href="@routes.Search.search()?facet.sort=index">Search</a></li>
+	           		<li class="@("active".when(pageName == "graph"))"><a class="white-text"  href="@routes.Search.plot_graph()">Trends</a></li>
+	           		<li class="@("active".when(pageName == "halflife"))"><a class="white-text"  href="@routes.Shiner.halflife()">Half-life</a></li>
 				</ul>
 				<div class="navbar-right">
 					@if(user != null) {
