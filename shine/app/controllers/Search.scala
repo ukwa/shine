@@ -95,9 +95,10 @@ object Search extends Controller {
 	  	user = User.findByEmail(username.toLowerCase())
     }
 	var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
-	val q = doSearch(query, parameters)
+	val q = doExport(query, parameters, 100)
 	val totalRecords = q.res.getResults().getNumFound().intValue()
 	println("exporting to CSV #: " + totalRecords)
+	// retrieve based on total records
 	Ok(views.csv.export("Search", user, q)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
   }
 
@@ -422,6 +423,14 @@ object Search extends Controller {
     new Query(query, parametersAsJava)
   }
 
+  def doExport(query: String, parameters: Map[String, Seq[String]], rows: Int) = {
+    // parses parameters and creates me a query object
+    var q = createQuery(query, parameters)
+    println("new query created: " + q.facets)
+    println("rows>>>>" + rows)
+    solr.search(q, rows)
+  }
+  
   def doSearch(query: String, parameters: Map[String, Seq[String]]) = {
     // parses parameters and creates me a query object
     var q = createQuery(query, parameters)

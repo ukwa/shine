@@ -73,9 +73,13 @@ public class Shine extends Solr {
 		
 		return parameters;
 	}
-	
+
 	public Query search(Query query) throws SolrServerException {
-		return this.search(query, buildInitialParameters(query));
+		return this.search(query, perPage);
+	}
+
+	public Query search(Query query, int rows) throws SolrServerException {
+		return this.search(query, buildInitialParameters(query), rows);
 	}
 	
 	public Query advancedSearch(Query query) throws SolrServerException {
@@ -90,8 +94,12 @@ public class Shine extends Solr {
 		return this.graph(query, buildInitialParameters(query));
 	}
 
+//	private Query search(Query query, SolrQuery solrParameters) throws SolrServerException {
+//		return this.search(query, solrParameters, perPage);
+//	}
+	
 	// usually for faceted search
-	private Query search(Query query, SolrQuery solrParameters) throws SolrServerException {
+	private Query search(Query query, SolrQuery solrParameters, int rows) throws SolrServerException {
 		
 		Map<String, List<String>> parameters = query.getParameters();
 		
@@ -157,8 +165,8 @@ public class Shine extends Solr {
 	    }
 		
 		// TODO: what if you need all results for exporting?
-		solrParameters.setRows(perPage);
-		
+		solrParameters.setRows(rows);
+		Logger.info("ROWS>>>>" + rows);
 		return doSearch(query, solrParameters);
 	}
 
