@@ -117,6 +117,11 @@ public class Query {
 		Logger.info("facets: " + facets);
 		Logger.info("filters: " + filters);
 		
+		if (parameters.get("facet.sort") != null) {
+			String facetSort = parameters.get("facet.sort").get(0);
+			Logger.info("facetSort: " + facetSort);
+		}
+		
 		// non facets
 
 		if (parameters.get("year_start") != null) {
@@ -265,30 +270,14 @@ public class Query {
 	
 	@SuppressWarnings("unchecked")
 	public void processQueryResponse() throws ParseException {
-		StringBuilder parameters = new StringBuilder("");
-		if (res.getFacetFields() != null) {
-			for (FacetField facetField : res.getFacetFields()) {
-				for (Count count : facetField.getValues()) {
-					String facet = facetField.getName() + "=\"" + count.getName() + "\"";
-					if (StringUtils.isNotBlank(this.getCheckedInString(facetField.getName(),count.getName()))) {
-						String in = "&facet.in."; 
-						parameters.append(in).append(facet);
-					} else if (StringUtils.isNotBlank(this.getCheckedOutString(facetField.getName(),count.getName()))) {
-						String out = "&facet.out";
-						parameters.append(out).append(facet);
-					}
-				}
-			}
-		}
-			
-		String facetSort = "facet.sort";
-		String checked = getCheckedFacet(facetSort);
-		if (StringUtils.isNotBlank(checked)) {
-			String sortValue = getFacetSortValue(facetSort);
-			parameters.append("&").append(facetSort).append("=").append(sortValue);
-		}
-		Logger.info("processFacetsAsParamValues: " + parameters.toString());
-		this.responseParameters = parameters.toString();
+		
+
+		this.responseParameters = this.responseFacetParameters();
+		
+		// process advance search parameters
+
+		this.responseParameters += processAdvancedSearchParameters();
+		
 		// 1980-01-01T12:00:00Z
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss'Z'");
 		Calendar cal = Calendar.getInstance();
@@ -359,6 +348,65 @@ public class Query {
 		}
 	}
 
+	private String responseFacetParameters() {
+		StringBuilder parameters = new StringBuilder("");
+		if (res.getFacetFields() != null) {
+			for (FacetField facetField : res.getFacetFields()) {
+				for (Count count : facetField.getValues()) {
+					String facet = facetField.getName() + "=\"" + count.getName() + "\"";
+					if (StringUtils.isNotBlank(this.getCheckedInString(facetField.getName(),count.getName()))) {
+						String in = "&facet.in."; 
+						parameters.append(in).append(facet);
+					} else if (StringUtils.isNotBlank(this.getCheckedOutString(facetField.getName(),count.getName()))) {
+						String out = "&facet.out";
+						parameters.append(out).append(facet);
+					}
+				}
+			}
+		}
+			
+		String facetSort = "facet.sort";
+		String checked = getCheckedFacet(facetSort);
+		if (StringUtils.isNotBlank(checked)) {
+			String sortValue = getFacetSortValue(facetSort);
+			parameters.append("&").append(facetSort).append("=").append(sortValue);
+		}
+		Logger.info("processFacetsAsParamValues: " + parameters.toString());
+		
+		return parameters.toString();
+	}
+	
+	private String processAdvancedSearchParameters() {
+		StringBuilder parameters = new StringBuilder("");
+		if (StringUtils.isNotEmpty(websiteTitle))
+			parameters.append("&websiteTitle=").append(websiteTitle);
+		if (StringUtils.isNotEmpty(pageTitle))
+			parameters.append("&pageTitle=").append(pageTitle);
+		if (StringUtils.isNotEmpty(name))
+			parameters.append("&name=").append(name);
+		if (StringUtils.isNotEmpty(url))
+			parameters.append("&url=").append(url);
+		if (StringUtils.isNotEmpty(fileFormat))
+			parameters.append("&fileFormat=").append(fileFormat);
+		if (StringUtils.isNotEmpty(dateStart))
+			parameters.append("&dateStart=").append(dateStart);
+		if (StringUtils.isNotEmpty(dateEnd))
+			parameters.append("&dateEnd=").append(dateEnd);
+		if (StringUtils.isNotEmpty(excluded))
+			parameters.append("&excluded=").append(excluded);
+		if (StringUtils.isNotEmpty(proximity.getPhrase1()))
+			parameters.append("&proximity=").append(proximity.getPhrase1());
+		if (StringUtils.isNotEmpty(proximity.getPhrase2()))
+			parameters.append("&proximity=").append(proximity.getPhrase2());
+		if (StringUtils.isNotEmpty(proximity.getProximity()))
+			parameters.append("&proximity=").append(proximity.getProximity());
+		if (StringUtils.isNotEmpty(hostDomainPublicSuffix))
+			parameters.append("&hostDomainPublicSuffix=").append(hostDomainPublicSuffix);
+		//parameters.append("urlHostDomainPublicSuffix=").append(urlHostDomainPublicSuffix);
+
+		return parameters.toString();
+	}
+	
 	private String partialHexDecode( byte[] bytes ) throws UnsupportedEncodingException {
 		String myString = new String( bytes, "ASCII");
 		StringBuilder newString = new StringBuilder(myString.length());

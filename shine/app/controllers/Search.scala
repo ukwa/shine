@@ -44,8 +44,6 @@ object Search extends Controller {
 
   def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     val action = request.getQueryString("action")
-    val selectedFacet = request.getQueryString("selected.facet")
-    val removeFacet = request.getQueryString("remove.facet")
     var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 
     action match {
@@ -63,7 +61,7 @@ object Search extends Controller {
 			println("None")
 		}
 	}
-
+    
     val q = doSearch(query, parameters)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()

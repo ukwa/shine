@@ -256,7 +256,7 @@
 				var inputName = "input[name='" + name + "']";
 				if (getURLParameter(name) !== undefined) {
 					var value = decodeURIComponent(getURLParameter(name)).replace(/"/g, "").replace("+", " ");
-					console.log(value);
+					//console.log(value);
 					$(inputName).val(value);
 				}
 			});
@@ -270,8 +270,13 @@
 						console.log(value);
 					}
 				});
-				//alert('submit');
-				$('form').submit();
+				
+				//console.log(values);
+				$('input', '#search-form').each(function(){
+				    $(this).val() == "" && $(this).attr("disabled", "disabled");
+				})
+				$('#search-form').submit();
+
 			});
 			
 			createSummary();
@@ -324,13 +329,13 @@
 					var $value = $('<li>').html("Host, Domain or Public Suffix: " + $("#host-domain-public-field").val());
 					$('#search-summary').append($value);
 				}				
-				if($('#url-host-domain-public-field').val() != '') {
+				/*if($('#url-host-domain-public-field').val() != '') {
 					var $value = $('<li>').html("URL, Host, Domain or Public Suffix: " + $("#url-host-domain-public-field").val());
 					$('#search-summary').append($value);
-				}				
+				}*/				
 			}
 			
-			paging();
+			//paging();
 
 			function paging() {
 				$('.paging').each(function() {
@@ -351,7 +356,7 @@
 					var regEx = /page=\d+/;
 					var newUrl = currentUrl.replace(regEx, "page=" + page);
 					console.log(newUrl);
-					$link.attr('href', newUrl);
+//					$link.attr('href', newUrl);
 				});
 			}
 		});
@@ -445,7 +450,7 @@
 					<a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
 				</div>
 			
-				@helper.form(action=routes.Search.advanced_search(), 'class -> "form-horizontal") {
+				@helper.form(action=routes.Search.advanced_search(), 'class -> "form-horizontal", 'id -> "search-form") {
 			
 				<div id="filter-panel" class="panel-collapse collapse">
 					<div class="panel panel-default">
