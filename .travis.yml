@@ -2,6 +2,7 @@ language: scala
 env:
   - PLAY_VERSION=2.2.1
 before_script:
+  - cd shine
   - wget http://downloads.typesafe.com/play/${PLAY_VERSION}/play-${PLAY_VERSION}.zip
   - unzip -q play-${PLAY_VERSION}.zip
-script: sh -c 'cd shine' && ../play-${PLAY_VERSION}/play -Dconfig.file=conf/travis-ci.conf test
+script: sh -c 'cd shine' && play-${PLAY_VERSION}/play -Dconfig.file=conf/travis-ci.conf test
