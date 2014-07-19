@@ -21,14 +21,17 @@ object ApplicationBuild extends Build {
     "org.codehaus.plexus" % "plexus-archiver" % "1.2",
     "org.apache.maven.wagon" % "wagon-provider-api" % "2.6",
     "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
-    "org.jbehave" % "jbehave-maven-plugin" % "3.9.1"
+    "org.jbehave" % "jbehave-maven-plugin" % "3.9.1",
+	"org.apache.commons" % "commons-email" % "1.3.2",
+	"commons-io" % "commons-io" % "2.3",
+	"org.avaje" % "ebean" % "2.7.1"  
   )
 
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     // Add your own project settings here
        // copy test resources
-      unmanagedClasspath in Test <+= (baseDirectory) map { bd => Attributed.blank(bd / "test")} 
+      unmanagedClasspath in Test <+= (baseDirectory) map { bd => Attributed.blank(bd / "test")}
   )
 
 }

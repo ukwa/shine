@@ -1,4 +1,4 @@
-@(title: String, q: String, labelX: String, labelY: String, year_start: String, year_end: String, graphMap:scala.collection.immutable.Map[uk.bl.wa.shine.Query,scala.collection.immutable.Map[String,scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]]])
+@(title: String, user: User, q: String, labelX: String, labelY: String, year_start: String, year_end: String, graphMap:scala.collection.immutable.Map[uk.bl.wa.shine.Query,scala.collection.immutable.Map[String,scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]]], pageName: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" href="@routes.Assets.at("jqplot/jquery.jqplot.min.css")">
@@ -194,7 +194,7 @@
 	</script>
 }
 
-@main(title, scripts, styles) {
+@main(title, scripts, styles, user, pageName) {
 
 	<!-- Tab panes -->
 	<div class="tab-content">

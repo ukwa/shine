@@ -1,0 +1,2 @@
+@(title: String, user: User, q: uk.bl.wa.shine.Query)@for((d, index) <- q.res.getResults().zipWithIndex) {@d.getFirstValue("title"),@d.getFirstValue("crawl_date"),http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))
+}

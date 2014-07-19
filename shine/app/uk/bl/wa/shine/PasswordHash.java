@@ -117,11 +117,11 @@ public class PasswordHash
         int iterations = Integer.parseInt(params[ITERATION_INDEX]);
         byte[] salt = fromHex(params[SALT_INDEX]);
         byte[] hash = fromHex(params[PBKDF2_INDEX]);
-        Logger.info("salt: " + salt + ", test hash: " + hash);
+//        Logger.info("salt: " + salt + ", test hash: " + hash);
         // Compute the hash of the provided password, using the same salt, 
         // iteration count, and hash length
         byte[] testHash = pbkdf2(password, salt, iterations, hash.length);
-        Logger.info("testHash: " + testHash + ", correctHash: " + correctHash);
+//        Logger.info("testHash: " + testHash + ", correctHash: " + correctHash);
         // Compare the hashes in constant time. The password is correct if
         // both hashes match.
         return slowEquals(hash, testHash);

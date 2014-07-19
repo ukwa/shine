@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue])
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -28,7 +28,7 @@
 	  			
 	  		}
 	  		
-			$('#ajax-loader').hide();
+			//$('#ajax-loader').hide();
 
 			function disableForm() {
 				$('#ajax-loader').show();
@@ -54,11 +54,12 @@
 			
 			$('#search').on('click', function(event) {
 				event.preventDefault();
-				//$('form').submit();
-				processSearch();
+				$('#search-form').submit();
+				//processSearch();
 			});
 			
-			paging();
+			// ajax paging
+			//paging();
 			
 			function paging() {
 				$('.paging').each(function() {
@@ -247,7 +248,7 @@
 					console.log(facet_name + " " + facet_value);
 //					var url = $('#current-url') + 
 
-		 			$('form').submit();
+		 			$('#search-form').submit();
 				});
 				
 				// for clicking on facet options (excludes)
@@ -257,10 +258,12 @@
 					var facet_name = $input_exclude.attr('name');
 					var facet_value = $input_exclude.val();
 					console.log(facet_name + " " + facet_value);
-		 			$('form').submit();
+		 			$('#search-form').submit();
 				});
 				
 			});
+			
+			createSummary();
 			
 			function facetToggle($element, $button) {
 				if ($element.attr('checked') !== undefined) {
@@ -285,6 +288,55 @@
 					$element.removeAttr('checked');
 				}
 			}
+			
+			function createSummary() {
+				$query = $('<li>').html("Search Term(s): " + $("#query").val());
+				$('#search-summary').append($query);
+				$(".facet-options").each(function(index) {
+					// check form fields
+					var $facet_option = $(this);
+					var $input_include = $facet_option.find('input.include');
+					var $input_exclude = $facet_option.find('input.exclude');
+
+					var $link_span_include = $facet_option.find('a.facet.include span');
+					var $link_span_exclude = $facet_option.find('a.facet.exclude span');
+					if ($link_span_include.hasClass("facet-selected")) {
+						// go get me the facet title
+						var value = $input_include.val();
+						var name = $facet_option.parent().parent().parent().find('div:nth-child(1)').find('a strong').html();
+						$summary = $('<li>').html(name + ": " + value);
+						$('#search-summary').append($summary);
+					}
+				});
+			}
+			
+			$('#save-search').on('click', function(event) {
+				event.preventDefault();
+				$("#save-search-form").modal('show');
+			    //$('form').attr('action', "/search/save").attr('method', 'post').submit();
+			});
+			$('#dismiss-x').click(function() {
+				$("#save-search-form").modal('hide');
+			});			
+			$('#save-search-save').click(function() {
+				var url = window.location;
+				var summary = $.trim($('#search-summary').html());
+				jsRoutes.controllers.Account.saveSearch($('#save-name').val(), $('#save-description').val(), summary, url).ajax({success:successFn, error:errorFn});
+				$("#save-search-form").modal('hide');
+				$('#save-name').val('');
+				$('#save-description').val('');
+				// close and reset form
+			});
+			var successFn = function(data) {
+				console.debug("Success of Ajax Call");
+				console.debug(data);
+			};
+			var errorFn = function(err) {
+				console.debug("Error of ajax Call");
+				console.debug(err);
+			}
+			
+			$('#csv-export').attr("href", "/search/export/csv" + $('#current-url').text());
 		});
 	</script>
 }
@@ -358,16 +410,13 @@
 	}
 }
 
-@main(title, styles, scripts) {
+@main(title, styles, scripts, user, pageName) {
 
-	<ul class="nav nav-tabs">
-		<li class="active"><a href="#">Search</a></li>
-		<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
-		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
-	</ul>
+	@searchTabs("search")
 
 	<div class="padding-20">
-		@helper.form(action=routes.Search.search()) {
+
+		@helper.form(action=routes.Search.search(), 'id -> "search-form") {
 	
 			<div class="row">
 				<div class="col-md-4 col-sm-4">
@@ -465,12 +514,22 @@
 								<span class="input-group-btn">
 									<button type="button" class="btn btn-primary" id="search" name="action" value="search">Search</button>
 									<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
-									<img id="ajax-loader" src="assets/images/ajax-loader.gif">
+									@if(user != null) {
+										<button type="button" class="btn btn-primary" id="save-search" name="action" value="save">Save Search</button>
+									}
+									<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif"> -->
 								</span>
 							</div>
 						</div>
 					</div>
-					
+
+					<div class="padding-20">
+						<div class="alert alert-info">
+							<ul id="search-summary">
+							</ul>
+						</div>
+					</div>
+
 					<div class="padding-20 hide" id="max-view-reached">
 						<div class="alert alert-danger alert-dismissable">
 							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -484,6 +543,9 @@
                                 Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
                             </h4><span class="hide" id="current-url"></span>
                             <div class="form-inline pull-right">
+                            	<div class="form-group">
+                            		<a href="" id="csv-export"><img id="ajax-loader" src="assets/images/csv.png"></a>
+                            	</div>
 								<div class="form-group">
 									<select class="form-control" name="sort" id="sort">
 										<!-- get from some where -->
@@ -529,4 +591,36 @@
 			</div>
 		}
 	</div>
+	
+	<div id="save-search-form" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+		<div class="modal-dialog">
+	    	<div class="modal-content">
+				<div class="modal-header">
+					<button id="dismiss-x" type="button" class="close" aria-hidden="true">&times;</button>
+					<h3 class="modal-title" id="modalTitle">Save Search</h3>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form" id="modal-form">
+						<div class="form-group">
+							<label for="save-name" class="col-sm-2 control-label">Name</label>
+						    <div class="col-sm-10">
+								<input type="text" name="save-name" id="save-name" class="form-control">
+						    </div>
+						</div>
+						<div class="form-group">				
+				    		<label for="save-description" class="col-sm-2 control-label">Description</label>
+				    		<div class="col-sm-10">
+								<textarea id="save-description" name="save-description" class="form-control"></textarea>
+				    		</div>
+				   		</div>
+					 </form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="save-search-close" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+					<button type="button" id="save-search-save" class="btn btn-primary">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
 }

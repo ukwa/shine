@@ -1,4 +1,10 @@
-@(ex: Throwable) @main("Error Page") {
+@(ex: Throwable)
+
+@styles = {}
+
+@scripts = {}
+
+@main("Error Page", styles, scripts, null) {
 	<h1><span class="label label-warning">Exception - Error Message</span></h1>
 	<div>
 		@ex.getMessage

@@ -1,0 +1,32 @@
+@(title: String, user: User, searches: List[Search])(implicit flash: play.api.mvc.Flash)
+
+@styles = {}
+
+@scripts = {}
+
+@main(title, styles, scripts, user) {
+
+	@flash.get("success").map { message =>
+		<div class="alert alert-success">
+			@message
+		</div>
+	}
+	<h1>@title</h1>
+		
+	@if(user != null) {
+	    <article  class="search">
+	        <ol class="list">
+				@for(search <- searches) {
+	               	<li>@(search.name)
+	               		<ul>
+	               			<a href="@(search.url)">
+	               				@Html(search.summary)
+	               			</a>
+	               		</ul>
+	               	</li>
+		        }
+	        </ol>
+	    </article>
+	}
+}
+

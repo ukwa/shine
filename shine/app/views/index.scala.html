@@ -1,6 +1,19 @@
-@(title: String)
+@(title: String, user: User)(implicit flash: play.api.mvc.Flash)
 
-@main(title) {
+@styles = {}
+
+@scripts = {}
+
+@main(title, styles, scripts, user) {
+
+	@flash.get("success").map { message =>
+		<div class="alert alert-success">
+			@message
+		</div>
+	}
 	<h1>@title</h1>
+	@if(user != null) {
+		<p>Welcome @user.email</p>
+	}
 }
 

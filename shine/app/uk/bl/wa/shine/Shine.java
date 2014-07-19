@@ -73,9 +73,13 @@ public class Shine extends Solr {
 		
 		return parameters;
 	}
-	
+
 	public Query search(Query query) throws SolrServerException {
-		return this.search(query, buildInitialParameters(query));
+		return this.search(query, perPage);
+	}
+
+	public Query search(Query query, int rows) throws SolrServerException {
+		return this.search(query, buildInitialParameters(query), rows);
 	}
 	
 	public Query advancedSearch(Query query) throws SolrServerException {
@@ -90,8 +94,12 @@ public class Shine extends Solr {
 		return this.graph(query, buildInitialParameters(query));
 	}
 
+//	private Query search(Query query, SolrQuery solrParameters) throws SolrServerException {
+//		return this.search(query, solrParameters, perPage);
+//	}
+	
 	// usually for faceted search
-	private Query search(Query query, SolrQuery solrParameters) throws SolrServerException {
+	private Query search(Query query, SolrQuery solrParameters, int rows) throws SolrServerException {
 		
 		Map<String, List<String>> parameters = query.getParameters();
 		
@@ -156,9 +164,9 @@ public class Shine extends Solr {
 		    Logger.info("post: query.facetValues: " + query.facetValues);
 	    }
 		
-		
-		solrParameters.setRows(perPage);
-		
+		// TODO: what if you need all results for exporting?
+		solrParameters.setRows(rows);
+		Logger.info("ROWS>>>>" + rows);
 		return doSearch(query, solrParameters);
 	}
 
@@ -313,8 +321,25 @@ public class Shine extends Solr {
 			}
 	
 			try {
+				processWebsiteTitle(parameters, query.websiteTitle);
+				if (StringUtils.isNotEmpty(query.pageTitle)) {
+					parameters.addFilterQuery("title:" + query.pageTitle);
+				}
+				if (StringUtils.isNotEmpty(query.name)) {
+					parameters.add("author", query.name);
+				}
+				if (StringUtils.isNotEmpty(query.url)) {
+					parameters.add("url", query.url);
+				}
+				if (StringUtils.isNotEmpty(query.fileFormat)) {
+					parameters.add("content_type", query.fileFormat);
+				}
 				processDateRange(parameters, query.dateStart, query.dateEnd);
 				processProximity(parameters, query.proximity);
+				
+//				processExcluded(parameters, query.excluded);
+				processHostDomainPublicSuffix(parameters, query.hostDomainPublicSuffix);
+//				processUrlHostDomainPublicSuffix(parameters, query.urlHostDomainPublicSuffix);
 			} catch (ParseException e) {
 				throw new SolrServerException(e);
 			}
@@ -381,10 +406,35 @@ public class Shine extends Solr {
 			parameters.setQuery(builder.toString());
 		}
 	}
-	
-	private void processFacetField(SolrQuery parameters, String facetField) {
-		// facet.in.public_suffix="co.uk"
+
+	private void processWebsiteTitle(SolrQuery parameters, String websiteTitle) {
+//		Website Title = 'title' where 'url_type'='SLASHPAGE' (i.e. not all pages)
+		if (StringUtils.isNotEmpty(websiteTitle)) {
+			parameters.addFilterQuery("title:" + websiteTitle);
+			parameters.addFilterQuery("url_type:SLASHPAGE");
+		}
 	}
+
+	private void processExcluded(SolrQuery parameters, String excluded) {
+		if (StringUtils.isNotEmpty(excluded)) {
+			parameters.add("NOT", "excluded");
+		}
+	}
+
+	private void processHostDomainPublicSuffix(SolrQuery parameters, String hostDomainPublicSuffix) {
+//		Host = 'host' or 'domain' depending on Solr index schema version.
+		if (StringUtils.isNotEmpty(hostDomainPublicSuffix)) {
+			parameters.add("domain", hostDomainPublicSuffix);
+		}
+	}
+
+//	private void processUrlHostDomainPublicSuffix(SolrQuery parameters, String urlHostDomainPublicSuffix) {
+//		
+//	}
+//	
+//	private void processFacetField(SolrQuery parameters, String facetField) {
+//		// facet.in.public_suffix="co.uk"
+//	}
 
 	public JsonNode suggestTitle(String name) throws SolrServerException {
 		return suggest(name, "/suggestTitle"); 

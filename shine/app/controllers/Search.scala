@@ -16,11 +16,14 @@ import scala.collection.immutable.Map
 import scala.collection.mutable.MutableList
 import play.api.libs.json._
 import play.api.Play.current
-import play.api.cache.Cache
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.apache.solr.client.solrj.response.RangeFacet
 import org.apache.solr.common.SolrDocument
 import scala.collection.JavaConverters._
+import models.User
+import views.Csv
+import play.api.cache.Cache
+import play.api.http.HeaderNames
 
 object Search extends Controller {
 
@@ -40,10 +43,7 @@ object Search extends Controller {
   }
 
   def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
-
     val action = request.getQueryString("action")
-    val selectedFacet = request.getQueryString("selected.facet")
-    val removeFacet = request.getQueryString("remove.facet")
     var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 
     action match {
@@ -61,7 +61,7 @@ object Search extends Controller {
 			println("None")
 		}
 	}
-
+    
     val q = doSearch(query, parameters)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
@@ -70,17 +70,36 @@ object Search extends Controller {
     println("totalRecords #: " + totalRecords)
 
     pagination.update(totalRecords, pageNo)
-
+    
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+	
     Cache.getAs[Map[String, FacetValue]]("facet.values") match {
 	    case Some(value) => {
 	    	play.api.Logger.debug("getting value from cache ...")
-	    	Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value))
+	    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search"))
 		}
 		case None => {
 			println("None")
-	    	Ok(views.html.search.search("Search", q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null))
+			// doesn't go this far
+	    	Ok("")
 		}
     }
+  }
+  
+  def exportSearch(query: String) = Action { implicit request =>
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+	var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
+	val q = doExport(query, parameters, 100)
+	val totalRecords = q.res.getResults().getNumFound().intValue()
+	println("exporting to CSV #: " + totalRecords)
+	// retrieve based on total records
+	Ok(views.csv.export("Search", user, q)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
   }
 
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -94,7 +113,13 @@ object Search extends Controller {
     println("totalRecords #: " + totalRecords)
 
     pagination.update(totalRecords, pageNo)
-    Ok(views.html.search.advanced("Advanced Search", q, pagination, sort, order))
+    
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+    
+    Ok(views.html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search"))
   }
 
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -110,11 +135,15 @@ object Search extends Controller {
 
     pagination.update(totalRecords, pageNo)
 
-    Ok(views.html.search.browse("Browse", q, pagination, sort, order))
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+    
+    Ok(views.html.search.browse("Browse", user, q, pagination, sort, order, "search"))
   }
 
   def plot_graph(query: String, year_start: String, year_end: String) = Action { implicit request =>
-
     // public suffixes and domains too?
     
     // select?q=*:*&facet=true&facet.date=crawl_date&facet.date.gap=%2B1YEAR&facet.date.start=1994-01-01T00:00:00.00Z&facet.date.end=NOW%2B1YEAR
@@ -163,9 +192,32 @@ object Search extends Controller {
 //    val q = head._1
 //    val listMap = head._2
 //    q.query = query
-    Ok(views.html.graphs.plot("NGram", query, "Years", "Count", yearStart, yearEnd, graphMap))
+    
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+    
+    Ok(views.html.graphs.plot("NGram", user, query, "Years", "Count", yearStart, yearEnd, graphMap, "graph"))
   }
 
+  def concordance(query: String) = Action { implicit request =>
+    println("advanced_search")
+
+    val q = doAdvanced(query, request.queryString)
+
+    val totalRecords = q.res.getResults().getNumFound().intValue()
+
+    println("totalRecords #: " + totalRecords)
+
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+    
+    Ok(views.html.search.concordance("Concordance", user, q, "concordance"))
+  }
+    
   def processChart = Action { implicit request =>
     println("processChart: " + request.queryString)
     val query = request.getQueryString("query")
@@ -371,6 +423,14 @@ object Search extends Controller {
     new Query(query, parametersAsJava)
   }
 
+  def doExport(query: String, parameters: Map[String, Seq[String]], rows: Int) = {
+    // parses parameters and creates me a query object
+    var q = createQuery(query, parameters)
+    println("new query created: " + q.facets)
+    println("rows>>>>" + rows)
+    solr.search(q, rows)
+  }
+  
   def doSearch(query: String, parameters: Map[String, Seq[String]]) = {
     // parses parameters and creates me a query object
     var q = createQuery(query, parameters)
@@ -380,6 +440,7 @@ object Search extends Controller {
 
   def doAdvanced(query: String, parameters: Map[String, Seq[String]]) = {
     val q = createQuery(query, parameters)
+    println("doAdvanced: " + q.proximity)
     solr.advancedSearch(q)
   }
 
@@ -575,5 +636,4 @@ object Search extends Controller {
     println("post: " + map)
     map
   }
-
 }

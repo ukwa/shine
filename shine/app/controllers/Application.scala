@@ -4,14 +4,19 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-
 import models._
 import views._
+import org.apache.commons.lang.StringUtils
+import uk.bl.wa.shine._
 
 object Application extends Controller {
 
-  def index = Action {
-    Ok(views.html.index("Shine Application"))
+  def index = Action { implicit request =>
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+	Ok(views.html.index("Shine Application", user))
   }
 
   // -- Authentication
@@ -21,10 +26,32 @@ object Application extends Controller {
       "email" -> text,
       "password" -> text
     ) verifying ("Invalid email or password", result => result match {
-      case (email, password) => Account.authenticate(email, password).isDefined
+      case (email, password) => validate(email, password)
     })
   )
 
+  /**
+   * We only store lowercase emails and transform user input to lowercase for this field.
+   * @return null if authentication ok.
+   */
+  
+  def validate(email: String, password: String) = {
+    val user = User.findByEmail(email.toLowerCase())
+    if (user != null) {
+		val storedPassword = user.password
+	    val authenticate = PasswordHash.validatePassword(password, storedPassword)
+		//val authenticate = testUser(email, password) == true
+		println("validating: " + authenticate)
+		authenticate
+    } else {
+    	false
+    }
+  }
+  
+  def testUser(username: String, password: String) = {
+    (username == "admin@test.com" && password == "secret")  
+  }
+  
   /**
    * Login page.
    */
@@ -36,9 +63,10 @@ object Application extends Controller {
    * Handle login form submission.
    */
   def authenticate = Action { implicit request =>
+    println("authenticate")
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.login(formWithErrors, "Shine Application")),
-      account => Redirect(routes.Application.index).withSession("email" -> account._1)
+      account => Redirect(routes.Application.index).withSession("username" -> account._1)
     )
   }
 
@@ -50,7 +78,7 @@ object Application extends Controller {
       "success" -> "You've been logged out"
     )
   }
-
+  
   // -- Javascript routing
 
   def javascriptRoutes = Action { implicit request =>
@@ -68,7 +96,8 @@ object Application extends Controller {
         routes.javascript.Search.suggestCollections,
         routes.javascript.Search.getFacets,
         routes.javascript.Search.processChart,
-        routes.javascript.Search.ajaxSearch
+        routes.javascript.Search.ajaxSearch,
+        routes.javascript.Account.saveSearch
         )).as("text/javascript")
   }
 }

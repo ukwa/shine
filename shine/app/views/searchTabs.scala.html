@@ -1,0 +1,56 @@
+@(level: String = "search")
+
+@showOption(tab: String) = @{
+	play.api.Play.current.configuration.getConfig("shine") match {
+	      case Some(config) => { 
+	      	config.getBoolean(tab) match {
+				case Some(option) => { option.asInstanceOf[Boolean] }
+				case None => { false } 
+			}
+	      }
+	      case None => { false } 
+	}
+}
+
+<ul class="nav nav-tabs">
+ 
+@level match {
+    
+  case "search" => {
+  	<li class="active"><a href="@routes.Search.search()?facet.sort=index">Search</a></li>
+	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
+	@if(showOption("show_browse")) {
+		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
+	}
+	<li><a href="@routes.Search.concordance()">Concordance View</a></li>
+  }
+
+  case "advanced_search" => {
+  	<li><a href="@routes.Search.search()?facet.sort=index">Search</a></li>
+	<li class="active"><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
+	@if(showOption("show_browse")) {
+		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
+	}
+	<li><a href="@routes.Search.concordance()">Concordance View</a></li>
+  }
+
+  case "browse" => {
+  	<li><a href="@routes.Search.search()?facet.sort=index">Search</a></li>
+	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
+	@if(showOption("show_browse")) {
+		<li class="active"><a href="@routes.Search.browse()">Browse Collections</a></li>
+	}
+	<li><a href="@routes.Search.concordance()">Concordance View</a></li>
+  }
+  
+  case "concordance" => {
+  	<li><a href="@routes.Search.search()?facet.sort=index">Search</a></li>
+	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
+	@if(showOption("show_browse")) {
+		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
+	}
+	<li class="active"><a href="@routes.Search.concordance()">Concordance View</a></li>
+  }
+}
+
+</ul>

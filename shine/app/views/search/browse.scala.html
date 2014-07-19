@@ -1,4 +1,4 @@
-@(title: String, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String)
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
@@ -311,13 +311,9 @@
 	</div>
 }
 
-@main(title, styles, scripts) {
+@main(title, styles, scripts, user, pageName) {
 
-	<ul class="nav nav-tabs" contextmenu="">
-		<li><a href="@routes.Search.search()">Search</a></li>
-		<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
-		<li class="active"><a href="@routes.Search.browse()">Browse Collections</a></li>
-	</ul>
+	@searchTabs("browse")
 
 	<div class="row">
 		<div class="col-md-12 col-sm-12">

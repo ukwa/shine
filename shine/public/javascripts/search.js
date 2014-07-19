@@ -15,11 +15,11 @@ $(function () {
 	});
 	
 	$('#sort').change(function() {
-		$('form').submit();
+		$('#search-form').submit();
 	});
 
 	$('#order').change(function() {
-		$('form').submit();
+		$('#search-form').submit();
 	});
 
 	$(".add-more-button").each(function(index) {
@@ -56,7 +56,6 @@ $(function () {
 					$show_more_span.html("Hide");
 				} 
 				else if ($li.hasClass('show') && $default_show !== 'default') {
-					console.log($link_text + " " + $default_show);
 					$li.addClass('hide');
 					$li.removeClass('show');
 					$show_more_icon.removeClass('glyphicon-minus-sign');
@@ -115,7 +114,7 @@ $(function () {
 				$facet_sort_input.val("");
 				$facet_sort_input.removeAttr("checked");
 			}
- 			$('form').submit();
+ 			$('#search-form').submit();
 		});
 		
 	});
@@ -238,9 +237,9 @@ $(function () {
 			console.log(value);
 			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("remove-facet");
 			var input = $("<input>").attr("type", "hidden").attr("name", "remove.facet").val(value);
-			$('form').append($(action));
-			$('form').append($(input));
-			$("form").submit();
+			$('#search-form').append($(action));
+			$('#search-form').append($(input));
+			$('#search-form').submit();
 		});
 	});
 });

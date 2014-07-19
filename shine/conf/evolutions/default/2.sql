@@ -1,15 +1,16 @@
 # --- !Ups
 
-create table permission (
+create table role (
   id                        bigint not null,
   name                      TEXT,
   url                       TEXT,
+  permissions               TEXT,
   description               TEXT,
   revision                  TEXT,
   last_update               timestamp not null,
-  constraint pk_permission primary key (id))
+  constraint pk_role primary key (id))
 ;
 
 # --- !Downs
 
-drop table if exists permission;
+drop table if exists role;

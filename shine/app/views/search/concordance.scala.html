@@ -1,0 +1,114 @@
+@(title: String, user: User, q: uk.bl.wa.shine.Query, pageName: String)(implicit flash: play.api.mvc.Flash)
+
+@styles = {}
+
+@scripts = {}
+
+@main(title, styles, scripts, user) {
+
+	@flash.get("success").map { message =>
+		<div class="alert alert-success">
+			@message
+		</div>
+	}
+	
+	@searchTabs("concordance")
+
+	<div class="padding-20">
+		@helper.form(action=routes.Search.search()) {
+	
+			<div class="row">
+				<div class="col-md-3 col-sm-3">
+					<div class="panel panel-default">
+						<div class="panel-heading filter-heading">
+							<h4 class="panel-title pull-left filter-heading-title">
+	                        	Corpus Files
+	                        </h4>
+						</div>
+						
+						<div class="list-group">
+							<a href="#" class="list-group-item active">
+    							<h4 class="list-group-item-heading">file1.txt</h4>
+    							<p class="list-group-item-text">file1</p>
+  							</a>
+							<a href="#" class="list-group-item">
+    							<h4 class="list-group-item-heading">file1.txt</h4>
+    							<p class="list-group-item-text">file1</p>
+  							</a>
+							<a href="#" class="list-group-item">
+    							<h4 class="list-group-item-heading">file1.txt</h4>
+    							<p class="list-group-item-text">file1</p>
+  							</a>
+							<a href="#" class="list-group-item">
+    							<h4 class="list-group-item-heading">file1.txt</h4>
+    							<p class="list-group-item-text">file1</p>
+  							</a>
+							<a href="#" class="list-group-item">
+    							<h4 class="list-group-item-heading">file1.txt</h4>
+    							<p class="list-group-item-text">file1</p>
+  							</a>
+							<a href="#" class="list-group-item">
+    							<h4 class="list-group-item-heading">file1.txt</h4>
+    							<p class="list-group-item-text">file1</p>
+  							</a>
+							<a href="#" class="list-group-item">
+    							<h4 class="list-group-item-heading">file1.txt</h4>
+    							<p class="list-group-item-text">file1</p>
+  							</a>
+							<a href="#" class="list-group-item">
+    							<h4 class="list-group-item-heading">file1.txt</h4>
+    							<p class="list-group-item-text">file1</p>
+  							</a>
+  						</div>
+						
+					</div>
+				</div>
+		
+				<div class="col-md-9 col-sm-9">
+
+					
+					<div class="panel panel-default">
+						<div class="panel-heading filter-heading">
+                            <h4 class="panel-title pull-left filter-heading-title">
+                                Results
+                            </h4>
+						</div>
+
+						<div class="panel-body">
+
+							<div id="result-set">
+								<div class="list-group">
+									<div class="list-group-item" href="#">
+										<h4 class="list-group-item-heading">heading</h4>
+										<p class="list-group-item-text">paragraph</p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+					
+					<div class="panel panel-default">
+						<div class="panel-body">
+				   			<div class="input-group">
+								<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="query" placeholder="Enter search term" />
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-primary" id="search" name="action" value="search">Search</button>
+									<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
+									@if(user != null) {
+										<button type="button" class="btn btn-primary" id="save-search" name="action" value="save">Save Search</button>
+									}
+									<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif"> -->
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+
+
+
+}
+
