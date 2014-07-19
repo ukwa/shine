@@ -25,19 +25,21 @@ public class FacetServiceImpl implements FacetService {
 	
 	public FacetServiceImpl(Configuration configuration) {
 		init();
-		Map<String, Object> map = configuration.getConfig("facets").asMap();
-		for (String facetHeader : map.keySet()) {
-			@SuppressWarnings("unchecked")
-			Map<String, String> values = (Map<String, String>) map.get(facetHeader);
-			for (String key : values.keySet()) {
-				String value = values.get(key);
-				FacetValue facetValue = new FacetValue(key, value);
-				Logger.info("facetValue: " + facetValue.getName() + "=" + facetValue.getValue());
-				// just load the basic (default) ones first
-				if (facetHeader.equals("basic")) {
-					this.defaults.put(key, facetValue);
-				} else {
-					this.optionals.put(key, facetValue);
+		if (configuration != null) {
+			Map<String, Object> map = configuration.getConfig("facets").asMap();
+			for (String facetHeader : map.keySet()) {
+				@SuppressWarnings("unchecked")
+				Map<String, String> values = (Map<String, String>) map.get(facetHeader);
+				for (String key : values.keySet()) {
+					String value = values.get(key);
+					FacetValue facetValue = new FacetValue(key, value);
+					Logger.info("facetValue: " + facetValue.getName() + "=" + facetValue.getValue());
+					// just load the basic (default) ones first
+					if (facetHeader.equals("basic")) {
+						this.defaults.put(key, facetValue);
+					} else {
+						this.optionals.put(key, facetValue);
+					}
 				}
 			}
 		}

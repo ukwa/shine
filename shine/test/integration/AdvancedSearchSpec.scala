@@ -14,11 +14,11 @@ class AdvancedSearchPageSpec extends Specification {
 	"Application" should {
     
 		"run in a browser" in new WithBrowser {
-			browser.goTo("/advanced_search")
+			browser.goTo("/login")
 
-			browser.url must equalTo("/advanced_search")
+			browser.url must equalTo("/login")
 
-        	browser.$("title").first.getText must equalTo("Advanced Search")
+        	browser.$("title").first.getText must equalTo("Shine Application")
 
         	browser.$("a").first.getText must equalTo("UK Web Archive")
 
