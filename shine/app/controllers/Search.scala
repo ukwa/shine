@@ -95,7 +95,7 @@ object Search extends Controller {
 	  	user = User.findByEmail(username.toLowerCase())
     }
 	var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
-	val q = doExport(query, parameters, 100)
+	val q = doExport(query, parameters)
 	val totalRecords = q.res.getResults().getNumFound().intValue()
 	println("exporting to CSV #: " + totalRecords)
 	// retrieve based on total records
@@ -423,12 +423,11 @@ object Search extends Controller {
     new Query(query, parametersAsJava)
   }
 
-  def doExport(query: String, parameters: Map[String, Seq[String]], rows: Int) = {
+  def doExport(query: String, parameters: Map[String, Seq[String]]) = {
     // parses parameters and creates me a query object
     var q = createQuery(query, parameters)
     println("new query created: " + q.facets)
-    println("rows>>>>" + rows)
-    solr.search(q, rows)
+    solr.export(q)
   }
   
   def doSearch(query: String, parameters: Map[String, Seq[String]]) = {

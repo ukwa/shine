@@ -78,6 +78,13 @@ public class Shine extends Solr {
 		return this.search(query, perPage);
 	}
 
+	public Query export(Query query) throws SolrServerException {
+		Query q = this.search(query, 0);
+		int total = (int)q.res.getResults().getNumFound();
+		Logger.info("exporting total: " + total);
+		return this.search(query, total);
+	}
+	
 	public Query search(Query query, int rows) throws SolrServerException {
 		return this.search(query, buildInitialParameters(query), rows);
 	}
@@ -167,6 +174,7 @@ public class Shine extends Solr {
 		// TODO: what if you need all results for exporting?
 		solrParameters.setRows(rows);
 		Logger.info("ROWS>>>>" + rows);
+		// get me 0 rows first and re-get with total
 		return doSearch(query, solrParameters);
 	}
 
