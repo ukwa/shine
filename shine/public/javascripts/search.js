@@ -275,3 +275,26 @@ function clearFacets() {
 		$input_exclude.removeAttr('checked');
 	});			
 }
+
+function showFacets() {
+	$(".facet-options").each(function(index) {
+		// check form fields
+		var $facet_option = $(this);
+		var $input_include = $facet_option.find('input.include');
+		var $input_exclude = $facet_option.find('input.exclude');
+
+		var $link_span_include = $facet_option.find('a.facet.include span');
+		var $link_span_exclude = $facet_option.find('a.facet.exclude span');
+		
+		if ($link_span_include.hasClass("facet-selected") || $link_span_exclude.hasClass("facet-selected")) {
+			// go to the beginning and show all
+			$ul = $facet_option.parent();
+			$ul.find('.facet-options').each(function() {
+				var $li = $(this);
+				$li.removeClass('hide');
+				$li.addClass('show');
+			});
+		}
+	});			
+
+}
