@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -82,12 +83,15 @@ public class Query {
 	
 	private Map<String, List<String>> parameters;
 	
+	private List<String> exclusions;
+	
 	public Query(String query, Map<String,List<String>> parameters) {
 		facets = new ArrayList<String>();
 		this.parameters = parameters;
 		facetValues = new HashMap<String, FacetValue>();
 		this.query = query;
 		this.proximity = new Proximity();
+		this.exclusions = new ArrayList<String>();
 		this.parseParameters();
 	}
 	
@@ -116,6 +120,14 @@ public class Query {
 		
 		Logger.info("facets: " + facets);
 		Logger.info("filters: " + filters);
+		if (parameters.get("exclude") != null) {
+			Iterator<String> iterator = parameters.get("exclude").iterator();
+			while (iterator.hasNext()) {
+				String exclude = iterator.next();
+				Logger.info("exclude >>>" + exclude);
+				exclusions.add(exclude);
+			}
+		}
 		
 		if (parameters.get("facet.sort") != null) {
 			String facetSort = parameters.get("facet.sort").get(0);
@@ -278,6 +290,8 @@ public class Query {
 
 		this.responseParameters += processAdvancedSearchParameters();
 		
+		this.responseParameters += processExclusionsParameters();
+		
 		// 1980-01-01T12:00:00Z
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss'Z'");
 		Calendar cal = Calendar.getInstance();
@@ -348,6 +362,10 @@ public class Query {
 		}
 	}
 
+	public List<String> getExclusions() {
+		return exclusions;
+	}
+
 	private String responseFacetParameters() {
 		StringBuilder parameters = new StringBuilder("");
 		if (res.getFacetFields() != null) {
@@ -404,6 +422,14 @@ public class Query {
 			parameters.append("&hostDomainPublicSuffix=").append(hostDomainPublicSuffix);
 		//parameters.append("urlHostDomainPublicSuffix=").append(urlHostDomainPublicSuffix);
 
+		return parameters.toString();
+	}
+	
+	private String processExclusionsParameters() {
+		StringBuilder parameters = new StringBuilder("");
+		for (String exclude : this.exclusions) {
+			parameters.append("&exclude=").append(exclude);
+		}
 		return parameters.toString();
 	}
 	

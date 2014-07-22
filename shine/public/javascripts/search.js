@@ -255,6 +255,20 @@ function getURLParameter(param) {
 	}				
 }
 
+function getURLParameters(param) {
+	var values = [];
+	var pageUrl = window.location.search.substring(1);
+	var urlVariables = pageUrl.split('&');
+	for (var i=0; i<urlVariables.length; i++) {
+		var parameterName = urlVariables[i].split('=');
+		if (parameterName[0] == param) {
+			values.push(parameterName[1])
+			//return parameterName[1];
+		}
+	}
+	return values;
+}
+
 function clearFacets() {
 	$(".facet-options").each(function(index) {
 		// check form fields

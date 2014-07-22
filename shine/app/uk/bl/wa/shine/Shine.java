@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -367,6 +369,19 @@ public class Shine extends Solr {
 	//		}
 			query.res = res;
 			query.processQueryResponse();
+			
+			// might take a long time
+			List<SolrDocument> docs = query.res.getResults();
+			
+			if (!query.res.getResults().isEmpty()) {
+				for (Iterator<SolrDocument> iterator = docs.iterator(); iterator.hasNext(); ) {
+					SolrDocument doc = iterator.next();
+					if (query.getExclusions().contains(String.valueOf(doc.getFirstValue("id_long")))) {
+						Logger.info("matched: " + String.valueOf(doc.getFirstValue("id_long")) + " - " + doc.getFirstValue("title"));
+				        iterator.remove();
+					}
+				}
+			}
 		} catch(ParseException e) {
 			throw new SolrServerException(e);
 		}

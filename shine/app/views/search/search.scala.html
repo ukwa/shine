@@ -343,6 +343,16 @@
 			});
 			
 			showFacets();
+			
+/*			var exclusions = getURLParameters('exclude');
+			console.log("exclusions: "+ exclusions);
+			$("input[name='exclude']").each(function() {
+				var checkBox = $(this);
+				var found = $.inArray(checkBox.val(), exclusions) > -1;
+				if (found) {
+					checkBox.attr('checked', 'checked');
+				}
+			});*/
 		});
 	</script>
 }
@@ -523,7 +533,7 @@
 									@if(user != null) {
 										<button type="button" class="btn btn-primary" id="save-search" name="action" value="save">Save Search</button>
 									}
-									<img id="ajax-loader" src="assets/images/ajax-loader.gif">
+									<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
 								</span>
 							</div>
 						</div>
@@ -578,12 +588,11 @@
 								@for((d, index) <- q.res.getResults().zipWithIndex) {
 									<div class="list-group">
 										<span class="list-group-item" href="#">
-											<input type="hidden" name="excludeDoc" value="(@d.getFirstValue("id_long"))">
 											<h4 class="list-group-item-heading">
 												@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
 											</h4>
 											<div class="checkbox pull-right">
-											    <input type="checkbox" value="(@d.getFirstValue("id_long"))" name="exclude">
+												<input type="checkbox" name="exclude" value="@d.getFirstValue("id_long")">
 											</div>
 											<p class="list-group-item-text">
 													@d.getFirstValue("crawl_date")<br />
