@@ -8,6 +8,7 @@ import models._
 import views._
 import org.apache.commons.lang.StringUtils
 import uk.bl.wa.shine._
+import java.util.Date
 
 object Application extends Controller {
 

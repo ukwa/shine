@@ -331,6 +331,7 @@ public class Shine extends Solr {
 			}
 	
 			try {
+				processExcluded(parameters, query.excluded);
 				processWebsiteTitle(parameters, query.websiteTitle);
 				if (StringUtils.isNotEmpty(query.pageTitle)) {
 					parameters.addFilterQuery("title:" + query.pageTitle);
@@ -440,7 +441,10 @@ public class Shine extends Solr {
 
 	private void processExcluded(SolrQuery parameters, String excluded) {
 		if (StringUtils.isNotEmpty(excluded)) {
-			parameters.add("NOT", "excluded");
+			String[] exclusions = excluded.split(",");
+			for (String exclude : exclusions) {
+				parameters.addFilterQuery("-" + exclude.trim());
+			}
 		}
 	}
 

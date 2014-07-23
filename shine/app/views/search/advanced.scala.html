@@ -1,4 +1,8 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, advancedForm: Form[controllers.Search.AdvancedData])(implicit flash: Flash)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(advancedBootstrapInput.f) }
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -496,10 +500,10 @@
 											None of these words
 										</label>
 										<div class="col-sm-6">
-											<input type="text" class="form-control search-field" id="exclude-field" name="excluded" placeholder="-rodent, -&quot;Jack Russell&quot;" value="@(q.excluded)">
+											<input type="text" class="form-control search-field" id="exclude-field" name="excluded" placeholder="rodent, Jack Russell" value="@(q.excluded)">
 										</div>
 										<div class="col-sm-4">
-											<p class="text-success">Put a minus sign just before words you don't want</p>
+											<p class="text-success">Words you wanted excluded from the URL</p>
 										</div>
 									</div>
 								</div>

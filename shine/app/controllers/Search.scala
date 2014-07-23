@@ -2,6 +2,11 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import play.api.data._
+import play.api.data.Forms._
+import models._
+import views._
+import play.api.data.Forms._
 import scala.collection.JavaConverters._
 import uk.bl.wa.shine.Shine
 import uk.bl.wa.shine.Query
@@ -24,8 +29,43 @@ import models.User
 import views.Csv
 import play.api.cache.Cache
 import play.api.http.HeaderNames
+import java.util.Date
 
 object Search extends Controller {
+
+  case class AdvancedData(
+      query: String, 
+      proximity1: Option[String], 
+      proximity2: Option[String], 
+      proximity3: Option[String], 
+      exclude: Option[String], 
+      dateStart: Option[Date], 
+      dateEnd: Option[Date], 
+      url: Option[String],
+      hostDomainPublicSuffix: Option[String], 
+      fileFormat: Option[String],
+      websiteTitle: Option[String],
+      pageTitle: Option[String],
+      author: Option[String]
+  )
+
+  val advancedForm = Form(
+	mapping(
+	  "query" -> text,
+	  "proximity1" -> optional(text),
+	  "proximity2" -> optional(text),
+	  "proximity3" -> optional(text),
+	  "exclude" -> optional(text),
+	  "dateStart" -> optional(date("yyyy-MM-dd")),
+	  "dateEnd" -> optional(date("yyyy-MM-dd")),
+	  "url" -> optional(text),
+	  "hostDomainPublicSuffix" -> optional(text),
+	  "fileFormat" -> optional(text),
+	  "websiteTitle" -> optional(text),
+	  "pageTitle" -> optional(text),
+	  "author" -> optional(text)
+	)(AdvancedData.apply)(AdvancedData.unapply)
+  )
 
   val config = play.Play.application().configuration().getConfig("shine")
 
@@ -104,6 +144,8 @@ object Search extends Controller {
 
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     println("advanced_search")
+    
+    validate(request.queryString);
 
     val q = doAdvanced(query, request.queryString)
 
@@ -119,7 +161,7 @@ object Search extends Controller {
 	  	user = User.findByEmail(username.toLowerCase())
     }
     
-    Ok(views.html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search"))
+    Ok(views.html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", advancedForm))
   }
 
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -634,5 +676,9 @@ object Search extends Controller {
     }
     println("post: " + map)
     map
+  }
+  
+  def validate(parameters: Map[String, Seq[String]]) = {
+    println("proximity: " + parameters.get("proximity").size);
   }
 }
