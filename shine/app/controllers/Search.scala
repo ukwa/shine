@@ -34,7 +34,7 @@ import java.util.Date
 object Search extends Controller {
 
   case class AdvancedData(
-      query: String, 
+      query: Option[String], 
       proximity1: Option[String], 
       proximity2: Option[String], 
       proximity3: Option[String], 
@@ -51,7 +51,7 @@ object Search extends Controller {
 
   val advancedForm = Form(
 	mapping(
-	  "query" -> text,
+	  "query" -> optional(text),
 	  "proximity1" -> optional(text),
 	  "proximity2" -> optional(text),
 	  "proximity3" -> optional(text),
@@ -145,25 +145,37 @@ object Search extends Controller {
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     println("advanced_search")
     
-    validate(request.queryString);
+    val phrase1 = request.queryString.get("proximity-phrase-1")
+    val phrase2 = request.queryString.get("proximity-phrase-2")
+    val proximity = request.queryString.get("proximity")
+    println("phrase1: " + phrase1.isEmpty)
+    println("phrase2: " + phrase2.isEmpty)
+    println("proximity: " + proximity.isEmpty)
 
-    val q = doAdvanced(query, request.queryString)
-
-    val totalRecords = q.res.getResults().getNumFound().intValue()
-
-    println("Page #: " + pageNo)
-    println("totalRecords #: " + totalRecords)
-
-    pagination.update(totalRecords, pageNo)
+//    if (phrase1.isEmpty || phrase2.isEmpty || proximity.isEmpty) {
+//      Redirect("/search/advanced").flashing(
+//    		  "success" -> "Please enter all proximity fields"
+//    		  )
+//      //BadRequest(html.search.advanced("Advanced Search", user, q, null, sort, order, "search", advancedForm.withGlobalError("Please enter all proximity fields")))	
+//    } 
+	    var user : User = null
+		request.session.get("username").map { username =>
+		  	user = User.findByEmail(username.toLowerCase())
+	    }
+	    
+	
+	    val q = doAdvanced(query, request.queryString)
+	
+	    val totalRecords = q.res.getResults().getNumFound().intValue()
+	
+	    println("Page #: " + pageNo)
+	    println("totalRecords #: " + totalRecords)
+	
+	    pagination.update(totalRecords, pageNo)
+		Ok(views.html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", advancedForm))
     
-    var user : User = null
-	request.session.get("username").map { username =>
-	  	user = User.findByEmail(username.toLowerCase())
-    }
-    
-    Ok(views.html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", advancedForm))
   }
-
+    
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     println("browse")
     val q = doBrowse(query, request.queryString)
@@ -676,9 +688,5 @@ object Search extends Controller {
     }
     println("post: " + map)
     map
-  }
-  
-  def validate(parameters: Map[String, Seq[String]]) = {
-    println("proximity: " + parameters.get("proximity").size);
   }
 }

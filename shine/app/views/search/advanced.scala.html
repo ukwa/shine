@@ -31,10 +31,6 @@
 			$("#date-from").datepicker({ dateFormat: "dd/mm/yy" });
 			$("#date-to").datepicker({ dateFormat: "dd/mm/yy" });
 
-			if(@(currentPage.getTotalItems == 0)) {
-		    	console.log("results: " + @(q.res.getResults().size()))
-		    	$('#filter-panel').collapse('show');
-		    }
 	    	$('#filter-panel').collapse('show');
 	    	
 	    	// start of title suggestions
@@ -449,6 +445,20 @@
 	<div class="row">
 		<div class="col-md-12 col-sm-12">
 			<div class="padding-20">
+				@if(advancedForm.hasGlobalErrors) {
+					@advancedForm.globalError.map { error =>
+						<div class="alert alert-danger">
+							@error.message
+						</div>
+					}
+				} 
+	
+				@flash.get("success").map { message =>
+					<div class="alert alert-success">
+						@message
+					</div>
+				}
+		
 		
 				<div class="padding-20">
 					<a data-toggle="collapse" data-parent="#accordion" href="#filter-panel" class="btn btn-primary"><span id="toggle">&#9660; Filters &#9650;</span></a>
@@ -483,10 +493,10 @@
 											Proximity:
 										</label>
 										<div class="col-sm-2">
-											<input type="text" class="form-control search-field" id="proximity-field-1" name="proximity" placeholder="phrase" value="@(q.proximity.getPhrase1)">
+											<input type="text" class="form-control search-field" id="proximity-field-1" name="proximity-phrase-1" placeholder="phrase" value="@(q.proximity.getPhrase1)">
 										</div>
 										<div class="col-sm-2">
-											<input type="text" class="form-control search-field" id="proximity-field-2" name="proximity" placeholder="phrase" value="@(q.proximity.getPhrase2)">
+											<input type="text" class="form-control search-field" id="proximity-field-2" name="proximity-phrase-2" placeholder="phrase" value="@(q.proximity.getPhrase2)">
 										</div>
 										<div class="col-sm-2">
 											<input type="text" class="form-control search-field" id="proximity" name="proximity" placeholder="25" value="@(q.proximity.getProximity)">

@@ -85,6 +85,11 @@ public class Query {
 	
 	private List<String> exclusions;
 	
+	public Query(String query) {
+		this.query = query;
+		this.proximity = new Proximity();
+	}
+	
 	public Query(String query, Map<String,List<String>> parameters) {
 		facets = new ArrayList<String>();
 		this.parameters = parameters;
@@ -171,13 +176,23 @@ public class Query {
 		if (parameters.get("fileFormat") != null) {
 			fileFormat = parameters.get("fileFormat").get(0);
 		}
-		if (parameters.get("proximity") != null) {
-			proximity = new Proximity();
-			proximity.setPhrase1(parameters.get("proximity").get(0));
-			proximity.setPhrase2(parameters.get("proximity").get(1));
-			proximity.setProximity(parameters.get("proximity").get(2));
-			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
+		if (parameters.get("proximity-phrase-1") != null) {
+			proximity.setPhrase1(parameters.get("proximity-phrase-1").get(0));
 		}
+		if (parameters.get("proximity-phrase-2") != null) {
+			proximity.setPhrase2(parameters.get("proximity-phrase-2").get(0));
+		}
+		if (parameters.get("proximity") != null) {
+			proximity.setProximity(parameters.get("proximity").get(0));
+		}
+	    	    
+//		if (proximities != null && proximities.size() == 3) {
+//			proximity = new Proximity();
+//			proximity.setPhrase1(proximities.get(0));
+//			proximity.setPhrase2(proximities.get(1));
+//			proximity.setProximity(proximities.get(2));
+//			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
+//		}
 		if (parameters.get("datestart") != null) {
 			dateStart = parameters.get("datestart").get(0).replace("\"", "");
 		}
