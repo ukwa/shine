@@ -311,7 +311,7 @@
 					var $value = $('<li>').html("File Format: " + $("#file-format-field").val());
 					$('#search-summary').append($value);
 				}
-				@if(showOption("show_browse")) {
+				@if(showOption("show_collections_field")) {
 					if($('#collection-field').val() != '') {
 						var $value = $('<li>').html("Collection: " + $("#collection-field").val());
 						$('#search-summary').append($value);
@@ -601,7 +601,7 @@
 										</div>
 									</div>
 
-									@if(showOption("show_browse")) {
+									@if(showOption("show_collections_field")) {
 										<div class="form-group">
 											<label for="option1" class="col-sm-2 control-label">
 												Collection:
