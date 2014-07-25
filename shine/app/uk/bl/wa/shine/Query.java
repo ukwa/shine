@@ -221,7 +221,7 @@ public class Query {
 //			proximity.setProximity(proximities.get(2));
 //			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
 //		}
-		if (parameters.get("dateStart") != null) {
+		if (parameters.get("datestart") != null) {
 			dateStart = parameters.get("datestart").get(0).replace("\"", "");
 		}
 		if (parameters.get("dateend") != null) {
