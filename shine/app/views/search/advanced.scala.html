@@ -1,8 +1,9 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, advancedForm: Form[controllers.Search.AdvancedData])(implicit flash: Flash)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, advancedForm: Form[controllers.Search.AdvancedData])(implicit flash: Flash, lang: play.api.i18n.Lang)
 
 @import helper._
+@import bootstrap.advanced._
 
-@implicitFieldConstructor = @{ FieldConstructor(advancedBootstrapInput.f) }
+@implicitFieldConstructor = @{ FieldConstructor(genericInput.f) }
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -283,8 +284,8 @@
 			
 			function createSummary() {
 				
-				if($('#full-text-field').val() != '') {
-					var $value = $('<li>').html("Search Term(s): " + $("#full-text-field").val());
+				if($('#full-text-fiel').val() != '') {
+					var $value = $('<li>').html("Search Term(s): " + $("#full-text-fiel").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#website-title-field').val() != '') {
@@ -476,46 +477,49 @@
 						<div class="panel-body">
 							<div class="row">
 								<div class="col-md-12">
-									<div class="form-group">
-										<label for="option1" class="col-sm-2 control-label">
-											Full Text Search:
-										</label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control search-field" name="query" value="@(q.query)" id="full-text-field" placeholder="<TEXT FIELD>, <MATCH TYPE>" />
-											<span id="search-result-field" class="hide"></span>
-										</div>
-										<div class="col-sm-4">
-											<p class="text-success">All these words</p>
-										</div>
-									</div>
+									@helper.inputText(advancedForm("query"),
+										'_label -> "Query:",
+									    'id -> "full-text-fiel",
+									    'class -> "form-control",
+									    'placeholder -> "<TEXT FIELD>, <MATCH TYPE>",
+									    '_error -> advancedForm("query").error.map(_.withMessage("Enter Query"))
+									)(FieldConstructor(fullSearchInput.f), lang)
+								
 									<div class="form-group">
 										<label for="" class="col-sm-2 control-label">
 											Proximity:
 										</label>
-										<div class="col-sm-2">
-											<input type="text" class="form-control search-field" id="proximity-field-1" name="proximity-phrase-1" placeholder="phrase" value="@(q.proximity.getPhrase1)">
-										</div>
-										<div class="col-sm-2">
-											<input type="text" class="form-control search-field" id="proximity-field-2" name="proximity-phrase-2" placeholder="phrase" value="@(q.proximity.getPhrase2)">
-										</div>
-										<div class="col-sm-2">
-											<input type="text" class="form-control search-field" id="proximity" name="proximity" placeholder="25" value="@(q.proximity.getProximity)">
-										</div>
+										@helper.inputText(advancedForm("proximityPhrase1"),
+										    'id -> "proximity-field-1",
+										    'class -> "form-control search-field",
+										    'placeholder -> "phrase",
+										    '_error -> advancedForm("proximityPhrase1").error.map(_.withMessage("Enter Proximity Values"))
+										)(FieldConstructor(proximityInput.f), lang)
+
+										@helper.inputText(advancedForm("proximityPhrase2"),
+										    'id -> "proximity-field-2",
+										    'class -> "form-control search-field",
+										    'placeholder -> "phrase",
+										    '_error -> advancedForm("proximityPhrase2").error.map(_.withMessage("Enter Proximity Values"))
+										)(FieldConstructor(proximityInput.f), lang)
+
+										@helper.inputText(advancedForm("proximity"),
+										    'id -> "proximity",
+										    'class -> "form-control search-field",
+										    'placeholder -> "25",
+										    '_error -> advancedForm("proximityPhrase1").error.map(_.withMessage("Enter Proximity Values"))
+										)(FieldConstructor(proximityInput.f), lang)
 										<div class="col-sm-4">
 											<p class="text-success">If you wish to search for word that appear together, try a proximity search. For example, the following finds resources where the words 'coffee' and 'java' occur within 25 words of each other.</p>
 										</div>
 									</div>
+									
 									<div class="form-group">
-										<label for="option3" class="col-sm-2 control-label">
-											None of these words
-										</label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control search-field" id="exclude-field" name="excluded" placeholder="rodent, Jack Russell" value="@(q.excluded)">
-										</div>
+										@inputText(advancedForm("exclude"), '_label -> "None of these words:", 'class -> "form-control", 'placeholder -> "rodent, Jack Russell", 'id -> "exclude-field")
 										<div class="col-sm-4">
 											<p class="text-success">Words you wanted excluded from the URL</p>
 										</div>
-									</div>
+									</div>											
 								</div>
 							</div>
 						</div>
@@ -534,78 +538,54 @@
 										<label for="option2" class="col-sm-2 control-label">
 											Date Range:
 										</label>
-										<div class="col-sm-3">
-											<input type="text" class="form-control search-field" id="date-from" name="datestart" placeholder="dd/mm/yyyy" value="@(q.dateStart)">
-										</div>
-										<div class="col-sm-3">
-											<input type="text" class="form-control search-field" id="date-to" name="dateend" placeholder="dd/mm/yyyy" value="@(q.dateEnd)">
-										</div>
+										@helper.inputDate(advancedForm("dateStart"),
+										    'id -> "date-from",
+										    'class -> "form-control search-field",
+										    'placeholder -> "dd/mm/yyyy",
+										    '_error -> advancedForm("dateStart").error.map(_.withMessage("Enter Date Ranges"))
+										)(FieldConstructor(dateInput.f), lang)
+										@helper.inputDate(advancedForm("dateEnd"),
+										    'id -> "date-from",
+										    'class -> "form-control search-field",
+										    'placeholder -> "dd/mm/yyyy",
+										    '_error -> advancedForm("dateEnd").error.map(_.withMessage("Enter Date Ranges"))
+										)(FieldConstructor(dateInput.f), lang)
 										<div class="col-sm-4">
 											<p class="text-success">Restrict by date (Format: dd/mm/yyyy)</p>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="option1" class="col-sm-2 control-label">
-											URL:
-										</label>
-										<div class="col-sm-6" id="url">
-											<input type="text" class="typeahead form-control search-field" name="url" value="@(q.url)" id="url-field" placeholder="URL" />
-										</div>
+										@inputText(advancedForm("url"), '_label -> "URL:", 'class -> "form-control", 'placeholder -> "URL", 'id -> "url-field")
 										<div class="col-sm-4">
 											<p class="text-success">URL</p>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="option3" class="col-sm-2 control-label">
-											Host, Domain or Public Suffix
-										</label>
-										<div class="col-sm-6" id="host-domain-public-suffix">
-											<input type="text" class="typeahead form-control search-field" name="facet.in.public_suffix" placeholder="Host, Domain or Public Suffix" value="@(q.hostDomainPublicSuffix)" id="host-domain-public-field">
-										</div>
+										@inputText(advancedForm("hostDomainPublicSuffix"), '_label -> "Host, Domain or Public Suffix:", 'class -> "form-control", 'placeholder -> "Host, Domain or Public Suffix", 'id -> "host-domain-public-field")
 										<div class="col-sm-4">
 											<p class="text-success">Match the values in the 'host', 'domain' or 'public_suffix' fields</p>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="option1" class="col-sm-2 control-label">
-											File Format:
-										</label>
-										<div class="col-sm-6" id="file-format">
-											<input type="text" class="typeahead form-control search-field" name="fileFormat" value="@(q.fileFormat)" id="file-format-field" placeholder="File Format" />
-										</div>
+										@inputText(advancedForm("fileFormat"), '_label -> "File Format:", 'class -> "form-control", 'placeholder -> "File Format", 'id -> "file-format-field")
 										<div class="col-sm-4">
 											<p class="text-success">File format</p>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="option1" class="col-sm-2 control-label">
-											Website Title:
-										</label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control search-field" name="websiteTitle" value="@(q.websiteTitle)" id="website-title-field" placeholder="Website Title" />
-										</div>
+										@inputText(advancedForm("websiteTitle"), '_label -> "Website Title:", 'class -> "form-control", 'placeholder -> "Website Title", 'id -> "website-title-field")
 										<div class="col-sm-4">
 											<p class="text-success">Website title</p>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="option1" class="col-sm-2 control-label">
-											Page Title:
-										</label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control search-field" name="pageTitle" value="@(q.pageTitle)" id="page-title-field" placeholder="Page Title" />
-										</div>
+										@inputText(advancedForm("pageTitle"), '_label -> "Page Title:", 'class -> "form-control", 'placeholder -> "Page Title", 'id -> "page-title-field")
 										<div class="col-sm-4">
 											<p class="text-success">Page title</p>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="option1" class="col-sm-2 control-label">
-											Author:
-										</label>
-										<div class="col-sm-6" id="author">
-											<input type="text" class="typeahead form-control search-field" name="ownerName" value="@(q.name)" id="name-field" placeholder="Name (personal and corporate)" />
-										</div>
+										@inputText(advancedForm("author"), '_label -> "Author:", 'class -> "form-control", 'placeholder -> "Name (personal and corporate)", 'id -> "name-field")
 										<div class="col-sm-4">
 											<p class="text-success">Name (personal and corporate)</p>
 										</div>
@@ -613,12 +593,7 @@
 
 									@if(showOption("show_collections_field")) {
 										<div class="form-group">
-											<label for="option1" class="col-sm-2 control-label">
-												Collection:
-											</label>
-											<div class="col-sm-6" id="collection">
-												<input type="text" class="typeahead form-control search-field" name="facet.in.collection" value="" placeholder="Collection" id="collection-field"/>
-											</div>
+											@inputText(advancedForm("collection"), '_label -> "Collection:", 'class -> "typeahead form-control search-field", 'placeholder -> "Collection", 'id -> "collection-field")
 											<div class="col-sm-4">
 												<p class="text-success">Collection</p>
 											</div>
@@ -698,6 +673,9 @@
 												"@d.getFirstValue("title")"
 											</a>
 										</h4>
+										<div class="checkbox pull-right">
+											<input type="checkbox" name="exclude" value="@d.getFirstValue("id_long")">
+										</div>
 										<p class="list-group-item-text">
 												@d.getFirstValue("crawl_date")<br />
 												@d.getFirstValue("content_type_norm")<br />

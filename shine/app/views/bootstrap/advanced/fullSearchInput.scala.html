@@ -6,9 +6,13 @@
 <div class="clearfix @if(elements.hasErrors) {error}">
 	<div class="form-group">
 	    <label for="@elements.id" class="col-sm-2 control-label">@elements.label</label>
-		<div class="col-sm-10">
+		<div class="col-sm-6">
 	        @elements.input
+			<span id="search-result-field" class="hide"></span>
 	        <span class="help-inline">@elements.infos.mkString(", ")</span> 
 	    </div>
+		<div class="col-sm-4">
+			<p class="text-success">All these words</p>
+		</div>
 	</div>
 </div>
