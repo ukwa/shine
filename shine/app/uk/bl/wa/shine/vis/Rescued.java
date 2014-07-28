@@ -12,23 +12,27 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.FacetField.Count;
-
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
+import org.apache.solr.client.solrj.response.QueryResponse;
 
 import play.Configuration;
 import play.Logger;
 import uk.bl.wa.shine.Solr;
 import uk.bl.wa.shine.vis.URIStatusLookup.URIStatus;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
 /**
+ * 
+ * Developed moved to Python for now, as only a one-off is really needed at the
+ * moment.
+ * 
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
- *
+ * 
  */
 public class Rescued extends Solr {
 	
