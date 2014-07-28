@@ -4,9 +4,16 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import models._
+import play.api.libs.json._
+import play.api.Play.current
+import play.api.cache.Cache
+import play.api.http.HeaderNames
+
+import anorm._
+
 import views._
-import play.api.data.Forms._
+import models._
+
 import scala.collection.JavaConverters._
 import uk.bl.wa.shine.Shine
 import uk.bl.wa.shine.Query
@@ -19,25 +26,21 @@ import org.apache.commons.lang3.StringUtils
 import scala.collection.mutable.ListBuffer
 import scala.collection.immutable.Map
 import scala.collection.mutable.MutableList
-import play.api.libs.json._
-import play.api.Play.current
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.apache.solr.client.solrj.response.RangeFacet
 import org.apache.solr.common.SolrDocument
 import scala.collection.JavaConverters._
 import models.User
 import views.Csv
-import play.api.cache.Cache
-import play.api.http.HeaderNames
 import java.util.Date
 
 object Search extends Controller {
 
   case class AdvancedData(
-      query: Option[String], 
-      proximity1: Option[String], 
-      proximity2: Option[String], 
-      proximity3: Option[String], 
+      query: String, 
+      proximityPhrase1: Option[String], 
+      proximityPhrase2: Option[String], 
+      proximity: Option[String], 
       exclude: Option[String], 
       dateStart: Option[Date], 
       dateEnd: Option[Date], 
@@ -46,15 +49,16 @@ object Search extends Controller {
       fileFormat: Option[String],
       websiteTitle: Option[String],
       pageTitle: Option[String],
-      author: Option[String]
+      author: Option[String],
+      collection: Option[String]
   )
 
   val advancedForm = Form(
 	mapping(
-	  "query" -> optional(text),
-	  "proximity1" -> optional(text),
-	  "proximity2" -> optional(text),
-	  "proximity3" -> optional(text),
+	  "query" -> text,
+	  "proximityPhrase1" -> optional(text),
+	  "proximityPhrase1" -> optional(text),
+	  "proximity" -> optional(text),
 	  "exclude" -> optional(text),
 	  "dateStart" -> optional(date("yyyy-MM-dd")),
 	  "dateEnd" -> optional(date("yyyy-MM-dd")),
@@ -63,10 +67,12 @@ object Search extends Controller {
 	  "fileFormat" -> optional(text),
 	  "websiteTitle" -> optional(text),
 	  "pageTitle" -> optional(text),
-	  "author" -> optional(text)
+	  "author" -> optional(text),
+	  "collection" -> optional(text)
 	)(AdvancedData.apply)(AdvancedData.unapply)
   )
 
+  
   val config = play.Play.application().configuration().getConfig("shine")
 
   val solr = new Shine(config)
@@ -142,29 +148,44 @@ object Search extends Controller {
 	Ok(views.csv.export("Search", user, q)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
   }
 
+  def getData(x: Option[String]) = x match {
+  	case Some(s) => s
+    case None => ""
+  }
+
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     println("advanced_search")
+    
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
     
     val phrase1 = request.queryString.get("proximity-phrase-1")
     val phrase2 = request.queryString.get("proximity-phrase-2")
     val proximity = request.queryString.get("proximity")
+    val form = advancedForm.bindFromRequest(request.queryString)
     println("phrase1: " + phrase1.isEmpty)
     println("phrase2: " + phrase2.isEmpty)
     println("proximity: " + proximity.isEmpty)
+	println("advancedData: " + form.data)
+	println("query form: " + getData(form.data.get("query")))
 
-//    if (phrase1.isEmpty || phrase2.isEmpty || proximity.isEmpty) {
-//      Redirect("/search/advanced").flashing(
-//    		  "success" -> "Please enter all proximity fields"
-//    		  )
-//      //BadRequest(html.search.advanced("Advanced Search", user, q, null, sort, order, "search", advancedForm.withGlobalError("Please enter all proximity fields")))	
+    // all empty - fine
+    // at least one empty no
+//    if (true) {
+////      Redirect("/search/advanced").flashing(
+////    		  "success" -> "Please enter all proximity fields"
+////    		  )
+//      q = new Query(query)
+//      BadRequest(html.search.advanced("Advanced Search", user, q, null, sort, order, "search", advancedForm.withGlobalError("Please enter all proximity fields")))	
 //    } 
-	    var user : User = null
-		request.session.get("username").map { username =>
-		  	user = User.findByEmail(username.toLowerCase())
-	    }
+//
+    // fill query with form data
+	    //val advancedData : AdvancedData = form.get 
 	    
-	
-	    val q = doAdvanced(query, request.queryString)
+    
+        val q = doAdvancedForm(form, request.queryString)
 	
 	    val totalRecords = q.res.getResults().getNumFound().intValue()
 	
@@ -172,8 +193,8 @@ object Search extends Controller {
 	    println("totalRecords #: " + totalRecords)
 	
 	    pagination.update(totalRecords, pageNo)
-		Ok(views.html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", advancedForm))
-    
+
+	    Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form))
   }
     
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -476,7 +497,7 @@ object Search extends Controller {
     println("doInit: " + parametersAsJava);
     new Query(query, parametersAsJava)
   }
-
+  
   def doExport(query: String, parameters: Map[String, Seq[String]]) = {
     // parses parameters and creates me a query object
     var q = createQuery(query, parameters)
@@ -489,6 +510,14 @@ object Search extends Controller {
     var q = createQuery(query, parameters)
     println("new query created: " + q.facets)
     solr.search(q)
+  }
+
+  // TODO: will sort out parameters
+  def doAdvancedForm(form: Form[controllers.Search.AdvancedData], parameters: Map[String, Seq[String]]) = {
+	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
+	val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("exclude")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava)
+    println("doAdvanced: " + query)
+    solr.advancedSearch(query)
   }
 
   def doAdvanced(query: String, parameters: Map[String, Seq[String]]) = {
