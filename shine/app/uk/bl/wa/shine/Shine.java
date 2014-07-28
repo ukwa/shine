@@ -336,8 +336,8 @@ public class Shine extends Solr {
 				if (StringUtils.isNotEmpty(query.pageTitle)) {
 					parameters.addFilterQuery("title:" + query.pageTitle);
 				}
-				if (StringUtils.isNotEmpty(query.name)) {
-					parameters.add("author", query.name);
+				if (StringUtils.isNotEmpty(query.author)) {
+					parameters.add("author", query.author);
 				}
 				if (StringUtils.isNotEmpty(query.url)) {
 					parameters.add("url", query.url);

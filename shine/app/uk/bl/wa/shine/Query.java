@@ -53,7 +53,7 @@ public class Query {
 	
 	public String pageTitle;
 
-	public String name;
+	public String author;
 	
 	public String url;
 	
@@ -114,7 +114,7 @@ public class Query {
 		this.fileFormat = fileFormat;
 		this.websiteTitle = websiteTitle;
 		this.pageTitle = pageTitle;
-		this.name = author;
+		this.author = author;
 		this.collection = collection;
 		this.parameters = parameters;
 		this.init();
@@ -195,8 +195,8 @@ public class Query {
 //		if (parameters.get("pageTitle") != null) {
 //			pageTitle = parameters.get("pageTitle").get(0);
 //		}
-//		if (parameters.get("name") != null) {
-//			name = parameters.get("name").get(0);
+//		if (parameters.get("author") != null) {
+//			author = parameters.get("author").get(0);
 //		}
 //		if (parameters.get("url") != null) {
 //			url = parameters.get("url").get(0);
@@ -443,8 +443,8 @@ public class Query {
 			parameters.append("&websiteTitle=").append(websiteTitle);
 		if (StringUtils.isNotEmpty(pageTitle))
 			parameters.append("&pageTitle=").append(pageTitle);
-		if (StringUtils.isNotEmpty(name))
-			parameters.append("&name=").append(name);
+		if (StringUtils.isNotEmpty(author))
+			parameters.append("&author=").append(author);
 		if (StringUtils.isNotEmpty(url))
 			parameters.append("&url=").append(url);
 		if (StringUtils.isNotEmpty(fileFormat))
