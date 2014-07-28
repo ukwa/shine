@@ -65,7 +65,7 @@ public class Search extends Model {
     
     /**
      * Retrieve searches by userid.
-     * @param name
+     * @param author
      * @return
      */
     public static List<Search> findByUser(User user) {

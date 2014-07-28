@@ -255,6 +255,20 @@ function getURLParameter(param) {
 	}				
 }
 
+function getURLParameters(param) {
+	var values = [];
+	var pageUrl = window.location.search.substring(1);
+	var urlVariables = pageUrl.split('&');
+	for (var i=0; i<urlVariables.length; i++) {
+		var parameterName = urlVariables[i].split('=');
+		if (parameterName[0] == param) {
+			values.push(parameterName[1])
+			//return parameterName[1];
+		}
+	}
+	return values;
+}
+
 function clearFacets() {
 	$(".facet-options").each(function(index) {
 		// check form fields
@@ -274,4 +288,27 @@ function clearFacets() {
 		$input_include.removeAttr('checked');
 		$input_exclude.removeAttr('checked');
 	});			
+}
+
+function showFacets() {
+	$(".facet-options").each(function(index) {
+		// check form fields
+		var $facet_option = $(this);
+		var $input_include = $facet_option.find('input.include');
+		var $input_exclude = $facet_option.find('input.exclude');
+
+		var $link_span_include = $facet_option.find('a.facet.include span');
+		var $link_span_exclude = $facet_option.find('a.facet.exclude span');
+		
+		if ($link_span_include.hasClass("facet-selected") || $link_span_exclude.hasClass("facet-selected")) {
+			// go to the beginning and show all
+			$ul = $facet_option.parent();
+			$ul.find('.facet-options').each(function() {
+				var $li = $(this);
+				$li.removeClass('hide');
+				$li.addClass('show');
+			});
+		}
+	});			
+
 }

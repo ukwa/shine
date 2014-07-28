@@ -1,0 +1,11 @@
+@(elements: helper.FieldElements)
+
+@**************************************************
+* Generate input according twitter bootsrap rules *
+**************************************************@
+    <label for="@elements.id" class="col-sm-2 control-label">@elements.label</label>
+	<div class="col-sm-6">
+        @elements.input
+		<div class="clearfix @if(elements.hasErrors) {error}"></div>
+        <span class="help-inline">@elements.infos.mkString(", ")</span> 
+    </div>

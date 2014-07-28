@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class Query {
 	
 	public String pageTitle;
 
-	public String name;
+	public String author;
 	
 	public String url;
 	
@@ -73,6 +74,8 @@ public class Query {
 	public String hostDomainPublicSuffix;
 	
 	public String urlHostDomainPublicSuffix;
+	
+	public String collection;
 
 	public Integer page;
 	
@@ -80,14 +83,48 @@ public class Query {
 	
 	public String order;
 	
-	private Map<String, List<String>> parameters;
+	public Map<String, List<String>> parameters;
+	
+	private List<String> exclusions;
+	
+	public Query(String query) {
+		this.query = query;
+		this.init();
+	}
 	
 	public Query(String query, Map<String,List<String>> parameters) {
-		facets = new ArrayList<String>();
+		this.query = query;
 		this.parameters = parameters;
-		facetValues = new HashMap<String, FacetValue>();
+		this.init();
+	}
+	
+	public Query(String query, String proximityPhrase1, String proximityPhrase2, String proximity, 
+			String exclude, String dateStart, String dateEnd, String url, String hostDomainPublicSuffix, 
+		    String fileFormat, String websiteTitle, String pageTitle, String author, String collection, Map<String,List<String>> parameters) {
 		this.query = query;
 		this.proximity = new Proximity();
+		this.proximity.setPhrase1(proximityPhrase1);
+		this.proximity.setPhrase2(proximityPhrase2);
+		this.proximity.setProximity(proximity);
+		this.excluded = exclude;
+		this.dateStart = dateStart;
+		this.dateEnd = dateEnd;
+		this.url = url;
+		this.hostDomainPublicSuffix = hostDomainPublicSuffix;
+		this.fileFormat = fileFormat;
+		this.websiteTitle = websiteTitle;
+		this.pageTitle = pageTitle;
+		this.author = author;
+		this.collection = collection;
+		this.parameters = parameters;
+		this.init();
+	}
+
+	private void init() {
+		facets = new ArrayList<String>();
+		facetValues = new HashMap<String, FacetValue>();
+		this.proximity = new Proximity();
+		this.exclusions = new ArrayList<String>();
 		this.parseParameters();
 	}
 	
@@ -114,8 +151,16 @@ public class Query {
 			}
 		}
 		
-		Logger.info("facets: " + facets);
-		Logger.info("filters: " + filters);
+//		Logger.info("facets: " + facets);
+//		Logger.info("filters: " + filters);
+		if (parameters.get("exclude") != null) {
+			Iterator<String> iterator = parameters.get("exclude").iterator();
+			while (iterator.hasNext()) {
+				String exclude = iterator.next();
+				Logger.info("exclude >>>" + exclude);
+				exclusions.add(exclude);
+			}
+		}
 		
 		if (parameters.get("facet.sort") != null) {
 			String facetSort = parameters.get("facet.sort").get(0);
@@ -144,43 +189,53 @@ public class Query {
 			order = parameters.get("order").get(0);
 		}
 		
-		if (parameters.get("websiteTitle") != null) {
-			websiteTitle = parameters.get("websiteTitle").get(0);
-		}
-		if (parameters.get("pageTitle") != null) {
-			pageTitle = parameters.get("pageTitle").get(0);
-		}
-		if (parameters.get("name") != null) {
-			name = parameters.get("name").get(0);
-		}
-		if (parameters.get("url") != null) {
-			url = parameters.get("url").get(0);
-		}
-		if (parameters.get("fileFormat") != null) {
-			fileFormat = parameters.get("fileFormat").get(0);
-		}
-		if (parameters.get("proximity") != null) {
-			proximity = new Proximity();
-			proximity.setPhrase1(parameters.get("proximity").get(0));
-			proximity.setPhrase2(parameters.get("proximity").get(1));
-			proximity.setProximity(parameters.get("proximity").get(2));
-			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
-		}
+//		if (parameters.get("websiteTitle") != null) {
+//			websiteTitle = parameters.get("websiteTitle").get(0);
+//		}
+//		if (parameters.get("pageTitle") != null) {
+//			pageTitle = parameters.get("pageTitle").get(0);
+//		}
+//		if (parameters.get("author") != null) {
+//			author = parameters.get("author").get(0);
+//		}
+//		if (parameters.get("url") != null) {
+//			url = parameters.get("url").get(0);
+//		}
+//		if (parameters.get("fileFormat") != null) {
+//			fileFormat = parameters.get("fileFormat").get(0);
+//		}
+//		if (parameters.get("proximity-phrase-1") != null) {
+//			proximity.setPhrase1(parameters.get("proximity-phrase-1").get(0));
+//		}
+//		if (parameters.get("proximity-phrase-2") != null) {
+//			proximity.setPhrase2(parameters.get("proximity-phrase-2").get(0));
+//		}
+//		if (parameters.get("proximity") != null) {
+//			proximity.setProximity(parameters.get("proximity").get(0));
+//		}
+	    	    
+//		if (proximities != null && proximities.size() == 3) {
+//			proximity = new Proximity();
+//			proximity.setPhrase1(proximities.get(0));
+//			proximity.setPhrase2(proximities.get(1));
+//			proximity.setProximity(proximities.get(2));
+//			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
+//		}
 		if (parameters.get("datestart") != null) {
 			dateStart = parameters.get("datestart").get(0).replace("\"", "");
 		}
 		if (parameters.get("dateend") != null) {
 			dateEnd = parameters.get("dateend").get(0).replace("\"", "");
 		}
-		if (parameters.get("excluded") != null) {
-			excluded = parameters.get("excluded").get(0);
-		}		
-		if (parameters.get("hostDomainPublicSuffix") != null) {
-			hostDomainPublicSuffix = parameters.get("hostDomainPublicSuffix").get(0);
-		}
-		if (parameters.get("urlHostDomainPublicSuffix") != null) {
-			urlHostDomainPublicSuffix = parameters.get("urlHostDomainPublicSuffix").get(0);
-		}
+//		if (parameters.get("excluded") != null) {
+//			excluded = parameters.get("excluded").get(0);
+//		}		
+//		if (parameters.get("hostDomainPublicSuffix") != null) {
+//			hostDomainPublicSuffix = parameters.get("hostDomainPublicSuffix").get(0);
+//		}
+//		if (parameters.get("urlHostDomainPublicSuffix") != null) {
+//			urlHostDomainPublicSuffix = parameters.get("urlHostDomainPublicSuffix").get(0);
+//		}
 	}
 	
 	public String getCheckedInString(String facet_name, String value ) {
@@ -278,6 +333,8 @@ public class Query {
 
 		this.responseParameters += processAdvancedSearchParameters();
 		
+		this.responseParameters += processExclusionsParameters();
+		
 		// 1980-01-01T12:00:00Z
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss'Z'");
 		Calendar cal = Calendar.getInstance();
@@ -348,6 +405,10 @@ public class Query {
 		}
 	}
 
+	public List<String> getExclusions() {
+		return exclusions;
+	}
+
 	private String responseFacetParameters() {
 		StringBuilder parameters = new StringBuilder("");
 		if (res.getFacetFields() != null) {
@@ -382,8 +443,8 @@ public class Query {
 			parameters.append("&websiteTitle=").append(websiteTitle);
 		if (StringUtils.isNotEmpty(pageTitle))
 			parameters.append("&pageTitle=").append(pageTitle);
-		if (StringUtils.isNotEmpty(name))
-			parameters.append("&name=").append(name);
+		if (StringUtils.isNotEmpty(author))
+			parameters.append("&author=").append(author);
 		if (StringUtils.isNotEmpty(url))
 			parameters.append("&url=").append(url);
 		if (StringUtils.isNotEmpty(fileFormat))
@@ -404,6 +465,14 @@ public class Query {
 			parameters.append("&hostDomainPublicSuffix=").append(hostDomainPublicSuffix);
 		//parameters.append("urlHostDomainPublicSuffix=").append(urlHostDomainPublicSuffix);
 
+		return parameters.toString();
+	}
+	
+	private String processExclusionsParameters() {
+		StringBuilder parameters = new StringBuilder("");
+		for (String exclude : this.exclusions) {
+			parameters.append("&exclude=").append(exclude);
+		}
 		return parameters.toString();
 	}
 	

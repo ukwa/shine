@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -78,6 +80,13 @@ public class Shine extends Solr {
 		return this.search(query, perPage);
 	}
 
+	public Query export(Query query) throws SolrServerException {
+		Query q = this.search(query, 0);
+		int total = (int)q.res.getResults().getNumFound();
+		Logger.info("exporting total: " + total);
+		return this.search(query, total);
+	}
+	
 	public Query search(Query query, int rows) throws SolrServerException {
 		return this.search(query, buildInitialParameters(query), rows);
 	}
@@ -167,6 +176,7 @@ public class Shine extends Solr {
 		// TODO: what if you need all results for exporting?
 		solrParameters.setRows(rows);
 		Logger.info("ROWS>>>>" + rows);
+		// get me 0 rows first and re-get with total
 		return doSearch(query, solrParameters);
 	}
 
@@ -321,12 +331,13 @@ public class Shine extends Solr {
 			}
 	
 			try {
+				processExcluded(parameters, query.excluded);
 				processWebsiteTitle(parameters, query.websiteTitle);
 				if (StringUtils.isNotEmpty(query.pageTitle)) {
 					parameters.addFilterQuery("title:" + query.pageTitle);
 				}
-				if (StringUtils.isNotEmpty(query.name)) {
-					parameters.add("author", query.name);
+				if (StringUtils.isNotEmpty(query.author)) {
+					parameters.add("author", query.author);
 				}
 				if (StringUtils.isNotEmpty(query.url)) {
 					parameters.add("url", query.url);
@@ -359,6 +370,19 @@ public class Shine extends Solr {
 	//		}
 			query.res = res;
 			query.processQueryResponse();
+			
+			// might take a long time
+			List<SolrDocument> docs = query.res.getResults();
+			
+			if (!query.res.getResults().isEmpty()) {
+				for (Iterator<SolrDocument> iterator = docs.iterator(); iterator.hasNext(); ) {
+					SolrDocument doc = iterator.next();
+					if (query.getExclusions().contains(String.valueOf(doc.getFirstValue("id_long")))) {
+						Logger.info("matched: " + String.valueOf(doc.getFirstValue("id_long")) + " - " + doc.getFirstValue("title"));
+				        iterator.remove();
+					}
+				}
+			}
 		} catch(ParseException e) {
 			throw new SolrServerException(e);
 		}
@@ -417,7 +441,10 @@ public class Shine extends Solr {
 
 	private void processExcluded(SolrQuery parameters, String excluded) {
 		if (StringUtils.isNotEmpty(excluded)) {
-			parameters.add("NOT", "excluded");
+			String[] exclusions = excluded.split(",");
+			for (String exclude : exclusions) {
+				parameters.addFilterQuery("-" + exclude.trim());
+			}
 		}
 	}
 

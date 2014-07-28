@@ -28,7 +28,7 @@
 	  			
 	  		}
 	  		
-			//$('#ajax-loader').hide();
+			$('#ajax-loader').hide();
 
 			function disableForm() {
 				$('#ajax-loader').show();
@@ -318,7 +318,7 @@
 			$('#dismiss-x').click(function() {
 				$("#save-search-form").modal('hide');
 			});			
-			$('#save-search-save').click(function() {
+			$('#save-search-save').on('click', function() {
 				var url = window.location;
 				var summary = $.trim($('#search-summary').html());
 				jsRoutes.controllers.Account.saveSearch($('#save-name').val(), $('#save-description').val(), summary, url).ajax({success:successFn, error:errorFn});
@@ -337,6 +337,22 @@
 			}
 			
 			$('#csv-export').attr("href", "/search/export/csv" + $('#current-url').text());
+			
+			$('#csv-export').on('click', function() {
+				//$('#ajax-loader').show();
+			});
+			
+			showFacets();
+			
+/*			var exclusions = getURLParameters('exclude');
+			console.log("exclusions: "+ exclusions);
+			$("input[name='exclude']").each(function() {
+				var checkBox = $(this);
+				var found = $.inArray(checkBox.val(), exclusions) > -1;
+				if (found) {
+					checkBox.attr('checked', 'checked');
+				}
+			});*/
 		});
 	</script>
 }
@@ -517,7 +533,7 @@
 									@if(user != null) {
 										<button type="button" class="btn btn-primary" id="save-search" name="action" value="save">Save Search</button>
 									}
-									<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif"> -->
+									<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
 								</span>
 							</div>
 						</div>
@@ -544,7 +560,7 @@
                             </h4><span class="hide" id="current-url"></span>
                             <div class="form-inline pull-right">
                             	<div class="form-group">
-                            		<a href="" id="csv-export"><img id="ajax-loader" src="assets/images/csv.png"></a>
+                            		<a href="" id="csv-export"><img id="csv-button-basic" src="assets/images/csv.png"></a>
                             	</div>
 								<div class="form-group">
 									<select class="form-control" name="sort" id="sort">
@@ -572,7 +588,12 @@
 								@for((d, index) <- q.res.getResults().zipWithIndex) {
 									<div class="list-group">
 										<span class="list-group-item" href="#">
-											<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a></h4>
+											<h4 class="list-group-item-heading">
+												@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
+											</h4>
+											<div class="checkbox pull-right">
+												<input type="checkbox" name="exclude" value="@d.getFirstValue("id_long")">
+											</div>
 											<p class="list-group-item-text">
 													@d.getFirstValue("crawl_date")<br />
 													@d.getFirstValue("content_type_norm")<br />

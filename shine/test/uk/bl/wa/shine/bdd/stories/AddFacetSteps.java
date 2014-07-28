@@ -28,24 +28,25 @@ public class AddFacetSteps {
 
 	@Given("a facet service")
 	public void givenCurrentFacetsList() {
-		facetService = new FacetServiceImpl();
+//		play.Configuration config = play.Play.application().configuration().getConfig("shine");
+		facetService = new FacetServiceImpl(null);
 		// existing facet in list
 		List<FacetValue> facetValues = new ArrayList<FacetValue>();
 		facetValues.add(new FacetValue("crawl_year", "Crawl Year"));
-		facetService.add("basic", facetValues);
+		facetService.add("basic");
 	}
 
 	@When("I add a new <facet>")
 	public void whenIAddFacet(@Named("facet") String facet) {
 		List<FacetValue> facetValues = new ArrayList<FacetValue>();
 		facetValues.add(new FacetValue("domain", "Domain"));
-		facetService.add("additional", facetValues);
+		facetService.add("additional");
 	}
 
 	@Then("the outcome should show <result> with added facet $result")
 	public void thenTheOutcomeShould(@Named("result") Map<String, List<FacetValue>> result) {
 		Assert.assertEquals(2, result.size());
-		Assert.assertEquals(facetService.getMap().size(), result.size());
+		Assert.assertEquals(facetService.getSelected().size(), result.size());
 	}
 	
     @AsParameterConverter
