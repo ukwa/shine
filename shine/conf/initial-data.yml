@@ -1,0 +1,68 @@
+
+# Users
+
+users:
+
+    - !!models.User
+        id:         1
+        email:      kinman.li@bl.uk
+        password:   secret
+    
+# Roles
+
+roles:
+
+    - !!models.Role
+        id:           1
+        name:         Admin
+        description:  Admin Role
+        users:
+            - !!models.User
+                id: 1
+
+    - !!models.Role
+        id:           2
+        name:         Read Only
+        description:  Read Only Role
+
+    - !!models.Role
+        id:           3
+        name:         Full Access
+        description:  Full Access Role
+                
+# Permissions
+
+permissions:
+    
+    - !!models.Permission
+        id:           1
+        name:         Create
+        description:  Create Permissions
+        roles: 
+            - !!models.Role
+              id: 1
+                        
+    - !!models.Permission
+        id:           2
+        name:         Read
+        description:  Read Permissions
+        roles: 
+            - !!models.Role
+              id: 1
+
+    - !!models.Permission
+        id:           3
+        name:         Update
+        description:  Update Permissions
+        roles: 
+            - !!models.Role
+              id: 1
+
+    - !!models.Permission
+        id:           4
+        name:         Delete
+        description:  Delete Permissions
+        roles: 
+            - !!models.Role
+              id: 1
+            
