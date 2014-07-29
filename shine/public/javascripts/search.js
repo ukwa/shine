@@ -312,8 +312,7 @@ function showFacets() {
 	});			
 }
 
-function saveSearch() {
-	
+function initModal() {
     $('#modal-form').validate({
         rules: {
           saveName: {
@@ -321,7 +320,6 @@ function saveSearch() {
           }
         }
 	});
-    
 	$('#save-search').on('click', function(event) {
 		event.preventDefault();
 		$("#save-search-save").prop('disabled', true);
@@ -331,27 +329,6 @@ function saveSearch() {
 	$('#dismiss-x').click(function() {
 		$("#save-search-form").modal('hide');
 	});			
-	$('#save-search-save').on('click', function() {
-		var pathArray = window.location.pathname.split('/');
-		// first element seems to be blank
-		var url = pathArray[2] + window.location.search;
-	//	console.log("url: " + url);
-		var summary = $.trim($('#search-summary').html());
-		jsRoutes.controllers.Account.saveSearch($('#saveName').val(), $('#save-description').val(), summary, url).ajax({success:successFn, error:errorFn});
-		$("#save-search-form").modal('hide');
-		$('#saveName').val('');
-		$('#save-description').val('');
-		// close and reset form
-	});
-	var successFn = function(data) {
-		console.debug("Success of Ajax Call");
-		console.debug(data);
-	};
-	var errorFn = function(err) {
-		console.debug("Error of ajax Call");
-		console.debug(err);
-	}
-	
     $('#modal-form input').on('keyup blur', function () {
         if ($('#modal-form').valid()) {
     		$("#save-search-save").prop('disabled', false);
@@ -359,6 +336,58 @@ function saveSearch() {
     		$("#save-search-save").prop('disabled', 'disabled');
         }
     });
+}
+
+function saveSearch() {
+	
+	initModal();
+	
+	$('#save-search-save').on('click', function() {
+		var pathArray = window.location.pathname.split('/');
+		// first element seems to be blank
+		var url = pathArray[2] + window.location.search;
+		console.log("url: " + url);
+		var summary = $.trim($('#search-summary').html());
+		jsRoutes.controllers.Account.saveSearch($('#saveName').val(), $('#save-description').val(), summary, url).ajax({success:successFn, error:errorFn});
+		$("#save-search-form").modal('hide');
+		$('#saveName').val('');
+		$('#save-description').val('');
+		var successFn = function(data) {
+			console.debug("Success of Ajax Call");
+			console.debug(data);
+		};
+		var errorFn = function(err) {
+			console.debug("Error of ajax Call");
+			console.debug(err);
+		}
+		// close and reset form
+	});
+}
+
+function saveAdvancedSearch() {
+	
+	initModal();
+	
+	$('#save-search-save').on('click', function() {
+		var pathArray = window.location.pathname.split('/');
+		// first element seems to be blank
+		var url = pathArray[2] + "/" + pathArray[3] + window.location.search;
+		console.log("url: " + url);
+		var summary = $.trim($('#search-summary').html());
+		jsRoutes.controllers.Account.saveSearch($('#saveName').val(), $('#save-description').val(), summary, url).ajax({success:successFn, error:errorFn});
+		$("#save-search-form").modal('hide');
+		$('#saveName').val('');
+		$('#save-description').val('');
+		var successFn = function(data) {
+			console.debug("Success of Ajax Call");
+			console.debug(data);
+		};
+		var errorFn = function(err) {
+			console.debug("Error of ajax Call");
+			console.debug(err);
+		}
+		// close and reset form
+	});
 }
 
 function validateSearchForm() {
