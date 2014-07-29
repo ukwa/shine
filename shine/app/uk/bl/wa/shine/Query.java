@@ -123,7 +123,6 @@ public class Query {
 	private void init() {
 		facets = new ArrayList<String>();
 		facetValues = new HashMap<String, FacetValue>();
-		this.proximity = new Proximity();
 		this.exclusions = new ArrayList<String>();
 		this.parseParameters();
 	}
