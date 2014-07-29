@@ -46,7 +46,7 @@
         	});
 	        suggestions.initialize();
 
-			$('#full-text-field').typeahead({
+/*			$('#query').typeahead({
 				highlight: true
 			},
 			{
@@ -61,18 +61,18 @@
 			    console.log('onCursorchanged');
 			    selectedTitle(datum);
 			});
-			 
+*/			 
 			function selectedTitle(datum) {
 			    searchField = $('#search-result-field').html();
 			    var clickedOnValue = datum['name'];
 			    var value = replaceLastWord(searchField, clickedOnValue);
-			    $('#full-text-field').typeahead('val', value);
+			    $('#query').typeahead('val', value);
 			}
 			
-			$('#full-text-field').keyup(function(value) {
-		    	var searchValue = $('#full-text-field').val();
+			$('#query').keyup(function(value) {
+		    	var searchValue = $('#query').val();
 			    $('#search-result-field').html(searchValue);
-				console.log("keyup: " + $('#search-field').html());
+				//console.log("keyup: " + $('#search-field').html());
 			});
 	    	// end of title suggestions
 			
@@ -274,9 +274,8 @@
 					}
 				});
 				
-				//console.log(values);
 				$('input', '#search-form').each(function(){
-				    $(this).val() == "" && $(this).attr("disabled", "disabled");
+//				    $(this).val() == "" && $(this).attr("disabled", "disabled");
 				})
 				$('#search-form').submit();
 
@@ -284,8 +283,8 @@
 			
 			function createSummary() {
 				
-				if($('#full-text-fiel').val() != '') {
-					var $value = $('<li>').html("Search Term(s): " + $("#full-text-fiel").val());
+				if($('#query').val() != '') {
+					var $value = $('<li>').html("Search Term(s): " + $("#query").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#website-title-field').val() != '') {
@@ -314,8 +313,8 @@
 						$('#search-summary').append($value);
 					}
 				}
-				if($('#proximityField1').val() != '' || $('#proximityField2').val() != '' || $('#proximity').val() != '') {
-					var $value = $('<li>').html("Proximity: " + $("#proximityField1").val() + " " + $("#proximityField2").val() + " " + $("#proximity").val());
+				if($('#proximityPhrase1').val() != '' || $('#proximityPhrase2').val() != '' || $('#proximity').val() != '') {
+					var $value = $('<li>').html("Proximity: " + $("#proximityPhrase1").val() + " " + $("#proximityPhrase2").val() + " " + $("#proximity").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#date-from').val() != '' || $('#date-to').val() != '') {
@@ -343,6 +342,8 @@
 				console.log('no results');
 		    	$('#filter-panel').collapse('show');
 				//$('#filter-panel').removeClass('in').removeClass('collapse').add('collapsing').removeClass('collapsing').addClass('collapse');
+			} else {
+				createSummary();
 			}
 			
 			//paging();
@@ -372,7 +373,6 @@
 			
 			validateAdvancedSearchForm();
 			saveSearch();
-			createSummary();
 
 		});
 	</script>
@@ -494,7 +494,7 @@
 									<span class="hide">@(advancedForm("query"))</span>								
 									@helper.inputText(advancedForm("query"),
 										'_label -> "Search Terms:",
-									    'id -> "full-text-fiel",
+									    'id -> "query",
 									    'class -> "form-control",
 									    'placeholder -> "<TEXT FIELD>, <MATCH TYPE>",
 									    '_error -> advancedForm("query").error.map(_.withMessage("Enter Query"))
@@ -505,14 +505,14 @@
 											Proximity:
 										</label>
 										@helper.inputText(advancedForm("proximityPhrase1"),
-										    'id -> "proximityField1",
+										    'id -> "proximityPhrase1",
 										    'class -> "form-control search-field",
 										    'placeholder -> "phrase",
 										    '_error -> advancedForm("proximityPhrase1").error.map(_.withMessage("Enter Proximity Values"))
 										)(FieldConstructor(proximityInput.f), lang)
 
 										@helper.inputText(advancedForm("proximityPhrase2"),
-										    'id -> "proximityField2",
+										    'id -> "proximityPhrase2",
 										    'class -> "form-control search-field",
 										    'placeholder -> "phrase",
 										    '_error -> advancedForm("proximityPhrase2").error.map(_.withMessage("Enter Proximity Values"))
@@ -531,9 +531,6 @@
 									
 									<div class="form-group">
 										@inputText(advancedForm("exclude"), '_label -> "None of these words:", 'class -> "form-control", 'placeholder -> "rodent, Jack Russell", 'id -> "exclude-field")
-										<div class="col-sm-4">
-											<p class="text-success">Words you wanted excluded from the URL</p>
-										</div>
 									</div>											
 								</div>
 							</div>

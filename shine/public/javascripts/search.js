@@ -361,23 +361,49 @@ function saveSearch() {
     });
 }
 
+function validateSearchForm() {
+	
+    $('#search-form').validate({
+    	errorLabelContainer: "#errorBox",
+        rules: {
+        	query: "required"
+        },
+        messages: {
+            query: "Please enter search term"
+        }
+	});
+    
+}
+
 function validateAdvancedSearchForm() {
 	
     $('#search-form').validate({
         rules: {
-        	proximityField1: {
-            required: true
-          }
-        },
-        rules: {
-        	proximityField2: {
-            required: true
-          }
-        },
-        rules: {
+        	query: "required",
+        	proximityPhrase1: {
+                required: {
+                    depends: function(element) {
+                        return $('#proximityPhrase2').val().length > 0 || $('#proximity').val().length > 0
+                    }
+                }
+            },
+            proximityPhrase2: {
+                required: {
+                    depends: function(element) {
+                        return $('#proximityPhrase1').val().length > 0 || $('#proximity').val().length > 0
+                    }
+                }
+            },
         	proximity: {
-            required: true
-          }
+                required: {
+                    depends: function(element) {
+                        return $('#proximityPhrase1').val().length > 0 || $('#proximityPhrase2').val().length > 0
+                    }
+                }
+            },
         },
+        messages: {
+            query: "Please enter search term"
+        }
 	});
 }

@@ -319,8 +319,14 @@
 			
 			showFacets();
 			saveSearch();
-			createSummary();
+			validateSearchForm();
 
+			@if(q.res.getResults().isEmpty()) {
+				console.log('no results');
+			} else {
+				createSummary();
+			}
+			
 /*			var exclusions = getURLParameters('exclude');
 			console.log("exclusions: "+ exclusions);
 			$("input[name='exclude']").each(function() {
@@ -513,6 +519,7 @@
 									<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
 								</span>
 							</div>
+							<div id="errorBox"></div>
 						</div>
 					</div>
 

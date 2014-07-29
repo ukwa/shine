@@ -267,9 +267,6 @@ public class Shine extends Solr {
 				parameters = new SolrQuery();
 			// The query:
 			// ?start=0&sort=content_type_norm+asc&q=wikipedia+crawl_date:[2009-06-01T00%3A00%3A00Z+TO+2011-06-01T00%3A00%3A00Z]&facet.field={!ex%3Dcrawl_year}crawl_year&facet.field={!ex%3Dpublic_suffix}public_suffix&facet=true&facet.mincount=1&rows=10
-			if (StringUtils.isEmpty(query.query)) {
-				query.query = "*:*";
-			}
 			parameters.add("q", query.query);
 	
 			Map<String, FacetValue> facetValues = query.facetValues;

@@ -53,3 +53,22 @@ a.facet-sort:link    { text-decoration:none; }
 .white-text {
     color: #fff !important;
 }
+
+#search-form .form-group label.error {
+    color: #FB3A3A;
+    display: inline-block;
+    margin: 4px 0 5px;
+    padding: 0;
+    text-align: left;
+    width: 220px;
+}
+
+#search-form #errorBox {
+	color: #FB3A3A;
+    display: inline-block;
+    margin: 4px 0 5px;
+    padding: 0;
+    text-align: left;
+    width: 220px;
+}
+	
