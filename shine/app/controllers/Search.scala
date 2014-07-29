@@ -36,7 +36,7 @@ import java.util.Date
 
 object Search extends Controller {
 
-  case class AdvancedData(
+  case class SearchData(
       query: String, 
       proximityPhrase1: Option[String], 
       proximityPhrase2: Option[String], 
@@ -53,7 +53,7 @@ object Search extends Controller {
       collection: Option[String]
   )
 
-  val advancedForm = Form(
+  val searchForm = Form(
 	mapping(
 	  "query" -> text,
 	  "proximityPhrase1" -> optional(text),
@@ -69,7 +69,7 @@ object Search extends Controller {
 	  "pageTitle" -> optional(text),
 	  "author" -> optional(text),
 	  "collection" -> optional(text)
-	)(AdvancedData.apply)(AdvancedData.unapply)
+	)(SearchData.apply)(SearchData.unapply)
   )
 
   
@@ -89,8 +89,15 @@ object Search extends Controller {
   }
 
   def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
+    
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+    
+    val form = searchForm.bindFromRequest(request.queryString)
+
     val action = request.getQueryString("action")
-    var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 
     action match {
 		case Some(parameter) => {
@@ -99,7 +106,8 @@ object Search extends Controller {
 			if (parameter.equals("reset-facets")) {
 				println("resetting facets")
 				solr.resetFacets()
-				parameters = collection.immutable.Map(resetParameters(parameters).toSeq: _*)
+				var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
+				resetParameters(parameters)
 				// also remove this stuff - facet.in.crawl_year="2008"&facet.out.public_suffix="co.uk"
 			} 
 		}
@@ -108,8 +116,8 @@ object Search extends Controller {
 		}
 	}
     
-    val q = doSearch(query, parameters)
-
+    val q = doSearchForm(form, request.queryString)
+    
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
     println("Page #: " + pageNo)
@@ -117,15 +125,10 @@ object Search extends Controller {
 
     pagination.update(totalRecords, pageNo)
     
-    var user : User = null
-	request.session.get("username").map { username =>
-	  	user = User.findByEmail(username.toLowerCase())
-    }
-	
     Cache.getAs[Map[String, FacetValue]]("facet.values") match {
 	    case Some(value) => {
 	    	play.api.Logger.debug("getting value from cache ...")
-	    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search"))
+	    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search", form))
 		}
 		case None => {
 			println("None")
@@ -161,40 +164,20 @@ object Search extends Controller {
 	  	user = User.findByEmail(username.toLowerCase())
     }
     
-    val phrase1 = request.queryString.get("proximity-phrase-1")
-    val phrase2 = request.queryString.get("proximity-phrase-2")
-    val proximity = request.queryString.get("proximity")
-    val form = advancedForm.bindFromRequest(request.queryString)
-    println("phrase1: " + phrase1.isEmpty)
-    println("phrase2: " + phrase2.isEmpty)
-    println("proximity: " + proximity.isEmpty)
+    val form = searchForm.bindFromRequest(request.queryString)
 	println("advancedData: " + form.data)
 	println("query form: " + getData(form.data.get("query")))
 
-    // all empty - fine
-    // at least one empty no
-//    if (true) {
-////      Redirect("/search/advanced").flashing(
-////    		  "success" -> "Please enter all proximity fields"
-////    		  )
-//      q = new Query(query)
-//      BadRequest(html.search.advanced("Advanced Search", user, q, null, sort, order, "search", advancedForm.withGlobalError("Please enter all proximity fields")))	
-//    } 
-//
-    // fill query with form data
-	    //val advancedData : AdvancedData = form.get 
-	    
-    
-        val q = doAdvancedForm(form, request.queryString)
-	
-	    val totalRecords = q.res.getResults().getNumFound().intValue()
-	
-	    println("Page #: " + pageNo)
-	    println("totalRecords #: " + totalRecords)
-	
-	    pagination.update(totalRecords, pageNo)
+    val q = doAdvancedForm(form, request.queryString)
 
-	    Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form))
+    val totalRecords = q.res.getResults().getNumFound().intValue()
+
+    println("Page #: " + pageNo)
+    println("totalRecords #: " + totalRecords)
+
+    pagination.update(totalRecords, pageNo)
+
+    Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form))
   }
     
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -511,12 +494,18 @@ object Search extends Controller {
     println("new query created: " + q.facets)
     solr.search(q)
   }
-
-  // TODO: will sort out parameters
-  def doAdvancedForm(form: Form[controllers.Search.AdvancedData], parameters: Map[String, Seq[String]]) = {
+  
+  def doSearchForm(form: Form[controllers.Search.SearchData], parameters: Map[String, Seq[String]]) = {
+	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
+	val query = new Query(getData(form.data.get("query")), parametersAsJava)
+    println("doSearchForm: " + query)
+    solr.search(query)
+  }
+  
+  def doAdvancedForm(form: Form[controllers.Search.SearchData], parameters: Map[String, Seq[String]]) = {
 	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
 	val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("exclude")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava)
-    println("doAdvanced: " + query)
+    println("doAdvancedForm: " + query)
     solr.advancedSearch(query)
   }
 

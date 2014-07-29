@@ -188,54 +188,13 @@ public class Query {
 		if (parameters.get("order") != null) {
 			order = parameters.get("order").get(0);
 		}
-		
-//		if (parameters.get("websiteTitle") != null) {
-//			websiteTitle = parameters.get("websiteTitle").get(0);
-//		}
-//		if (parameters.get("pageTitle") != null) {
-//			pageTitle = parameters.get("pageTitle").get(0);
-//		}
-//		if (parameters.get("author") != null) {
-//			author = parameters.get("author").get(0);
-//		}
-//		if (parameters.get("url") != null) {
-//			url = parameters.get("url").get(0);
-//		}
-//		if (parameters.get("fileFormat") != null) {
-//			fileFormat = parameters.get("fileFormat").get(0);
-//		}
-//		if (parameters.get("proximity-phrase-1") != null) {
-//			proximity.setPhrase1(parameters.get("proximity-phrase-1").get(0));
-//		}
-//		if (parameters.get("proximity-phrase-2") != null) {
-//			proximity.setPhrase2(parameters.get("proximity-phrase-2").get(0));
-//		}
-//		if (parameters.get("proximity") != null) {
-//			proximity.setProximity(parameters.get("proximity").get(0));
-//		}
-	    	    
-//		if (proximities != null && proximities.size() == 3) {
-//			proximity = new Proximity();
-//			proximity.setPhrase1(proximities.get(0));
-//			proximity.setPhrase2(proximities.get(1));
-//			proximity.setProximity(proximities.get(2));
-//			Logger.info("" + proximity.getPhrase1() + " " + proximity.getPhrase2() + " " + proximity.getProximity());
-//		}
+
 		if (parameters.get("datestart") != null) {
 			dateStart = parameters.get("datestart").get(0).replace("\"", "");
 		}
 		if (parameters.get("dateend") != null) {
 			dateEnd = parameters.get("dateend").get(0).replace("\"", "");
 		}
-//		if (parameters.get("excluded") != null) {
-//			excluded = parameters.get("excluded").get(0);
-//		}		
-//		if (parameters.get("hostDomainPublicSuffix") != null) {
-//			hostDomainPublicSuffix = parameters.get("hostDomainPublicSuffix").get(0);
-//		}
-//		if (parameters.get("urlHostDomainPublicSuffix") != null) {
-//			urlHostDomainPublicSuffix = parameters.get("urlHostDomainPublicSuffix").get(0);
-//		}
 	}
 	
 	public String getCheckedInString(String facet_name, String value ) {
@@ -329,8 +288,6 @@ public class Query {
 
 		this.responseParameters = this.responseFacetParameters();
 		
-		// process advance search parameters
-
 		this.responseParameters += processAdvancedSearchParameters();
 		
 		this.responseParameters += processExclusionsParameters();
