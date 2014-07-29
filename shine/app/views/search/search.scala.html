@@ -325,6 +325,10 @@
 			showFacets();
 			saveSearch();
 			validateSearchForm();
+			
+			if ($('#search-summary').html().trim().length > 0) {
+				$('#summary').removeClass('hide');
+			}
 
 			@if(q.res.getResults().isEmpty()) {
 				console.log('no results');
@@ -528,12 +532,12 @@
 						</div>
 					</div>
 
-					<div class="padding-20">
+					<div class="padding-20 hide" id="summary">
 						<div class="alert alert-info">
 							<ul id="search-summary">
 							</ul>
 						</div>
-					</div>
+					</div>					
 
 					<div class="padding-20 hide" id="max-view-reached">
 						<div class="alert alert-danger alert-dismissable">

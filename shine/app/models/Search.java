@@ -6,12 +6,10 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import play.db.ebean.Model;
-
 import play.data.validation.Constraints;
 import play.data.format.Formats;
 
@@ -82,6 +80,10 @@ public class Search extends Model {
         return find.all();
     }
 
+    public static Search find(Long id) {
+    	return find.where().eq("id", id).findUnique();
+    }
+
     /**
      * Create a new search.
      */
@@ -90,5 +92,4 @@ public class Search extends Model {
 		search.save();
 		return search;
    }
-
 }

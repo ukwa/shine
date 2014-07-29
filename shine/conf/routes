@@ -36,6 +36,7 @@ GET     /account/password                   controllers.Account.changePassword
 POST    /account/changepassword             controllers.Account.updatePassword
 GET     /search/mysearches                  controllers.Account.mySearches
 GET     /search/save                     	controllers.Account.saveSearch(name, description, summary, url)
+POST    /search/mysearches/:id/delete       controllers.Account.deleteSearch(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
 

@@ -287,8 +287,8 @@ public class Query {
 
 		this.responseParameters = this.responseFacetParameters();
 		
+		// should only be for advanced search
 		this.responseParameters += processAdvancedSearchParameters();
-		
 		this.responseParameters += processExclusionsParameters();
 		
 		// 1980-01-01T12:00:00Z
@@ -411,12 +411,14 @@ public class Query {
 			parameters.append("&dateEnd=").append(dateEnd);
 		if (StringUtils.isNotEmpty(excluded))
 			parameters.append("&excluded=").append(excluded);
-		if (StringUtils.isNotEmpty(proximity.getPhrase1()))
-			parameters.append("&proximity=").append(proximity.getPhrase1());
-		if (StringUtils.isNotEmpty(proximity.getPhrase2()))
-			parameters.append("&proximity=").append(proximity.getPhrase2());
-		if (StringUtils.isNotEmpty(proximity.getProximity()))
-			parameters.append("&proximity=").append(proximity.getProximity());
+		if (proximity != null) {
+			if (StringUtils.isNotEmpty(proximity.getPhrase1()))
+				parameters.append("&proximity=").append(proximity.getPhrase1());
+			if (StringUtils.isNotEmpty(proximity.getPhrase2()))
+				parameters.append("&proximity=").append(proximity.getPhrase2());
+			if (StringUtils.isNotEmpty(proximity.getProximity()))
+				parameters.append("&proximity=").append(proximity.getProximity());
+		}
 		if (StringUtils.isNotEmpty(hostDomainPublicSuffix))
 			parameters.append("&hostDomainPublicSuffix=").append(hostDomainPublicSuffix);
 		//parameters.append("urlHostDomainPublicSuffix=").append(urlHostDomainPublicSuffix);

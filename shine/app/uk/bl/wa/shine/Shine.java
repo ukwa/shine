@@ -345,7 +345,7 @@ public class Shine extends Solr {
 				processDateRange(parameters, query.dateStart, query.dateEnd);
 				processProximity(parameters, query.proximity);
 				
-//				processExcluded(parameters, query.excluded);
+				processExcluded(parameters, query.excluded);
 				processHostDomainPublicSuffix(parameters, query.hostDomainPublicSuffix);
 //				processUrlHostDomainPublicSuffix(parameters, query.urlHostDomainPublicSuffix);
 			} catch (ParseException e) {
