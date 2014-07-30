@@ -80,19 +80,8 @@ public class Shine extends Solr {
 		return this.search(query, perPage);
 	}
 
-	public Query export(Query query) throws SolrServerException {
-		Query q = this.search(query, 0);
-		int total = (int)q.res.getResults().getNumFound();
-		Logger.info("exporting total: " + total);
-		return this.search(query, total);
-	}
-	
 	public Query search(Query query, int rows) throws SolrServerException {
 		return this.search(query, buildInitialParameters(query), rows);
-	}
-	
-	public Query advancedSearch(Query query) throws SolrServerException {
-		return this.advancedSearch(query, buildInitialParameters(query));
 	}
 	
 	public Query browse(Query query) throws SolrServerException {
@@ -102,12 +91,14 @@ public class Shine extends Solr {
 	public Query graph(Query query) throws SolrServerException {
 		return this.graph(query, buildInitialParameters(query));
 	}
-
-//	private Query search(Query query, SolrQuery solrParameters) throws SolrServerException {
-//		return this.search(query, solrParameters, perPage);
-//	}
 	
-	// usually for faceted search
+	public Query export(Query query) throws SolrServerException {
+		Query q = this.search(query, 0);
+		int total = (int)q.res.getResults().getNumFound();
+		Logger.info("exporting total: " + total);
+		return this.search(query, total);
+	}
+
 	private Query search(Query query, SolrQuery solrParameters, int rows) throws SolrServerException {
 		
 		Map<String, List<String>> parameters = query.getParameters();
@@ -173,22 +164,9 @@ public class Shine extends Solr {
 		    Logger.info("post: query.facetValues: " + query.facetValues);
 	    }
 		
-		// TODO: what if you need all results for exporting?
 		solrParameters.setRows(rows);
-		Logger.info("ROWS>>>>" + rows);
-		// get me 0 rows first and re-get with total
+
 		return doSearch(query, solrParameters);
-	}
-
-
-	private Query advancedSearch(Query query, SolrQuery parameters) throws SolrServerException {
-		// facets available on the advanced search fields
-		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
-		// build up facetValues with parameters
-		Logger.info("advancedSearch parameters: " + query.filters + " - " + parameters);
-		parameters.setRows(perPage);
-		query.facetValues = facetValues;
-		return doSearch(query, parameters);
 	}
 
 	private Query browse(Query query, SolrQuery parameters) throws SolrServerException {

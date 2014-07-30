@@ -96,6 +96,7 @@ object Search extends Controller {
     }
     
     val form = searchForm.bindFromRequest(request.queryString)
+    val q = doAdvancedForm(form, request.queryString)
 
     val action = request.getQueryString("action")
 
@@ -116,7 +117,6 @@ object Search extends Controller {
 		}
 	}
     
-    val q = doSearchForm(form, request.queryString)
     
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -165,10 +165,9 @@ object Search extends Controller {
     }
     
     val form = searchForm.bindFromRequest(request.queryString)
-	println("advancedData: " + form.data)
-	println("query form: " + getData(form.data.get("query")))
-
     val q = doAdvancedForm(form, request.queryString)
+
+    println("advancedData: " + form.data)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -262,7 +261,8 @@ object Search extends Controller {
   def concordance(query: String) = Action { implicit request =>
     println("advanced_search")
 
-    val q = doAdvanced(query, request.queryString)
+    val form = searchForm.bindFromRequest(request.queryString)
+    val q = doAdvancedForm(form, request.queryString)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -488,6 +488,7 @@ object Search extends Controller {
     solr.export(q)
   }
   
+  // for ajax
   def doSearch(query: String, parameters: Map[String, Seq[String]]) = {
     // parses parameters and creates me a query object
     var q = createQuery(query, parameters)
@@ -506,13 +507,7 @@ object Search extends Controller {
 	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
 	val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("exclude")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava)
     println("doAdvancedForm: " + query)
-    solr.advancedSearch(query)
-  }
-
-  def doAdvanced(query: String, parameters: Map[String, Seq[String]]) = {
-    val q = createQuery(query, parameters)
-    println("doAdvanced: " + q.proximity)
-    solr.advancedSearch(q)
+    solr.search(query)
   }
 
   def doBrowse(query: String, parameters: Map[String, Seq[String]]) = {
