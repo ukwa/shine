@@ -18,6 +18,7 @@
 			    e.preventDefault();
 			    $('#confirm').modal('show')
 			        .on('click', '#delete', function() {
+			        	console.log('delete');
 			            $form.trigger('submit'); // submit the form
 			        });
 			});
@@ -36,29 +37,23 @@
 	<h1>@title</h1>
 		
 	@if(user != null) {
-	    <article  class="search">
-	        <ol class="list">
-				@for(search <- searches) {
-					@helper.form(routes.Account.deleteSearch(search.id)) {
-		               	<li>
-		               		<div class="pull-left">
-		               			@(search.name)
-		               		</div>
-		               		<div class="pull-right">
-		               		    <button type="button" data-dismiss="modal" class="btn btn-danger" name="delete_search">Delete</button>
-		               		</div>
-		               		<br/>
-		               		<ul>
-		               			<a href="../@(search.url)">
-		               				@Html(search.summary)
-		               			</a>
-		               		</ul>
-		               	</li>
-					}
-		        }
-	        </ol>
-	    </article>
-	    
+        <table class="table table-condensed">
+			@for(search <- searches) {
+				<tr>
+	               	<td>
+              			@(search.name) @(search.description)
+						<a href="../@(search.url)">
+	          					@(search.summary)
+						</a>
+	               	</td>
+	               	<td>
+						@helper.form(routes.Account.deleteSearch(search.id)) {
+	              		    	<button type="button" data-dismiss="modal" class="btn btn-danger" name="delete_search">Delete</button>
+						}
+					</td>
+	       		</tr>
+	        }
+		</table>	    
 		<div id="confirm" class="modal fade" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-vertical-centered">
 		    	<div class="modal-content">

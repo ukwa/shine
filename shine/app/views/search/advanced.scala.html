@@ -343,8 +343,8 @@
 			
 			@if(q.res.getResults().isEmpty()) {
 				console.log('no results');
+				$('#summary').addClass('hide');
 		    	$('#filter-panel').collapse('show');
-				//$('#filter-panel').removeClass('in').removeClass('collapse').add('collapsing').removeClass('collapsing').addClass('collapse');
 			} else {
 				console.log('got results');
 				createSummary();
@@ -641,7 +641,7 @@
 					</div>			
 				</div>
 				
-				<div class="padding-20 hide" id="summary">
+				<div class="padding-20" id="summary">
 					<div class="alert alert-info">
 						<ul id="search-summary">
 						</ul>

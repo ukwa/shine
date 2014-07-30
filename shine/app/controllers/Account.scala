@@ -99,7 +99,10 @@ object Account extends Controller {
 		// insert stuff
 	    //Ok(views.html.mySearches("My Searches", user))
 		// redirect back to search you just saved.
-		val search = models.Search.create(name, description, summary, url, user.id)
+		println("summary: " + summary)
+		val newSummary = summary.replace("<li>", " ").replace("</li><li>", " ").replace("</li>", " ").trim()
+		println("newSummary: " + newSummary)
+		val search = models.Search.create(name, description, newSummary, url, user.id)
 		println("saved search: " + search.name + " - " + search.summary + " - " + search.url + " - " + search.user_id)
 		Ok("false")
 	    //Redirect(routes.Account.mySearches).flashing("success" -> "Search was added")

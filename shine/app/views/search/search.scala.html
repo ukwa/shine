@@ -326,12 +326,9 @@
 			saveSearch();
 			validateSearchForm();
 			
-			if ($('#search-summary').html().trim().length > 0) {
-				$('#summary').removeClass('hide');
-			}
-
 			@if(q.res.getResults().isEmpty()) {
 				console.log('no results');
+				$('#summary').addClass('hide');
 			} else {
 				createSummary();
 			}
@@ -455,7 +452,7 @@
 												}
 			        								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
 			        								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-			          								<a href="@(routes.Search.search(q.query))@(q.getParamsPlusFilter(fc.getName(),f.getName()))">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
+			          								@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span>
 			          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 			          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 												</li>
@@ -532,7 +529,7 @@
 						</div>
 					</div>
 
-					<div class="padding-20 hide" id="summary">
+					<div class="padding-20" id="summary">
 						<div class="alert alert-info">
 							<ul id="search-summary">
 							</ul>
