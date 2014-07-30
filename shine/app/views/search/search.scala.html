@@ -315,14 +315,6 @@
 				});
 			}
 			
-			function csvLink() {
-				//$('#csv-export').attr("href", "search/export/csv" + $('#current-url').text());
-				$('#csv-export').on('click', function(event) {
-					event.preventDefault();
-					location.href="search/export/csv" + $('#current-url').text();
-				});
-			}
-
 			showFacets();
 			saveSearch();
 			validateSearchForm();
@@ -607,6 +599,7 @@
 			</div>
 		}
 	</div>
+	<input type="hidden" id="export_url" value="@routes.Search.exportSearch()">
 	
 	@saveSearchModal()
 }

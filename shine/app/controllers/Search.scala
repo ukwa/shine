@@ -476,6 +476,15 @@ object Search extends Controller {
     }
   }
 
+  def getField(key: String, parameters: Map[String, Seq[String]]) = {
+	val list = parameters.get(key)
+	if (!list.isEmpty) {
+	  list.get(0)
+	} else {
+	  ""
+	}
+  }
+  
   def createQuery(query: String, parameters: Map[String, Seq[String]]) = {
     val map = parameters
     val parametersAsJava = map.map { case (k, v) => (k, v.asJava) }.asJava;
@@ -485,8 +494,26 @@ object Search extends Controller {
 
   def doExport(query: String, parameters: Map[String, Seq[String]]) = {
     // parses parameters and creates me a query object
-    var q = createQuery(query, parameters)
-    println("new query created: " + q.facets)
+	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
+
+	println("doExport")
+
+	val q = new Query(query, 
+	    getField("proximityPhrase1", parameters), 
+	    getField("proximityPhrase2", parameters), 
+	    getField("proximity", parameters), 
+	    getField("exclude", parameters), 
+	    getField("dateStart", parameters), 
+	    getField("dateEnd", parameters),  
+	    getField("url", parameters), 
+	    getField("hostDomainPublicSuffix", parameters), 
+	    getField("fileFormat", parameters), 
+	    getField("websiteTitle", parameters), 
+	    getField("pageTitle", parameters),  
+	    getField("author", parameters),  
+	    getField("collection", parameters),  
+	    parametersAsJava)
+    
     solr.export(q)
   }
   

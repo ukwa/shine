@@ -437,3 +437,9 @@ function validateAdvancedSearchForm() {
 	});
 }
 
+function csvLink() {
+	$('#csv-export').on('click', function(event) {
+		event.preventDefault();
+		window.location.href=$('#export_url').val() + $('#current-url').text();
+	});
+}
