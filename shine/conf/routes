@@ -19,7 +19,7 @@ GET     /search/browse            			controllers.Search.browse(query ?= "*:*", p
 
 GET     /search/concordance                 controllers.Search.concordance(query ?= "*:*")
 
-GET     /search/export/csv					controllers.Search.exportSearch(query ?= "")
+GET     /search/export/csv					controllers.Search.exportSearch()
 
 # TBD: The main hook for the explore/trend analysis/delve UI.
 

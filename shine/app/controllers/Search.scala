@@ -138,12 +138,14 @@ object Search extends Controller {
     }
   }
   
-  def exportSearch(query: String) = Action { implicit request =>
+  def exportSearch() = Action { implicit request =>
     var user : User = null
 	request.session.get("username").map { username =>
 	  	user = User.findByEmail(username.toLowerCase())
     }
 	var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
+	val query = request.getQueryString("query").get
+	println("query: " + query)
 	val q = doExport(query, parameters)
 	val totalRecords = q.res.getResults().getNumFound().intValue()
 	println("exporting to CSV #: " + totalRecords)
@@ -480,7 +482,7 @@ object Search extends Controller {
     println("doInit: " + parametersAsJava);
     new Query(query, parametersAsJava)
   }
-  
+
   def doExport(query: String, parameters: Map[String, Seq[String]]) = {
     // parses parameters and creates me a query object
     var q = createQuery(query, parameters)
@@ -488,7 +490,6 @@ object Search extends Controller {
     solr.export(q)
   }
   
-  // for ajax
   def doSearch(query: String, parameters: Map[String, Seq[String]]) = {
     // parses parameters and creates me a query object
     var q = createQuery(query, parameters)

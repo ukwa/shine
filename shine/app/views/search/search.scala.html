@@ -315,16 +315,18 @@
 				});
 			}
 			
-			
-			$('#csv-export').attr("href", "/search/export/csv" + $('#current-url').text());
-			
-			$('#csv-export').on('click', function() {
-				//$('#ajax-loader').show();
-			});
-			
+			function csvLink() {
+				//$('#csv-export').attr("href", "search/export/csv" + $('#current-url').text());
+				$('#csv-export').on('click', function(event) {
+					event.preventDefault();
+					location.href="search/export/csv" + $('#current-url').text();
+				});
+			}
+
 			showFacets();
 			saveSearch();
 			validateSearchForm();
+			csvLink();
 			
 			@if(q.res.getResults().isEmpty()) {
 				console.log('no results');
@@ -547,11 +549,14 @@
 						<div class="panel-heading filter-heading">
                             <h4 class="panel-title pull-left filter-heading-title">
                                 Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
-                            </h4><span class="hide" id="current-url"></span>
+                            </h4>
+                            <span class="hide" id="current-url"></span>
                             <div class="form-inline pull-right">
-                            	<div class="form-group">
-                            		<a href="" id="csv-export"><img id="csv-button-basic" src="assets/images/csv.png"></a>
-                            	</div>
+                            	@if(!q.res.getResults().isEmpty()) {
+	                            	<div class="form-group">
+	                            		<button type="button" id="csv-export" class="btn btn-primary" name="action" value="csv">CSV</button>
+	                            	</div>
+                            	}
 								<div class="form-group">
 									<select class="form-control" name="sort" id="sort">
 										<!-- get from some where -->

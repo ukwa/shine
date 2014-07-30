@@ -33,6 +33,8 @@
 	  		$('#order').val('@(currentOrder)')
 			$("#date-from").datepicker({ dateFormat: "dd/mm/yy" });
 			$("#date-to").datepicker({ dateFormat: "dd/mm/yy" });
+			
+	  		$('#current-url').text(window.location.search);
 
 	    	//$('#filter-panel').collapse('show');
 	    	
@@ -375,8 +377,18 @@
 				});
 			}
 			
+			function csvLink() {
+				//$('#csv-export').attr("href", "search/export/csv" + $('#current-url').text());
+				$('#csv-export').on('click', function(event) {
+					event.preventDefault();
+					console.log($('#export_url').val() + $('#current-url').text());
+					//window.location.href=$('#export_url').val() + $('#current-url').text();
+				});
+			}
+			
 			validateAdvancedSearchForm();
 			saveAdvancedSearch();
+			csvLink();
 		});
 	</script>
 }
@@ -657,12 +669,19 @@
 								
 				<div class="panel panel-default">
 					<div class="panel-heading filter-heading">
-	                    <h4 class="panel-title pull-left filter-heading-title" id="result-header">
-	                        Results @currentPage.getDisplayXtoYofZ(" to "," of ")
+	                    <h4 class="panel-title pull-left filter-heading-title">
+	                        Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
 	                    </h4>
-	                    <div class="form-inline pull-right">
-							<div class="form-group">
+                        <span class="hide" id="current-url"></span>
+                       	<div class="form-inline pull-right">
+                          	@if(!q.res.getResults().isEmpty()) {
+<!-- 	                         	<div class="form-group" style="margin-right:20px">
+                            		<button type="button" id="csv-export" class="btn btn-primary" name="action" value="csv">CSV</button>
+	                         	</div> -->
+	                         }
+							<div class="form-group" style="margin-right:15px">
 								<select class="form-control" name="sort" id="sort">
+									<!-- get from some where -->
 									<option value="content_type_norm">Title</option>
 									<option value="crawl_date">Crawl Date</option>
 									<option value="content_type_norm">Content</option>
@@ -670,7 +689,7 @@
 									<option value="sentiment_score">Score</option>
 								</select>
 							</div>
-							<div class="form-group">
+							<div class="form-group" style="margin-right:5px">
 								<select class="form-control" name="order" id="order">
 									<option value="asc">Asc</option>
 									<option value="desc">Desc</option>
@@ -678,6 +697,7 @@
 							</div>
 						</div>
 					</div>
+
 					@if(!q.res.getResults().isEmpty()) {
 						<div class="panel-body">
 							@pagination
@@ -712,6 +732,7 @@
 			</div>
 		</div>
 	</div>
+	<input type="hidden" id="export_url" value="@routes.Search.exportSearch()">
 	
 	@saveSearchModal()
 	
