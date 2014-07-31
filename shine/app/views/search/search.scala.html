@@ -6,11 +6,11 @@
 @implicitFieldConstructor = @{ FieldConstructor(searchInput.f) }
 
 @styles = {
-	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
 }
 
 @scripts = {
+	<script src="@routes.Assets.at("javascripts/tooltip.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("javascripts/jquery.validate.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
 	
@@ -423,8 +423,12 @@
 						<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
 						<input type="hidden" name="page" value="@(currentPage.getCurrentPage)" />
 						<div class="padding-5 pull-right">
-							<a id="facet-sort-value" class="facet-sort" href=""><span class="label label-primary">value</span></a>
-							<a id="facet-sort-count" class="facet-sort" href=""><span class="label label-primary">count</span></a> 
+							<button class="facet-sort btn btn-primary btn-xs" type="button" value="value" id="facet-sort-value" data-toggle="tooltip" data-placement="top" title="Sort by Index">
+								<span class="glyphicon glyphicon-sort-by-alphabet"></span>
+							</button>
+							<button class="facet-sort btn btn-primary btn-xs" type="button" value="count" id="facet-sort-count" data-toggle="tooltip" data-placement="top" title="Sort by Count">
+								<span class="glyphicon glyphicon-sort-by-order-alt"></span>
+							</button>
 						</div>
 						@if(q.res.getFacetFields() != null) {
 							@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
@@ -485,23 +489,29 @@
 							}
 						}
 						<div class="panel-body">
-							<button class="btn btn-primary btn-xs" type="submit" name="action" value="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
-							@if(optionalFacets.size >= 1) {
-								<span class="input-group pull-right">
-									<button class="btn btn-primary btn-xs" type="submit" name="action" value="add-facet"><span>Add Facet</span></button>
-									<div class="btn-group">
-	  									<div class="form-group">
+							<div class="row pull-right">
+								<div class="col-md-12 col-sm-12">
+									@if(optionalFacets.size >= 1) {
+										<div class="input-group">
 											<select class="form-control" name="selected.facet" id="facet-values">
 												@for((key, value) <- optionalFacets) {
 													<option value="@key">@value.getValue()</option>
 												}
 											</select>
-										</div>
-									</div>
-								</span>
-							}
+											<span class="input-group-btn">
+												<button class="btn btn-primary" type="submit" name="action" value="add-facet"><span>Add Facet</span></button>
+											</span>
+										</div><!-- /input-group -->
+									}
+								</div>
+							</div>
+							<div class="row pull-right reset-facets">
+								<div class="col-md-12 col-sm-12">
+									<button class="btn btn-primary" type="submit" name="action" value="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
+								</div>
+							</div>
 						</div>
-						
+
 					</div>
 				</div>
 		

@@ -1,5 +1,7 @@
 $(function () {
-
+	
+	$("[data-toggle=tooltip]").tooltip();
+	
 	$('#query').keypress(function(event){
 		var keycode = (event.keyCode ? event.keyCode : event.which);
 		if(keycode == '13'){
@@ -72,45 +74,45 @@ $(function () {
 	
 	// read in what was submitted
 	$facet_sort_input = $('#facet-sort');
-	$link_sort_count = $('a#facet-sort-count').find('span.label');
-	$link_sort_value = $('a#facet-sort-value').find('span.label');
+	$link_sort_count = $('#facet-sort-count');
+	$link_sort_value = $('#facet-sort-value');
 
 	if ($facet_sort_input.attr('checked') === undefined) {
-		$("a.facet-sort").each(function(index) {
+		$(".facet-sort").each(function(index) {
 			// unchecked then reset all buttons
-			var $link_span = $(this).find('span.label');
-			$link_span.removeClass('label-success');
-			$link_span.addClass('label-primary');
+			var $link_span = $(this);
+			$link_span.removeClass('btn-success');
+			$link_span.addClass('btn-primary');
 		});
 	} else {
 		if ($facet_sort_input.val() == 'count') {
-			$link_sort_count.removeClass('label-primary');
-			$link_sort_count.addClass('label-success');
+			$link_sort_count.removeClass('btn-primary');
+			$link_sort_count.addClass('btn-success');
 		} else if ($facet_sort_input.val() == 'index') {
-			$link_sort_value.removeClass('label-primary');
-			$link_sort_value.addClass('label-success');
+			$link_sort_value.removeClass('btn-primary');
+			$link_sort_value.addClass('btn-success');
 		}
 	}
 
 	// on clicks
-	$("a.facet-sort").each(function(index) {
-		var $link_span = $(this).find('span.label');
+	$("button.facet-sort").each(function(index) {
+		var $link_span = $(this);
 		$(this).click(function(event) {
 			event.preventDefault();
-			if ($link_span.hasClass('label-primary')) {
+			if ($link_span.hasClass('btn-primary')) {
 				// SELECTED
-				$link_span.removeClass('label-primary');
-				$link_span.addClass('label-success');
-				if ($link_span.text() == 'count') {
+				$link_span.removeClass('btn-primary');
+				$link_span.addClass('btn-success');
+				if ($link_span.val() == 'count') {
 					$facet_sort_input.val("count");
-				} else if ($link_span.text() == 'value') {
+				} else if ($link_span.val() == 'value') {
 					$facet_sort_input.val("index");
 				}
 				$facet_sort_input.attr("checked", "checked");
 			} else {
 				// DESELECTED
-				$link_span.removeClass('label-success');
-				$link_span.addClass('label-primary');
+				$link_span.removeClass('btn-success');
+				$link_span.addClass('btn-primary');
 				$facet_sort_input.val("");
 				$facet_sort_input.removeAttr("checked");
 			}

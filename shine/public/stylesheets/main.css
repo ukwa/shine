@@ -71,4 +71,12 @@ a.facet-sort:link    { text-decoration:none; }
     text-align: left;
     width: 220px;
 }
-	
+
+.reset-facets {
+	margin-top:5px;
+}
+
+.tooltip-inner {
+    white-space: pre-wrap;
+    min-width: 100px;
+}	
