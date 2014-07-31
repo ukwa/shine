@@ -95,9 +95,6 @@ object Search extends Controller {
 	  	user = User.findByEmail(username.toLowerCase())
     }
     
-    val form = searchForm.bindFromRequest(request.queryString)
-    val q = doAdvancedForm(form, request.queryString)
-
     val action = request.getQueryString("action")
 
     action match {
@@ -109,6 +106,7 @@ object Search extends Controller {
 				solr.resetFacets()
 				var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 				resetParameters(parameters)
+				println("resetted parameters: " + parameters)
 				// also remove this stuff - facet.in.crawl_year="2008"&facet.out.public_suffix="co.uk"
 			} 
 		}
@@ -117,6 +115,8 @@ object Search extends Controller {
 		}
 	}
     
+    val form = searchForm.bindFromRequest(request.queryString)
+    val q = doSearchForm(form, request.queryString)
     
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -167,7 +167,7 @@ object Search extends Controller {
     }
     
     val form = searchForm.bindFromRequest(request.queryString)
-    val q = doAdvancedForm(form, request.queryString)
+    val q = doSearchForm(form, request.queryString)
 
     println("advancedData: " + form.data)
 
@@ -264,7 +264,7 @@ object Search extends Controller {
     println("advanced_search")
 
     val form = searchForm.bindFromRequest(request.queryString)
-    val q = doAdvancedForm(form, request.queryString)
+    val q = doSearchForm(form, request.queryString)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -526,13 +526,6 @@ object Search extends Controller {
   
   def doSearchForm(form: Form[controllers.Search.SearchData], parameters: Map[String, Seq[String]]) = {
 	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
-	val query = new Query(getData(form.data.get("query")), parametersAsJava)
-    println("doSearchForm: " + query)
-    solr.search(query)
-  }
-  
-  def doAdvancedForm(form: Form[controllers.Search.SearchData], parameters: Map[String, Seq[String]]) = {
-	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
 	val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("exclude")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava)
     println("doAdvancedForm: " + query)
     solr.search(query)
@@ -717,6 +710,24 @@ object Search extends Controller {
     Ok(collectionJson)
   }
 
+  def resetFacets(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
+	println("resetting facets")
+	solr.resetFacets()
+	var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
+	resetParameters(parameters)
+
+	var user : User = null
+	
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+    
+    val form = searchForm.bindFromRequest(request.queryString)
+    val q = doSearchForm(form, request.queryString)
+    
+	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null, "search", form))
+  }
+  
   def resetParameters(parameters: collection.immutable.Map[String, Seq[String]]) = {
     val map = collection.mutable.Map(parameters.toSeq: _*)
     println("pre: " + map)

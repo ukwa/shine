@@ -446,7 +446,7 @@
 												}
 			        								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
 			        								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-			          								@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span>
+			        								<a href="#">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
 			          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 			          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 												</li>

@@ -21,6 +21,8 @@ GET     /search/concordance                 controllers.Search.concordance(query
 
 GET     /search/export/csv					controllers.Search.exportSearch()
 
+POST    /search/reset/facets				controllers.Search.resetFacets(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+
 # TBD: The main hook for the explore/trend analysis/delve UI.
 
 GET     /graph								controllers.Search.plot_graph(query ?= "*:*", year_start ?= "2000", year_end ?= "2015")
