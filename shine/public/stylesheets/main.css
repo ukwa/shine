@@ -88,7 +88,7 @@ a.facet-sort:link    { text-decoration:none; }
 }
 
 .modal-vertical-centered-progress {
-	transform: translate(0, 75%) !important;
-  	-ms-transform: translate(0, 75%) !important; /* IE 9 */
-  	-webkit-transform: translate(0, 75%) !important; /* Safari and Chrome */
+	transform: translate(0, 300%) !important;
+  	-ms-transform: translate(0, 300%) !important; /* IE 9 */
+  	-webkit-transform: translate(0, 300%) !important; /* Safari and Chrome */
 }		
