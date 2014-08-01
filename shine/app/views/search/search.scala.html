@@ -378,7 +378,7 @@
 			<ul class="pagination">
 				@if(currentPage.hasPreviousPage) {
 	            	<li class="prev">
-	            		<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage-1)" class="paging">&laquo;</a>
+	            		<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage-1)" class="paging" data-toggle="tooltip" data-placement="left" title="Page @(currentPage.getCurrentPage-1)">&laquo;</a>
 	                </li>
 	            } else {
 	                <li class="prev disabled">
@@ -397,7 +397,7 @@
 				}
 	        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
 	                <li class="next" id="list-@(index)">
-	                    <a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage+1)" class="paging">&raquo;</a>
+	                    <a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage+1)" class="paging" data-toggle="tooltip" data-placement="right" title="Page @(currentPage.getCurrentPage+1)">&raquo;</a>
 	                </li>
 	            } else {
 	                <li class="next disabled">
@@ -499,7 +499,7 @@
 												}
 											</select>
 											<span class="input-group-btn">
-												<button class="btn btn-primary" type="submit" name="action" value="add-facet"><span>Add Facet</span></button>
+												<button class="btn btn-primary" type="submit" name="action" value="add-facet" data-toggle="tooltip" data-placement="top" title="Add Facet to the above list"><span>Add Facet</span> <span class="glyphicon glyphicon-plus"></span></button>
 											</span>
 										</div><!-- /input-group -->
 									}
@@ -507,7 +507,7 @@
 							</div>
 							<div class="row pull-right reset-facets">
 								<div class="col-md-12 col-sm-12">
-									<button class="btn btn-primary" type="submit" name="action" value="reset-facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
+									<button class="btn btn-primary" type="submit" name="action" value="reset-facets" data-toggle="tooltip" data-placement="left" title="Resets Optional Facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
 								</div>
 							</div>
 						</div>
@@ -556,7 +556,7 @@
                             <div class="form-inline pull-right">
                             	@if(!q.res.getResults().isEmpty()) {
 	                            	<div class="form-group">
-	                            		<button type="button" id="csv-export" class="btn btn-primary" name="action" value="csv">CSV</button>
+	                            		<button type="button" id="csv-export" class="btn btn-primary" name="action" value="csv" data-toggle="tooltip" data-placement="top" title="Export Standard Version">CSV</button>
 	                            	</div>
                             	}
 								<div class="form-group">
@@ -589,7 +589,7 @@
 												@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
 											</h4>
 											<div class="checkbox pull-right">
-												<input type="checkbox" name="exclude" value="@d.getFirstValue("id_long")">
+												<input type="checkbox" name="exclude" value="@d.getFirstValue("id_long")" data-toggle="tooltip" data-placement="top" title="Remove from Results">
 											</div>
 											<p class="list-group-item-text">
 													@d.getFirstValue("crawl_date")<br />

@@ -114,5 +114,5 @@ object Account extends Controller {
   def deleteSearch(id:Long) = Action { implicit request =>
     	models.Search.find(id).delete
         Redirect(routes.Account.mySearches()).flashing("success" -> "Your search has been deleted")
-  }
+  }  
 }
