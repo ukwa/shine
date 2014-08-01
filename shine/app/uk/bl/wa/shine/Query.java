@@ -85,7 +85,7 @@ public class Query {
 	
 	public Map<String, List<String>> parameters;
 	
-	private List<String> exclusions;
+	private List<String> excludeDocs;
 	
 	public Query(String query) {
 		this.query = query;
@@ -123,7 +123,7 @@ public class Query {
 	private void init() {
 		facets = new ArrayList<String>();
 		facetValues = new HashMap<String, FacetValue>();
-		this.exclusions = new ArrayList<String>();
+		this.excludeDocs = new ArrayList<String>();
 		this.parseParameters();
 	}
 	
@@ -150,14 +150,12 @@ public class Query {
 			}
 		}
 		
-//		Logger.info("facets: " + facets);
-//		Logger.info("filters: " + filters);
-		if (parameters.get("exclude") != null) {
-			Iterator<String> iterator = parameters.get("exclude").iterator();
+		if (parameters.get("excludeDoc") != null) {
+			Iterator<String> iterator = parameters.get("excludeDoc").iterator();
 			while (iterator.hasNext()) {
 				String exclude = iterator.next();
-				Logger.info("exclude >>>" + exclude);
-				exclusions.add(exclude);
+				Logger.info("excludeDoc >>>" + exclude);
+				excludeDocs.add(exclude);
 			}
 		}
 		
@@ -289,6 +287,7 @@ public class Query {
 		
 		// should only be for advanced search
 		this.responseParameters += processAdvancedSearchParameters();
+		// this is for filtering exclusions from checkboxes
 		this.responseParameters += processExclusionsParameters();
 		
 		// 1980-01-01T12:00:00Z
@@ -361,8 +360,8 @@ public class Query {
 		}
 	}
 
-	public List<String> getExclusions() {
-		return exclusions;
+	public List<String> getExcludeDocs() {
+		return excludeDocs;
 	}
 
 	private String responseFacetParameters() {
@@ -428,8 +427,8 @@ public class Query {
 	
 	private String processExclusionsParameters() {
 		StringBuilder parameters = new StringBuilder("");
-		for (String exclude : this.exclusions) {
-			parameters.append("&exclude=").append(exclude);
+		for (String exclude : this.excludeDocs) {
+			parameters.append("&excludeDoc=").append(exclude);
 		}
 		return parameters.toString();
 	}

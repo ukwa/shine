@@ -323,7 +323,6 @@ public class Shine extends Solr {
 				processDateRange(parameters, query.dateStart, query.dateEnd);
 				processProximity(parameters, query.proximity);
 				
-				processExcluded(parameters, query.excluded);
 				processHostDomainPublicSuffix(parameters, query.hostDomainPublicSuffix);
 //				processUrlHostDomainPublicSuffix(parameters, query.urlHostDomainPublicSuffix);
 			} catch (ParseException e) {
@@ -349,11 +348,12 @@ public class Shine extends Solr {
 			// might take a long time
 			List<SolrDocument> docs = query.res.getResults();
 			
+			// filter exclusions
 			if (!query.res.getResults().isEmpty()) {
 				for (Iterator<SolrDocument> iterator = docs.iterator(); iterator.hasNext(); ) {
 					SolrDocument doc = iterator.next();
-					if (query.getExclusions().contains(String.valueOf(doc.getFirstValue("id_long")))) {
-						Logger.info("matched: " + String.valueOf(doc.getFirstValue("id_long")) + " - " + doc.getFirstValue("title"));
+					if (query.getExcludeDocs().contains(String.valueOf(doc.getFirstValue("id")))) {
+						Logger.info("matched: " + String.valueOf(doc.getFirstValue("id")) + " - " + doc.getFirstValue("title"));
 				        iterator.remove();
 					}
 				}

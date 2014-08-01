@@ -60,7 +60,14 @@
 			
 			$('#search').on('click', function(event) {
 				event.preventDefault();
-				$('#search-form').submit();
+				if ($('#search-form').valid()) {
+				    $('#modalLoader').modal({
+				        backdrop: true,
+				        keyboard: true
+				    }).css({
+				    });
+					$('#search-form').submit();
+				}
 				//processSearch();
 			});
 			
@@ -589,7 +596,7 @@
 												@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
 											</h4>
 											<div class="checkbox pull-right">
-												<input type="checkbox" name="exclude" value="@d.getFirstValue("id_long")" data-toggle="tooltip" data-placement="top" title="Remove from Results">
+												<input type="checkbox" name="excludeDoc" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Remove from Results">
 											</div>
 											<p class="list-group-item-text">
 													@d.getFirstValue("crawl_date")<br />
@@ -612,4 +619,6 @@
 	<input type="hidden" id="export_url" value="@routes.Search.exportSearch()">
 	
 	@saveSearchModal()
+	@modalLoader()
+	
 }

@@ -79,4 +79,16 @@ a.facet-sort:link    { text-decoration:none; }
 .tooltip-inner {
     white-space: pre-wrap;
     min-width: 150px;
-}	
+}
+
+.modal-vertical-centered {
+	transform: translate(0, 50%) !important;
+  	-ms-transform: translate(0, 50%) !important; /* IE 9 */
+  	-webkit-transform: translate(0, 50%) !important; /* Safari and Chrome */
+}
+
+.modal-vertical-centered-progress {
+	transform: translate(0, 75%) !important;
+  	-ms-transform: translate(0, 75%) !important; /* IE 9 */
+  	-webkit-transform: translate(0, 75%) !important; /* Safari and Chrome */
+}		
