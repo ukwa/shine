@@ -281,6 +281,11 @@
 					$('input', '#search-form').each(function(){
 					    $(this).val() == "" && $(this).attr("disabled", "disabled");
 					})
+				    $('#modalLoader').modal({
+				        backdrop: true,
+				        keyboard: true
+				    }).css({
+				    });
 				}
 				$('#search-form').submit();
 
@@ -726,6 +731,6 @@
 	<input type="hidden" id="export_url" value="@routes.Search.exportSearch()">
 	
 	@saveSearchModal()
-	
+	@modalLoader()
 	
 }
