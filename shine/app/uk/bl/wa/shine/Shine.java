@@ -21,6 +21,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.params.FacetParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -69,6 +70,11 @@ public class Shine extends Solr {
 		}
 
 		parameters.set("start", start);
+		
+		parameters.setParam(FacetParams.FACET_METHOD, FacetParams.FACET_METHOD_enum);
+		parameters.setParam(FacetParams.FACET_ENUM_CACHE_MINDF, "25");
+		
+		Logger.info("facet methods set");
 		// Sorts:
 		// parameters.setSort("sentiment_score", ORDER.asc);
 		Logger.info("params: " + parameters);
