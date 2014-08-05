@@ -87,6 +87,8 @@ public class Query {
 	
 	private List<String> excludeDocs;
 	
+	public Query() {}
+	
 	public Query(String query) {
 		this.query = query;
 		this.init();

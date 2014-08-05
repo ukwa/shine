@@ -326,7 +326,7 @@
 			validateSearchForm();
 			csvLink();
 			
-			@if(q.res.getResults().isEmpty()) {
+			@if(q != null && q.res.getResults().isEmpty()) {
 				console.log('no results');
 				$('#summary').addClass('hide');
 			} else {
@@ -347,9 +347,11 @@
 }
 
 @getName(facetName: String) = @{
-	cachedFacets.get(facetName) match {
-      case Some(value) => { value.getValue }
-      case None => { println("nothing") }
+    if (cachedFacets != null) {
+		cachedFacets.get(facetName) match {
+	      case Some(value) => { value.getValue }
+	      case None => { println("nothing") }
+		}
 	}
 }
 
@@ -379,7 +381,7 @@
 }
 
 @pagination = {
-	@if(currentPage.getTotalItems > 0) {
+	@if(currentPage != null && currentPage.getTotalItems > 0) {
 		<div class="text-center paging-tabs">
 			<ul class="pagination">
 				@if(currentPage.hasPreviousPage) {
@@ -426,98 +428,102 @@
 			<div class="row">
 				<div class="col-md-4 col-sm-4">
 					<div class="panel panel-default">
-						<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
-						<input type="hidden" name="page" value="@(currentPage.getCurrentPage)" />
-						<div class="padding-5 pull-right">
-							<button class="facet-sort btn btn-primary btn-xs" type="button" value="value" id="facet-sort-value" data-toggle="tooltip" data-placement="top" title="Sort by Index">
-								<span class="glyphicon glyphicon-sort-by-alphabet"></span>
-							</button>
-							<button class="facet-sort btn btn-primary btn-xs" type="button" value="count" id="facet-sort-count" data-toggle="tooltip" data-placement="top" title="Sort by Count">
-								<span class="glyphicon glyphicon-sort-by-order-alt"></span>
-							</button>
-						</div>
-						@if(q.res.getFacetFields() != null) {
-							@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
-								<div class="panel-body">
-				    				<div>
-			        					<a><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
-			        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
-			        					<button class="btn btn-primary btn-xs facet-remove" type="button" name="action" value="remove-facet">
-			        						<span class="glyphicon glyphicon-remove"></span>
-			        					</button>
-				    				</div>
-				    				<div class="facet-index">
-			      						<ul class="list-unstyled">
-											@for((f, i) <- fc.getValues().zipWithIndex) {
-												@if(i >= facetLimit) {
-			        								<li class="facet-options hide">
-												} else {
-			        								<li class="facet-options show" data-attr="default">
-												}
-			        								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
-			        								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-			        								<a href="#">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
-			          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-			          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-												</li>
-										        <!-- dynamically add checked="true"? -->
-										        <!-- OR use some kind of link constructor? -->
-											}
-											@if((fc.getValues().size - facetLimit) > 0) {
-												<li> 
-		        									<a id="@(fc.getName())" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
-		        								</li>
-	        								}
-											<li>
-	        									<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
-											</li>
-											
-			    						</ul>
-										<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
-											<span class="input-group-btn">
-	        									<button class="add-facet-button btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
-	      									</span>
-											<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
-											<span class="input-group-sm input-group-addon">
-												<a href="#" title="Include" class="add-facet-value">
-													<span class="glyphicon glyphicon-plus-sign"></span>
-												</a>&nbsp;
-												<a href="#" title="Exclude" class="remove-facet-value">
-													<span class="glyphicon glyphicon-minus-sign"></span>
-												</a>
-											</span>
-											<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
-											</span>
-	
-										</div>
-				    				</div>
-				  				</div>
+						@if(q != null) {
+							<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
+							@if(currentPage != null) {
+								<input type="hidden" name="page" value="@(currentPage.getCurrentPage)" />
 							}
-						}
-						<div class="panel-body">
-							<div class="row pull-right">
-								<div class="col-md-12 col-sm-12">
-									@if(optionalFacets.size >= 1) {
-										<div class="input-group">
-											<select class="form-control" name="selected.facet" id="facet-values">
-												@for((key, value) <- optionalFacets) {
-													<option value="@key">@value.getValue()</option>
+							<div class="padding-5 pull-right">
+								<button class="facet-sort btn btn-primary btn-xs" type="button" value="value" id="facet-sort-value" data-toggle="tooltip" data-placement="top" title="Sort by Index">
+									<span class="glyphicon glyphicon-sort-by-alphabet"></span>
+								</button>
+								<button class="facet-sort btn btn-primary btn-xs" type="button" value="count" id="facet-sort-count" data-toggle="tooltip" data-placement="top" title="Sort by Count">
+									<span class="glyphicon glyphicon-sort-by-order-alt"></span>
+								</button>
+							</div>
+						
+							@if(q.res.getFacetFields() != null) {
+								@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
+									<div class="panel-body">
+					    				<div>
+				        					<a><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
+				        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
+				        					<button class="btn btn-primary btn-xs facet-remove" type="button" name="action" value="remove-facet">
+				        						<span class="glyphicon glyphicon-remove"></span>
+				        					</button>
+					    				</div>
+					    				<div class="facet-index">
+				      						<ul class="list-unstyled">
+												@for((f, i) <- fc.getValues().zipWithIndex) {
+													@if(i >= facetLimit) {
+				        								<li class="facet-options hide">
+													} else {
+				        								<li class="facet-options show" data-attr="default">
+													}
+				        								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
+				        								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
+				        								<a href="#">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
+				          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
+				          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
+													</li>
+											        <!-- dynamically add checked="true"? -->
+											        <!-- OR use some kind of link constructor? -->
 												}
-											</select>
-											<span class="input-group-btn">
-												<button class="btn btn-primary" type="submit" name="action" value="add-facet" data-toggle="tooltip" data-placement="top" title="Add Facet to the above list"><span>Add Facet</span> <span class="glyphicon glyphicon-plus"></span></button>
-											</span>
-										</div><!-- /input-group -->
-									}
+												@if((fc.getValues().size - facetLimit) > 0) {
+													<li> 
+			        									<a id="@(fc.getName())" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
+			        								</li>
+		        								}
+												<li>
+		        									<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
+												</li>
+												
+				    						</ul>
+											<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
+												<span class="input-group-btn">
+		        									<button class="add-facet-button btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+		      									</span>
+												<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
+												<span class="input-group-sm input-group-addon">
+													<a href="#" title="Include" class="add-facet-value">
+														<span class="glyphicon glyphicon-plus-sign"></span>
+													</a>&nbsp;
+													<a href="#" title="Exclude" class="remove-facet-value">
+														<span class="glyphicon glyphicon-minus-sign"></span>
+													</a>
+												</span>
+												<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
+												</span>
+		
+											</div>
+					    				</div>
+					  				</div>
+								}
+							}
+							<div class="panel-body">
+								<div class="row pull-right">
+									<div class="col-md-12 col-sm-12">
+										@if(optionalFacets.size >= 1) {
+											<div class="input-group">
+												<select class="form-control" name="selected.facet" id="facet-values">
+													@for((key, value) <- optionalFacets) {
+														<option value="@key">@value.getValue()</option>
+													}
+												</select>
+												<span class="input-group-btn">
+													<button class="btn btn-primary" type="submit" name="action" value="add-facet" data-toggle="tooltip" data-placement="top" title="Add Facet to the above list"><span>Add Facet</span> <span class="glyphicon glyphicon-plus"></span></button>
+												</span>
+											</div><!-- /input-group -->
+										}
+									</div>
+								</div>
+								<div class="row pull-right reset-facets">
+									<div class="col-md-12 col-sm-12">
+										<button class="btn btn-primary" type="submit" name="action" value="reset-facets" data-toggle="tooltip" data-placement="left" title="Resets Optional Facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
+									</div>
 								</div>
 							</div>
-							<div class="row pull-right reset-facets">
-								<div class="col-md-12 col-sm-12">
-									<button class="btn btn-primary" type="submit" name="action" value="reset-facets" data-toggle="tooltip" data-placement="left" title="Resets Optional Facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
-								</div>
-							</div>
-						</div>
-
+						}
 					</div>
 				</div>
 		
@@ -556,11 +562,13 @@
 					<div class="panel panel-default">
 						<div class="panel-heading filter-heading">
                             <h4 class="panel-title pull-left filter-heading-title">
+                            @if(currentPage != null) {
                                 Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
+                            }
                             </h4>
                             <span class="hide" id="current-url"></span>
                             <div class="form-inline pull-right">
-                            	@if(!q.res.getResults().isEmpty()) {
+                            	@if(q != null && !q.res.getResults().isEmpty()) {
 	                            	<div class="form-group">
 	                            		<button type="button" id="csv-export" class="btn btn-primary" name="action" value="csv" data-toggle="tooltip" data-placement="top" title="Export Standard Version">CSV</button>
 	                            	</div>
@@ -588,23 +596,25 @@
 							@pagination
 	
 							<div id="result-set">
-								@for((d, index) <- q.res.getResults().zipWithIndex) {
-									<div class="list-group">
-										<span class="list-group-item" href="#">
-											<h4 class="list-group-item-heading">
-												@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
-											</h4>
-											<div class="checkbox pull-right">
-												<input type="checkbox" name="excludeDoc" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Remove from Results">
-											</div>
-											<p class="list-group-item-text">
-													@d.getFirstValue("crawl_date")<br />
-													@d.getFirstValue("content_type_norm")<br />
-													@d.getFirstValue("domain")<br />
-													@d.getFirstValue("sentiment_score")
-											</p>
-										</span>
-									</div>
+								@if(q != null) {
+									@for((d, index) <- q.res.getResults().zipWithIndex) {
+										<div class="list-group">
+											<span class="list-group-item" href="#">
+												<h4 class="list-group-item-heading">
+													@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
+												</h4>
+												<div class="checkbox pull-right">
+													<input type="checkbox" name="excludeDoc" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Remove from Results">
+												</div>
+												<p class="list-group-item-text">
+														@d.getFirstValue("crawl_date")<br />
+														@d.getFirstValue("content_type_norm")<br />
+														@d.getFirstValue("domain")<br />
+														@d.getFirstValue("sentiment_score")
+												</p>
+											</span>
+										</div>
+									}
 								}
 							</div>
 							@pagination

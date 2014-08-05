@@ -116,25 +116,30 @@ object Search extends Controller {
 	}
     
     val form = searchForm.bindFromRequest(request.queryString)
-    val q = doSearchForm(form, request.queryString)
-    
-    val totalRecords = q.res.getResults().getNumFound().intValue()
-
-    println("Page #: " + pageNo)
-    println("totalRecords #: " + totalRecords)
-
-    pagination.update(totalRecords, pageNo)
-    
-    Cache.getAs[Map[String, FacetValue]]("facet.values") match {
-	    case Some(value) => {
-	    	play.api.Logger.debug("getting value from cache ...")
-	    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search", form))
-		}
-		case None => {
-			println("None")
-			// doesn't go this far
-	    	Ok("")
-		}
+    if (StringUtils.isNotBlank(query)) {
+	    val q = doSearchForm(form, request.queryString)
+	    
+	    val totalRecords = q.res.getResults().getNumFound().intValue()
+	
+	    println("Page #: " + pageNo)
+	    println("totalRecords #: " + totalRecords)
+	
+	    pagination.update(totalRecords, pageNo)
+	    
+	    Cache.getAs[Map[String, FacetValue]]("facet.values") match {
+		    case Some(value) => {
+		    	play.api.Logger.debug("getting value from cache ...")
+		    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search", form))
+			}
+			case None => {
+				println("None")
+				// doesn't go this far
+		    	Ok("")
+			}
+	    }
+    } else {
+		play.api.Logger.debug("blank query")
+		Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form))
     }
   }
   
