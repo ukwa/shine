@@ -16,12 +16,28 @@ $(function () {
 		//clearFacets();
 	});
 	
-	$('#sort').change(function() {
-		$('#search-form').submit();
+	$('#sort').change(function(event) {
+		console.log('sort');
+		event.preventDefault();
+		if ($('#search-form').valid()) {
+		    $('#modalLoader').modal({
+		        backdrop: true,
+		        keyboard: true
+		    });
+			$('#search-form').submit();
+		}
 	});
 
-	$('#order').change(function() {
-		$('#search-form').submit();
+	$('#order').change(function(event) {
+		console.log('order');
+		event.preventDefault();
+		if ($('#search-form').valid()) {
+		    $('#modalLoader').modal({
+		        backdrop: true,
+		        keyboard: true
+		    });
+			$('#search-form').submit();
+		}
 	});
 
 	$(".add-more-button").each(function(index) {
@@ -99,6 +115,12 @@ $(function () {
 		var $link_span = $(this);
 		$(this).click(function(event) {
 			event.preventDefault();
+			if ($('#search-form').valid()) {
+			    $('#modalLoader').modal({
+			        backdrop: true,
+			        keyboard: true
+			    });
+			}
 			if ($link_span.hasClass('btn-primary')) {
 				// SELECTED
 				$link_span.removeClass('btn-primary');
@@ -235,6 +257,12 @@ $(function () {
 	$('.facet-remove').each(function() {
 		$(this).click(function(event) {
 			event.preventDefault();
+			if ($('#search-form').valid()) {
+			    $('#modalLoader').modal({
+			        backdrop: true,
+			        keyboard: true
+			    });
+			}
 			var value = $(this).parent().find("input").val();
 			console.log(value);
 			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("remove-facet");
