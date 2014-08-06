@@ -42,7 +42,7 @@ doQuery("NO-FACETS-ALL", None, base_ndq + "&q=*:*")
 
 # Pseudo-random word queries:
 
-words = [ "jam", "bananas", "gary barlow", "doctor who", "sherlock holmes", "lossless" ]
+words = [ "jam", "bananas", "gary barlow", "doctor who", "sherlock holmes", "lossless", "tony blair" ]
 for word in words:
 	doQuery("NO-FACETS-"+word, None, base_ndq + ("&q=\"%s\"" % word ) )
 
@@ -50,7 +50,11 @@ for word in words:
 # Facets
 facet_method = "&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20" #&facet.method=enum&facet.enum.cache.minDf=100"
 facets = ["public_suffix", "content_type_norm", "crawl_years", "content_language", "links_public_suffixes", "author", "postcode_district", "domain", "links_domains", 
-          "generator", "content_type", "content_type_full", "content_type_tika", "content_type_droid", "content_ffb", "content_type_ext" ]
+          "generator", "content_type", "content_type_full", "content_type_tika", "content_type_droid", "content_ffb", "content_type_ext",
+          "elements_used", "content_encoding", "contet_type_served" ]
+# Generator appears to bump RAM (bumped to 18GB during building) quite a bit - perhaps many of these should be DocValues? 
+# Added the elements_used pushed to 19GB.
+# But fast once cached.
 
 # Date Range Faceting (harder work I think):
 facet_date_range_1y = "&facet.date=crawl_dates&facet.date.start=1994-01-01T00:00:00Z&facet.date.end=NOW/YEAR%2B1YEAR&facet.date.gap=%2B1YEAR"
