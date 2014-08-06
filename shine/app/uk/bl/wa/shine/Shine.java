@@ -117,7 +117,8 @@ public class Shine extends Solr {
 	    query.facetValues = facetService.getSelected();
 	    
 	    // check incoming parameter list
-	    Logger.info("pre-adding>>>> " + query.facetValues);
+	    Logger.info("actionParameters: " + actionParameters);
+	    Logger.info("parameters: " + parameters);
 	    
 	    if (actionParameters != null) {
 		    String action = actionParameters.get(0);
@@ -165,12 +166,21 @@ public class Shine extends Solr {
 						Logger.info("query.facetValues >>> " + query.facetValues);
 //					}
 				}
+
 			}
 		    Logger.info("post: query.facets: " + query.facets);
 		    Logger.info("post: query.facetValues: " + query.facetValues);
 	    }
 		
 		solrParameters.setRows(rows);
+		
+//		if (parameters.get("facet.sort") == null) {
+//			Logger.info("facet.sort: " + parameters.get("facet.sort"));
+//			solrParameters.setFacetSort("index");
+//			Logger.info("set to index");
+//		}
+		
+		Logger.info("solrParameters: " + solrParameters);
 
 		return doSearch(query, solrParameters);
 	}
@@ -237,8 +247,6 @@ public class Shine extends Solr {
 		Logger.info("end date: " + end);
 		solrParameters.addDateRangeFacet("crawl_date", start, end, "+1YEAR");
 		solrParameters.setFacetSort("index");
-		Logger.info("start date: " + query.yearStart);
-		Logger.info("start end: " + query.yearEnd);
 		return doSearch(query, solrParameters);
 	}
 
