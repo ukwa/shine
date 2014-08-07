@@ -114,12 +114,12 @@ def runQueries(endpoint):
 	print("TIMING %s (s) for %s " %(elapsed.seconds, endpoint))
 
 
-runQueries("http://192.168.1.182:8983/solr/jisc5/select")
+#runQueries("http://192.168.1.182:8983/solr/jisc5/select")
 
 # Loop over endpoints:
 endpoint_template = "http://%s:%s/solr/jisc5/select"
-#hosts = [ "192.168.1.181", "192.168.1.182", "192.168.1.203", "192.168.1.215" ]
-hosts = [ "192.168.1.203", "192.168.1.215" ]
+hosts = [ "192.168.1.181", "192.168.1.182", "192.168.1.203", "192.168.1.215" ]
+#hosts = [ "192.168.1.203", "192.168.1.215" ]
 ports = ["8983", "8984", "8985", "8986", "8987", "8988"]
 for host in hosts:
     for port in ports:
