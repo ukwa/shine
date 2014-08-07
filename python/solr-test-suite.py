@@ -38,7 +38,7 @@ def doQuery(tag, facet, url):
 		print("WARNING: numFound = 0!")
 	print(tag + ".numFound " + str(numFound))
 	if rj.has_key('facet_counts'):
-		pprint(tag + ".facetValues[0] " + rj['facet_counts']['facet_fields'][facet][0])
+		print(tag + ".facetValues[0] " + rj['facet_counts']['facet_fields'][facet][0])
 	sys.stdout.flush()
 
 
