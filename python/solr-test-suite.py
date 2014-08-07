@@ -38,7 +38,8 @@ def doQuery(tag, facet, url):
 		print("WARNING: numFound = 0!")
 	print(tag + ".numFound " + str(numFound))
 	if rj.has_key('facet_counts'):
-		pprint(rj['facet_counts']['facet_fields'][facet][0])
+		pprint(tag + ".facetValues[0] " + rj['facet_counts']['facet_fields'][facet][0])
+	sys.stdout.flush()
 
 
 def runQueries(endpoint):
@@ -112,5 +113,14 @@ def runQueries(endpoint):
 	elapsed = end_time - start_time
 	print("TIMING %s (s) for %s " %(elapsed.seconds, endpoint))
 
-runQueries("http://192.168.1.215:8983/solr/jisc5/select")
-runQueries("http://192.168.1.215:8984/solr/jisc5/select")
+
+runQueries("http://192.168.1.182:8983/solr/jisc5/select")
+
+# Loop over endpoints:
+endpoint_template = "http://%s:%s/solr/jisc5/select"
+#hosts = [ "192.168.1.181", "192.168.1.182", "192.168.1.203", "192.168.1.215" ]
+hosts = [ "192.168.1.203", "192.168.1.215" ]
+ports = ["8983", "8984", "8985", "8986", "8987", "8988"]
+for host in hosts:
+    for port in ports:
+        runQueries(endpoint_template % (host, port))
