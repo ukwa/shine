@@ -38,7 +38,8 @@ def doQuery(tag, facet, url):
 		print("WARNING: numFound = 0!")
 	print(tag + ".numFound " + str(numFound))
 	if rj.has_key('facet_counts'):
-		print(tag + ".facetValues[0] " + rj['facet_counts']['facet_fields'][facet][0])
+		if len(rj['facet_counts']['facet_fields'][facet]) > 0:
+		    print(tag + ".facetValues[0] " + rj['facet_counts']['facet_fields'][facet][0])
 	sys.stdout.flush()
 
 
@@ -46,7 +47,7 @@ def runQueries(endpoint):
 	print("Running queries against: "+endpoint)
 	start_time = datetime.datetime.now()
 	# Config:
-	base_ndq = "%s?wt=json&indent=true&distrib=false&sort=crawl_date+asc" % endpoint
+	base_ndq = "%s&sort=crawl_date+asc" % endpoint
 	# "&cache=false"
 
 	# Query for *:*:
@@ -114,10 +115,10 @@ def runQueries(endpoint):
 	print("TIMING %s (s) for %s " %(elapsed.seconds, endpoint))
 
 
-#runQueries("http://192.168.1.182:8983/solr/jisc5/select")
+# runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true")
 
 # Loop over endpoints:
-endpoint_template = "http://%s:%s/solr/jisc5/select"
+endpoint_template = "http://%s:%s/solr/jisc5/select?distrib=false&wt=json&indent=true"
 hosts = [ "192.168.1.181", "192.168.1.182", "192.168.1.203", "192.168.1.215" ]
 #hosts = [ "192.168.1.203", "192.168.1.215" ]
 ports = ["8983", "8984", "8985", "8986", "8987", "8988"]
