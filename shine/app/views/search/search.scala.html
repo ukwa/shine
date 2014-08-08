@@ -271,24 +271,47 @@
 				facetToggle($input_exclude, $link_span_exclude);
 
 				// for clicking on facet options (includes)
-				$(this).find('a.facet.include').click(function(event) {
-					event.preventDefault();
-					// change +/-
-					facetClickToggle($link_span_include, $input_include);
-					// TODO: grab current url from somewhere
-					//alert('test');
+				$(this).find('a.facet.include').each(function(index) {
 					var facet_name = $input_include.attr('name');
 					var facet_value = $input_include.val();
-					console.log(facet_name + " " + facet_value);
-//					var url = $('#current-url') + 
+					//console.log(facet_name + " " + facet_value);
+					var url = "search?" + $('#search-form').serialize();
+					// if not activated then remove
 
-					if ($('#search-form').valid()) {
-					    $('#modalLoader').modal({
-					        backdrop: true,
-					        keyboard: true
-					    });
-						$('#search-form').submit();
+					var span = $(this).find('span.glyphicon');
+					
+					var facet = facet_name + "=" + facet_value;
+					if (!span.hasClass('facet-selected')) {
+						// SELECTED
+						url = url + "&" + facet;
+					} else {
+						// i.e remove facet.in.crawl_year=%222007%22
+						facet_value = facet_value.replace('"', '%22').replace('"', '%22');
+						var reg = "^\".*\"$";
+						console.log("facet_value: " + facet_value);
+						var regex = new RegExp("&"+ facet_name + "=" + facet_value);
+						url = url.replace(regex,'');
+						console.log(url);
+						console.log("remove facet: " + facet);
 					}
+					
+					$(this).attr('href', url);
+					
+					$(this).click(function(event) {
+//						event.preventDefault();
+						// change +/-
+						facetClickToggle($link_span_include, $input_include);
+						//console.log($('#search-form').serialize());
+						
+						if ($('#search-form').valid()) {
+						    $('#modalLoader').modal({
+						        backdrop: true,
+						        keyboard: true
+						    });
+//							$('#search-form').submit();
+						}
+					});
+
 				});
 				
 				// for clicking on facet options (excludes)
@@ -320,6 +343,8 @@
 			}
 
 			function facetClickToggle($button, $element) {
+				console.log($button.attr('class') + " " + $element.attr('class'));
+				
 				if ($button.hasClass('facet-deselected')) {
 					// SELECTED
 					$button.removeClass('facet-deselected');
@@ -479,11 +504,17 @@
 									@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 										<div class="panel-body">
 						    				<div>
-					        					<a><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
+					        					<a class="facet-heading"><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
 					        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
-					        					<button class="btn btn-primary btn-xs facet-remove" type="button" name="action" value="remove-facet">
-					        						<span class="glyphicon glyphicon-remove"></span>
-					        					</button>
+												<div class="btn-group">
+													<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+														<span class="glyphicon glyphicon-cog"></span>
+													</button>
+													<ul class="dropdown-menu" role="menu">
+														<li><a href="#" class="facet-remove">(x) remove this facet</a></li>
+													</ul>
+												</div>
+					        										        					
 						    				</div>
 						    				<div class="facet-index">
 					      						<ul class="list-unstyled">
@@ -495,7 +526,7 @@
 														}
 					        								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
 					        								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-					        								<a href="#">@(Html(q.formatFacet(fc,f))) <span class="badge">@(f.getCount())</span></a>
+					        								<a class="facet-name">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span>
 					          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 					          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 														</li>
@@ -545,7 +576,7 @@
 													</select>
 													<span class="input-group-btn">
 														<button id="add-facet" class="btn btn-primary" type="button" name="action" value="add-facet" data-toggle="tooltip" data-placement="top" title="Add Facet to the above list"><span>Add Facet</span> <span class="glyphicon glyphicon-plus"></span></button>
-														<input type="hidden" name="action" value="" id="action" />
+														<input type="hidden" name="action" value="search" id="action" />
 													</span>
 												</div><!-- /input-group -->
 											}
@@ -664,13 +695,10 @@
 									<span class="input-group-btn">
 										<button id="search" type="button" class="btn btn-primary" name="action" value="search">Search</button>
 										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
-										@if(user != null) {
-											<button type="button" class="btn btn-primary" id="save-search" name="action" value="save">Save Search</button>
-										}
-										<input type="hidden" name="action" value="" id="action" />
 										<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
 									</span>
 								</div>
+								<input type="hidden" name="action" value="" id="action" />
 								<div id="errorBox"></div>
 							</div>
 						</div>

@@ -91,4 +91,14 @@ a.facet-sort:link    { text-decoration:none; }
 	transform: translate(0, 300%) !important;
   	-ms-transform: translate(0, 300%) !important; /* IE 9 */
   	-webkit-transform: translate(0, 300%) !important; /* Safari and Chrome */
+}
+
+li a.facet-name {
+	text-decoration:none;
+	color: #428bca;
+}
+
+div a.facet-heading {
+	text-decoration:none;
+	color: #428bca;
 }		

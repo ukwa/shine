@@ -112,13 +112,27 @@ public class Shine extends Solr {
 	    List<String> actionParameters = parameters.get("action");
 
 	    String selectedFacet = null;
-	    String removeFacet = null;
-
+	    
 	    query.facetValues = facetService.getSelected();
+	    
+	    List<String> removeFacets = parameters.get("remove.facet");
 	    
 	    // check incoming parameter list
 	    Logger.info("actionParameters: " + actionParameters);
 	    Logger.info("parameters: " + parameters);
+	    
+	    if (removeFacets != null) {
+		    for (String removeFacet : removeFacets) {
+			    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
+			    // from url parameters
+				query.facets.remove(removeFacet);
+			    // for filtering
+			    query.facetValues.remove(removeFacet);
+			    // for dropdown list
+			    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
+			    Logger.info("removing>>>> " + selectedFacetValue.getName());
+		    }
+	    }
 	    
 	    if (actionParameters != null) {
 		    String action = actionParameters.get(0);
@@ -137,24 +151,24 @@ public class Shine extends Solr {
 			    }
 			    
 			} else if (action.equals("remove-facet")) {
-			    removeFacet = parameters.get("remove.facet").get(0);
-			    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
-			    
-			    // from url parameters
-				query.facets.remove(removeFacet);
-			    // for filtering
-			    query.facetValues.remove(removeFacet);
-			    // for dropdown list
-			    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
-			    
-			    Logger.info("removing>>>> " + selectedFacetValue.getName());
+//			    removeFacet = parameters.get("remove.facet").get(0);
+//			    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
+//			    
+//			    // from url parameters
+//				query.facets.remove(removeFacet);
+//			    // for filtering
+//			    query.facetValues.remove(removeFacet);
+//			    // for dropdown list
+//			    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
+//			    
+//			    Logger.info("removing>>>> " + selectedFacetValue.getName());
 			} else if (action.equals("search")) {
 				//parameters.setParam("wt", "json");
 				// get the defaults
 				// facets that come from url parameters
 			    String[] facets = query.facets.toArray(new String[query.facets.size()]);
 			    
-			    Logger.info("searching....");
+			    Logger.info("searching...." + query.facets);
 			    
 				for (String facet : facets) {
 //					if (StringUtils.isNotEmpty(removeFacet) && !removeFacet.equals(facet)) {
@@ -246,7 +260,7 @@ public class Shine extends Solr {
 		Logger.info("start date: " + start);
 		Logger.info("end date: " + end);
 		solrParameters.addDateRangeFacet("crawl_date", start, end, "+1YEAR");
-		solrParameters.setFacetSort("index");
+		solrParameters.setFacetSort(FacetParams.FACET_SORT_INDEX);
 		return doSearch(query, solrParameters);
 	}
 
@@ -285,9 +299,9 @@ public class Shine extends Solr {
 			List<String> fq = new ArrayList<String>();
 			for (String param : params.keySet()) {
 				String field = param;
-				if (!param.equals("facet.sort")) {
-					parameters.setFacetSort("index");
-				}
+//				if (!param.equals("facet.sort")) {
+//					parameters.setFacetSort(FacetParams.FACET_SORT_INDEX);
+//				}
 				if (param.equals("facet.sort")) {
 					// there's only one sort
 					parameters.setFacetSort(params.get(param).get(0));

@@ -110,6 +110,14 @@ $(function () {
 		}
 	}
 
+	$('.facet-sort-count').each(function(index) {
+		
+	});
+	$('.facet-sort-value').each(function(index) {
+		
+	});
+
+	
 	// on clicks
 	$("button.facet-sort").each(function(index) {
 		var $link_span = $(this);
@@ -263,7 +271,7 @@ $(function () {
 			        keyboard: true
 			    });
 			}
-			var value = $(this).parent().find("input").val();
+			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
 			console.log(value);
 			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("remove-facet");
 			var input = $("<input>").attr("type", "hidden").attr("name", "remove.facet").val(value);

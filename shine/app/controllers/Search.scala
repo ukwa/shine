@@ -381,6 +381,14 @@ object Search extends Controller {
 	data
   }
   
+  def doAjaxSearch(query: String, parameters: Map[String, Seq[String]]) = {
+    // parses parameters and creates me a query object
+    var q = createQuery(query, parameters)
+    println("new query created: " + q.facets)
+    solr.search(q)
+  }
+  
+
   def ajaxSearch = Action { implicit request =>
     val query = request.getQueryString("query")
     val page = request.getQueryString("page")
@@ -422,7 +430,7 @@ object Search extends Controller {
 
     var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 
-    val q = doSearch(queryString, parameters)
+    val q = doAjaxSearch(queryString, parameters)
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -522,13 +530,6 @@ object Search extends Controller {
 	    parametersAsJava)
     
     solr.export(q)
-  }
-  
-  def doSearch(query: String, parameters: Map[String, Seq[String]]) = {
-    // parses parameters and creates me a query object
-    var q = createQuery(query, parameters)
-    println("new query created: " + q.facets)
-    solr.search(q)
   }
   
   def doSearchForm(form: Form[controllers.Search.SearchData], parameters: Map[String, Seq[String]]) = {
