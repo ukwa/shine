@@ -114,21 +114,27 @@ def runQueries(endpoint):
 	elapsed = end_time - start_time
 	print("TIMING %s (s) for %s " %(elapsed.seconds, endpoint))
 
-# Basic distrib mode:
-#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true")
+# Automatid distributed mode:
+runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true")
+
 # Attempt to control allocation of distrib mode across all four servers:
-runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=http://192.168.1.181:8983/solr/jisc5|http://192.168.1.181:8984/solr/jisc5|http://192.168.1.181:8985/solr/jisc5|http://192.168.1.181:8986/solr/jisc5|http://192.168.1.181:8987/solr/jisc5|http://192.168.1.181:8988/solr/jisc5|http://192.168.1.182:8983/solr/jisc5|http://192.168.1.182:8984/solr/jisc5|http://192.168.1.182:8985/solr/jisc5|http://192.168.1.182:8986/solr/jisc5|http://192.168.1.182:8987/solr/jisc5|http://192.168.1.182:8988/solr/jisc5|http://192.168.1.203:8983/solr/jisc5|http://192.168.1.203:8984/solr/jisc5|http://192.168.1.203:8985/solr/jisc5|http://192.168.1.203:8986/solr/jisc5|http://192.168.1.203:8987/solr/jisc5|http://192.168.1.203:8988/solr/jisc5|http://192.168.1.215:8983/solr/jisc5|http://192.168.1.215:8984/solr/jisc5|http://192.168.1.215:8985/solr/jisc5|http://192.168.1.215:8986/solr/jisc5|http://192.168.1.215:8987/solr/jisc5|http://192.168.1.215:8988/solr/jisc5")
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
+
+# Attempt to control allocation of distrib mode across just the two dedicated servers (181,182):
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.181:8989/solr/jisc5,192.168.1.181:8990/solr/jisc5,192.168.1.181:8991/solr/jisc5,192.168.1.181:8992/solr/jisc5,192.168.1.181:8993/solr/jisc5,192.168.1.181:8994/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.182:8989/solr/jisc5,192.168.1.182:8990/solr/jisc5,192.168.1.182:8991/solr/jisc5,192.168.1.182:8992/solr/jisc5,192.168.1.182:8993/solr/jisc5,192.168.1.182:8994/solr/jisc5")
 
 # Loop over endpoints:
 endpoint_template = "http://%s:%s/solr/jisc5/select?distrib=false&wt=json&indent=true"
-hosts = [ "192.168.1.181", "192.168.1.182", "192.168.1.203", "192.168.1.215" ]
+#hosts = [ "192.168.1.181", "192.168.1.182", "192.168.1.203", "192.168.1.215" ]
+hosts = [ "192.168.1.181", "192.168.1.182" ]
 #hosts = [ "192.168.1.203", "192.168.1.215" ]
-ports = ["8983", "8984", "8985", "8986", "8987", "8988"]
+#ports = ["8983", "8984", "8985", "8986", "8987", "8988"]
+ports = ["8983", "8984", "8985", "8986", "8987", "8988", "8989", "8990", "8991", "8992", "8993", "8994"]
 endpoints = []
 for host in hosts:
     for port in ports:
     	pass
-    	endpoints.append("http://%s:%s/solr/jisc5" % (host, port) )
+    	endpoints.append("%s:%s/solr/jisc5" % (host, port) )
         #runQueries(endpoint_template % (host, port))
 
-print("&shards=" + "|".join(endpoints))
+print("&shards=" + ",".join(endpoints))
