@@ -274,7 +274,7 @@ $(function () {
 			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
 			console.log(value);
 			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("remove-facet");
-			var input = $("<input>").attr("type", "hidden").attr("name", "remove.facet").val(value);
+			var input = $("<input>").attr("type", "hidden").attr("name", "removeFacet").val(value);
 			$('#search-form').append($(action));
 			$('#search-form').append($(input));
 			$('#search-form').submit();
@@ -437,6 +437,25 @@ function validateSearchForm() {
         },
         messages: {
             query: "Please enter search term"
+        }
+	});
+    
+}
+
+function validateFacetForm() {
+	
+    $('#search-form').validate({
+        rules: {
+        	selectedFacet: {
+                required: {
+                    depends: function(element) {
+                        return $('#action').val() == 'add-facet'
+                    }
+                }
+            }
+        },
+        messages: {
+        	selectedFacet: "Please select a facet"
         }
 	});
     

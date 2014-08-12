@@ -111,79 +111,60 @@ public class Shine extends Solr {
 		
 	    List<String> actionParameters = parameters.get("action");
 
-	    String selectedFacet = null;
 	    
 	    query.facetValues = facetService.getSelected();
 	    
-	    List<String> removeFacets = parameters.get("remove.facet");
+	    List<String> removeFacets = parameters.get("removeFacet");
 	    
 	    // check incoming parameter list
 	    Logger.info("actionParameters: " + actionParameters);
 	    Logger.info("parameters: " + parameters);
 	    
-	    if (removeFacets != null) {
-		    for (String removeFacet : removeFacets) {
-			    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
-			    // from url parameters
-				query.facets.remove(removeFacet);
-			    // for filtering
-			    query.facetValues.remove(removeFacet);
-			    // for dropdown list
-			    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
-			    Logger.info("removing>>>> " + selectedFacetValue.getName());
-		    }
-	    }
-	    
 	    if (actionParameters != null) {
+	    	
 		    String action = actionParameters.get(0);
+		    
+	    	// got through all that state removeFacet=[facet1, facet2, etc] and remove from list
+		    if (removeFacets != null) {
+			    for (String removeFacet : removeFacets) {
+				    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
+				    // from url parameters
+					query.facets.remove(removeFacet);
+				    // for filtering
+				    query.facetValues.remove(removeFacet);
+				    // for dropdown list
+				    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
+				    Logger.info("removing>>>> " + selectedFacetValue.getName());
+			    }
+		    }
+	    	
 			if (action.equals("add-facet")) {
-			    selectedFacet = parameters.get("selected.facet").get(0);
-			    FacetValue selectedFacetValue = getFacetValueByName(selectedFacet);
+			    String addFacet = parameters.get("addFacet").get(0);
+			    
+			    FacetValue addFacetValue = getFacetValueByName(addFacet);
 			    
 			    // TODO: if it doesn't already haveit in there
-			    if (!query.facets.contains(selectedFacet)) {
+			    if (!query.facets.contains(addFacet)) {
 				    // from url parameters
-				    query.facets.add(selectedFacet);
+				    query.facets.add(addFacet);
 				    // for filtering
-				    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
+				    query.facetValues.put(addFacetValue.getName(), addFacetValue);
 				    // for dropdown list
-				    facetService.getOptionals().remove(selectedFacet);
+				    facetService.getOptionals().remove(addFacet);
 			    }
-			    
-			} else if (action.equals("remove-facet")) {
-//			    removeFacet = parameters.get("remove.facet").get(0);
-//			    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
-//			    
-//			    // from url parameters
-//				query.facets.remove(removeFacet);
-//			    // for filtering
-//			    query.facetValues.remove(removeFacet);
-//			    // for dropdown list
-//			    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
-//			    
-//			    Logger.info("removing>>>> " + selectedFacetValue.getName());
 			} else if (action.equals("search")) {
 				//parameters.setParam("wt", "json");
 				// get the defaults
 				// facets that come from url parameters
 			    String[] facets = query.facets.toArray(new String[query.facets.size()]);
 			    
-			    Logger.info("searching...." + query.facets);
-			    
 				for (String facet : facets) {
-//					if (StringUtils.isNotEmpty(removeFacet) && !removeFacet.equals(facet)) {
-						Logger.info("facet >>>>>>>>>>>>>>> " + facet);
-					    FacetValue selectedFacetValue = getFacetValueByName(facet);
-						Logger.info("selectedFacetValue >>>>>>>>>>>>>>> " + selectedFacetValue.getValue());
-					    query.facets.add(facet);
-					    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
-						Logger.info("query.facetValues >>> " + query.facetValues);
-//					}
+				    FacetValue selectedFacetValue = getFacetValueByName(facet);
+				    query.facets.add(facet);
+				    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
 				}
 
 			}
-		    Logger.info("post: query.facets: " + query.facets);
-		    Logger.info("post: query.facetValues: " + query.facetValues);
 	    }
 		
 		solrParameters.setRows(rows);

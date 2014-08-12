@@ -94,8 +94,18 @@ object Search extends Controller {
 	request.session.get("username").map { username =>
 	  	user = User.findByEmail(username.toLowerCase())
     }
-    
-//   	println("action: " + request.body.asFormUrlEncoded.get("action"))
+
+//&facet.fields=crawl_year
+//&facet.fields=public_suffix
+//&selected.facet=author
+//
+//&action=add-facet
+//
+//&query=wikipedia
+//&sort=content_type_norm
+//&order=asc    
+
+    //   	println("action: " + request.body.asFormUrlEncoded.get("action"))
    	
     val action = request.getQueryString("action")
     println("action: " + action)

@@ -279,7 +279,7 @@
 				if($("#search-form").valid()) {
 					console.log('no errors');
 					$('input', '#search-form').each(function(){
-					    $(this).val() == "" && $(this).attr("disabled", "disabled");
+					    $(this).val() == "" && $(this).prop("disabled", true);
 					})
 				    $('#modalLoader').modal({
 				        backdrop: true,

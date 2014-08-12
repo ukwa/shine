@@ -54,30 +54,46 @@
 				return "/search?facet.sort=index&query=" + $("#query").val();
 			}
 
-			function getAjaxUrl() {
-				return "/ajaxSearch?facet.sort=index&query=" + $("#query").val();
-			}
-			
 			$('#search').on('click', function(event) {
 				if ($('#search-form').valid()) {
+					if ($('#addFacet').val() == "") {
+						$('#addFacet').prop("disabled", true);				
+					}
 				    $('#modalLoader').modal({
 				        backdrop: true,
 				        keyboard: true
 				    });
 				    $('#action').val('search');
+				    // add to parameters then submit
+				    // &facet.fields=postcode_district
+				    
 					$('#search-form').submit();
 				}
 				//processSearch();
 			});
+			
+			function buildDefaultFacets() {
+			    var crawl_year = $("<input>")
+	       			.attr("type", "hidden")
+	       			.attr("name", "facet.fields").val("crawl_year");
+				
+			    var public_suffix = $("<input>")
+	       			.attr("type", "hidden")
+	       			.attr("name", "facet.fields").val("public_suffix");
+			    
+			    $('#search-form').append($(crawl_year)).append($(public_suffix));
+			}
 
 			$('#add-facet').on('click', function(event) {
-				if ($('#search-form').valid()) {
-				    $('#modalLoader').modal({
-				        backdrop: true,
-				        keyboard: true
-				    });
-				    $('#action').val('add-facet');
-					$('#search-form').submit();
+				if($('#addFacet').val()) {
+					if ($('#search-form').valid()) {
+					    $('#modalLoader').modal({
+					        backdrop: true,
+					        keyboard: true
+					    });
+					    $('#action').val('add-facet');
+						$('#search-form').submit();
+					}
 				}
 			});
 			
@@ -91,171 +107,6 @@
 					$('#search-form').submit();
 				}
 			});
-			
-			// ajax paging
-			//paging();
-			
-			function paging() {
-				$('.paging').each(function() {
-					var $link = $(this);
-					// build up a next page ref via ajax
-	//				$link.attr('href', '#');
-					$link.on('click', function(event) {
-						event.preventDefault();
-						var page = $link.attr('id').split('-')[1];
-						console.log(page + " " + $link.attr('href'));
-						processSearch(page)
-						// remove all classes from list
-						removeActive();
-	 					$link.parent().attr("class", "active current");
-					});
-				});
-			}
-			
-			function removeActive() {
-				$('.paging').each(function() {
-					$(this).parent().removeAttr('class');
-				});
-
-			}
-			
-			function clearPager() {
-	    		$('.pagination').each(function() {
-	    			$(this).empty();
-	    		});
-			}
-			
-			function processSearch(page) {
-				
-				disableForm();
-				var url = getAjaxUrl();
-				
-				if (typeof page === "undefined") {
-					page = 1;
-				}
-				
-				url += "&page="+page;
-				
-				console.log("page: " + page);
-			
-		  		$('#current-url').text(url);
-				
-				//&sort=crawl_date+asc
-				 //"&facet=true&facet.mincount=1"
-				 //&facet.field=%7B%21ex%3Dcrawl_year%7Dcrawl_year
-				 //&facet.field=%7B%21ex%3Dpublic_suffix%7Dpublic_suffix
-
-				 
-				//&facet.fields=public_suffix
-				//&facet.in.public_suffix=%22org%22&facet.fields=crawl_year
-				//&selected.facet=author
-				//&sort=content_type_norm&order=asc
-
-				//	[{"query":"nhs","data":[{"value":"1994","count":3},{"value":"1995","count":1},{"value":"1996","count":439},{"value":"1997","count":2529},{"value":"1998","count":2792},{"value":"1999","count":7345},{"value":"2000","count":9946},{"value":"2001","count":36838},{"value":"2002","count":97371},{"value":"2003","count":236514},{"value":"2004","count":277319},{"value":"2005","count":207931}]},{"query":" wikipedia","data":[{"value":"2001","count":12},{"value":"2002","count":67},{"value":"2003","count":464},{"value":"2004","count":8030},{"value":"2005","count":64540}]}]
-				$.ajax({
-	    	    	url: url,
-	    	    	dataType: 'json',
-	    	    	success: function(data) {
-	    	    		var results = [];
-	    	    		$('#result-set').empty();
-	    	    		$.each( data.results, function( index, obj ) {
-		    	    		$listGroup = $('<div>').addClass('list-group');
-		    	    		$spanGroup = $('<span>').addClass('list-group-item').attr('href', '#')
-		    	    			.append('<span>').addClass('list-group-item').attr('href', '#');
-		    	    		
-		    	    		var title = obj.title;
-		    	    		if (obj.title == '') {
-		    	    			title = "no title";
-		    	    		}
-		    	    			
-		    	    		$heading = $('<h4>').addClass('list-group-item-heading').html("<a href='" + obj.url + "'>" + title + "</a>");
-		    	    		$paragraph = $('<p>').addClass('list-group-item-text');
-		    	    		var paraData = obj.crawl_date + "<br />" + obj.content_type_norm + "<br />" + obj.domain + "<br />" + obj.sentiment_score;
-		    	    		$paragraph.html(paraData);
-							$spanGroup.append($heading);
-							$spanGroup.append($paragraph);
-		    	    		$listGroup.append($spanGroup);
-		    	    		$('#result-set').append($listGroup);
-	    	    		});
-	    	    		
-	    	    		clearPager();
-	    	    		
-	    	    		$('.pagination').each(function(index) {
-	    	    			$page = $(this);
-	    	    			$list = $('<li>');
-	    	    			$anchor = $('<a>');
-	    	    			var prevPageNo = data.pager.currentPage - 1;
-	    	    			console.log("hasPreviousPage: " + data.pager.hasPreviousPage + " " + prevPageNo);
-	    	    			if(data.pager.hasPreviousPage) {
-	    	    				$list.addClass('prev');
-	    	    				$prev_page = getAjaxUrl() + "&page=" + prevPageNo;
-	    	    				$anchor.addClass('paging').attr('href', $prev_page);
-	    	    				$anchor.attr('id','page-' + prevPageNo);
-								$anchor.html('&laquo;');
-	            			} else {
-	    	    				$list.addClass('prev disabled');
-	    	    				$anchor.addClass('paging');
-								$anchor.html('&laquo;');
-	            			}
-	    	    			$list.append($anchor);
-	    	    			$page.append($list);
-	    	    			
-	    	    		    for (var i=0; i < data.pager.pagesList.length; i++) {
-	    	    		        var index = data.pager.pagesList[i];
-		    	    			console.log(index + "-" + data.pager.currentPage);
-								if (index == data.pager.currentPage) {
-	    							if(index == data.pager.currentPage.getMaxViewablePages) {
-	    								$span = $('<span>').addClass('max-viewable-reached hide');
-	    							}
-	    							$list_loop = $('<li>').addClass('active current').attr('id', 'list-' + index);
-	    							$anchor_loop = $('<a>').addClass('paging').attr('id', 'page-' + index).attr('href', '#');
-	    							$anchor_loop.html(data.pager.currentPage);
-	    							$span_inner = $('<span>').addClass('sr-only').html('(current)');
-	    							$anchor_loop.append($span_inner);
-	    							$list_loop.append($anchor_loop);
-								} else {
-									$list_loop = $('<li>').attr('id', 'list-' + index);
-									$url = getAjaxUrl() + "&page=" + index;
-	    							$anchor_loop = $('<a>').addClass('paging').attr('id', 'page-' + index).attr('href', url);
-	    							$anchor_loop.html(index);
-	    							$list_loop.append($anchor_loop);
-								}	    	    				
-								$page.append($list_loop);
-    	    				}
-	    	    			
-	    	    			$list = $('<li>');
-	    	    			$anchor = $('<a>');
-	    	    			var nextPageNo = data.pager.currentPage + 1;
-	    	    			console.log("hasNextPage: " + data.pager.hasNextPage + " " + nextPageNo);
-	    		        	if(data.pager.hasNextPage && !data.pager.hasMaxViewablePagedReached) {
-	    	    				$list.addClass('next');
-	    	    				$prev_page = getAjaxUrl() + "&page=" + nextPageNo;
-	    	    				$anchor.addClass('paging').attr('href', $prev_page);
-	    	    				$anchor.attr('id','page-' + nextPageNo);
-								$anchor.html('&raquo;');
-	            			} else {
-	    	    				$list.addClass('next disabled');
-	    	    				$anchor.addClass('paging');
-								$anchor.html('&raquo;');
-	            			}
-	    	    			$list.append($anchor);
-	    	    			$page.append($list);
-	    	    			
-		    	    		$('#displayingXOfY').html(data.pager.displayingXOfY);
-	    	    		});
-							
-	    	    		paging();
-	    	    		
-	    	    		console.log(results);
-	    	    		enableForm();
-	    	    		// TODO: pushState not working in IE9
-	    	    		window.history.pushState("", "", getUrl() + "&page=" + page);
-	    	    	},
-	    	    	error: function(jqXHR, textStatus, errorThrown) {
-	    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
-	    	    	}
-	    	    });
-			}
 			
 			$(".facet-options").each(function(index) {
 				// check form fields
@@ -569,7 +420,8 @@
 										<div class="col-md-12 col-sm-12">
 											@if(optionalFacets.size >= 1) {
 												<div class="input-group">
-													<select class="form-control" name="selected.facet" id="facet-values">
+													<select class="form-control" name="addFacet" id="addFacet">
+														<option value="" selected="selected">&#060;Please Select&#062;</option>
 														@for((key, value) <- optionalFacets) {
 															<option value="@key">@value.getValue()</option>
 														}
