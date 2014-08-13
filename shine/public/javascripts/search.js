@@ -257,9 +257,28 @@ $(function () {
 		});
 	}
 	
-	$('#reset-facets').click(function(event) {
-		event.preventDefault();
-		
+	$('#add-facet').on('click', function(event) {
+		if($('#addFacet').val()) {
+			if ($('#search-form').valid()) {
+			    $('#modalLoader').modal({
+			        backdrop: true,
+			        keyboard: true
+			    });
+			    $('#action').val('add-facet');
+				$('#search-form').submit();
+			}
+		}
+	});
+	
+	$('#reset-facets').on('click', function(event) {
+		if ($('#search-form').valid()) {
+		    $('#modalLoader').modal({
+		        backdrop: true,
+		        keyboard: true
+		    });
+		    $('#action').val('reset-facets');
+			$('#search-form').submit();
+		}
 	});
 	
 	$('.facet-remove').each(function() {
@@ -280,6 +299,69 @@ $(function () {
 			$('#search-form').submit();
 		});
 	});
+	
+	$('.facet-invert').each(function() {
+		$(this).click(function(event) {
+			event.preventDefault();
+			if ($('#search-form').valid()) {
+			    $('#modalLoader').modal({
+			        backdrop: true,
+			        keyboard: true
+			    });
+			}
+			
+			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
+			console.log(value);
+			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("invert-facet");
+			var input = $("<input>").attr("type", "hidden").attr("name", "removeFacet").val(value);
+			$('#search-form').append($(action));
+			$('#search-form').append($(input));
+			$('#search-form').submit();
+		});
+	});
+	
+	$('.facet-sort-alpha').each(function() {
+		$(this).click(function(event) {
+			event.preventDefault();
+			if ($('#search-form').valid()) {
+			    $('#modalLoader').modal({
+			        backdrop: true,
+			        keyboard: true
+			    });
+			}
+			
+//			&f.public_suffix.facet.sort=index
+			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
+			console.log("f." + value + ".facet.sort=index");
+			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("search");
+			var input = $("<input>").attr("type", "hidden").attr("name", "f." + value + ".facet.sort").val("index");
+			$('#search-form').append($(action));
+			$('#search-form').append($(input));
+			$('#search-form').submit();
+		});
+	});
+
+	$('.facet-sort-freq').each(function() {
+		$(this).click(function(event) {
+			event.preventDefault();
+			if ($('#search-form').valid()) {
+			    $('#modalLoader').modal({
+			        backdrop: true,
+			        keyboard: true
+			    });
+			}
+			
+//			&f.public_suffix.facet.sort=count
+			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
+			console.log("f." + value + ".facet.sort=count");
+			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("search");
+			var input = $("<input>").attr("type", "hidden").attr("name", "f." + value + ".facet.sort").val("count");
+			$('#search-form').append($(action));
+			$('#search-form').append($(input));
+			$('#search-form').submit();
+		});
+	});
+
 });
 
 function getURLParameter(param) {
