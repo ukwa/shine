@@ -287,7 +287,12 @@ public class Shine extends Solr {
 				if (filterKey.startsWith("-")) {
 					field = field.replaceFirst("-", "");
 					for (String val : filters.get(filterKey)) {
-						fq.add("{!tag=" + field + "}" + filterKey + ":" + val); // TODO
+						if (val.isEmpty()) {
+							Logger.info("No Value just filterKey: " + filterKey + " - "+ val);
+							fq.add("{!tag=" + field + "}" + filterKey);
+						} else {
+							fq.add("{!tag=" + field + "}" + filterKey + ":" + val); // TODO
+						}
 																			// Escape
 																			// correctly?
 					}
