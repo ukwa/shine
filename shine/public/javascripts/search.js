@@ -302,7 +302,13 @@ $(function () {
 	
 	$('.facet-invert').each(function() {
 		$(this).click(function(event) {
-			event.preventDefault();
+			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
+			var url = "search?" + $('#search-form').serialize();
+			
+			url = url + "&" + "facet.out." + value;
+			$(this).attr('href', url);
+			
+			console.log(url);
 			if ($('#search-form').valid()) {
 			    $('#modalLoader').modal({
 			        backdrop: true,
@@ -310,13 +316,11 @@ $(function () {
 			    });
 			}
 			
-			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
-			console.log(value);
-			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("invert-facet");
-			var input = $("<input>").attr("type", "hidden").attr("name", "removeFacet").val(value);
-			$('#search-form').append($(action));
-			$('#search-form').append($(input));
-			$('#search-form').submit();
+//			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("invert-facet");
+//			var input = $("<input>").attr("type", "hidden").attr("name", "removeFacet").val(value);
+//			$('#search-form').append($(action));
+//			$('#search-form').append($(input));
+//			$('#search-form').submit();
 		});
 	});
 	
