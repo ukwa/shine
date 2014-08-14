@@ -321,8 +321,34 @@ $(function () {
 	});
 	
 	$('.facet-sort-alpha').each(function() {
+		var value = $(this).parent().parent().parent().parent().parent().find("input").val();
+		var url = "search?" + $('#search-form').serialize();
+
+//		?page=1
+//		&facet.fields=crawl_year
+//		&facet.fields=public_suffix
+//		&addFacet=
+//		&action=search
+//		&query=wikipedia
+//		&sort=content_type_norm
+//		&order=asc
+//		&f.crawl_year.facet.sort=index
+		
+//		?page=1
+//		&facet.fields=crawl_year
+//		&facet.fields=public_suffix
+//		&addFacet=
+//		&action=search
+//		&query=wikipedia
+//		&sort=content_type_norm
+//		&order=asc
+//		&action=search
+//		&f.crawl_year.facet.sort=count
+		
+		url = url + "&" + "f." + value + ".facet.sort=index";
+		$(this).attr('href', url);
+		
 		$(this).click(function(event) {
-			event.preventDefault();
 			if ($('#search-form').valid()) {
 			    $('#modalLoader').modal({
 			        backdrop: true,
@@ -331,19 +357,23 @@ $(function () {
 			}
 			
 //			&f.public_suffix.facet.sort=index
-			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
-			console.log("f." + value + ".facet.sort=index");
-			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("search");
-			var input = $("<input>").attr("type", "hidden").attr("name", "f." + value + ".facet.sort").val("index");
-			$('#search-form').append($(action));
-			$('#search-form').append($(input));
-			$('#search-form').submit();
+//			console.log("f." + value + ".facet.sort=index");
+//			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("search");
+//			var input = $("<input>").attr("type", "hidden").attr("name", "f." + value + ".facet.sort").val("index");
+//			$('#search-form').append($(action));
+//			$('#search-form').append($(input));
+//			$('#search-form').submit();
 		});
 	});
 
 	$('.facet-sort-freq').each(function() {
+		var value = $(this).parent().parent().parent().parent().parent().find("input").val();
+		var url = "search?" + $('#search-form').serialize();
+
+		url = url + "&" + "f." + value + ".facet.sort=count";
+		$(this).attr('href', url);
+		
 		$(this).click(function(event) {
-			event.preventDefault();
 			if ($('#search-form').valid()) {
 			    $('#modalLoader').modal({
 			        backdrop: true,
@@ -351,14 +381,16 @@ $(function () {
 			    });
 			}
 			
+//			console.log(url);
+			
 //			&f.public_suffix.facet.sort=count
-			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
-			console.log("f." + value + ".facet.sort=count");
-			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("search");
-			var input = $("<input>").attr("type", "hidden").attr("name", "f." + value + ".facet.sort").val("count");
-			$('#search-form').append($(action));
-			$('#search-form').append($(input));
-			$('#search-form').submit();
+//			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
+//			console.log("f." + value + ".facet.sort=count");
+//			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("search");
+//			var input = $("<input>").attr("type", "hidden").attr("name", "f." + value + ".facet.sort").val("count");
+//			$('#search-form').append($(action));
+//			$('#search-form').append($(input));
+//			$('#search-form').submit();
 		});
 	});
 

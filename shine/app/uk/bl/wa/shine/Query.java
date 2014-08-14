@@ -83,6 +83,7 @@ public class Query {
 	
 	public String order;
 	
+	// incoming parameters
 	public Map<String, List<String>> parameters;
 	
 	private List<String> excludeDocs;
@@ -142,8 +143,8 @@ public class Query {
 				    filters.put("-"+param.replace("facet.out.", ""), values);
 					Logger.info(" facet out values: " + values);
 				} else if( param.equals("facet.sort")  && values.get(0).length() > 0) {
-				    filters.put(param, values);
-					Logger.info(" facet other values: " + values);
+//				    filters.put(param, values);
+//					Logger.info(" facet other values: " + values);
 				} else if (param.equals("facet.fields")) {
 					for (String value : values) {
 						facets.add(value);
@@ -161,10 +162,10 @@ public class Query {
 			}
 		}
 		
-		if (parameters.get("facet.sort") != null) {
-			String facetSort = parameters.get("facet.sort").get(0);
-			Logger.info("facetSort: " + facetSort);
-		}
+//		if (parameters.get("facet.sort") != null) {
+//			String facetSort = parameters.get("facet.sort").get(0);
+//			Logger.info("facetSort: " + facetSort);
+//		}
 		
 		// non facets
 
@@ -194,6 +195,7 @@ public class Query {
 		if (parameters.get("dateend") != null) {
 			dateEnd = parameters.get("dateend").get(0).replace("\"", "");
 		}
+		Logger.info("filters: " + filters);
 	}
 	
 	public String getCheckedInString(String facet_name, String value ) {
@@ -376,7 +378,7 @@ public class Query {
 						String in = "&facet.in."; 
 						parameters.append(in).append(facet);
 					} else if (StringUtils.isNotBlank(this.getCheckedOutString(facetField.getName(),count.getName()))) {
-						String out = "&facet.out";
+						String out = "&facet.out.";
 						parameters.append(out).append(facet);
 					}
 				}
