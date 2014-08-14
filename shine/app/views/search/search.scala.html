@@ -84,30 +84,6 @@
 			    $('#search-form').append($(crawl_year)).append($(public_suffix));
 			}
 
-			$('#add-facet').on('click', function(event) {
-				if($('#addFacet').val()) {
-					if ($('#search-form').valid()) {
-					    $('#modalLoader').modal({
-					        backdrop: true,
-					        keyboard: true
-					    });
-					    $('#action').val('add-facet');
-						$('#search-form').submit();
-					}
-				}
-			});
-			
-			$('#reset-facets').on('click', function(event) {
-				if ($('#search-form').valid()) {
-				    $('#modalLoader').modal({
-				        backdrop: true,
-				        keyboard: true
-				    });
-				    $('#action').val('reset-facets');
-					$('#search-form').submit();
-				}
-			});
-			
 			$(".facet-options").each(function(index) {
 				// check form fields
 				var $facet_option = $(this);
@@ -362,7 +338,11 @@
 														<span class="glyphicon glyphicon-cog"></span>
 													</button>
 													<ul class="dropdown-menu" role="menu">
+														<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically</a></li>
+														<li><a href="#" class="facet-sort-freq">(01) sort values by frequency</a></li>
+														<li><a href="#" class="facet-invert">(uv) invert this selection</a></li>
 														<li><a href="#" class="facet-remove">(x) remove this facet</a></li>
+														<li><a href="#" class="facet-search">(+) search for another facet value</a></li>
 													</ul>
 												</div>
 					        										        					
