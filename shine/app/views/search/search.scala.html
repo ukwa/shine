@@ -244,12 +244,12 @@
     if (q.menu != null) {
     	// if contained in menu list then set it
     	// f.public_suffix.facet.sort=index, f.crawl_year.facet.sort=index
-    	var key = "f."+facetName
-    	var option = key+"="+value
-    	var prop = q.menu.get(key)
+    	// facet.out.public_suffix
+    	var prop = q.menu.get(facetName)
+//    	println(facetName + "=" + value)
     	if(prop != null) {
     		if(prop.equals(value)) {
-	    		println("selected: " + key + "=" + q.menu.get(key) + " - " + value)
+	    		println("selected: " + facetName + "=" + prop + " - " + value)
 				<span class='glyphicon glyphicon-ok'></span>
 			}
 		}
@@ -355,9 +355,9 @@
 														<span class="glyphicon glyphicon-cog"></span>
 													</button>
 													<ul class="dropdown-menu" role="menu">
-														<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected(fc.getName()+".facet.sort", "index")</a></li>
-														<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected(fc.getName()+".facet.sort", "count")</a></li>
-														<li><a href="#" class="facet-invert">(uv) invert this selection @getSelected(fc.getName(), "facet-invert")</a></li>
+														<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+fc.getName()+".facet.sort", "index")</a></li>
+														<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+fc.getName()+".facet.sort", "count")</a></li>
+														<li><a href="#" class="facet-invert">(uv) invert this selection @getSelected("facet.out." + fc.getName(), "true")</a></li>
 														<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(fc.getName(), "facet-remove")</a></li>
 														<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(fc.getName(), "facet-search")</a></li>
 													</ul>

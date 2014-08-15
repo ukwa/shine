@@ -301,14 +301,15 @@ $(function () {
 	});
 	
 	$('.facet-invert').each(function() {
+		var value = $(this).parent().parent().parent().parent().parent().find("input").val();
+		var url = "search" + window.location.search;
+		
+		var facet = "facet.out." + value;
+		url = url.replace("&"+facet, '');
+		url = url + "&" + facet
+		$(this).attr('href', url);
+		
 		$(this).click(function(event) {
-			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
-			var url = "search" + window.location.search;
-			
-			url = url + "&" + "facet.out." + value;
-			$(this).attr('href', url);
-			
-			console.log(url);
 			if ($('#search-form').valid()) {
 			    $('#modalLoader').modal({
 			        backdrop: true,

@@ -347,10 +347,12 @@ public class Shine extends Solr {
 				if (key.equals("facet.sort")) {
 					// there's only one sort
 					solrParameters.setFacetSort(params.get(key).get(0));
-				} else if (key.contains(".facet.sort")) {
+				} else if (key.contains(".facet.sort") || key.contains("facet.out.")) {
 					if (!params.get(key).get(0).isEmpty()) {
 						solrParameters.add(key, params.get(key).get(0));
 						query.menu.put(key, params.get(key).get(0));
+					} else if (key.contains("facet.out.")) {
+						query.menu.put(key, Boolean.TRUE.toString());
 					}
 				}
 			}
