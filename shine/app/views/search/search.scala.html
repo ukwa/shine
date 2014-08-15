@@ -240,6 +240,22 @@
 	}
 }
 
+@getSelected(facetName: String, value: String) = @{
+    if (q.menu != null) {
+    	// if contained in menu list then set it
+    	// f.public_suffix.facet.sort=index, f.crawl_year.facet.sort=index
+    	var key = "f."+facetName
+    	var option = key+"="+value
+    	var prop = q.menu.get(key)
+    	if(prop != null) {
+    		if(prop.equals(value)) {
+	    		println("selected: " + key + "=" + q.menu.get(key) + " - " + value)
+				<span class='glyphicon glyphicon-ok'></span>
+			}
+		}
+	}
+}
+
 @****************************************
 * Helper generating navigation links    *
 ****************************************@
@@ -333,19 +349,19 @@
 						    				<div>
 					        					<a class="facet-heading"><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
 					        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
+					        					<input type="hidden" name="f.@(fc.getName()).facet.sort" value="" class="facet-sort">
 												<div class="btn-group">
 													<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
 														<span class="glyphicon glyphicon-cog"></span>
 													</button>
 													<ul class="dropdown-menu" role="menu">
-														<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically</a></li>
-														<li><a href="#" class="facet-sort-freq">(01) sort values by frequency</a></li>
-														<li><a href="#" class="facet-invert">(uv) invert this selection</a></li>
-														<li><a href="#" class="facet-remove">(x) remove this facet</a></li>
-														<li><a href="#" class="facet-search">(+) search for another facet value</a></li>
+														<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected(fc.getName()+".facet.sort", "index")</a></li>
+														<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected(fc.getName()+".facet.sort", "count")</a></li>
+														<li><a href="#" class="facet-invert">(uv) invert this selection @getSelected(fc.getName(), "facet-invert")</a></li>
+														<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(fc.getName(), "facet-remove")</a></li>
+														<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(fc.getName(), "facet-search")</a></li>
 													</ul>
 												</div>
-					        										        					
 						    				</div>
 						    				<div class="facet-index">
 					      						<ul class="list-unstyled">

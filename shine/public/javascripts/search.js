@@ -303,7 +303,7 @@ $(function () {
 	$('.facet-invert').each(function() {
 		$(this).click(function(event) {
 			var value = $(this).parent().parent().parent().parent().parent().find("input").val();
-			var url = "search?" + $('#search-form').serialize();
+			var url = "search" + window.location.search;
 			
 			url = url + "&" + "facet.out." + value;
 			$(this).attr('href', url);
@@ -325,8 +325,9 @@ $(function () {
 	});
 	
 	$('.facet-sort-alpha').each(function() {
-		var value = $(this).parent().parent().parent().parent().parent().find("input").val();
-		var url = "search?" + $('#search-form').serialize();
+		var input = $(this).parent().parent().parent().parent().parent().find("input")
+		var value = input.val();
+		var url = "search" + window.location.search;
 
 //		?page=1
 //		&facet.fields=crawl_year
@@ -349,10 +350,18 @@ $(function () {
 //		&action=search
 //		&f.crawl_year.facet.sort=count
 		
-		url = url + "&" + "f." + value + ".facet.sort=index";
+		var facetName = "f." + value + ".facet.sort";
+		url = url.replace("&"+facetName+'=count', '').replace("&"+facetName+'=index', '');
+		url = url + "&" + facetName + "=index";
 		$(this).attr('href', url);
 		
 		$(this).click(function(event) {
+			// check if facetName is already in url
+			// remove if it is
+//			var selectedMenu = $(this).parent().parent().parent().parent().parent().find("input.facet-sort");
+//			selectedMenu.val("index");
+//			console.log(value + " - " + selectedMenu.val());
+			console.log(url);
 			if ($('#search-form').valid()) {
 			    $('#modalLoader').modal({
 			        backdrop: true,
@@ -372,9 +381,11 @@ $(function () {
 
 	$('.facet-sort-freq').each(function() {
 		var value = $(this).parent().parent().parent().parent().parent().find("input").val();
-		var url = "search?" + $('#search-form').serialize();
+		var url = "search" + window.location.search;
 
-		url = url + "&" + "f." + value + ".facet.sort=count";
+		var facetName = "f." + value + ".facet.sort";
+		url = url.replace("&"+facetName+'=count', '').replace("&"+facetName+'=index', '');
+		url = url + "&" + facetName + "=count";
 		$(this).attr('href', url);
 		
 		$(this).click(function(event) {
@@ -611,6 +622,13 @@ function validateAdvancedSearchForm() {
         }
 	});
 }
+
+//function getMenuChoice(url) {
+////	f.crawl_year.facet.sort=index
+////	f.public_suffix.facet.sort=index
+//    if (url.indexOf('.facet.sort') !== -1 ){
+//    	getURLParameter
+//}
 
 function csvLink() {
 	$('#csv-export').on('click', function(event) {

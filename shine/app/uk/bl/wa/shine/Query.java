@@ -88,6 +88,8 @@ public class Query {
 	
 	private List<String> excludeDocs;
 	
+	public Map<String,String> menu;
+	
 	public Query() {}
 	
 	public Query(String query) {
@@ -124,9 +126,10 @@ public class Query {
 	}
 
 	private void init() {
-		facets = new ArrayList<String>();
-		facetValues = new HashMap<String, FacetValue>();
+		this.facets = new ArrayList<String>();
+		this.facetValues = new HashMap<String, FacetValue>();
 		this.excludeDocs = new ArrayList<String>();
+		this.menu = new HashMap<String,String>();
 		this.parseParameters();
 	}
 	
