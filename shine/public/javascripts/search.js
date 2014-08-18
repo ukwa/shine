@@ -270,17 +270,6 @@ $(function () {
 		}
 	});
 	
-	$('#reset-facets').on('click', function(event) {
-		if ($('#search-form').valid()) {
-		    $('#modalLoader').modal({
-		        backdrop: true,
-		        keyboard: true
-		    });
-		    $('#action').val('reset-facets');
-			$('#search-form').submit();
-		}
-	});
-	
 	$('.facet-remove').each(function() {
 		$(this).click(function(event) {
 			event.preventDefault();
@@ -362,7 +351,7 @@ $(function () {
 //			var selectedMenu = $(this).parent().parent().parent().parent().parent().find("input.facet-sort");
 //			selectedMenu.val("index");
 //			console.log(value + " - " + selectedMenu.val());
-			console.log(url);
+//			console.log(url);
 			if ($('#search-form').valid()) {
 			    $('#modalLoader').modal({
 			        backdrop: true,

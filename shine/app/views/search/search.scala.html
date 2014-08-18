@@ -1,4 +1,4 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String, searchForm: Form[controllers.Search.SearchData])(implicit flash: Flash, lang: play.api.i18n.Lang)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String, searchForm: Form[controllers.Search.SearchData])
 
 @import helper._
 @import bootstrap.search._
@@ -28,7 +28,7 @@
 				var array = facetShow.split(",");
 				array.forEach(function(value) {
 					var link = 'a#' + value;
-					console.log(">>> " + link);
+					//console.log(">>> " + link);
 					$(link).trigger("click");
 				});
 	  			
@@ -54,10 +54,23 @@
 				return "/search?facet.sort=index&query=" + $("#query").val();
 			}
 
+			function resetFacets() {
+				$("input[name='facet.fields']").each(function() {
+					var facet = $(this);
+					if (facet.val() == "crawl_year" || facet.val() == "public_suffix") {
+						console.log("not removing: " + facet.val());
+					} else {
+						console.log("removing: " + facet.val());
+						facet.remove();
+					}
+				});
+			}
+
 			$('#search').on('click', function(event) {
 				if ($('#search-form').valid()) {
 					if ($('#addFacet').val() == "") {
-						$('#addFacet').prop("disabled", true);				
+						$('#addFacet').prop("disabled", true);
+						
 					}
 				    $('#modalLoader').modal({
 				        backdrop: true,
@@ -69,7 +82,51 @@
 				    
 					$('#search-form').submit();
 				}
-				//processSearch();
+			});
+			
+			$('#reset-facets').on('click', function(event) {
+				if ($('#search-form').valid()) {
+					
+					//var url = "search" + window.location.search;
+
+					// reset non-default facets
+					//url = url.replace("&facet.fields=crawl_year", '').replace("&facet.fields=public_suffix", '');
+					//&facet.fields=crawl_year
+					//&f.crawl_year.facet.sort=
+					//&facet.fields=public_suffix
+					//&f.public_suffix.facet.sort=
+					//&facet.in.public_suffix=%22org.uk%22
+					
+					//&action=resetfacets&query=wikipedia&sort=content_type_norm&order=asc
+					//console.log(url);
+					if ($('#addFacet').val() == "") {
+						$('#addFacet').prop("disabled", true);				
+					}
+				    $('#modalLoader').modal({
+				        backdrop: true,
+				        keyboard: true
+				    });
+					clearFacets();
+					resetFacets();
+				    $('#action').val('resetfacets');
+	
+					$('#search-form').submit();
+				}
+			});
+			
+			$('.save-corpus').on('click', function(event) {
+				if ($('#search-form').valid()) {
+					if ($('#addFacet').val() == "") {
+						$('#addFacet').prop("disabled", true);				
+					}
+				    $('#modalLoader').modal({
+				        backdrop: true,
+				        keyboard: true
+				    });
+				    $('#action').val('savecorpus');
+
+					$('#search-form').submit();
+				}
 			});
 			
 			function buildDefaultFacets() {
@@ -115,11 +172,11 @@
 						// i.e remove facet.in.crawl_year=%222007%22
 						facet_value = facet_value.replace('"', '%22').replace('"', '%22');
 						var reg = "^\".*\"$";
-						console.log("facet_value: " + facet_value);
+//						console.log("facet_value: " + facet_value);
 						var regex = new RegExp("&"+ facet_name + "=" + facet_value);
 						url = url.replace(regex,'');
-						console.log(url);
-						console.log("remove facet: " + facet);
+//						console.log(url);
+//						console.log("remove facet: " + facet);
 					}
 					
 					$(this).attr('href', url);
@@ -147,7 +204,7 @@
 					facetClickToggle($link_span_exclude, $input_exclude);
 					var facet_name = $input_exclude.attr('name');
 					var facet_value = $input_exclude.val();
-					console.log(facet_name + " " + facet_value);
+					//console.log(facet_name + " " + facet_value);
 					if ($('#search-form').valid()) {
 					    $('#modalLoader').modal({
 					        backdrop: true,
@@ -170,7 +227,7 @@
 			}
 
 			function facetClickToggle($button, $element) {
-				console.log($button.attr('class') + " " + $element.attr('class'));
+				//console.log($button.attr('class') + " " + $element.attr('class'));
 				
 				if ($button.hasClass('facet-deselected')) {
 					// SELECTED
@@ -212,7 +269,7 @@
 			csvLink();
 			
 			@if(q != null && q.res.getResults().isEmpty()) {
-				console.log('no results');
+				//console.log('no results');
 				$('#summary').addClass('hide');
 			} else {
 				createSummary();
@@ -314,6 +371,9 @@
 	                </li>
 				}
 			</ul>
+			<div class="form-group pull-right save-right">
+				<button type="button" class="btn btn-primary save-right save-corpus" name="action" value="corpus-save" data-toggle="tooltip" data-placement="right" title="Corpus Save">Save Selected</button>
+		    </div>
 		</div>
 	}
 }
@@ -349,7 +409,6 @@
 						    				<div>
 					        					<a class="facet-heading"><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
 					        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
-					        					<input type="hidden" name="f.@(fc.getName()).facet.sort" value="" class="facet-sort">
 												<div class="btn-group">
 													<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
 														<span class="glyphicon glyphicon-cog"></span>
@@ -432,7 +491,7 @@
 									</div>
 									<div class="row pull-right reset-facets">
 										<div class="col-md-12 col-sm-12">
-											<button id="reset-facets" class="btn btn-primary" type="submit" name="action" value="reset-facets" data-toggle="tooltip" data-placement="left" title="Resets Optional Facets"><span>Reset Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
+											<button id="reset-facets" class="btn btn-primary" type="button" name="action" value="reset-facets" data-toggle="tooltip" data-placement="left" title="Resets Optional Facets"><span>Reset All Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
 										</div>
 									</div>
 								</div>
@@ -516,7 +575,7 @@
 														@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
 													</h4>
 													<div class="checkbox pull-right">
-														<input type="checkbox" name="excludeDoc" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Remove from Results">
+														<input type="checkbox" name="excludeDoc" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Select">
 													</div>
 													<p class="list-group-item-text">
 															@d.getFirstValue("crawl_date")<br />

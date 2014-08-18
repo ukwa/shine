@@ -101,4 +101,8 @@ li a.facet-name {
 div a.facet-heading {
 	text-decoration:none;
 	color: #428bca;
+}
+
+div.save-right {
+	margin: 20px 0;
 }		
