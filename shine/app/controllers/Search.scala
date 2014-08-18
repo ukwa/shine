@@ -135,6 +135,7 @@ object Search extends Controller {
 	
 	    println("Page #: " + pageNo)
 	    println("totalRecords #: " + totalRecords)
+	    println("menu selected: " + q.menu)
 	
 	    pagination.update(totalRecords, pageNo)
 	    
