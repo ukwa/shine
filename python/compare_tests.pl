@@ -12,6 +12,7 @@ my (@a_a, @a_b);					# arrays of log contents
 my ($s_linea, $s_lineb);				# strings of each log line
 my $i_url;						# counter of tests, determined by line starting with 'URL'
 my %h_urls;						# hash of test results
+my ($i_a, $i_b, $i_same);				# counters of better results
 
 # Main -----------------------------------------------------
 getargs();
@@ -36,6 +37,10 @@ while ($s_linea = shift @a_a) {
 		$h_urls{a}{$i_url}{qtime} = $1;
 		$s_lineb =~ m@QTime\s+(\d+)@;
 		$h_urls{b}{$i_url}{qtime} = $1;
+
+		if ($h_urls{a}{$i_url}{qtime} < $h_urls{b}{$i_url}{qtime}) { $i_a++; }
+		elsif ($h_urls{a}{$i_url}{qtime} > $h_urls{b}{$i_url}{qtime}) { $i_b++; }
+		else { $i_same++; }
 	}
 	elsif ($s_linea =~ m@numFound\s+(\d+)@) {	# collect test numfounds
 		$h_urls{a}{$i_url}{numfound} = $1;
@@ -46,6 +51,8 @@ while ($s_linea = shift @a_a) {
 	if ($b_verbose) { print "$s_linea$s_lineb\n"; }	# print log lines 
 }
 
+printf "%4d)  A  %8d %12d %6s  B  %8d %12d\n", $i_url, $h_urls{a}{$i_url}{qtime}, $h_urls{a}{$i_url}{numfound}, ' ', $h_urls{b}{$i_url}{qtime}, $h_urls{b}{$i_url}{numfound};
+print "QTime better for a: $i_a\tFor b: $i_b".($i_same?"\tSame: $i_same":'')."\n";
 close A or warn "Failed to read-close $s_a\n";
 close B or warn "Failed to read-close $s_b\n";
 exit 0;
