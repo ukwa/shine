@@ -140,107 +140,6 @@
 			    
 			    $('#search-form').append($(crawl_year)).append($(public_suffix));
 			}
-
-			$(".facet-options").each(function(index) {
-				// check form fields
-				var $facet_option = $(this);
-				var $input_include = $facet_option.find('input.include');
-				var $input_exclude = $facet_option.find('input.exclude');
-
-				var $link_span_include = $facet_option.find('a.facet.include span');
-				var $link_span_exclude = $facet_option.find('a.facet.exclude span');
-
-				// to read back facet options after submit
-				facetToggle($input_include, $link_span_include);
-				facetToggle($input_exclude, $link_span_exclude);
-
-				// for clicking on facet options (includes)
-				$(this).find('a.facet.include').each(function(index) {
-					var facet_name = $input_include.attr('name');
-					var facet_value = $input_include.val();
-					//console.log(facet_name + " " + facet_value);
-					var url = "search?" + $('#search-form').serialize();
-					// if not activated then remove
-
-					var span = $(this).find('span.glyphicon');
-					
-					var facet = facet_name + "=" + facet_value;
-					if (!span.hasClass('facet-selected')) {
-						// SELECTED
-						url = url + "&" + facet;
-					} else {
-						// i.e remove facet.in.crawl_year=%222007%22
-						facet_value = facet_value.replace('"', '%22').replace('"', '%22');
-						var reg = "^\".*\"$";
-//						console.log("facet_value: " + facet_value);
-						var regex = new RegExp("&"+ facet_name + "=" + facet_value);
-						url = url.replace(regex,'');
-//						console.log(url);
-//						console.log("remove facet: " + facet);
-					}
-					
-					$(this).attr('href', url);
-					
-					$(this).click(function(event) {
-//						event.preventDefault();
-						// change +/-
-						facetClickToggle($link_span_include, $input_include);
-						//console.log($('#search-form').serialize());
-						
-						if ($('#search-form').valid()) {
-						    $('#modalLoader').modal({
-						        backdrop: true,
-						        keyboard: true
-						    });
-//							$('#search-form').submit();
-						}
-					});
-
-				});
-				
-				// for clicking on facet options (excludes)
-				$(this).find('a.facet.exclude').click(function(event) {
-					event.preventDefault();
-					facetClickToggle($link_span_exclude, $input_exclude);
-					var facet_name = $input_exclude.attr('name');
-					var facet_value = $input_exclude.val();
-					//console.log(facet_name + " " + facet_value);
-					if ($('#search-form').valid()) {
-					    $('#modalLoader').modal({
-					        backdrop: true,
-					        keyboard: true
-					    });
-						$('#search-form').submit();
-					}
-				});
-				
-			});
-			
-			function facetToggle($element, $button) {
-				if ($element.attr('checked') !== undefined) {
-					$button.removeClass('facet-deselected');
-					$button.addClass('facet-selected');
-				} else {
-					$button.removeClass('facet-selected');
-					$button.addClass('facet-deselected');
-				}
-			}
-
-			function facetClickToggle($button, $element) {
-				//console.log($button.attr('class') + " " + $element.attr('class'));
-				
-				if ($button.hasClass('facet-deselected')) {
-					// SELECTED
-					$button.removeClass('facet-deselected');
-					$button.addClass('facet-selected');
-					$element.attr('checked', '');
-				} else {
-					// DESELECTED
-					$button.removeClass('facet-selected');
-					$button.addClass('facet-deselected');
-					$element.removeAttr('checked');
-				}
-			}
 			
 			function createSummary() {
 				$query = $('<li>').html("Search Term(s): " + $("#query").val());
@@ -252,7 +151,6 @@
 					var $input_exclude = $facet_option.find('input.exclude');
 
 					var $link_span_include = $facet_option.find('a.facet.include span');
-					var $link_span_exclude = $facet_option.find('a.facet.exclude span');
 					if ($link_span_include.hasClass("facet-selected")) {
 						// go get me the facet title
 						var value = $input_include.val();
@@ -263,6 +161,7 @@
 				});
 			}
 			
+			facetOptions();
 			showFacets();
 			saveSearch();
 			validateSearchForm();
@@ -405,7 +304,7 @@
 							
 								@if(q.res.getFacetFields() != null) {
 									@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
-										<div class="panel-body">
+										<div class="panel-body @(fc.getName())">
 						    				<div>
 					        					<a class="facet-heading"><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
 					        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
@@ -416,7 +315,7 @@
 													<ul class="dropdown-menu" role="menu">
 														<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+fc.getName()+".facet.sort", "index")</a></li>
 														<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+fc.getName()+".facet.sort", "count")</a></li>
-														<li><a href="#" class="facet-invert">(uv) invert this selection @getSelected("facet.out." + fc.getName(), "true")</a></li>
+														<li><a href="#" class="facet-invert">(uv) invert this selection</a></li>
 														<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(fc.getName(), "facet-remove")</a></li>
 														<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(fc.getName(), "facet-search")</a></li>
 													</ul>

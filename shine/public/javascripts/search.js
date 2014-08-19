@@ -293,18 +293,52 @@ $(function () {
 		var value = $(this).parent().parent().parent().parent().parent().find("input").val();
 		var url = "search" + window.location.search;
 		
-		var facet = "facet.out." + value;
-		url = url.replace("&"+facet, '');
-		url = url + "&" + facet
-		$(this).attr('href', url);
-		
+//		var facet = "facet.out." + value;
+//		url = url.replace("&"+facet, '');
+//		url = url + "&" + facet
+//		$(this).attr('href', url);
+
 		$(this).click(function(event) {
-			if ($('#search-form').valid()) {
-			    $('#modalLoader').modal({
-			        backdrop: true,
-			        keyboard: true
-			    });
-			}
+			var facets_inc = $(this).parent().parent().parent().parent().parent().parent().find('div.panel-body.' + value + ' div.facet-index ul li a.facet.include span');
+			var facets_exc = $(this).parent().parent().parent().parent().parent().parent().find('div.panel-body.' + value + ' div.facet-index ul li a.facet.exclude span');
+
+			var invert = $("<input>").attr("type", "hidden").attr("name", "invert").attr('id','invert-'+value);
+
+			var innerHtml = "(uv) invert this selection";
+		    if ($(this).html() === innerHtml ) {
+				$(this).addClass(value);
+		    	innerHtml += " <span class='glyphicon glyphicon-ok'></span>";
+				// add selected
+			    facets_inc.each(function() {
+					$(this).addClass('hide');
+				});
+				facets_exc.each(function() {
+					$(this).removeClass('hide');
+				});
+				$(this).html(innerHtml);
+				invert.val(value)
+				$('#search-form').append($(invert));
+
+		    } else {
+				$(this).removeClass(value);
+		    	innerHtml = innerHtml.replace(" <span class='glyphicon glyphicon-ok'></span>", '');
+			    facets_inc.each(function() {
+					$(this).removeClass('hide');
+				});
+				facets_exc.each(function() {
+					$(this).addClass('hide');
+				});
+				$(this).html(innerHtml);
+				$('#invert-'+value).remove();
+		    }
+		    
+		    facetOptions();
+//			if ($('#search-form').valid()) {
+//			    $('#modalLoader').modal({
+//			        backdrop: true,
+//			        keyboard: true
+//			    });
+//			}
 			
 //			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("invert-facet");
 //			var input = $("<input>").attr("type", "hidden").attr("name", "removeFacet").val(value);
@@ -625,4 +659,168 @@ function csvLink() {
 		event.preventDefault();
 		window.location.href=$('#export_url').val() + $('#current-url').text();
 	});
+}
+
+function facetOptions() {
+	$(".facet-options").each(function(index) {
+		// check form fields
+		var $facet_option = $(this);
+		var $input_include = $facet_option.find('input.include');
+		var $input_exclude = $facet_option.find('input.exclude');
+
+		var $link_span_include = $facet_option.find('a.facet.include span');
+		var $link_span_exclude = $facet_option.find('a.facet.exclude span');
+
+		var url = window.location.search;
+
+		// rework this bit
+		// if invert is selected
+		var facetClass = $input_include.attr('name').replace('facet.in.', '');
+		
+		if ($('#invert-'+facetClass).val() == facetClass) {
+			console.log("invert: " + $('#invert-'+facetClass).val() + " " + facetClass);
+			$link_span_include.addClass('hide');
+			$link_span_exclude.removeClass('hide');
+		}
+		else if (!url.indexOf("facet.in") >= 0 || !url.indexOf("facet.out")) {
+			$link_span_include.removeClass('hide');
+			$link_span_exclude.addClass('hide');
+		}
+		// to read back facet options after submit
+		facetToggle($input_include, $link_span_include);
+		facetToggle($input_exclude, $link_span_exclude);
+
+		var facet_name_inc = $input_include.attr('name');
+		var facet_value_inc = $input_include.val();
+
+		var facet_name_exc = $input_exclude.attr('name');
+		var facet_value_exc = $input_exclude.val();
+
+		// for clicking on facet options (includes)
+		$(this).find('a.facet.include').each(function(index) {
+			//console.log(facet_name + " " + facet_value);
+			var url = "search?" + $('#search-form').serialize();
+			// if not activated then remove
+/* 					facet_value_exc = facet_value_exc.replace('"', '%22').replace('"', '%22');
+			var regexExc = new RegExp("&"+ facet_name_exc + "=" + facet_value_exc);
+*/					
+//					console.log("remove: " + "&"+ facet_name_exc + "=" + facet_value_exc);
+//					url = url.replace(regexExc,'');
+//					console.log("new url: " + url);
+
+			var span = $(this).find('span.glyphicon');
+			
+			var facet = facet_name_inc + "=" + facet_value_inc;
+			if (!span.hasClass('facet-selected')) {
+				// SELECTED
+				url = url + "&" + facet;
+			} else {
+				// i.e remove facet.in.crawl_year=%222007%22
+				facet = facet.replace('"', '%22').replace('"', '%22');
+//						console.log("facet_value: " + facet_value);
+				var regexInc = new RegExp("&"+ facet);
+				url = url.replace(regexInc,'');
+//						console.log(url);
+//						console.log("remove facet: " + facet);
+			}
+			
+			$(this).attr('href', url);
+			
+			$(this).click(function(event) {
+//						event.preventDefault();
+				// change +/-
+				facetClickToggle($link_span_include, $input_include);
+				//console.log($('#search-form').serialize());
+				
+				if ($('#search-form').valid()) {
+				    $('#modalLoader').modal({
+				        backdrop: true,
+				        keyboard: true
+				    });
+//							$('#search-form').submit();
+					// switch to -
+					
+					
+				}
+			});
+
+		});
+		
+		// for clicking on facet options (excludes)
+		$(this).find('a.facet.exclude').each(function(index) {
+			//console.log(facet_name + " " + facet_value);
+			var url = "search?" + $('#search-form').serialize();
+			// if not activated then remove
+/* 					facet_value_inc = facet_value_inc.replace('"', '%22').replace('"', '%22');
+			var regexInc = new RegExp("&"+ facet_name_inc + "=" + facet_value_inc); */
+			
+//					console.log("remove: " + "&"+ facet_name_inc + "=" + facet_value_inc);
+//					url = url.replace(regexInc,'');
+//					console.log("new url: " + url);
+
+
+			var span = $(this).find('span.glyphicon');
+			
+			var facet = facet_name_exc + "=" + facet_value_exc;
+			if (!span.hasClass('facet-selected')) {
+				// SELECTED
+				url = url + "&" + facet;
+			} else {
+				// i.e remove facet.in.crawl_year=%222007%22
+				facet = facet.replace('"', '%22').replace('"', '%22');
+				var reg = "^\".*\"$";
+//						console.log("facet_value: " + facet_value);
+				var regexExc = new RegExp("&"+ facet);
+				url = url.replace(regexExc,'');
+//						console.log(url);
+//						console.log("remove facet: " + facet);
+			}
+			
+			$(this).attr('href', url);
+			
+			$(this).click(function(event) {
+//						event.preventDefault();
+				// change +/-
+				facetClickToggle($link_span_exclude, $input_exclude);
+//						console.log($('#search-form').serialize());
+				
+				if ($('#search-form').valid()) {
+				    $('#modalLoader').modal({
+				        backdrop: true,
+				        keyboard: true
+				    });
+//							$('#search-form').submit();
+					// switch to +
+					
+					
+				}
+			});
+
+		});
+	});
+}
+
+function facetToggle($element, $button) {
+	if ($element.attr('checked') !== undefined) {
+		$button.removeClass('facet-deselected');
+		$button.addClass('facet-selected');
+	} else {
+		$button.removeClass('facet-selected');
+		$button.addClass('facet-deselected');
+	}
+}
+
+function facetClickToggle($button, $element) {
+	//console.log($button.attr('class') + " " + $element.attr('class'));
+	if ($button.hasClass('facet-deselected')) {
+		// SELECTED
+		$button.removeClass('facet-deselected');
+		$button.addClass('facet-selected');
+		$element.attr('checked', '');
+	} else {
+		// DESELECTED
+		$button.removeClass('facet-selected');
+		$button.addClass('facet-deselected');
+		$element.removeAttr('checked');
+	}
 }
