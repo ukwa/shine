@@ -296,16 +296,19 @@ $(function () {
 //		var facet = "facet.out." + value;
 //		url = url.replace("&"+facet, '');
 //		url = url + "&" + facet
-//		$(this).attr('href', url);
+		
+		var invert = "&invert=" + value; 
 
 		$(this).click(function(event) {
+//			event.preventDefault();
 			var facets_inc = $(this).parent().parent().parent().parent().parent().parent().find('div.panel-body.' + value + ' div.facet-index ul li a.facet.include span');
 			var facets_exc = $(this).parent().parent().parent().parent().parent().parent().find('div.panel-body.' + value + ' div.facet-index ul li a.facet.exclude span');
 
-			var invert = $("<input>").attr("type", "hidden").attr("name", "invert").attr('id','invert-'+value);
-
+			url = url.replace('&invert=&', '&');
+			
 			var innerHtml = "(uv) invert this selection";
 		    if ($(this).html() === innerHtml ) {
+		    	console.log('none');
 				$(this).addClass(value);
 		    	innerHtml += " <span class='glyphicon glyphicon-ok'></span>";
 				// add selected
@@ -316,8 +319,8 @@ $(function () {
 					$(this).removeClass('hide');
 				});
 				$(this).html(innerHtml);
-				invert.val(value)
-				$('#search-form').append($(invert));
+				$('#invert_' + value).val(value);
+				url = url + invert;
 
 		    } else {
 				$(this).removeClass(value);
@@ -329,8 +332,11 @@ $(function () {
 					$(this).addClass('hide');
 				});
 				$(this).html(innerHtml);
-				$('#invert-'+value).remove();
+				$('#invert_' + value).val('');
+				url = url.replace(invert, '');
 		    }
+		    console.log(url);
+			$(this).attr('href', url);
 		    
 		    facetOptions();
 //			if ($('#search-form').valid()) {
@@ -676,16 +682,25 @@ function facetOptions() {
 		// rework this bit
 		// if invert is selected
 		var facetClass = $input_include.attr('name').replace('facet.in.', '');
-		
-		if ($('#invert-'+facetClass).val() == facetClass) {
-			console.log("invert: " + $('#invert-'+facetClass).val() + " " + facetClass);
-			$link_span_include.addClass('hide');
-			$link_span_exclude.removeClass('hide');
-		}
-		else if (!url.indexOf("facet.in") >= 0 || !url.indexOf("facet.out")) {
+		console.log("facetClass: " + facetClass);
+
+		if (!url.indexOf("facet.in") >= 0 || !url.indexOf("facet.out")) {
 			$link_span_include.removeClass('hide');
 			$link_span_exclude.addClass('hide');
 		}
+
+		var inverts = getURLParameters('invert');
+		for (var i=0; i < inverts.length; i++) {
+			var facet = inverts[i];
+			var idfacet = '#invert_' + facet;
+			var input = $(idfacet);
+			console.log(idfacet + " - " + input.val() + " - " + facetClass);
+			if (facet == facetClass) {
+				$link_span_include.addClass('hide');
+				$link_span_exclude.removeClass('hide');
+			}
+		}
+		
 		// to read back facet options after submit
 		facetToggle($input_include, $link_span_include);
 		facetToggle($input_exclude, $link_span_exclude);
@@ -723,7 +738,7 @@ function facetOptions() {
 //						console.log(url);
 //						console.log("remove facet: " + facet);
 			}
-			
+			url = url.replace('&invert=&', '&');
 			$(this).attr('href', url);
 			
 			$(this).click(function(event) {
@@ -758,7 +773,6 @@ function facetOptions() {
 //					url = url.replace(regexInc,'');
 //					console.log("new url: " + url);
 
-
 			var span = $(this).find('span.glyphicon');
 			
 			var facet = facet_name_exc + "=" + facet_value_exc;
@@ -776,6 +790,7 @@ function facetOptions() {
 //						console.log("remove facet: " + facet);
 			}
 			
+			url = url.replace('&invert=', '&invert='+facetClass);
 			$(this).attr('href', url);
 			
 			$(this).click(function(event) {
@@ -798,6 +813,21 @@ function facetOptions() {
 
 		});
 	});
+}
+
+
+function applyInverts() {
+	var inverts = getURLParameters('invert');
+	for (i=0; i < inverts.length; i++) {
+		var facet = inverts[i];
+		var innerHtml = "(uv) invert this selection";
+		var input = $('#invert_' + facet);
+		var menu = $('#invertmenu_' + facet);
+		input.val(facet);
+		menu.addClass(facet);
+		innerHtml += " <span class='glyphicon glyphicon-ok'></span>";
+		menu.html(innerHtml);
+	}
 }
 
 function facetToggle($element, $button) {

@@ -129,6 +129,7 @@
 				}
 			});
 			
+			
 			function buildDefaultFacets() {
 			    var crawl_year = $("<input>")
 	       			.attr("type", "hidden")
@@ -165,6 +166,7 @@
 			showFacets();
 			saveSearch();
 			validateSearchForm();
+			applyInverts();
 			csvLink();
 			
 			@if(q != null && q.res.getResults().isEmpty()) {
@@ -270,9 +272,11 @@
 	                </li>
 				}
 			</ul>
-			<div class="form-group pull-right save-right">
-				<button type="button" class="btn btn-primary save-right save-corpus" name="action" value="corpus-save" data-toggle="tooltip" data-placement="right" title="Corpus Save">Save Selected</button>
-		    </div>
+			@if(user != null) {
+				<div class="form-group pull-right save-right">
+					<button type="button" class="btn btn-primary save-right save-corpus" name="action" value="corpus-save" data-toggle="tooltip" data-placement="right" title="Corpus Save">Save Selected</button>
+			    </div>
+			}
 		</div>
 	}
 }
@@ -308,6 +312,7 @@
 						    				<div>
 					        					<a class="facet-heading"><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
 					        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
+					        					<input type="hidden" name="invert" value="" id="invert_@(fc.getName())">
 												<div class="btn-group">
 													<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
 														<span class="glyphicon glyphicon-cog"></span>
@@ -315,7 +320,7 @@
 													<ul class="dropdown-menu" role="menu">
 														<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+fc.getName()+".facet.sort", "index")</a></li>
 														<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+fc.getName()+".facet.sort", "count")</a></li>
-														<li><a href="#" class="facet-invert">(uv) invert this selection</a></li>
+														<li><a href="#" class="facet-invert" id="invertmenu_@(fc.getName())">(uv) invert this selection</a></li>
 														<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(fc.getName(), "facet-remove")</a></li>
 														<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(fc.getName(), "facet-search")</a></li>
 													</ul>
