@@ -1,4 +1,4 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String, searchForm: Form[controllers.Search.SearchData])
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String, searchForm: Form[controllers.Search.SearchData], sortableFacets: List[Object])
 
 @import helper._
 @import bootstrap.search._
@@ -198,6 +198,21 @@
 	}
 }
 
+@getSortableFacet(facetName: String) = @{
+    if (sortableFacets != null) {
+		sortableFacets match {
+	      case List(value) => { 
+	      	if (value.equals(facetName)) {
+	      		value
+	      	} else {
+	      		null
+	      	}
+	      }
+	      case _ => { null }
+		}
+	}
+}
+
 @getSelected(facetName: String, value: String) = @{
     if (q.menu != null) {
     	// if contained in menu list then set it
@@ -318,8 +333,10 @@
 														<span class="glyphicon glyphicon-cog"></span>
 													</button>
 													<ul class="dropdown-menu" role="menu">
-														<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+fc.getName()+".facet.sort", "index")</a></li>
-														<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+fc.getName()+".facet.sort", "count")</a></li>
+														@if(getSortableFacet(fc.getName) != null) {
+															<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+fc.getName()+".facet.sort", "index")</a></li>
+															<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+fc.getName()+".facet.sort", "count")</a></li>
+														}
 														<li><a href="#" class="facet-invert" id="invertmenu_@(fc.getName())">(uv) invert this selection</a></li>
 														<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(fc.getName(), "facet-remove")</a></li>
 														<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(fc.getName(), "facet-search")</a></li>
