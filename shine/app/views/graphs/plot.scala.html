@@ -70,6 +70,11 @@
 				var query = $("#query").val();
 				var year_start = $("#year-start").val();
 				var year_end = $("#year-end").val();
+				
+				$("input[name='interval']").each(function() {
+					var value = $(this).val();
+					console.log("interval: " + value);
+				});
 
 				var url = "processChart?query=" + query + "&year_start=" + year_start + "&year_end=" + year_end;
 
@@ -209,6 +214,11 @@
 					<div class="row padding-10 text-center">
 						<div class="col-md-12">
 							<div class="form-inline">
+							    <div class="form-group">
+									<input type="radio" name="interval" value="3month"> <label>3 Month</label>
+									<input type="radio" name="interval" value="6month"> <label>6 Month</label>
+									<input type="radio" name="interval" value="1year"> <label>1 Year</label>
+								</div>							
 								<div class="form-group">
 									<label class="sr-only" for="from-date">From:</label>
 									<input type="text" class="form-control field-right" id="year-start" name="year_start">

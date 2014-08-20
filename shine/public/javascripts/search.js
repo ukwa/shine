@@ -299,10 +299,20 @@ $(function () {
 		
 		var invert = "&invert=" + value; 
 
+		var parent = $(this).parent().parent().parent().parent().parent().parent();
+		
+		var facets_inc = parent.find('div.panel-body.' + value + ' div.facet-index ul li a.facet.include span');
+		var facets_exc = parent.find('div.panel-body.' + value + ' div.facet-index ul li a.facet.exclude span');
+
+		var facet_value = parent.find('div.panel-body.' + value + ' div.facet-index ul li a.facet-name');
+
+		var input_include = parent.find('div.panel-body.' + value + ' div.facet-index ul li input.include');
+		var input_exclude = parent.find('div.panel-body.' + value + ' div.facet-index ul li input.exclude');
+
+		console.log('For ' + value + " " + input_include.attr('checked') + " - " + input_exclude.attr('checked') + " - " + facet_value.html());
+
 		$(this).click(function(event) {
 //			event.preventDefault();
-			var facets_inc = $(this).parent().parent().parent().parent().parent().parent().find('div.panel-body.' + value + ' div.facet-index ul li a.facet.include span');
-			var facets_exc = $(this).parent().parent().parent().parent().parent().parent().find('div.panel-body.' + value + ' div.facet-index ul li a.facet.exclude span');
 
 			url = url.replace('&invert=&', '&');
 			
@@ -682,7 +692,7 @@ function facetOptions() {
 		// rework this bit
 		// if invert is selected
 		var facetClass = $input_include.attr('name').replace('facet.in.', '');
-		console.log("facetClass: " + facetClass);
+//		console.log("facetClass: " + facetClass);
 
 		if (!url.indexOf("facet.in") >= 0 || !url.indexOf("facet.out")) {
 			$link_span_include.removeClass('hide');
@@ -694,7 +704,7 @@ function facetOptions() {
 			var facet = inverts[i];
 			var idfacet = '#invert_' + facet;
 			var input = $(idfacet);
-			console.log(idfacet + " - " + input.val() + " - " + facetClass);
+//			console.log(idfacet + " - " + input.val() + " - " + facetClass);
 			if (facet == facetClass) {
 				$link_span_include.addClass('hide');
 				$link_span_exclude.removeClass('hide');
@@ -814,7 +824,6 @@ function facetOptions() {
 		});
 	});
 }
-
 
 function applyInverts() {
 	var inverts = getURLParameters('invert');
