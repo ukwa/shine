@@ -297,8 +297,6 @@ $(function () {
 //		url = url.replace("&"+facet, '');
 //		url = url + "&" + facet
 		
-		var invert = "&invert=" + value; 
-
 		var parent = $(this).parent().parent().parent().parent().parent().parent();
 		
 		var facets_inc = parent.find('div.panel-body.' + value + ' div.facet-index ul li a.facet.include span');
@@ -309,14 +307,10 @@ $(function () {
 		var list = parent.find('div.panel-body.' + value + ' div.facet-index ul li.facet-options');
 
 		//		div.panel-body.crawl_year div.facet-index ul li.facet-options
-		var includes = [];
-		var excludes = [];
 		
 		$(this).click(function(event) {
 //			event.preventDefault();
 
-//			url = url.replace('&invert=&', '&');
-			
 //			var innerHtml = "(uv) invert this selection";
 			var innerHtml = "(+-) Exclude selected values";
 			
@@ -334,25 +328,14 @@ $(function () {
 				    	// then switch included to unchecked
 				    	// get exclude and switch to checked
 						include.removeAttr('checked');
-						//exclude.attr('checked', 'checked');
-					} else {
-						include.removeAttr('checked');
 						exclude.attr('checked', 'checked');
+					} else {
+						exclude.removeAttr('checked');
+//						include.attr('checked', 'checked');
 					}
 				});
 		    	
-				$(this).addClass(value);
-		    	innerHtml += " <span class='glyphicon glyphicon-ok'></span>";
-				// add selected
-			    facets_inc.each(function() {
-					$(this).addClass('hide');
-				});
-				facets_exc.each(function() {
-					$(this).removeClass('hide');
-				});
-				$(this).html(innerHtml);
 				$('#invert_' + value).val(value);
-//				url = url + invert;
 
 		    } else {
 		    	console.log('back to includes');
@@ -367,23 +350,13 @@ $(function () {
 				    	// then switch included to unchecked
 				    	// get exclude and switch to checked
 						exclude.removeAttr('checked');
-						//exclude.attr('checked', 'checked');
-					} else {
-						exclude.removeAttr('checked');
 						include.attr('checked', 'checked');
+					} else {
+						include.removeAttr('checked');
+//						exclude.attr('checked', 'checked');
 					}
 				});
 
-		    	
-		    	$(this).removeClass(value);
-		    	innerHtml = innerHtml.replace(" <span class='glyphicon glyphicon-ok'></span>", '');
-			    facets_inc.each(function() {
-					$(this).removeClass('hide');
-				});
-				facets_exc.each(function() {
-					$(this).addClass('hide');
-				});
-				$(this).html(innerHtml);
 				$('#invert_' + value).val('');
 //				url = url.replace(invert, '');
 		    }
@@ -391,6 +364,8 @@ $(function () {
 //			$(this).attr('href', url);
 		    
 //		    facetOptions();
+		    
+		    disableInvertInputs();
 			if ($('#search-form').valid()) {
 			    $('#modalLoader').modal({
 			        backdrop: true,
@@ -398,10 +373,6 @@ $(function () {
 			    });
 			}
 			
-//			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("invert-facet");
-//			var input = $("<input>").attr("type", "hidden").attr("name", "removeFacet").val(value);
-//			$('#search-form').append($(action));
-//			$('#search-form').append($(input));
 			$('#search-form').submit();
 		});
 	});
@@ -904,4 +875,12 @@ function facetClickToggle($button, $element) {
 		$button.addClass('facet-deselected');
 		$element.removeAttr('checked');
 	}
+}
+
+function disableInvertInputs() {
+	$("input[name='invert']").each(function() {
+	    if ($(this).val() == '') {
+			$(this).prop('disabled', true);
+	    }
+	});
 }

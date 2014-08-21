@@ -143,22 +143,57 @@
 			}
 			
 			function createSummary() {
-				$query = $('<li>').html("Search Term(s): " + $("#query").val());
-				$('#search-summary').append($query);
-				$(".facet-options").each(function(index) {
+				
+				var query = $('<li>').html("Search Term(s): " + $("#query").val());
+				var line = "";
+				$('#search-summary').append(query);
+				
+				$('ul.facet-heading').each(function(index) {
+					
 					// check form fields
-					var $facet_option = $(this);
-					var $input_include = $facet_option.find('input.include');
-					var $input_exclude = $facet_option.find('input.exclude');
+					var facet_options = $(this).find('li.facet-options');
+					
+					var total = facet_options.length;
 
-					var $link_span_include = $facet_option.find('a.facet.include span');
-					if ($link_span_include.hasClass("facet-selected")) {
-						// go get me the facet title
-						var value = $input_include.val();
-						var name = $facet_option.parent().parent().parent().find('div:nth-child(1)').find('a strong').html();
-						$summary = $('<li>').html(name + ": " + value);
-						$('#search-summary').append($summary);
-					}
+					var facet_main = $(this).parent().parent().find('div.facet-main');
+					var name = "";
+					var values = "";
+					var facetValue = facet_main.find('input[type=hidden]:first').val();
+					var invert = facet_main.find('input[type=hidden]:last').val();
+					
+					// +/-
+					facet_options.each(function(index) {
+						if (name.length == 0) {
+							name = facet_main.find('a strong').html();
+							// inverted
+							if (facetValue == invert) {
+								line = name + ": (Exclude) ";
+							} else {
+								line = name + ": (Include) ";
+							}
+						}
+						var facet_option = $(this);
+						
+						var include = facet_option.find('input.include');
+						var exclude = facet_option.find('input.exclude');
+
+						if (include.attr('checked')) {
+							var value = include.val();
+							values += value + " ";
+						}
+						if (exclude.attr('checked')) {
+							var value = exclude.val();
+							values += value + " ";
+						}
+					    if (index === total - 1 && values.length > 0) {
+					    	line += values;
+							summary = $('<li>').html(line);
+							$('#search-summary').append(summary);
+					    }
+
+					});
+
+
 				});
 			}
 			
@@ -324,7 +359,7 @@
 								@if(q.res.getFacetFields() != null) {
 									@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 										<div class="panel-body @(fc.getName())">
-						    				<div>
+						    				<div class="facet-main">
 					        					<a class="facet-heading"><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
 					        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
 					        					<input type="hidden" name="invert" value="" id="invert_@(fc.getName())">
@@ -344,7 +379,7 @@
 												</div>
 						    				</div>
 						    				<div class="facet-index">
-					      						<ul class="list-unstyled">
+					      						<ul class="list-unstyled facet-heading">
 													@for((f, i) <- fc.getValues().zipWithIndex) {
 														@if(i >= facetLimit) {
 					        								<li class="facet-options hide">
