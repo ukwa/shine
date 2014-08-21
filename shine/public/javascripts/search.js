@@ -306,19 +306,41 @@ $(function () {
 
 		var facet_value = parent.find('div.panel-body.' + value + ' div.facet-index ul li a.facet-name');
 
-		var input_include = parent.find('div.panel-body.' + value + ' div.facet-index ul li input.include');
-		var input_exclude = parent.find('div.panel-body.' + value + ' div.facet-index ul li input.exclude');
+		var list = parent.find('div.panel-body.' + value + ' div.facet-index ul li.facet-options');
 
-		console.log('For ' + value + " " + input_include.attr('checked') + " - " + input_exclude.attr('checked') + " - " + facet_value.html());
-
+		//		div.panel-body.crawl_year div.facet-index ul li.facet-options
+		var includes = [];
+		var excludes = [];
+		
 		$(this).click(function(event) {
 //			event.preventDefault();
 
-			url = url.replace('&invert=&', '&');
+//			url = url.replace('&invert=&', '&');
 			
-			var innerHtml = "(uv) invert this selection";
+//			var innerHtml = "(uv) invert this selection";
+			var innerHtml = "(+-) Exclude selected values";
+			
 		    if ($(this).html() === innerHtml ) {
-		    	console.log('none');
+		    	console.log('inverting');
+
+		    	list.each(function() {
+					var include = $(this).find('input.include');
+					var exclude = $(this).find('input.exclude');
+					var facetName = $(this).find('a:nth-child(3)').html();
+					if (include.attr('checked')) {
+						console.log('Include ' + value + " " + include.attr('checked') + " - " + facetName);
+				    	// switch positive to negative
+				    	// get include checked
+				    	// then switch included to unchecked
+				    	// get exclude and switch to checked
+						include.removeAttr('checked');
+						//exclude.attr('checked', 'checked');
+					} else {
+						include.removeAttr('checked');
+						exclude.attr('checked', 'checked');
+					}
+				});
+		    	
 				$(this).addClass(value);
 		    	innerHtml += " <span class='glyphicon glyphicon-ok'></span>";
 				// add selected
@@ -330,10 +352,30 @@ $(function () {
 				});
 				$(this).html(innerHtml);
 				$('#invert_' + value).val(value);
-				url = url + invert;
+//				url = url + invert;
 
 		    } else {
-				$(this).removeClass(value);
+		    	console.log('back to includes');
+
+		    	list.each(function() {
+					var include = $(this).find('input.include');
+					var exclude = $(this).find('input.exclude');
+					var facetName = $(this).find('a:nth-child(3)').html();
+					if (exclude.attr('checked')) {
+				    	// switch positive to negative
+				    	// get include checked
+				    	// then switch included to unchecked
+				    	// get exclude and switch to checked
+						exclude.removeAttr('checked');
+						//exclude.attr('checked', 'checked');
+					} else {
+						exclude.removeAttr('checked');
+						include.attr('checked', 'checked');
+					}
+				});
+
+		    	
+		    	$(this).removeClass(value);
 		    	innerHtml = innerHtml.replace(" <span class='glyphicon glyphicon-ok'></span>", '');
 			    facets_inc.each(function() {
 					$(this).removeClass('hide');
@@ -343,24 +385,24 @@ $(function () {
 				});
 				$(this).html(innerHtml);
 				$('#invert_' + value).val('');
-				url = url.replace(invert, '');
+//				url = url.replace(invert, '');
 		    }
-		    console.log(url);
-			$(this).attr('href', url);
+//		    console.log(url);
+//			$(this).attr('href', url);
 		    
-		    facetOptions();
-//			if ($('#search-form').valid()) {
-//			    $('#modalLoader').modal({
-//			        backdrop: true,
-//			        keyboard: true
-//			    });
-//			}
+//		    facetOptions();
+			if ($('#search-form').valid()) {
+			    $('#modalLoader').modal({
+			        backdrop: true,
+			        keyboard: true
+			    });
+			}
 			
 //			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("invert-facet");
 //			var input = $("<input>").attr("type", "hidden").attr("name", "removeFacet").val(value);
 //			$('#search-form').append($(action));
 //			$('#search-form').append($(input));
-//			$('#search-form').submit();
+			$('#search-form').submit();
 		});
 	});
 	
@@ -829,7 +871,7 @@ function applyInverts() {
 	var inverts = getURLParameters('invert');
 	for (i=0; i < inverts.length; i++) {
 		var facet = inverts[i];
-		var innerHtml = "(uv) invert this selection";
+		var innerHtml = "(+-) Include selected values";
 		var input = $('#invert_' + facet);
 		var menu = $('#invertmenu_' + facet);
 		input.val(facet);
