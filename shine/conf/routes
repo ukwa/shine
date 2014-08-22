@@ -36,9 +36,14 @@ GET     /assets/javascripts/routes          controllers.Application.javascriptRo
 
 GET     /account/password                   controllers.Account.changePassword
 POST    /account/changepassword             controllers.Account.updatePassword
+
 GET     /search/mysearches                  controllers.Account.mySearches
-GET     /search/save                     	controllers.Account.saveSearch(name, description, summary, url)
+GET     /search/mysearches/save             controllers.Account.saveSearch(name, description, summary, url)
 POST    /search/mysearches/:id/delete       controllers.Account.deleteSearch(id:Long)
+
+GET     /search/mycorpora                  	controllers.Account.myCorpora
+GET     /search/mycorpora/save             	controllers.Account.saveCorpus(name, description)
+POST    /search/mycorpora/:id/delete       	controllers.Account.deleteCorpus(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
 

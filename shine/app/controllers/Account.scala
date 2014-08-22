@@ -114,5 +114,32 @@ object Account extends Controller {
   def deleteSearch(id:Long) = Action { implicit request =>
     	models.Search.find(id).delete
         Redirect(routes.Account.mySearches()).flashing("success" -> "Your search has been deleted")
+  }
+  
+  def myCorpora = Action { implicit request =>
+  	  request.session.get("username").map { username =>
+		val user = User.findByEmail(username.toLowerCase())
+		val corpora = models.Corpus.findByUser(user)
+		val cs = JavaConverters.asScalaBufferConverter(corpora).asScala.toList
+	    Ok(views.html.myCorpora("My Corpora", user, cs))
+	  }.getOrElse {
+		Unauthorized("Oops, you are not authorized")
+	  }
+  }
+  
+  def saveCorpus(name: String, description: String) = Action { implicit request =>
+  	  request.session.get("username").map { username =>
+		val user = User.findByEmail(username.toLowerCase())
+		val corpus = models.Corpus.create(name, description, user.id)
+		Ok("false")
+	    //Redirect(routes.Account.mySearches).flashing("success" -> "Search was added")
+	  }.getOrElse {
+		Unauthorized("Oops, you are not authorized")
+	  }
+  }
+
+  def deleteCorpus(id:Long) = Action { implicit request =>
+    	models.Corpus.find(id).delete
+        Redirect(routes.Account.myCorpora()).flashing("success" -> "Your corpus has been deleted")
   }  
 }

@@ -1,4 +1,4 @@
-@(title: String, user: User, searches: List[Search])(implicit flash: play.api.mvc.Flash)
+@(title: String, user: User, corpora: List[Corpus])(implicit flash: play.api.mvc.Flash)
 
 @styles = {
 	<style>
@@ -13,11 +13,11 @@
 @scripts = {
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$('button[name="delete_search"]').on('click', function(e){
+			$('button[name="delete_corpus"]').on('click', function(e){
 			    var $form = $(this).closest('form'); 
 			    e.preventDefault();
-			    $('#confirmSearch').modal('show')
-			        .on('click', '#deleteSearch', function() {
+			    $('#confirmCorpus').modal('show')
+			        .on('click', '#deleteCorpus', function() {
 			        	console.log('delete');
 			            $form.trigger('submit'); // submit the form
 			        });
@@ -38,30 +38,27 @@
 		
 	@if(user != null) {
         <table class="table table-condensed">
-			@for(search <- searches) {
+			@for(corpus <- corpora) {
 				<tr>
 	               	<td>
-              			@(search.name) @(search.description)
-						<a href="../@(search.url)">
-	          					@(search.summary)
-						</a>
+              			@(corpus.name) @(corpus.description)
 	               	</td>
 	               	<td>
-						@helper.form(routes.Account.deleteSearch(search.id)) {
-              		    	<button type="button" data-dismiss="modal" class="btn btn-danger" name="delete_search">Delete</button>
+						@helper.form(routes.Account.deleteCorpus(corpus.id)) {
+              		    	<button type="button" data-dismiss="modal" class="btn btn-danger" name="delete_corpus">Delete</button>
 						}
-					</td>
-	       		</tr>
+					</td>	       		
+				</tr>
 	        }
 		</table>	    
-		<div id="confirmSearch" class="modal fade" tabindex="-1" role="dialog">
+		<div id="confirmCorpus" class="modal fade" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-vertical-centered">
 		    	<div class="modal-content">
 		  			<div class="modal-body">
 		    			Are you sure?
 		  			</div>
 		  			<div class="modal-footer">
-					    <button type="button" data-dismiss="modal" class="btn btn-danger" id="deleteSearch">Delete</button>
+					    <button type="button" data-dismiss="modal" class="btn btn-danger" id="deleteCorpus">Delete</button>
 					    <button type="button" data-dismiss="modal" class="btn">Cancel</button>
 					</div>
 				</div>

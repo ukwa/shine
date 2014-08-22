@@ -57,10 +57,18 @@ $(function () {
 	
 	$('.show-more').each(function(index) {
 		var $show_more = $(this);
+		var parent = $(this).parent().parent().parent();
+		var shown = parent.find('li.facet-options.show').length;
+		console.log(">>>: " + shown);
+		
+		parent.find('ul.facet-heading').each(function(index) {
+			console.log("shown: " + $(this).find('li.facet-options').length);
+		});
+		
 		$(this).click(function(event) {
 			event.preventDefault();
 			// click on link and do something....
-			$(this).parent().parent().find('li.facet-options').each(function(index) {
+			parent.parent().find('li.facet-options').each(function(index) {
 				$li = $(this);
 				var $show_more_icon = $show_more.find('span:nth-child(1)');
 				var $show_more_span = $show_more.find('span:nth-child(2)');
@@ -532,7 +540,7 @@ function showFacets() {
 }
 
 function initModal() {
-    $('#modal-form').validate({
+    $('#search-modal-form').validate({
         rules: {
           saveName: {
             required: true
@@ -545,11 +553,11 @@ function initModal() {
 		$("#save-search-form").modal('show');
 	    //$('form').attr('action', "/search/save").attr('method', 'post').submit();
 	});
-	$('#dismiss-x').click(function() {
+	$('#dismiss-search-x').click(function() {
 		$("#save-search-form").modal('hide');
 	});			
-    $('#modal-form input').on('keyup blur', function () {
-        if ($('#modal-form').valid()) {
+    $('#search-modal-form input').on('keyup blur', function () {
+        if ($('#search-modal-form').valid()) {
     		$("#save-search-save").prop('disabled', false);
         } else {
     		$("#save-search-save").prop('disabled', 'disabled');
@@ -597,6 +605,55 @@ function saveAdvancedSearch() {
 		$("#save-search-form").modal('hide');
 		$('#saveName').val('');
 		$('#save-description').val('');
+		var successFn = function(data) {
+			console.debug("Success of Ajax Call");
+			console.debug(data);
+		};
+		var errorFn = function(err) {
+			console.debug("Error of ajax Call");
+			console.debug(err);
+		}
+		// close and reset form
+	});
+}
+
+function initCorpusModal() {
+    $('#corpus-modal-form').validate({
+        rules: {
+          saveCorpusName: {
+            required: true
+          }
+        }
+	});
+    
+    $('.save-corpus').each(function() {
+    	$(this).on('click', function(event) {
+    		event.preventDefault();
+    		$("#save-corpus-save").prop('disabled', true);
+    		$("#save-corpus-form").modal('show');
+    	});
+    	$('#dismiss-corpus-x').click(function() {
+    		$("#save-corpus-form").modal('hide');
+    	});			
+        $('#corpus-modal-form input').on('keyup blur', function () {
+            if ($('#corpus-modal-form').valid()) {
+        		$("#save-corpus-save").prop('disabled', false);
+            } else {
+        		$("#save-corpus-save").prop('disabled', 'disabled');
+            }
+        });
+    });
+}
+
+function saveCorpus() {
+	
+	initCorpusModal();
+	
+	$('#save-corpus-save').on('click', function() {
+		jsRoutes.controllers.Account.saveCorpus($('#saveCorpusName').val(), $('#save-corpus-description').val()).ajax({success:successFn, error:errorFn});
+		$("#save-corpus-form").modal('hide');
+		$('#saveCorpusName').val('');
+		$('#save-corpus-description').val('');
 		var successFn = function(data) {
 			console.debug("Success of Ajax Call");
 			console.debug(data);
