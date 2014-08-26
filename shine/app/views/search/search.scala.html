@@ -181,6 +181,12 @@
 				});
 			}
 			
+			$(".dropdown-menu li a").click(function() {
+				var text = $(this).parents(".input-group-btn").find('.btn').text($(this).text());
+				var value = $(this).parents(".input-group-btn").find('.btn').val($(this).text());
+				console.log(text + "-" + value);
+			});
+			
 			facetOptions();
 			showFacets();
 			saveSearch();
@@ -424,9 +430,9 @@
 													</select>
 													<span class="input-group-btn">
 														<button id="add-facet" class="btn btn-primary" type="button" name="action" value="add-facet" data-toggle="tooltip" data-placement="top" title="Add Facet to the above list"><span>Add Facet</span> <span class="glyphicon glyphicon-plus"></span></button>
-														<input type="hidden" name="action" value="search" id="action" />
 													</span>
 												</div><!-- /input-group -->
+												<input type="hidden" name="action" value="search" id="action" />
 											}
 										</div>
 									</div>
@@ -516,7 +522,7 @@
 														@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
 													</h4>
 													<div class="checkbox pull-right">
-														<input type="checkbox" name="excludeDoc" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Select">
+														<input type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Select" class="resource">
 													</div>
 													<p class="list-group-item-text">
 															@d.getFirstValue("crawl_date")<br />

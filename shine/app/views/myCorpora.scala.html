@@ -42,6 +42,11 @@
 				<tr>
 	               	<td>
               			@(corpus.name) @(corpus.description)
+              			<ul>
+              				@for(resource <- corpus.resources) {
+              					<li>@(resource.id) @(resource.resource_id)</li>
+              				}
+              			</ul>
 	               	</td>
 	               	<td>
 						@helper.form(routes.Account.deleteCorpus(corpus.id)) {

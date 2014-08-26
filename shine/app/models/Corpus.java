@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -43,7 +44,7 @@ public class Corpus extends Model {
     @Formats.NonEmpty
     public Long user_id;
     
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="corpus")
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE }, mappedBy = "corpus")
     public List<Resource> resources = new ArrayList<Resource>();
     
     @Version

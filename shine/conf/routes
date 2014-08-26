@@ -44,6 +44,7 @@ POST    /search/mysearches/:id/delete       controllers.Account.deleteSearch(id:
 GET     /search/mycorpora                  	controllers.Account.myCorpora
 GET     /search/mycorpora/save             	controllers.Account.saveCorpus(name, description)
 POST    /search/mycorpora/:id/delete       	controllers.Account.deleteCorpus(id:Long)
+GET     /search/mycorpora/saveResources    	controllers.Account.saveResources(corpusId, resources)
 
 # Map static resources from the /public folder to the /assets URL path
 

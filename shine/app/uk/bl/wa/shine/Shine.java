@@ -379,7 +379,7 @@ public class Shine extends Solr {
 			if (!query.res.getResults().isEmpty()) {
 				for (Iterator<SolrDocument> iterator = docs.iterator(); iterator.hasNext(); ) {
 					SolrDocument doc = iterator.next();
-					if (query.getExcludeDocs().contains(String.valueOf(doc.getFirstValue("id")))) {
+					if (query.getSelectedResources().contains(String.valueOf(doc.getFirstValue("id")))) {
 						Logger.info("matched: " + String.valueOf(doc.getFirstValue("id")) + " - " + doc.getFirstValue("title"));
 				        iterator.remove();
 					}

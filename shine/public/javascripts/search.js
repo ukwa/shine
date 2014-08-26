@@ -620,28 +620,34 @@ function saveAdvancedSearch() {
 function initCorpusModal() {
     $('#corpus-modal-form').validate({
         rules: {
-          saveCorpusName: {
-            required: true
-          }
+		    saveCorpusName: {
+			    required: {
+			        depends: function(element) {
+			            return $('#dropdownCorpora');
+			        }
+			    }
+			},
         }
 	});
     
     $('.save-corpus').each(function() {
     	$(this).on('click', function(event) {
     		event.preventDefault();
-    		$("#save-corpus-save").prop('disabled', true);
     		$("#save-corpus-form").modal('show');
     	});
     	$('#dismiss-corpus-x').click(function() {
     		$("#save-corpus-form").modal('hide');
-    	});			
-        $('#corpus-modal-form input').on('keyup blur', function () {
-            if ($('#corpus-modal-form').valid()) {
-        		$("#save-corpus-save").prop('disabled', false);
-            } else {
-        		$("#save-corpus-save").prop('disabled', 'disabled');
-            }
-        });
+    	});
+    	if($('#dropdownCorpora') === undefined) {
+    		$("#save-corpus-save").prop('disabled', true);
+    		$('#corpus-modal-form input').on('keyup blur', function () {
+	            if ($('#corpus-modal-form').valid()) {
+	        		$("#save-corpus-save").prop('disabled', false);
+	            } else {
+	        		$("#save-corpus-save").prop('disabled', 'disabled');
+	            }
+	        });
+    	}
     });
 }
 
@@ -650,7 +656,16 @@ function saveCorpus() {
 	initCorpusModal();
 	
 	$('#save-corpus-save').on('click', function() {
-		jsRoutes.controllers.Account.saveCorpus($('#saveCorpusName').val(), $('#save-corpus-description').val()).ajax({success:successFn, error:errorFn});
+		
+		console.log($("select#dropdownCorpora" ).val());
+		var docs = $('input:checkbox[name="selectedResource"]:checked');
+		var selectedResources = "";
+		docs.each(function() {
+			console.log("val: " + $(this).val());
+			selectedResources += $(this).val() + ";";
+		});
+
+		jsRoutes.controllers.Account.saveResources($("select#dropdownCorpora" ).val(), selectedResources).ajax({success:successFn, error:errorFn});
 		$("#save-corpus-form").modal('hide');
 		$('#saveCorpusName').val('');
 		$('#save-corpus-description').val('');
