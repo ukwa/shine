@@ -26,12 +26,10 @@ import scala.collection.mutable.MutableList
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.apache.solr.client.solrj.response.RangeFacet
 import org.apache.solr.common.SolrDocument
-import scala.collection.JavaConverters._
 import models.User
 import views.Csv
 import java.util.Date
 import play.api.mvc.Result
-import scala.collection.JavaConverters
 
 object Search extends Controller {
 
@@ -773,7 +771,7 @@ object Search extends Controller {
   def myCorpora(user: User) = {
 	val corpora = models.Corpus.findByUser(user)
 	println("corpora size: " + corpora.size())
-	JavaConverters.asScalaBufferConverter(corpora).asScala.toList
+	corpora.asScala.toList
   }
 
 }

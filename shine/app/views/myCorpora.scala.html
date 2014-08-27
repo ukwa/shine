@@ -44,7 +44,9 @@
               			@(corpus.name) @(corpus.description)
               			<ul>
               				@for(resource <- corpus.resources) {
-              					<li>@(resource.id) @(resource.resource_id)</li>
+              					<li>
+              						@(resource.id) @(resource.resource_id)
+								</li>
               				}
               			</ul>
 	               	</td>

@@ -8,7 +8,11 @@ import models._
 import views._
 import org.apache.commons.lang.StringUtils
 import uk.bl.wa.shine._
-import scala.collection.JavaConverters
+import scala.collection.JavaConverters._
+import play.api.libs.json.Json
+import play.api.libs.json.JsString
+import play.api.libs.json.JsNumber
+
 
 object Account extends Controller {
 
@@ -86,7 +90,7 @@ object Account extends Controller {
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
 		val searches = models.Search.findByUser(user)
-		val ls = JavaConverters.asScalaBufferConverter(searches).asScala.toList
+		val ls = searches.asScala.toList
 	    Ok(views.html.mySearches("My Searches", user, ls))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
@@ -120,7 +124,7 @@ object Account extends Controller {
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
 		val corpora = models.Corpus.findByUser(user)
-		val cs = JavaConverters.asScalaBufferConverter(corpora).asScala.toList
+		val cs = corpora.asScala.toList
 	    Ok(views.html.myCorpora("My Corpora", user, cs))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
@@ -131,7 +135,18 @@ object Account extends Controller {
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
 		val corpus = models.Corpus.create(name, description, user.id)
-		Ok("false")
+		
+		var myCorpora = models.Corpus.findByUser(user)
+		
+		var results = Json.arr()
+
+		for (c <- myCorpora.asScala) {
+		  println("c: " + c.name)
+		  val json = Json.obj("id" -> JsNumber(c.id.longValue()), "name" -> JsString(c.name))
+		  results = results :+ json
+		}
+
+		Ok(results)
 	    //Redirect(routes.Account.mySearches).flashing("success" -> "Search was added")
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")

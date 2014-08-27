@@ -617,47 +617,131 @@ function saveAdvancedSearch() {
 	});
 }
 
-function initCorpusModal() {
-    $('#corpus-modal-form').validate({
-        rules: {
-		    saveCorpusName: {
-			    required: {
-			        depends: function(element) {
-			            return $('#dropdownCorpora');
-			        }
-			    }
-			},
-        }
-	});
+function saveCorpus() {
     
+    // to open the modal and add events
     $('.save-corpus').each(function() {
+    	
     	$(this).on('click', function(event) {
     		event.preventDefault();
     		$("#save-corpus-form").modal('show');
     	});
+    	
     	$('#dismiss-corpus-x').click(function() {
     		$("#save-corpus-form").modal('hide');
     	});
-    	if($('#dropdownCorpora') === undefined) {
-    		$("#save-corpus-save").prop('disabled', true);
-    		$('#corpus-modal-form input').on('keyup blur', function () {
-	            if ($('#corpus-modal-form').valid()) {
-	        		$("#save-corpus-save").prop('disabled', false);
-	            } else {
-	        		$("#save-corpus-save").prop('disabled', 'disabled');
-	            }
-	        });
+    });
+    
+    updateCorpusDropdown();
+    validateCorpusName();
+
+    $('#saveCorpusName').on('keyup', function(event) {
+    	if($('#saveCorpusName').length > 0) {
+    		$("#save-corpus-save").show();
+    		$("#save-resource-save").hide();
     	}
     });
+    
+	// no dropdown
+	if($('#saveCorpusName').length > 0) {
+
+		$("#save-corpus-save").show();
+		$("#save-resource-save").hide();
+		
+		$("#save-corpus-save").prop('disabled', true);
+		$('#corpus-modal-form input').on('keyup blur', function () {
+            if ($('#corpus-modal-form').valid()) {
+        		$("#save-corpus-save").prop('disabled', false);
+            } else {
+        		$("#save-corpus-save").prop('disabled', 'disabled');
+            }
+        });
+	    saveCorpusDetails();
+	} else {
+		$("#save-corpus-save").hide();
+		$("#save-resource-save").show();
+		// we have a dropdown to choose from
+		saveResourceDetails();
+	}
+
 }
 
-function saveCorpus() {
+function validateCorpusName() {
 	
-	initCorpusModal();
+	// validate name
+    $('#corpus-modal-form').validate({
+        rules: {
+        	saveCorpusName: {
+                required: {
+                    depends: function(element) {
+                        return ($('#selectedCorpus').val() == undefined) || ($('#selectedCorpus').length > 0 && $('#selectedCorpus').val().length == 0)
+                    }
+                }
+        	}
+        }
+	});
+}
+
+function updateCorpusDropdown() {
+	$('#selectedCorpus').on('change', function(event) {
+		event.preventDefault();
+	    validateCorpusName();
+		console.log($('#selectedCorpus').val().length);
+		if ($('#selectedCorpus').val().length > 0) {
+			// buttons now change save resource
+			$("#save-corpus-save").hide();
+			$("#save-resource-save").show();
+			saveResourceDetails();
+		} else {
+			$("#save-corpus-save").show();
+			$("#save-resource-save").hide();
+			saveCorpusDetails();
+		}
+	});
+}
+
+function saveCorpusDetails() {
 	
-	$('#save-corpus-save').on('click', function() {
+	$('#save-corpus-save').on('click', function(event) {
+		event.preventDefault();
+	
+		var docs = $('input:checkbox[name="selectedResource"]:checked');
 		
-		console.log($("select#dropdownCorpora" ).val());
+		var selectedResources = "";
+		docs.each(function() {
+			console.log("val: " + $(this).val());
+			selectedResources += $(this).val() + ";";
+		});
+		
+		jsRoutes.controllers.Account.saveCorpus($('#saveCorpusName').val(), $('#save-corpus-description').val()).ajax({
+			success: function(data) {
+				// show dropdown list
+				$('#currentCorpusDropDown').remove();
+				$('#corpusDropDownPanel').empty();
+			    $('#corpusDropDownPanel').append("<div class='form-group'><label for='saveCorpusName' class='col-sm-2 control-label'>Corpus</label><div class='col-sm-10'><div class='dropdown'><select class='form-control' name='selectedCorpus' id='selectedCorpus'><option value='' selected='selected'>&#060;Please Select&#062;</option>");
+				$.each($(data), function(key, value) {
+					$('#selectedCorpus').append("<option value='" + value.id + "'>" + value.name + "</option>");
+				});
+				$('#corpusDropDownPanel').append("</select></div></div></div>");
+			    updateCorpusDropdown();
+			},
+		    error: function() {
+		    	console.debug("Error of ajax Call");
+				console.debug(err);
+		    }
+		});
+		
+//		$("#save-corpus-form").modal('hide');
+		$('#saveCorpusName').val('');
+		$('#save-corpus-description').val('');
+		
+		// close and reset form
+	});
+}
+
+function saveResourceDetails() {
+	
+	$('#save-resource-save').on('click', function() {
 		var docs = $('input:checkbox[name="selectedResource"]:checked');
 		var selectedResources = "";
 		docs.each(function() {
@@ -665,18 +749,17 @@ function saveCorpus() {
 			selectedResources += $(this).val() + ";";
 		});
 
-		jsRoutes.controllers.Account.saveResources($("select#dropdownCorpora" ).val(), selectedResources).ajax({success:successFn, error:errorFn});
+		jsRoutes.controllers.Account.saveResources($("select#selectedCorpus").val(), selectedResources).ajax({
+	          success: function(data) {
+	  			console.debug("Success of Ajax Call");
+				console.debug(data);
+	          },
+		      error: function() {
+				console.debug("Error of ajax Call");
+				console.debug(err);
+		      }			
+		});
 		$("#save-corpus-form").modal('hide');
-		$('#saveCorpusName').val('');
-		$('#save-corpus-description').val('');
-		var successFn = function(data) {
-			console.debug("Success of Ajax Call");
-			console.debug(data);
-		};
-		var errorFn = function(err) {
-			console.debug("Error of ajax Call");
-			console.debug(err);
-		}
 		// close and reset form
 	});
 }
