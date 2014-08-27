@@ -347,12 +347,10 @@ public class Shine extends Solr {
 				if (key.equals("facet.sort")) {
 					// there's only one sort
 					solrParameters.setFacetSort(params.get(key).get(0));
-				} else if (key.contains(".facet.sort") || key.contains("facet.out.")) {
+				} else if (key.contains(".facet.sort")) {
 					if (!params.get(key).get(0).isEmpty()) {
 						solrParameters.add(key, params.get(key).get(0));
 						query.menu.put(key, params.get(key).get(0));
-					} else if (key.contains("facet.out.")) {
-						query.menu.put(key, Boolean.TRUE.toString());
 					}
 				}
 			}
@@ -381,7 +379,7 @@ public class Shine extends Solr {
 			if (!query.res.getResults().isEmpty()) {
 				for (Iterator<SolrDocument> iterator = docs.iterator(); iterator.hasNext(); ) {
 					SolrDocument doc = iterator.next();
-					if (query.getExcludeDocs().contains(String.valueOf(doc.getFirstValue("id")))) {
+					if (query.getSelectedResources().contains(String.valueOf(doc.getFirstValue("id")))) {
 						Logger.info("matched: " + String.valueOf(doc.getFirstValue("id")) + " - " + doc.getFirstValue("title"));
 				        iterator.remove();
 					}

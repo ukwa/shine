@@ -98,7 +98,9 @@ object Application extends Controller {
         routes.javascript.Search.getFacets,
         routes.javascript.Search.processChart,
         routes.javascript.Search.ajaxSearch,
-        routes.javascript.Account.saveSearch
+        routes.javascript.Account.saveSearch,
+        routes.javascript.Account.saveCorpus,
+        routes.javascript.Account.saveResources 
         )).as("text/javascript")
   }
 }

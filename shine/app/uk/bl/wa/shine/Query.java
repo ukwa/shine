@@ -86,7 +86,7 @@ public class Query {
 	// incoming parameters
 	public Map<String, List<String>> parameters;
 	
-	private List<String> excludeDocs;
+	private List<String> selectedResources;
 	
 	public Map<String,String> menu;
 	
@@ -128,7 +128,7 @@ public class Query {
 	private void init() {
 		this.facets = new ArrayList<String>();
 		this.facetValues = new HashMap<String, FacetValue>();
-		this.excludeDocs = new ArrayList<String>();
+		this.selectedResources = new ArrayList<String>();
 		this.menu = new HashMap<String,String>();
 		this.parseParameters();
 	}
@@ -156,12 +156,12 @@ public class Query {
 			}
 		}
 		
-		if (parameters.get("excludeDoc") != null) {
-			Iterator<String> iterator = parameters.get("excludeDoc").iterator();
+		if (parameters.get("selectedResource") != null) {
+			Iterator<String> iterator = parameters.get("selectedResource").iterator();
 			while (iterator.hasNext()) {
-				String exclude = iterator.next();
-				Logger.info("excludeDoc >>>" + exclude);
-				excludeDocs.add(exclude);
+				String selectedResource = iterator.next();
+				Logger.info("selectedResource >>>" + selectedResource);
+				selectedResources.add(selectedResource);
 			}
 		}
 		
@@ -367,8 +367,8 @@ public class Query {
 		}
 	}
 
-	public List<String> getExcludeDocs() {
-		return excludeDocs;
+	public List<String> getSelectedResources() {
+		return selectedResources;
 	}
 
 	private String responseFacetParameters() {
@@ -434,8 +434,8 @@ public class Query {
 	
 	private String processExclusionsParameters() {
 		StringBuilder parameters = new StringBuilder("");
-		for (String exclude : this.excludeDocs) {
-			parameters.append("&excludeDoc=").append(exclude);
+		for (String selectedResource : this.selectedResources) {
+			parameters.append("&selectedResource=").append(selectedResource);
 		}
 		return parameters.toString();
 	}

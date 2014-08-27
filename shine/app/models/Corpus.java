@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -31,9 +32,9 @@ public class Corpus extends Model {
     @Formats.NonEmpty
     public String name;
 
-    public String metaData;
+    public String metadata;
 
-    public String summary;
+    public String description;
 
     public String tags;
     
@@ -43,7 +44,7 @@ public class Corpus extends Model {
     @Formats.NonEmpty
     public Long user_id;
     
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="corpus")
+    @OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL,CascadeType.PERSIST,CascadeType.MERGE }, mappedBy = "corpus")
     public List<Resource> resources = new ArrayList<Resource>();
     
     @Version
@@ -52,9 +53,10 @@ public class Corpus extends Model {
     public static Model.Finder<String,Corpus> find = new Model.Finder<String,Corpus>(String.class, Corpus.class);
 
     
-    public Corpus(String name, Long user_id) {
+    public Corpus(String name, String description, Long user_id) {
 		super();
 		this.name = name;
+		this.description = description;
 		this.user_id = user_id;
 	}
 
@@ -75,8 +77,8 @@ public class Corpus extends Model {
     /**
      * Create a new corpus.
      */
-    public static Corpus create(String name, Long userId) {
-    	Corpus corpus = new Corpus(name, userId);
+    public static Corpus create(String name, String description, Long userId) {
+    	Corpus corpus = new Corpus(name, description, userId);
     	corpus.save();
 		return corpus;
    }

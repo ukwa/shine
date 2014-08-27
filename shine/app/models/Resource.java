@@ -5,12 +5,11 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import play.data.format.Formats;
-import play.data.validation.Constraints;
 import play.db.ebean.Model;
 
 @Entity 
@@ -23,24 +22,28 @@ public class Resource extends Model {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-    public Long resource_id;
+    public Long id;
     
-    @Constraints.Required
-    @Formats.NonEmpty
-    public Long corpus_id;
-    
+	public String resource_id;
+	
     @ManyToOne
+    @JoinColumn(name="corpus_id")
     public Corpus corpus;
+    
+    public String title;
+    
+    public String url;
     
     @Version
     public Timestamp lastUpdate;
 
     public static Model.Finder<String,Resource> find = new Model.Finder<String,Resource>(String.class, Resource.class);
 
-    public Resource(Long resource_id, Long corpus_id) {
+    public Resource(String title, String url, String resource_id) {
 		super();
+		this.title = title;
+		this.url = url;
 		this.resource_id = resource_id;
-		this.corpus_id = corpus_id;
 	}
 
 	public static List<Resource> findByCorpus(Corpus corpus) {
@@ -56,14 +59,4 @@ public class Resource extends Model {
     public static Resource find(Long resourceId) {
     	return find.where().eq("resource_id", resourceId).findUnique();
     }
-
-    /**
-     * Create a new corpus.
-     */
-    public static Resource create(Long resourceId, Long corpusId) {
-    	Resource resource = new Resource(resourceId, corpusId);
-    	resource.save();
-		return resource;
-   }
-
 }

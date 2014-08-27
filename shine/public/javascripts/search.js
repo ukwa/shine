@@ -57,10 +57,18 @@ $(function () {
 	
 	$('.show-more').each(function(index) {
 		var $show_more = $(this);
+		var parent = $(this).parent().parent().parent();
+		var shown = parent.find('li.facet-options.show').length;
+		console.log(">>>: " + shown);
+		
+		parent.find('ul.facet-heading').each(function(index) {
+			console.log("shown: " + $(this).find('li.facet-options').length);
+		});
+		
 		$(this).click(function(event) {
 			event.preventDefault();
 			// click on link and do something....
-			$(this).parent().parent().find('li.facet-options').each(function(index) {
+			parent.parent().find('li.facet-options').each(function(index) {
 				$li = $(this);
 				var $show_more_icon = $show_more.find('span:nth-child(1)');
 				var $show_more_span = $show_more.find('span:nth-child(2)');
@@ -290,33 +298,26 @@ $(function () {
 	});
 	
 	$('.facet-invert').each(function() {
-		var value = $(this).parent().parent().parent().parent().parent().find("input").val();
+		var parent = $(this).parent().parent().parent().parent().parent()
+		var value = parent.find("input").val();
 		var url = "search" + window.location.search;
 		
 //		var facet = "facet.out." + value;
 //		url = url.replace("&"+facet, '');
 //		url = url + "&" + facet
 		
-		var invert = "&invert=" + value; 
+		var facets_inc = parent.parent().find('div.panel-body.' + value + ' div.facet-index ul li a.facet.include span');
+		var facets_exc = parent.parent().find('div.panel-body.' + value + ' div.facet-index ul li a.facet.exclude span');
 
-		var parent = $(this).parent().parent().parent().parent().parent().parent();
-		
-		var facets_inc = parent.find('div.panel-body.' + value + ' div.facet-index ul li a.facet.include span');
-		var facets_exc = parent.find('div.panel-body.' + value + ' div.facet-index ul li a.facet.exclude span');
+		var facet_value = parent.parent().find('div.panel-body.' + value + ' div.facet-index ul li a.facet-name');
 
-		var facet_value = parent.find('div.panel-body.' + value + ' div.facet-index ul li a.facet-name');
-
-		var list = parent.find('div.panel-body.' + value + ' div.facet-index ul li.facet-options');
+		var list = parent.parent().find('div.panel-body.' + value + ' div.facet-index ul li.facet-options');
 
 		//		div.panel-body.crawl_year div.facet-index ul li.facet-options
-		var includes = [];
-		var excludes = [];
 		
 		$(this).click(function(event) {
 //			event.preventDefault();
 
-//			url = url.replace('&invert=&', '&');
-			
 //			var innerHtml = "(uv) invert this selection";
 			var innerHtml = "(+-) Exclude selected values";
 			
@@ -334,25 +335,14 @@ $(function () {
 				    	// then switch included to unchecked
 				    	// get exclude and switch to checked
 						include.removeAttr('checked');
-						//exclude.attr('checked', 'checked');
-					} else {
-						include.removeAttr('checked');
 						exclude.attr('checked', 'checked');
+					} else {
+						exclude.removeAttr('checked');
+//						include.attr('checked', 'checked');
 					}
 				});
 		    	
-				$(this).addClass(value);
-		    	innerHtml += " <span class='glyphicon glyphicon-ok'></span>";
-				// add selected
-			    facets_inc.each(function() {
-					$(this).addClass('hide');
-				});
-				facets_exc.each(function() {
-					$(this).removeClass('hide');
-				});
-				$(this).html(innerHtml);
 				$('#invert_' + value).val(value);
-//				url = url + invert;
 
 		    } else {
 		    	console.log('back to includes');
@@ -367,23 +357,13 @@ $(function () {
 				    	// then switch included to unchecked
 				    	// get exclude and switch to checked
 						exclude.removeAttr('checked');
-						//exclude.attr('checked', 'checked');
-					} else {
-						exclude.removeAttr('checked');
 						include.attr('checked', 'checked');
+					} else {
+						include.removeAttr('checked');
+//						exclude.attr('checked', 'checked');
 					}
 				});
 
-		    	
-		    	$(this).removeClass(value);
-		    	innerHtml = innerHtml.replace(" <span class='glyphicon glyphicon-ok'></span>", '');
-			    facets_inc.each(function() {
-					$(this).removeClass('hide');
-				});
-				facets_exc.each(function() {
-					$(this).addClass('hide');
-				});
-				$(this).html(innerHtml);
 				$('#invert_' + value).val('');
 //				url = url.replace(invert, '');
 		    }
@@ -391,6 +371,8 @@ $(function () {
 //			$(this).attr('href', url);
 		    
 //		    facetOptions();
+		    
+		    disableInvertInputs();
 			if ($('#search-form').valid()) {
 			    $('#modalLoader').modal({
 			        backdrop: true,
@@ -398,10 +380,6 @@ $(function () {
 			    });
 			}
 			
-//			var action = $("<input>").attr("type", "hidden").attr("name", "action").val("invert-facet");
-//			var input = $("<input>").attr("type", "hidden").attr("name", "removeFacet").val(value);
-//			$('#search-form').append($(action));
-//			$('#search-form').append($(input));
 			$('#search-form').submit();
 		});
 	});
@@ -562,7 +540,7 @@ function showFacets() {
 }
 
 function initModal() {
-    $('#modal-form').validate({
+    $('#search-modal-form').validate({
         rules: {
           saveName: {
             required: true
@@ -575,11 +553,11 @@ function initModal() {
 		$("#save-search-form").modal('show');
 	    //$('form').attr('action', "/search/save").attr('method', 'post').submit();
 	});
-	$('#dismiss-x').click(function() {
+	$('#dismiss-search-x').click(function() {
 		$("#save-search-form").modal('hide');
 	});			
-    $('#modal-form input').on('keyup blur', function () {
-        if ($('#modal-form').valid()) {
+    $('#search-modal-form input').on('keyup blur', function () {
+        if ($('#search-modal-form').valid()) {
     		$("#save-search-save").prop('disabled', false);
         } else {
     		$("#save-search-save").prop('disabled', 'disabled');
@@ -627,6 +605,70 @@ function saveAdvancedSearch() {
 		$("#save-search-form").modal('hide');
 		$('#saveName').val('');
 		$('#save-description').val('');
+		var successFn = function(data) {
+			console.debug("Success of Ajax Call");
+			console.debug(data);
+		};
+		var errorFn = function(err) {
+			console.debug("Error of ajax Call");
+			console.debug(err);
+		}
+		// close and reset form
+	});
+}
+
+function initCorpusModal() {
+    $('#corpus-modal-form').validate({
+        rules: {
+		    saveCorpusName: {
+			    required: {
+			        depends: function(element) {
+			            return $('#dropdownCorpora');
+			        }
+			    }
+			},
+        }
+	});
+    
+    $('.save-corpus').each(function() {
+    	$(this).on('click', function(event) {
+    		event.preventDefault();
+    		$("#save-corpus-form").modal('show');
+    	});
+    	$('#dismiss-corpus-x').click(function() {
+    		$("#save-corpus-form").modal('hide');
+    	});
+    	if($('#dropdownCorpora') === undefined) {
+    		$("#save-corpus-save").prop('disabled', true);
+    		$('#corpus-modal-form input').on('keyup blur', function () {
+	            if ($('#corpus-modal-form').valid()) {
+	        		$("#save-corpus-save").prop('disabled', false);
+	            } else {
+	        		$("#save-corpus-save").prop('disabled', 'disabled');
+	            }
+	        });
+    	}
+    });
+}
+
+function saveCorpus() {
+	
+	initCorpusModal();
+	
+	$('#save-corpus-save').on('click', function() {
+		
+		console.log($("select#dropdownCorpora" ).val());
+		var docs = $('input:checkbox[name="selectedResource"]:checked');
+		var selectedResources = "";
+		docs.each(function() {
+			console.log("val: " + $(this).val());
+			selectedResources += $(this).val() + ";";
+		});
+
+		jsRoutes.controllers.Account.saveResources($("select#dropdownCorpora" ).val(), selectedResources).ajax({success:successFn, error:errorFn});
+		$("#save-corpus-form").modal('hide');
+		$('#saveCorpusName').val('');
+		$('#save-corpus-description').val('');
 		var successFn = function(data) {
 			console.debug("Success of Ajax Call");
 			console.debug(data);
@@ -766,7 +808,7 @@ function facetOptions() {
 		// for clicking on facet options (includes)
 		$(this).find('a.facet.include').each(function(index) {
 			//console.log(facet_name + " " + facet_value);
-			var url = "search?" + $('#search-form').serialize();
+//			var url = "search?" + $('#search-form').serialize();
 			// if not activated then remove
 /* 					facet_value_exc = facet_value_exc.replace('"', '%22').replace('"', '%22');
 			var regexExc = new RegExp("&"+ facet_name_exc + "=" + facet_value_exc);
@@ -790,7 +832,7 @@ function facetOptions() {
 //						console.log(url);
 //						console.log("remove facet: " + facet);
 			}
-			url = url.replace('&invert=&', '&');
+//			url = url.replace('&invert=&', '&');
 			$(this).attr('href', url);
 			
 			$(this).click(function(event) {
@@ -904,4 +946,12 @@ function facetClickToggle($button, $element) {
 		$button.addClass('facet-deselected');
 		$element.removeAttr('checked');
 	}
+}
+
+function disableInvertInputs() {
+	$("input[name='invert']").each(function() {
+	    if ($(this).val() == '') {
+			$(this).prop('disabled', true);
+	    }
+	});
 }
