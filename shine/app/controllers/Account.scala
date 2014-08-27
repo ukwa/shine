@@ -178,4 +178,8 @@ object Account extends Controller {
 	  }
   }
 
+  def deleteResource(id:Long) = Action { implicit request =>
+    	models.Resource.find(id).delete
+        Redirect(routes.Account.myCorpora()).flashing("success" -> "Your resource has been deleted")
+  }
 }

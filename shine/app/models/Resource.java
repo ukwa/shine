@@ -56,7 +56,7 @@ public class Resource extends Model {
         return find.all();
     }
 
-    public static Resource find(Long resourceId) {
-    	return find.where().eq("resource_id", resourceId).findUnique();
+    public static Resource find(Long id) {
+    	return find.where().eq("id", id).findUnique();
     }
 }

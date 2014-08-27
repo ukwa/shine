@@ -628,8 +628,15 @@ function saveCorpus() {
     	});
     	
     	$('#dismiss-corpus-x').click(function() {
+			$("#save-resource-save").text('Save Resource(s)');
     		$("#save-corpus-form").modal('hide');
     	});
+    	
+    	$('#save-corpus-close').click(function() {
+			$("#save-resource-save").text('Save Resource(s)');
+    		$("#save-corpus-form").modal('hide');
+    	});
+    	
     });
     
     updateCorpusDropdown();
@@ -704,7 +711,8 @@ function saveCorpusDetails() {
 	
 	$('#save-corpus-save').on('click', function(event) {
 		event.preventDefault();
-	
+		$("#save-resource-save").text('Save Resource(s)');
+
 		var docs = $('input:checkbox[name="selectedResource"]:checked');
 		
 		var selectedResources = "";
@@ -740,7 +748,6 @@ function saveCorpusDetails() {
 }
 
 function saveResourceDetails() {
-	
 	$('#save-resource-save').on('click', function() {
 		var docs = $('input:checkbox[name="selectedResource"]:checked');
 		var selectedResources = "";
@@ -748,18 +755,22 @@ function saveResourceDetails() {
 			console.log("val: " + $(this).val());
 			selectedResources += $(this).val() + ";";
 		});
-
-		jsRoutes.controllers.Account.saveResources($("select#selectedCorpus").val(), selectedResources).ajax({
-	          success: function(data) {
-	  			console.debug("Success of Ajax Call");
-				console.debug(data);
-	          },
-		      error: function() {
-				console.debug("Error of ajax Call");
-				console.debug(err);
-		      }			
-		});
-		$("#save-corpus-form").modal('hide');
+		if (selectedResources.length > 0) {
+			jsRoutes.controllers.Account.saveResources($("select#selectedCorpus").val(), selectedResources).ajax({
+		          success: function(data) {
+		  			console.debug("Success of Ajax Call");
+					console.debug(data);
+		          },
+			      error: function() {
+					console.debug("Error of ajax Call");
+					console.debug(err);
+			      }			
+			});
+			$("#save-corpus-form").modal('hide');
+		} else {
+			$("#save-resource-save").text('No resources selected');
+			
+		}
 		// close and reset form
 	});
 }
