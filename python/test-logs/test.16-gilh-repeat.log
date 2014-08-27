@@ -1,0 +1,429 @@
+Running queries against: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&q=*:*
+NO-FACETS-ALL.QTime 45262
+NO-FACETS-ALL.numFound 2023428397
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&q="tools"
+NO-FACETS-tools.QTime 9177
+NO-FACETS-tools.numFound 80957081
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&q="doctor who"
+NO-FACETS-doctor who.QTime 18939
+NO-FACETS-doctor who.numFound 5665802
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&q="current"
+NO-FACETS-current.QTime 9328
+NO-FACETS-current.numFound 130103354
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&q="nose"
+NO-FACETS-nose.QTime 8284
+NO-FACETS-nose.numFound 8572211
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&q="arrived"
+NO-FACETS-arrived.QTime 8615
+NO-FACETS-arrived.numFound 16589459
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&q="isn't"
+NO-FACETS-isn't.QTime 6577
+NO-FACETS-isn't.numFound 30909857
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&q="doesn't"
+NO-FACETS-doesn't.QTime 7161
+NO-FACETS-doesn't.numFound 42250702
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&q="rhythm"
+NO-FACETS-rhythm.QTime 6404
+NO-FACETS-rhythm.numFound 5003404
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&q="sense"
+NO-FACETS-sense.QTime 6501
+NO-FACETS-sense.numFound 30325338
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=crawl_years
+ONE-FACET-crawl_years.QTime 30954
+ONE-FACET-crawl_years.numFound 2023428397
+ONE-FACET-crawl_years.facetValues[0] 2004
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=content_language
+ONE-FACET-content_language.QTime 12913
+ONE-FACET-content_language.numFound 2023428397
+ONE-FACET-content_language.facetValues[0] en
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=public_suffix
+ONE-FACET-public_suffix.QTime 12314
+ONE-FACET-public_suffix.numFound 2023428397
+ONE-FACET-public_suffix.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes.QTime 29021
+ONE-FACET-links_public_suffixes.numFound 2023428397
+ONE-FACET-links_public_suffixes.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=domain
+ONE-FACET-domain.QTime 41273
+ONE-FACET-domain.numFound 2023428397
+ONE-FACET-domain.facetValues[0] amazon.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=links_domains
+ONE-FACET-links_domains.QTime 127084
+ONE-FACET-links_domains.numFound 2023428397
+ONE-FACET-links_domains.facetValues[0] amazon.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=content_type_norm
+ONE-FACET-content_type_norm.QTime 11560
+ONE-FACET-content_type_norm.numFound 2023428397
+ONE-FACET-content_type_norm.facetValues[0] html
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=author
+ONE-FACET-author.QTime 31001
+ONE-FACET-author.numFound 2023428397
+ONE-FACET-author.facetValues[0] 
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=postcode_district
+ONE-FACET-postcode_district.QTime 22762
+ONE-FACET-postcode_district.numFound 2023428397
+ONE-FACET-postcode_district.facetValues[0] CV1
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="tools"&facet.field=crawl_years
+ONE-FACET-crawl_years-tools.QTime 11293
+ONE-FACET-crawl_years-tools.numFound 80957081
+ONE-FACET-crawl_years-tools.facetValues[0] 2008
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="tools"&facet.field=content_language
+ONE-FACET-content_language-tools.QTime 137
+ONE-FACET-content_language-tools.numFound 80957081
+ONE-FACET-content_language-tools.facetValues[0] en
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="tools"&facet.field=public_suffix
+ONE-FACET-public_suffix-tools.QTime 159
+ONE-FACET-public_suffix-tools.numFound 80957081
+ONE-FACET-public_suffix-tools.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="tools"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-tools.QTime 4113
+ONE-FACET-links_public_suffixes-tools.numFound 80957081
+ONE-FACET-links_public_suffixes-tools.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="tools"&facet.field=domain
+ONE-FACET-domain-tools.QTime 9367
+ONE-FACET-domain-tools.numFound 80957081
+ONE-FACET-domain-tools.facetValues[0] kelkoo.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="tools"&facet.field=links_domains
+ONE-FACET-links_domains-tools.QTime 19293
+ONE-FACET-links_domains-tools.numFound 80957081
+ONE-FACET-links_domains-tools.facetValues[0] doubleclick.net
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="tools"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-tools.QTime 135
+ONE-FACET-content_type_norm-tools.numFound 80957081
+ONE-FACET-content_type_norm-tools.facetValues[0] html
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="tools"&facet.field=author
+ONE-FACET-author-tools.QTime 7637
+ONE-FACET-author-tools.numFound 80957081
+ONE-FACET-author-tools.facetValues[0] 
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="tools"&facet.field=postcode_district
+ONE-FACET-postcode_district-tools.QTime 5245
+ONE-FACET-postcode_district-tools.numFound 80957081
+ONE-FACET-postcode_district-tools.facetValues[0] CV1
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doctor who"&facet.field=crawl_years
+ONE-FACET-crawl_years-doctor who.QTime 20633
+ONE-FACET-crawl_years-doctor who.numFound 5665802
+ONE-FACET-crawl_years-doctor who.facetValues[0] 2008
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doctor who"&facet.field=content_language
+ONE-FACET-content_language-doctor who.QTime 96
+ONE-FACET-content_language-doctor who.numFound 5665802
+ONE-FACET-content_language-doctor who.facetValues[0] en
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doctor who"&facet.field=public_suffix
+ONE-FACET-public_suffix-doctor who.QTime 56
+ONE-FACET-public_suffix-doctor who.numFound 5665802
+ONE-FACET-public_suffix-doctor who.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doctor who"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-doctor who.QTime 4042
+ONE-FACET-links_public_suffixes-doctor who.numFound 5665802
+ONE-FACET-links_public_suffixes-doctor who.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doctor who"&facet.field=domain
+ONE-FACET-domain-doctor who.QTime 5405
+ONE-FACET-domain-doctor who.numFound 5665802
+ONE-FACET-domain-doctor who.facetValues[0] digitalspy.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doctor who"&facet.field=links_domains
+ONE-FACET-links_domains-doctor who.QTime 13844
+ONE-FACET-links_domains-doctor who.numFound 5665802
+ONE-FACET-links_domains-doctor who.facetValues[0] digitalspy.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doctor who"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-doctor who.QTime 56
+ONE-FACET-content_type_norm-doctor who.numFound 5665802
+ONE-FACET-content_type_norm-doctor who.facetValues[0] html
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doctor who"&facet.field=author
+ONE-FACET-author-doctor who.QTime 35099
+ONE-FACET-author-doctor who.numFound 5665802
+ONE-FACET-author-doctor who.facetValues[0] WPA
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doctor who"&facet.field=postcode_district
+ONE-FACET-postcode_district-doctor who.QTime 23206
+ONE-FACET-postcode_district-doctor who.numFound 5665802
+ONE-FACET-postcode_district-doctor who.facetValues[0] CA28
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="current"&facet.field=crawl_years
+ONE-FACET-crawl_years-current.QTime 21517
+ONE-FACET-crawl_years-current.numFound 130103354
+ONE-FACET-crawl_years-current.facetValues[0] 2004
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="current"&facet.field=content_language
+ONE-FACET-content_language-current.QTime 202
+ONE-FACET-content_language-current.numFound 130103354
+ONE-FACET-content_language-current.facetValues[0] en
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="current"&facet.field=public_suffix
+ONE-FACET-public_suffix-current.QTime 203
+ONE-FACET-public_suffix-current.numFound 130103354
+ONE-FACET-public_suffix-current.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="current"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-current.QTime 14709
+ONE-FACET-links_public_suffixes-current.numFound 130103354
+ONE-FACET-links_public_suffixes-current.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="current"&facet.field=domain
+ONE-FACET-domain-current.QTime 9488
+ONE-FACET-domain-current.numFound 130103354
+ONE-FACET-domain-current.facetValues[0] bbc.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="current"&facet.field=links_domains
+ONE-FACET-links_domains-current.QTime 20613
+ONE-FACET-links_domains-current.numFound 130103354
+ONE-FACET-links_domains-current.facetValues[0] bbc.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="current"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-current.QTime 213
+ONE-FACET-content_type_norm-current.numFound 130103354
+ONE-FACET-content_type_norm-current.facetValues[0] html
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="current"&facet.field=author
+ONE-FACET-author-current.QTime 4718
+ONE-FACET-author-current.numFound 130103354
+ONE-FACET-author-current.facetValues[0] 
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="current"&facet.field=postcode_district
+ONE-FACET-postcode_district-current.QTime 1206
+ONE-FACET-postcode_district-current.numFound 130103354
+ONE-FACET-postcode_district-current.facetValues[0] SL6
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="nose"&facet.field=crawl_years
+ONE-FACET-crawl_years-nose.QTime 9281
+ONE-FACET-crawl_years-nose.numFound 8572211
+ONE-FACET-crawl_years-nose.facetValues[0] 2008
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="nose"&facet.field=content_language
+ONE-FACET-content_language-nose.QTime 69
+ONE-FACET-content_language-nose.numFound 8572211
+ONE-FACET-content_language-nose.facetValues[0] en
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="nose"&facet.field=public_suffix
+ONE-FACET-public_suffix-nose.QTime 70
+ONE-FACET-public_suffix-nose.numFound 8572211
+ONE-FACET-public_suffix-nose.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="nose"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-nose.QTime 932
+ONE-FACET-links_public_suffixes-nose.numFound 8572211
+ONE-FACET-links_public_suffixes-nose.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="nose"&facet.field=domain
+ONE-FACET-domain-nose.QTime 5356
+ONE-FACET-domain-nose.numFound 8572211
+ONE-FACET-domain-nose.facetValues[0] guardian.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="nose"&facet.field=links_domains
+ONE-FACET-links_domains-nose.QTime 3327
+ONE-FACET-links_domains-nose.numFound 8572211
+ONE-FACET-links_domains-nose.facetValues[0] google.com
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="nose"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-nose.QTime 59
+ONE-FACET-content_type_norm-nose.numFound 8572211
+ONE-FACET-content_type_norm-nose.facetValues[0] html
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="nose"&facet.field=author
+ONE-FACET-author-nose.QTime 22110
+ONE-FACET-author-nose.numFound 8572211
+ONE-FACET-author-nose.facetValues[0] mquinn
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="nose"&facet.field=postcode_district
+ONE-FACET-postcode_district-nose.QTime 9018
+ONE-FACET-postcode_district-nose.numFound 8572211
+ONE-FACET-postcode_district-nose.facetValues[0] TW9
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="arrived"&facet.field=crawl_years
+ONE-FACET-crawl_years-arrived.QTime 18686
+ONE-FACET-crawl_years-arrived.numFound 16589459
+ONE-FACET-crawl_years-arrived.facetValues[0] 2008
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="arrived"&facet.field=content_language
+ONE-FACET-content_language-arrived.QTime 68
+ONE-FACET-content_language-arrived.numFound 16589459
+ONE-FACET-content_language-arrived.facetValues[0] en
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="arrived"&facet.field=public_suffix
+ONE-FACET-public_suffix-arrived.QTime 76
+ONE-FACET-public_suffix-arrived.numFound 16589459
+ONE-FACET-public_suffix-arrived.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="arrived"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-arrived.QTime 12788
+ONE-FACET-links_public_suffixes-arrived.numFound 16589459
+ONE-FACET-links_public_suffixes-arrived.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="arrived"&facet.field=domain
+ONE-FACET-domain-arrived.QTime 6015
+ONE-FACET-domain-arrived.numFound 16589459
+ONE-FACET-domain-arrived.facetValues[0] guardian.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="arrived"&facet.field=links_domains
+ONE-FACET-links_domains-arrived.QTime 13261
+ONE-FACET-links_domains-arrived.numFound 16589459
+ONE-FACET-links_domains-arrived.facetValues[0] facebook.com
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="arrived"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-arrived.QTime 52
+ONE-FACET-content_type_norm-arrived.numFound 16589459
+ONE-FACET-content_type_norm-arrived.facetValues[0] html
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="arrived"&facet.field=author
+ONE-FACET-author-arrived.QTime 2106
+ONE-FACET-author-arrived.numFound 16589459
+ONE-FACET-author-arrived.facetValues[0] 
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="arrived"&facet.field=postcode_district
+ONE-FACET-postcode_district-arrived.QTime 437
+ONE-FACET-postcode_district-arrived.numFound 16589459
+ONE-FACET-postcode_district-arrived.facetValues[0] SL1
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="isn't"&facet.field=crawl_years
+ONE-FACET-crawl_years-isn't.QTime 9268
+ONE-FACET-crawl_years-isn't.numFound 30909857
+ONE-FACET-crawl_years-isn't.facetValues[0] 2008
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="isn't"&facet.field=content_language
+ONE-FACET-content_language-isn't.QTime 75
+ONE-FACET-content_language-isn't.numFound 30909857
+ONE-FACET-content_language-isn't.facetValues[0] en
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="isn't"&facet.field=public_suffix
+ONE-FACET-public_suffix-isn't.QTime 85
+ONE-FACET-public_suffix-isn't.numFound 30909857
+ONE-FACET-public_suffix-isn't.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="isn't"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-isn't.QTime 206
+ONE-FACET-links_public_suffixes-isn't.numFound 30909857
+ONE-FACET-links_public_suffixes-isn't.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="isn't"&facet.field=domain
+ONE-FACET-domain-isn't.QTime 5572
+ONE-FACET-domain-isn't.numFound 30909857
+ONE-FACET-domain-isn't.facetValues[0] amazon.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="isn't"&facet.field=links_domains
+ONE-FACET-links_domains-isn't.QTime 10063
+ONE-FACET-links_domains-isn't.numFound 30909857
+ONE-FACET-links_domains-isn't.facetValues[0] doubleclick.net
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="isn't"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-isn't.QTime 62
+ONE-FACET-content_type_norm-isn't.numFound 30909857
+ONE-FACET-content_type_norm-isn't.facetValues[0] html
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="isn't"&facet.field=author
+ONE-FACET-author-isn't.QTime 3548
+ONE-FACET-author-isn't.numFound 30909857
+ONE-FACET-author-isn't.facetValues[0] 
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="isn't"&facet.field=postcode_district
+ONE-FACET-postcode_district-isn't.QTime 9498
+ONE-FACET-postcode_district-isn't.numFound 30909857
+ONE-FACET-postcode_district-isn't.facetValues[0] M3
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doesn't"&facet.field=crawl_years
+ONE-FACET-crawl_years-doesn't.QTime 20355
+ONE-FACET-crawl_years-doesn't.numFound 42250702
+ONE-FACET-crawl_years-doesn't.facetValues[0] 2008
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doesn't"&facet.field=content_language
+ONE-FACET-content_language-doesn't.QTime 103
+ONE-FACET-content_language-doesn't.numFound 42250702
+ONE-FACET-content_language-doesn't.facetValues[0] en
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doesn't"&facet.field=public_suffix
+ONE-FACET-public_suffix-doesn't.QTime 114
+ONE-FACET-public_suffix-doesn't.numFound 42250702
+ONE-FACET-public_suffix-doesn't.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doesn't"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-doesn't.QTime 14551
+ONE-FACET-links_public_suffixes-doesn't.numFound 42250702
+ONE-FACET-links_public_suffixes-doesn't.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doesn't"&facet.field=domain
+ONE-FACET-domain-doesn't.QTime 5729
+ONE-FACET-domain-doesn't.numFound 42250702
+ONE-FACET-domain-doesn't.facetValues[0] bbc.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doesn't"&facet.field=links_domains
+ONE-FACET-links_domains-doesn't.QTime 14469
+ONE-FACET-links_domains-doesn't.numFound 42250702
+ONE-FACET-links_domains-doesn't.facetValues[0] doubleclick.net
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doesn't"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-doesn't.QTime 94
+ONE-FACET-content_type_norm-doesn't.numFound 42250702
+ONE-FACET-content_type_norm-doesn't.facetValues[0] html
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doesn't"&facet.field=author
+ONE-FACET-author-doesn't.QTime 2546
+ONE-FACET-author-doesn't.numFound 42250702
+ONE-FACET-author-doesn't.facetValues[0] 
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doesn't"&facet.field=postcode_district
+ONE-FACET-postcode_district-doesn't.QTime 4705
+ONE-FACET-postcode_district-doesn't.numFound 42250702
+ONE-FACET-postcode_district-doesn't.facetValues[0] N19
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=crawl_years
+ONE-FACET-crawl_years-rhythm.QTime 15130
+ONE-FACET-crawl_years-rhythm.numFound 5003404
+ONE-FACET-crawl_years-rhythm.facetValues[0] 2005
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=content_language
+ONE-FACET-content_language-rhythm.QTime 46
+ONE-FACET-content_language-rhythm.numFound 5003404
+ONE-FACET-content_language-rhythm.facetValues[0] en
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=public_suffix
+ONE-FACET-public_suffix-rhythm.QTime 49
+ONE-FACET-public_suffix-rhythm.numFound 5003404
+ONE-FACET-public_suffix-rhythm.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-rhythm.QTime 10159
+ONE-FACET-links_public_suffixes-rhythm.numFound 5003404
+ONE-FACET-links_public_suffixes-rhythm.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=domain
+ONE-FACET-domain-rhythm.QTime 5109
+ONE-FACET-domain-rhythm.numFound 5003404
+ONE-FACET-domain-rhythm.facetValues[0] amazon.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=links_domains
+ONE-FACET-links_domains-rhythm.QTime 11492
+ONE-FACET-links_domains-rhythm.numFound 5003404
+ONE-FACET-links_domains-rhythm.facetValues[0] amazon.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-rhythm.QTime 43
+ONE-FACET-content_type_norm-rhythm.numFound 5003404
+ONE-FACET-content_type_norm-rhythm.facetValues[0] html
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=author
+ONE-FACET-author-rhythm.QTime 9469
+ONE-FACET-author-rhythm.numFound 5003404
+ONE-FACET-author-rhythm.facetValues[0] ofsted
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=postcode_district
+ONE-FACET-postcode_district-rhythm.QTime 9400
+ONE-FACET-postcode_district-rhythm.numFound 5003404
+ONE-FACET-postcode_district-rhythm.facetValues[0] N19
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sense"&facet.field=crawl_years
+ONE-FACET-crawl_years-sense.QTime 20307
+ONE-FACET-crawl_years-sense.numFound 30325338
+ONE-FACET-crawl_years-sense.facetValues[0] 2008
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sense"&facet.field=content_language
+ONE-FACET-content_language-sense.QTime 72
+ONE-FACET-content_language-sense.numFound 30325338
+ONE-FACET-content_language-sense.facetValues[0] en
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sense"&facet.field=public_suffix
+ONE-FACET-public_suffix-sense.QTime 85
+ONE-FACET-public_suffix-sense.numFound 30325338
+ONE-FACET-public_suffix-sense.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sense"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-sense.QTime 9690
+ONE-FACET-links_public_suffixes-sense.numFound 30325338
+ONE-FACET-links_public_suffixes-sense.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sense"&facet.field=domain
+ONE-FACET-domain-sense.QTime 6128
+ONE-FACET-domain-sense.numFound 30325338
+ONE-FACET-domain-sense.facetValues[0] guardian.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sense"&facet.field=links_domains
+ONE-FACET-links_domains-sense.QTime 15602
+ONE-FACET-links_domains-sense.numFound 30325338
+ONE-FACET-links_domains-sense.facetValues[0] amazon.co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sense"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-sense.QTime 56
+ONE-FACET-content_type_norm-sense.numFound 30325338
+ONE-FACET-content_type_norm-sense.facetValues[0] html
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sense"&facet.field=author
+ONE-FACET-author-sense.QTime 225
+ONE-FACET-author-sense.numFound 30325338
+ONE-FACET-author-sense.facetValues[0] 
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sense"&facet.field=postcode_district
+ONE-FACET-postcode_district-sense.QTime 1238
+ONE-FACET-postcode_district-sense.numFound 30325338
+ONE-FACET-postcode_district-sense.facetValues[0] N19
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="tools"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-tools.QTime 28116
+ALL-FACETS-tools.numFound 80957081
+ALL-FACETS-tools.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doctor who"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-doctor who.QTime 34099
+ALL-FACETS-doctor who.numFound 5665802
+ALL-FACETS-doctor who.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="current"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-current.QTime 51199
+ALL-FACETS-current.numFound 130103354
+ALL-FACETS-current.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="nose"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-nose.QTime 41790
+ALL-FACETS-nose.numFound 8572211
+ALL-FACETS-nose.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="arrived"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-arrived.QTime 54126
+ALL-FACETS-arrived.numFound 16589459
+ALL-FACETS-arrived.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="isn't"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-isn't.QTime 29134
+ALL-FACETS-isn't.numFound 30909857
+ALL-FACETS-isn't.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="doesn't"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-doesn't.QTime 68092
+ALL-FACETS-doesn't.numFound 42250702
+ALL-FACETS-doesn't.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-rhythm.QTime 58668
+ALL-FACETS-rhythm.numFound 5003404
+ALL-FACETS-rhythm.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sense"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-sense.QTime 69577
+ALL-FACETS-sense.numFound 30325338
+ALL-FACETS-sense.facetValues[0] co.uk
+TIMING 1432 (s) for http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true 
+&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.181:8989/solr/jisc5,192.168.1.181:8990/solr/jisc5,192.168.1.181:8991/solr/jisc5,192.168.1.181:8992/solr/jisc5,192.168.1.181:8993/solr/jisc5,192.168.1.181:8994/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.182:8989/solr/jisc5,192.168.1.182:8990/solr/jisc5,192.168.1.182:8991/solr/jisc5,192.168.1.182:8992/solr/jisc5,192.168.1.182:8993/solr/jisc5,192.168.1.182:8994/solr/jisc5
