@@ -26,17 +26,17 @@ from pprint import pprint
 #urlo=urllib.URLopener()
 urlo = urllib.FancyURLopener({"http":"http://explorer.bl.uk:3127"})
 
-word_list = open('common-english-words.txt').read().splitlines()
+word_list = open('long-dictionary-word-list.txt').read().splitlines()
+num_words = 50
+run_single_facet_queries = True
+run_all_facet_queries = True
 
 def doQuery(tag, facet, url):
 	print("URL: "+url)
 	response = urlo.open(url)
 	rj = json.load(response)
-	print(tag + ".QTime " + str(rj['responseHeader']['QTime']))
-	numFound = rj['response']['numFound']
-	if numFound == 0:
-		print("WARNING: numFound = 0!")
-	print(tag + ".numFound " + str(numFound))
+	print(tag + ".QTime " + str(rj['responseHeader']['QTime']) + " numFound " + str(rj['response']['numFound']) )
+	# And output the first facet:
 	if rj.has_key('facet_counts'):
 		if len(rj['facet_counts']['facet_fields'][facet]) > 0:
 		    print(tag + ".facetValues[0] " + rj['facet_counts']['facet_fields'][facet][0])
@@ -51,15 +51,14 @@ def runQueries(endpoint):
 	# "&cache=false"
 
 	# Query for *:*:
-	doQuery("NO-FACETS-ALL", None, base_ndq + "&q=*:*")
+	doQuery("NO-FACETS-ALL", None, base_ndq + "&q={!cache=false}*:*")
 
 	# Pseudo-random word queries:
 	words = []
-	for x in range(1,10):
+	for x in range(1,num_words):
   		words.append(random.choice(word_list)) 
 	for word in words:
-		doQuery("NO-FACETS-"+word, None, base_ndq + ("&q=\"%s\"" % word ) )
-
+		doQuery("NO-FACETS-"+word, None, base_ndq + ("&q={!cache=false}\"%s\"" % word ) )
 
 	# Fields
 	general_fields = [ "wayback_date", "url", "text", "title", "source_file_s", "id", "hash", "description", "crawl_dates", "content_length", "content_text_length" ]
@@ -91,38 +90,49 @@ def runQueries(endpoint):
 	# Hook it in
 	#facet_method = facet_method + facet_date_range_1y
 
-	# Each facet seperately:
-	for facet in facets:
-		q = base_ndq + facet_method + "&q=*:*" + ("&facet.field=%s" % facet)
-		doQuery("ONE-FACET-"+facet, facet, q )
 
-	# All word-facet combinations:
-	for word in words:
-	    for facet in facets:
-		    q = base_ndq + facet_method + ("&q=\"%s\"" % word ) + ("&facet.field=%s" % facet)
-		    doQuery("ONE-FACET-"+facet+"-"+word, facet, q )
+	# Optionally skip the single-facet queries
+	if run_single_facet_queries:
+
+		# Each facet seperately:
+		for facet in facets:
+			q = base_ndq + facet_method + "&q={!cache=false}*:*" + ("&facet.field=%s" % facet)
+			doQuery("ONE-FACET-"+facet, facet, q )	
+
+		# All word-facet combinations:
+		for word in words:
+		    for facet in facets:
+			    q = base_ndq + facet_method + ("&q={!cache=false}\"%s\"" % word ) + ("&facet.field=%s" % facet)
+			    doQuery("ONE-FACET-"+facet+"-"+word, facet, q )
 
 
-	# All the facets at once:
-	for word in words:
-	    q = base_ndq + facet_method + ("&q=\"%s\"" % word )
-	    for facet in facets:
-	    	q = q  + ("&facet.field=%s" % facet)
-	    doQuery("ALL-FACETS-"+word, "public_suffix", q )
+	# Optionally skip the all-facet queries
+	if run_all_facet_queries:
+
+		# All the facets at once:
+		for word in words:
+		    q = base_ndq + facet_method + ("&q={!cache=false}\"%s\"" % word )
+		    for facet in facets:
+		    	q = q  + ("&facet.field=%s" % facet)
+		    doQuery("ALL-FACETS-"+word, "public_suffix", q )
 
 	end_time = datetime.datetime.now()
 	elapsed = end_time - start_time
 	print("TIMING %s (s) for %s " %(elapsed.seconds, endpoint))
 
 # Automatid distributed mode:
-runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true")
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true")
 
 # Attempt to control allocation of distrib mode across all four servers:
-#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
+runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
 
 # Attempt to control allocation of distrib mode across just the two dedicated servers (181,182):
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.181:8989/solr/jisc5,192.168.1.181:8990/solr/jisc5,192.168.1.181:8991/solr/jisc5,192.168.1.181:8992/solr/jisc5,192.168.1.181:8993/solr/jisc5,192.168.1.181:8994/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.182:8989/solr/jisc5,192.168.1.182:8990/solr/jisc5,192.168.1.182:8991/solr/jisc5,192.168.1.182:8992/solr/jisc5,192.168.1.182:8993/solr/jisc5,192.168.1.182:8994/solr/jisc5")
 
+#
+# Build shard lists:
+#
+# Not needed presently as the necessary shard lists have been generated and used above
 # Loop over endpoints:
 endpoint_template = "http://%s:%s/solr/jisc5/select?distrib=false&wt=json&indent=true"
 #hosts = [ "192.168.1.181", "192.168.1.182", "192.168.1.203", "192.168.1.215" ]
@@ -137,4 +147,4 @@ for host in hosts:
     	endpoints.append("%s:%s/solr/jisc5" % (host, port) )
         #runQueries(endpoint_template % (host, port))
 
-print("&shards=" + ",".join(endpoints))
+#print("&shards=" + ",".join(endpoints))
