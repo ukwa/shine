@@ -42,7 +42,7 @@ def doQuery(tag, facet, url):
 	response = urlo.open(url)
 	rj = json.load(response)
 	end_time = datetime.datetime.now()
-	print(tag + ".QTime.[ms] %s numFound %s wallclock.[s] %s" % (rj['responseHeader']['QTime'], rj['response']['numFound'], elapsed_ms(start_time,end_time) ) )
+	print(tag + ".QTime.[ms] %s numFound %s wallclock.[ms] %s" % (rj['responseHeader']['QTime'], rj['response']['numFound'], elapsed_ms(start_time,end_time) ) )
 	# And output the first facet:
 	if rj.has_key('facet_counts'):
 		if len(rj['facet_counts']['facet_fields'][facet]) > 0:
@@ -137,7 +137,7 @@ def runQueries(endpoint):
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
 #runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
 #runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
-runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
+#runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
 
 # Attempt to controlled over 6 on each server separately:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5")
@@ -149,7 +149,7 @@ runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&dist
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
 
 # Attempt to control allocation of distrib mode across just the two dedicated servers (181,182):
-#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.181:8989/solr/jisc5,192.168.1.181:8990/solr/jisc5,192.168.1.181:8991/solr/jisc5,192.168.1.181:8992/solr/jisc5,192.168.1.181:8993/solr/jisc5,192.168.1.181:8994/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.182:8989/solr/jisc5,192.168.1.182:8990/solr/jisc5,192.168.1.182:8991/solr/jisc5,192.168.1.182:8992/solr/jisc5,192.168.1.182:8993/solr/jisc5,192.168.1.182:8994/solr/jisc5")
+runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.181:8989/solr/jisc5,192.168.1.181:8990/solr/jisc5,192.168.1.181:8991/solr/jisc5,192.168.1.181:8992/solr/jisc5,192.168.1.181:8993/solr/jisc5,192.168.1.181:8994/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.182:8989/solr/jisc5,192.168.1.182:8990/solr/jisc5,192.168.1.182:8991/solr/jisc5,192.168.1.182:8992/solr/jisc5,192.168.1.182:8993/solr/jisc5,192.168.1.182:8994/solr/jisc5")
 
 #
 # Build shard lists:
