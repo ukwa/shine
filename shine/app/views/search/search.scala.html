@@ -181,12 +181,23 @@
 				});
 			}
 			
-			$(".dropdown-menu li a").click(function() {
-				var text = $(this).parents(".input-group-btn").find('.btn').text($(this).text());
-				var value = $(this).parents(".input-group-btn").find('.btn').val($(this).text());
-				console.log(text + "-" + value);
+			$('#results-page').show();
+			$('#concordance-page').hide();
+			
+			$('#results a').click(function (e) {
+				e.preventDefault()
+				$(this).tab('show');
+				$('#concordance-page').hide();
+				$('#results-page').show();
 			});
 			
+			$('#concordance a').click(function (e) {
+				e.preventDefault()
+				$(this).tab('show');
+				$('#results-page').hide();
+				$('#concordance-page').show();
+			});
+
 			facetOptions();
 			showFacets();
 			saveSearch();
@@ -252,73 +263,6 @@
 				<span class='glyphicon glyphicon-ok'></span>
 			}
 		}
-	}
-}
-
-@****************************************
-* Helper generating navigation links    *
-****************************************@
-@link(pageNo:Int, newSortBy:String) = @{
-    
-    var sortBy = currentSortBy
-    var order = currentOrder
-    
-    if(newSortBy != null) {
-        sortBy = newSortBy
-        if(currentSortBy == newSortBy) {
-            if(currentOrder == "asc") {
-                order = "desc"
-            } else {
-                order = "asc"
-            }
-        } else {
-            order = "asc"
-        }
-    }
-
-    // Generate the link
-    routes.Search.search(q.query, pageNo, sortBy, order)
-}
-
-@pagination = {
-	@if(currentPage != null && currentPage.getTotalItems > 0) {
-		<div class="text-center paging-tabs">
-			<ul class="pagination">
-				@if(currentPage.hasPreviousPage) {
-	            	<li class="prev">
-	            		<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage-1)" class="paging" data-toggle="tooltip" data-placement="left" title="Page @(currentPage.getCurrentPage-1)">&laquo;</a>
-	                </li>
-	            } else {
-	                <li class="prev disabled">
-	                    <a class="paging">&laquo;</a>
-	                </li>
-	            }
-				@for(index <- currentPage.getPagesList) {
-					@if(index == currentPage.getCurrentPage) {
-						@if(index == currentPage.getMaxViewablePages) {
-							<span class="max-viewable-reached hide"></span>
-						}
-						<li class="active current" id="list-@(index)"><a href="#" class="paging" id="page-@(index)">@(currentPage.getCurrentPage) <span class="sr-only">(current)</span></a></li>
-					} else {
-						<li id="list-@(index)"><a href="@link(index, null)@(q.responseParameters)" id="page-@(index)" class="paging">@(index)</a></li>
-					}
-				}
-	        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
-	                <li class="next" id="list-@(index)">
-	                    <a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage+1)" class="paging" data-toggle="tooltip" data-placement="right" title="Page @(currentPage.getCurrentPage+1)">&raquo;</a>
-	                </li>
-	            } else {
-	                <li class="next disabled">
-	                    <a class="paging">&raquo;</a>
-	                </li>
-				}
-			</ul>
-			@if(user != null) {
-				<div class="form-group pull-right save-right">
-					<button type="button" class="btn btn-primary save-right save-corpus" name="action" value="corpus-save" data-toggle="tooltip" data-placement="right" title="Corpus Save">Save Selected</button>
-			    </div>
-			}
-		</div>
 	}
 }
 
@@ -476,69 +420,13 @@
 								Maximum number of results reached
 							</div>
 						</div>
+
+						@resultsTabs("results")
 									
-						<div class="panel panel-default">
-							<div class="panel-heading filter-heading">
-	                            <h4 class="panel-title pull-left filter-heading-title">
-	                            @if(currentPage != null) {
-	                                Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
-	                            }
-	                            </h4>
-	                            <span class="hide" id="current-url"></span>
-	                            <div class="form-inline pull-right">
-	                            	@if(q != null && !q.res.getResults().isEmpty()) {
-		                            	<div class="form-group">
-		                            		<button type="button" id="csv-export" class="btn btn-primary" name="action" value="csv" data-toggle="tooltip" data-placement="top" title="Export Standard Version">CSV</button>
-		                            	</div>
-	                            	}
-									<div class="form-group">
-										<select class="form-control" name="sort" id="sort">
-											<!-- get from some where -->
-											<option value="content_type_norm">Title</option>
-											<option value="crawl_date">Crawl Date</option>
-											<option value="content_type_norm">Content</option>
-											<option value="domain">Domain</option>
-											<option value="sentiment_score">Score</option>
-										</select>
-									</div>
-									<div class="form-group">
-										<select class="form-control" name="order" id="order">
-											<option value="asc">Asc</option>
-											<option value="desc">Desc</option>
-										</select>
-									</div>
-								</div>
-							</div>
-	
-							<div class="panel-body">
-								@pagination
-		
-								<div id="result-set">
-									@if(q != null) {
-										@for((d, index) <- q.res.getResults().zipWithIndex) {
-											<div class="list-group">
-												<span class="list-group-item" href="#">
-													<h4 class="list-group-item-heading">
-														@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
-													</h4>
-													<div class="checkbox pull-right">
-														<input type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Select" class="resource">
-													</div>
-													<p class="list-group-item-text">
-															@d.getFirstValue("crawl_date")<br />
-															@d.getFirstValue("content_type_norm")<br />
-															@d.getFirstValue("domain")<br />
-															@d.getFirstValue("sentiment_score")
-													</p>
-												</span>
-											</div>
-										}
-									}
-								</div>
-								@pagination
-							</div>
-						</div>
-	
+						<div class="padding-20">
+							<div id="results-page">@resultsPage(user, q, currentPage, currentSortBy, currentOrder)</div>
+							<div id="concordance-page">@concordancePage(user, q, currentPage, currentSortBy, currentOrder)</div>
+						</div>	
 					</div>
 				} else {
 					<div class="col-md-12 col-sm12">
