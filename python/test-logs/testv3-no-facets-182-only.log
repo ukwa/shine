@@ -1,0 +1,402 @@
+Running queries against: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}*:*
+NO-FACETS-ALL.QTime.[ms] 1363 numFound 84330478 wallclock.[s] 1583.159
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"euronithopod"
+NO-FACETS-euronithopod.QTime.[ms] 433 numFound 2 wallclock.[s] 464.046
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"blubbery"
+NO-FACETS-blubbery.QTime.[ms] 718 numFound 357 wallclock.[s] 968.097
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cookout"
+NO-FACETS-cookout.QTime.[ms] 765 numFound 903 wallclock.[s] 995.1
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"genus eudyptes"
+NO-FACETS-genus eudyptes.QTime.[ms] 1250 numFound 0 wallclock.[s] 1257.125
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"under the weather"
+NO-FACETS-under the weather.QTime.[ms] 14420 numFound 17141 wallclock.[s] 14677.468
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"stream"
+NO-FACETS-stream.QTime.[ms] 858 numFound 444688 wallclock.[s] 1001.1
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"relax"
+NO-FACETS-relax.QTime.[ms] 893 numFound 515394 wallclock.[s] 1068.107
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"reefy"
+NO-FACETS-reefy.QTime.[ms] 584 numFound 72 wallclock.[s] 790.079
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"first of october antifascist resistance group"
+NO-FACETS-first of october antifascist resistance group.QTime.[ms] 6031 numFound 7 wallclock.[s] 6167.617
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"wear down"
+NO-FACETS-wear down.QTime.[ms] 2919 numFound 2669 wallclock.[s] 3114.311
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cowper"
+NO-FACETS-cowper.QTime.[ms] 840 numFound 7928 wallclock.[s] 1084.109
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"doomsday"
+NO-FACETS-doomsday.QTime.[ms] 851 numFound 17825 wallclock.[s] 987.098
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"counter tube"
+NO-FACETS-counter tube.QTime.[ms] 2375 numFound 15 wallclock.[s] 2557.256
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"obstinate"
+NO-FACETS-obstinate.QTime.[ms] 828 numFound 6750 wallclock.[s] 1067.107
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"chinese parasol"
+NO-FACETS-chinese parasol.QTime.[ms] 2196 numFound 81 wallclock.[s] 2364.236
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"genus haematobia"
+NO-FACETS-genus haematobia.QTime.[ms] 552 numFound 0 wallclock.[s] 559.056
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"catapultic"
+NO-FACETS-catapultic.QTime.[ms] 424 numFound 3 wallclock.[s] 477.048
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"after-shave lotion"
+NO-FACETS-after-shave lotion.QTime.[ms] 3792 numFound 2391 wallclock.[s] 3978.398
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"have a good time"
+NO-FACETS-have a good time.QTime.[ms] 17172 numFound 22369 wallclock.[s] 17336.733
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"light"
+NO-FACETS-light.QTime.[ms] 987 numFound 3448240 wallclock.[s] 1134.114
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"metal-looking"
+NO-FACETS-metal-looking.QTime.[ms] 2985 numFound 220 wallclock.[s] 3180.318
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"aper"
+NO-FACETS-aper.QTime.[ms] 815 numFound 3480 wallclock.[s] 977.097
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"color television"
+NO-FACETS-color television.QTime.[ms] 6481 numFound 4624 wallclock.[s] 6662.666
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cascades"
+NO-FACETS-cascades.QTime.[ms] 843 numFound 15294 wallclock.[s] 1000.1
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"alphamerical"
+NO-FACETS-alphamerical.QTime.[ms] 419 numFound 1 wallclock.[s] 454.045
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cyrillic"
+NO-FACETS-cyrillic.QTime.[ms] 883 numFound 12473 wallclock.[s] 1031.103
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"chordophone"
+NO-FACETS-chordophone.QTime.[ms] 553 numFound 32 wallclock.[s] 770.077
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"counter conditioning"
+NO-FACETS-counter conditioning.QTime.[ms] 1193 numFound 31 wallclock.[s] 1379.138
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"brushup"
+NO-FACETS-brushup.QTime.[ms] 798 numFound 267 wallclock.[s] 994.1
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"comestible"
+NO-FACETS-comestible.QTime.[ms] 789 numFound 1333 wallclock.[s] 979.098
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"dermatomyositis"
+NO-FACETS-dermatomyositis.QTime.[ms] 824 numFound 431 wallclock.[s] 1041.104
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"calabur tree"
+NO-FACETS-calabur tree.QTime.[ms] 883 numFound 0 wallclock.[s] 888.089
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"lightly"
+NO-FACETS-lightly.QTime.[ms] 478 numFound 139867 wallclock.[s] 661.066
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"forecourt"
+NO-FACETS-forecourt.QTime.[ms] 878 numFound 29272 wallclock.[s] 1048.105
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"brad"
+NO-FACETS-brad.QTime.[ms] 888 numFound 136428 wallclock.[s] 1032.103
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"athelstan"
+NO-FACETS-athelstan.QTime.[ms] 840 numFound 1955 wallclock.[s] 1020.102
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"fingertip"
+NO-FACETS-fingertip.QTime.[ms] 828 numFound 14675 wallclock.[s] 997.1
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"family anobiidae"
+NO-FACETS-family anobiidae.QTime.[ms] 1406 numFound 8 wallclock.[s] 1555.155
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"harassed"
+NO-FACETS-harassed.QTime.[ms] 835 numFound 19711 wallclock.[s] 1005.101
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cork"
+NO-FACETS-cork.QTime.[ms] 818 numFound 204081 wallclock.[s] 977.097
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"gustatory sensation"
+NO-FACETS-gustatory sensation.QTime.[ms] 1970 numFound 11 wallclock.[s] 2128.213
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"bucolic"
+NO-FACETS-bucolic.QTime.[ms] 846 numFound 3331 wallclock.[s] 1036.104
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"depilatory"
+NO-FACETS-depilatory.QTime.[ms] 815 numFound 3439 wallclock.[s] 981.098
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"grief"
+NO-FACETS-grief.QTime.[ms] 818 numFound 90252 wallclock.[s] 971.097
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"wolf-sized"
+NO-FACETS-wolf-sized.QTime.[ms] 2205 numFound 8 wallclock.[s] 2343.234
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"unpretentiously"
+NO-FACETS-unpretentiously.QTime.[ms] 743 numFound 260 wallclock.[s] 928.092
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"egg en cocotte"
+NO-FACETS-egg en cocotte.QTime.[ms] 2833 numFound 4 wallclock.[s] 2924.293
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"frog"
+NO-FACETS-frog.QTime.[ms] 889 numFound 298825 wallclock.[s] 1044.104
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cigarette lighter"
+NO-FACETS-cigarette lighter.QTime.[ms] 1939 numFound 37237 wallclock.[s] 2065.207
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"family eschrichtiidae"
+NO-FACETS-family eschrichtiidae.QTime.[ms] 589 numFound 1 wallclock.[s] 627.063
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"belostomatidae"
+NO-FACETS-belostomatidae.QTime.[ms] 481 numFound 19 wallclock.[s] 656.065
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"blastocladia"
+NO-FACETS-blastocladia.QTime.[ms] 449 numFound 0 wallclock.[s] 457.046
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"explode a bombshell"
+NO-FACETS-explode a bombshell.QTime.[ms] 1896 numFound 6 wallclock.[s] 2011.201
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"citta del vaticano"
+NO-FACETS-citta del vaticano.QTime.[ms] 2800 numFound 57 wallclock.[s] 2944.295
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"friedrich august von hayek"
+NO-FACETS-friedrich august von hayek.QTime.[ms] 4153 numFound 37 wallclock.[s] 4303.43
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"acuminate leaf"
+NO-FACETS-acuminate leaf.QTime.[ms] 1565 numFound 0 wallclock.[s] 1575.158
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"gulf of akaba"
+NO-FACETS-gulf of akaba.QTime.[ms] 2779 numFound 10 wallclock.[s] 2958.296
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"adjustable spanner"
+NO-FACETS-adjustable spanner.QTime.[ms] 2257 numFound 1213 wallclock.[s] 2429.243
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"judicially"
+NO-FACETS-judicially.QTime.[ms] 857 numFound 1775 wallclock.[s] 1073.107
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"bang up"
+NO-FACETS-bang up.QTime.[ms] 3622 numFound 12070 wallclock.[s] 3772.377
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"rough-textured"
+NO-FACETS-rough-textured.QTime.[ms] 2232 numFound 557 wallclock.[s] 2412.242
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"body waste"
+NO-FACETS-body waste.QTime.[ms] 2873 numFound 414 wallclock.[s] 3021.302
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"guitar pick"
+NO-FACETS-guitar pick.QTime.[ms] 2412 numFound 2198 wallclock.[s] 2583.258
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"evangelistic"
+NO-FACETS-evangelistic.QTime.[ms] 813 numFound 4715 wallclock.[s] 935.093
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"early-morning hour"
+NO-FACETS-early-morning hour.QTime.[ms] 3996 numFound 37 wallclock.[s] 4165.417
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"d"
+NO-FACETS-d.QTime.[ms] 1079 numFound 5986303 wallclock.[s] 1253.125
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"hydroelectric"
+NO-FACETS-hydroelectric.QTime.[ms] 880 numFound 11814 wallclock.[s] 1080.108
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"frederick sanger"
+NO-FACETS-frederick sanger.QTime.[ms] 2047 numFound 239 wallclock.[s] 2205.221
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"dryopteris oreopteris"
+NO-FACETS-dryopteris oreopteris.QTime.[ms] 1122 numFound 1 wallclock.[s] 1142.114
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"beneficent"
+NO-FACETS-beneficent.QTime.[ms] 851 numFound 2340 wallclock.[s] 1010.101
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"precedential"
+NO-FACETS-precedential.QTime.[ms] 610 numFound 84 wallclock.[s] 763.077
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"iodinate"
+NO-FACETS-iodinate.QTime.[ms] 433 numFound 9 wallclock.[s] 605.06
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"haematic"
+NO-FACETS-haematic.QTime.[ms] 448 numFound 14 wallclock.[s] 641.064
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"charles digby harrod"
+NO-FACETS-charles digby harrod.QTime.[ms] 2562 numFound 5 wallclock.[s] 2660.266
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"edmontosaurus"
+NO-FACETS-edmontosaurus.QTime.[ms] 599 numFound 183 wallclock.[s] 779.078
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"tune"
+NO-FACETS-tune.QTime.[ms] 878 numFound 548949 wallclock.[s] 1022.103
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"north-east"
+NO-FACETS-north-east.QTime.[ms] 3281 numFound 611444 wallclock.[s] 3406.34
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"puerile"
+NO-FACETS-puerile.QTime.[ms] 877 numFound 4118 wallclock.[s] 1095.11
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"absolutistic"
+NO-FACETS-absolutistic.QTime.[ms] 437 numFound 14 wallclock.[s] 643.064
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"awe-inspiring"
+NO-FACETS-awe-inspiring.QTime.[ms] 2179 numFound 25382 wallclock.[s] 2340.234
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"clutch"
+NO-FACETS-clutch.QTime.[ms] 858 numFound 244086 wallclock.[s] 972.098
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"arena theater"
+NO-FACETS-arena theater.QTime.[ms] 2210 numFound 30 wallclock.[s] 2370.237
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"outline"
+NO-FACETS-outline.QTime.[ms] 877 numFound 317979 wallclock.[s] 1027.102
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"in so far"
+NO-FACETS-in so far.QTime.[ms] 10861 numFound 23159 wallclock.[s] 11005.101
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"semicomatose"
+NO-FACETS-semicomatose.QTime.[ms] 438 numFound 12 wallclock.[s] 624.062
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cold war"
+NO-FACETS-cold war.QTime.[ms] 2614 numFound 64884 wallclock.[s] 2696.27
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"geothermally"
+NO-FACETS-geothermally.QTime.[ms] 635 numFound 120 wallclock.[s] 788.079
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"bergamot"
+NO-FACETS-bergamot.QTime.[ms] 823 numFound 17967 wallclock.[s] 959.096
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"browsing"
+NO-FACETS-browsing.QTime.[ms] 892 numFound 780314 wallclock.[s] 988.098
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"arteria radialis"
+NO-FACETS-arteria radialis.QTime.[ms] 1229 numFound 3 wallclock.[s] 1324.133
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"fireboat"
+NO-FACETS-fireboat.QTime.[ms] 660 numFound 307 wallclock.[s] 848.085
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"computer network"
+NO-FACETS-computer network.QTime.[ms] 3310 numFound 36520 wallclock.[s] 3437.343
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"predacious"
+NO-FACETS-predacious.QTime.[ms] 560 numFound 87 wallclock.[s] 724.072
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"aerial ladder truck"
+NO-FACETS-aerial ladder truck.QTime.[ms] 3368 numFound 11 wallclock.[s] 3532.353
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"dance orchestra"
+NO-FACETS-dance orchestra.QTime.[ms] 2473 numFound 858 wallclock.[s] 2649.265
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cowl"
+NO-FACETS-cowl.QTime.[ms] 844 numFound 17558 wallclock.[s] 971.097
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"football field"
+NO-FACETS-football field.QTime.[ms] 2822 numFound 4565 wallclock.[s] 2995.3
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"effortless"
+NO-FACETS-effortless.QTime.[ms] 858 numFound 53479 wallclock.[s] 1010.101
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"ever so"
+NO-FACETS-ever so.QTime.[ms] 1993 numFound 44728 wallclock.[s] 2174.217
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"pro-inflammatory"
+NO-FACETS-pro-inflammatory.QTime.[ms] 2441 numFound 751 wallclock.[s] 2584.259
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"dacron"
+NO-FACETS-dacron.QTime.[ms] 748 numFound 3686 wallclock.[s] 805.08
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"jazz around"
+NO-FACETS-jazz around.QTime.[ms] 2588 numFound 184 wallclock.[s] 2767.277
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"genus peridinium"
+NO-FACETS-genus peridinium.QTime.[ms] 630 numFound 0 wallclock.[s] 639.064
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"disadvantaged"
+NO-FACETS-disadvantaged.QTime.[ms] 839 numFound 79211 wallclock.[s] 938.094
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"promise"
+NO-FACETS-promise.QTime.[ms] 907 numFound 573286 wallclock.[s] 989.099
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"minded"
+NO-FACETS-minded.QTime.[ms] 872 numFound 272078 wallclock.[s] 995.099
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"depilation"
+NO-FACETS-depilation.QTime.[ms] 78 numFound 5964 wallclock.[s] 217.022
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"acceleratory"
+NO-FACETS-acceleratory.QTime.[ms] 487 numFound 20 wallclock.[s] 675.067
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"flexibly"
+NO-FACETS-flexibly.QTime.[ms] 803 numFound 19380 wallclock.[s] 941.094
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"feline"
+NO-FACETS-feline.QTime.[ms] 854 numFound 42413 wallclock.[s] 994.099
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cerebral mantle"
+NO-FACETS-cerebral mantle.QTime.[ms] 1989 numFound 0 wallclock.[s] 1998.2
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"bark louse"
+NO-FACETS-bark louse.QTime.[ms] 1894 numFound 6 wallclock.[s] 2000.2
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"court of justice"
+NO-FACETS-court of justice.QTime.[ms] 10393 numFound 18453 wallclock.[s] 10561.056
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"andre maurois"
+NO-FACETS-andre maurois.QTime.[ms] 1771 numFound 134 wallclock.[s] 1931.193
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"autarchic"
+NO-FACETS-autarchic.QTime.[ms] 569 numFound 77 wallclock.[s] 774.078
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"3-d"
+NO-FACETS-3-d.QTime.[ms] 4821 numFound 83150 wallclock.[s] 4987.498
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"campanula aparinoides"
+NO-FACETS-campanula aparinoides.QTime.[ms] 810 numFound 0 wallclock.[s] 832.084
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"theist"
+NO-FACETS-theist.QTime.[ms] 846 numFound 1307 wallclock.[s] 1041.104
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"gobi"
+NO-FACETS-gobi.QTime.[ms] 817 numFound 5912 wallclock.[s] 974.097
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"swollen"
+NO-FACETS-swollen.QTime.[ms] 930 numFound 45483 wallclock.[s] 1076.108
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"candle"
+NO-FACETS-candle.QTime.[ms] 866 numFound 224502 wallclock.[s] 1000.1
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"construct"
+NO-FACETS-construct.QTime.[ms] 831 numFound 135335 wallclock.[s] 936.093
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"fallout shelter"
+NO-FACETS-fallout shelter.QTime.[ms] 2024 numFound 374 wallclock.[s] 2177.218
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"interject"
+NO-FACETS-interject.QTime.[ms] 820 numFound 1329 wallclock.[s] 1008.101
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"agglutinate"
+NO-FACETS-agglutinate.QTime.[ms] 687 numFound 153 wallclock.[s] 859.086
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"fetch up"
+NO-FACETS-fetch up.QTime.[ms] 3299 numFound 1456 wallclock.[s] 3437.344
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"thin out"
+NO-FACETS-thin out.QTime.[ms] 3342 numFound 1828 wallclock.[s] 3528.352
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"inundate"
+NO-FACETS-inundate.QTime.[ms] 804 numFound 1267 wallclock.[s] 980.098
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"unarguably"
+NO-FACETS-unarguably.QTime.[ms] 792 numFound 1385 wallclock.[s] 978.098
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"violet-flowered"
+NO-FACETS-violet-flowered.QTime.[ms] 2074 numFound 10 wallclock.[s] 2215.222
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"defend"
+NO-FACETS-defend.QTime.[ms] 834 numFound 251992 wallclock.[s] 957.096
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"choice of words"
+NO-FACETS-choice of words.QTime.[ms] 7810 numFound 3831 wallclock.[s] 7987.368
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"dazzled"
+NO-FACETS-dazzled.QTime.[ms] 845 numFound 10508 wallclock.[s] 1064.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"breach of promise"
+NO-FACETS-breach of promise.QTime.[ms] 1706 numFound 281 wallclock.[s] 1859.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"marginalize"
+NO-FACETS-marginalize.QTime.[ms] 811 numFound 1469 wallclock.[s] 1013.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"asbestosis"
+NO-FACETS-asbestosis.QTime.[ms] 812 numFound 5141 wallclock.[s] 970.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"elateridae"
+NO-FACETS-elateridae.QTime.[ms] 555 numFound 77 wallclock.[s] 723.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"uncropped"
+NO-FACETS-uncropped.QTime.[ms] 751 numFound 559 wallclock.[s] 928.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"bath linen"
+NO-FACETS-bath linen.QTime.[ms] 2231 numFound 2022 wallclock.[s] 2380.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"structured"
+NO-FACETS-structured.QTime.[ms] 897 numFound 288813 wallclock.[s] 1021.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"fisher"
+NO-FACETS-fisher.QTime.[ms] 884 numFound 219837 wallclock.[s] 1001.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"dwarf oak"
+NO-FACETS-dwarf oak.QTime.[ms] 2033 numFound 22 wallclock.[s] 2203.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"gradualness"
+NO-FACETS-gradualness.QTime.[ms] 485 numFound 69 wallclock.[s] 646.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"paramagnetic"
+NO-FACETS-paramagnetic.QTime.[ms] 854 numFound 1159 wallclock.[s] 1062.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"wandering"
+NO-FACETS-wandering.QTime.[ms] 869 numFound 76579 wallclock.[s] 1020.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"benjamin jonson"
+NO-FACETS-benjamin jonson.QTime.[ms] 2035 numFound 15 wallclock.[s] 2252.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"brisket"
+NO-FACETS-brisket.QTime.[ms] 812 numFound 2397 wallclock.[s] 1004.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"comminute"
+NO-FACETS-comminute.QTime.[ms] 515 numFound 44 wallclock.[s] 692.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"choke up"
+NO-FACETS-choke up.QTime.[ms] 1043 numFound 235 wallclock.[s] 1187.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"glimmering"
+NO-FACETS-glimmering.QTime.[ms] 842 numFound 3059 wallclock.[s] 1001.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"desensitising"
+NO-FACETS-desensitising.QTime.[ms] 839 numFound 2133 wallclock.[s] 1036.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"flutter"
+NO-FACETS-flutter.QTime.[ms] 819 numFound 24809 wallclock.[s] 1037.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"bionic woman"
+NO-FACETS-bionic woman.QTime.[ms] 2222 numFound 3935 wallclock.[s] 2377.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"quintuple"
+NO-FACETS-quintuple.QTime.[ms] 892 numFound 1137 wallclock.[s] 1064.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"convey"
+NO-FACETS-convey.QTime.[ms] 819 numFound 99957 wallclock.[s] 959.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"bioscience"
+NO-FACETS-bioscience.QTime.[ms] 791 numFound 15953 wallclock.[s] 882.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"gobiesocidae"
+NO-FACETS-gobiesocidae.QTime.[ms] 69 numFound 17 wallclock.[s] 303.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"tide"
+NO-FACETS-tide.QTime.[ms] 854 numFound 146079 wallclock.[s] 964.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"uncrystallised"
+NO-FACETS-uncrystallised.QTime.[ms] 112 numFound 99 wallclock.[s] 251.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"argillaceous rock"
+NO-FACETS-argillaceous rock.QTime.[ms] 2199 numFound 9 wallclock.[s] 2343.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"amylolysis"
+NO-FACETS-amylolysis.QTime.[ms] 481 numFound 4 wallclock.[s] 545.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"ongoing"
+NO-FACETS-ongoing.QTime.[ms] 893 numFound 449283 wallclock.[s] 1012.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"wash-and-wear"
+NO-FACETS-wash-and-wear.QTime.[ms] 11475 numFound 952 wallclock.[s] 11602.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"change-of-pace"
+NO-FACETS-change-of-pace.QTime.[ms] 3565 numFound 4782 wallclock.[s] 3719.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"low-ceilinged"
+NO-FACETS-low-ceilinged.QTime.[ms] 2417 numFound 512 wallclock.[s] 2569.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"equador laurel"
+NO-FACETS-equador laurel.QTime.[ms] 1780 numFound 0 wallclock.[s] 1786.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"chuck-full"
+NO-FACETS-chuck-full.QTime.[ms] 2797 numFound 65 wallclock.[s] 3032.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"earlier"
+NO-FACETS-earlier.QTime.[ms] 903 numFound 1018694 wallclock.[s] 1045.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"biogeographical"
+NO-FACETS-biogeographical.QTime.[ms] 798 numFound 653 wallclock.[s] 922.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"personal"
+NO-FACETS-personal.QTime.[ms] 1076 numFound 6316624 wallclock.[s] 1208.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"bang up"
+NO-FACETS-bang up.QTime.[ms] 1307 numFound 12070 wallclock.[s] 1456.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"equus caballus"
+NO-FACETS-equus caballus.QTime.[ms] 1860 numFound 210 wallclock.[s] 2035.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"fasciolopsiasis"
+NO-FACETS-fasciolopsiasis.QTime.[ms] 439 numFound 6 wallclock.[s] 570.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"generosity"
+NO-FACETS-generosity.QTime.[ms] 866 numFound 43626 wallclock.[s] 986.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"bryanthus taxifolius"
+NO-FACETS-bryanthus taxifolius.QTime.[ms] 867 numFound 0 wallclock.[s] 875.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"fretfully"
+NO-FACETS-fretfully.QTime.[ms] 662 numFound 299 wallclock.[s] 877.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"stonewash"
+NO-FACETS-stonewash.QTime.[ms] 848 numFound 4198 wallclock.[s] 1000.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"genus vallisneria"
+NO-FACETS-genus vallisneria.QTime.[ms] 879 numFound 0 wallclock.[s] 891.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"brown pine"
+NO-FACETS-brown pine.QTime.[ms] 2308 numFound 87 wallclock.[s] 2453.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cigar lighter"
+NO-FACETS-cigar lighter.QTime.[ms] 1847 numFound 13541 wallclock.[s] 1971.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"family ichneumonidae"
+NO-FACETS-family ichneumonidae.QTime.[ms] 1411 numFound 2 wallclock.[s] 1472.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"baccharis viminea"
+NO-FACETS-baccharis viminea.QTime.[ms] 1085 numFound 4 wallclock.[s] 1170.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"burden of proof"
+NO-FACETS-burden of proof.QTime.[ms] 2461 numFound 6748 wallclock.[s] 2612.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"duc de richelieu"
+NO-FACETS-duc de richelieu.QTime.[ms] 3255 numFound 45 wallclock.[s] 3456.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"gnetales"
+NO-FACETS-gnetales.QTime.[ms] 471 numFound 20 wallclock.[s] 645.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"black bindweed"
+NO-FACETS-black bindweed.QTime.[ms] 2399 numFound 178 wallclock.[s] 2566.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"elizabethan"
+NO-FACETS-elizabethan.QTime.[ms] 862 numFound 41993 wallclock.[s] 979.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"chow mein"
+NO-FACETS-chow mein.QTime.[ms] 2032 numFound 2656 wallclock.[s] 2220.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"harass"
+NO-FACETS-harass.QTime.[ms] 833 numFound 23274 wallclock.[s] 944.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"dilly-dally"
+NO-FACETS-dilly-dally.QTime.[ms] 1976 numFound 766 wallclock.[s] 2124.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"cleansing agent"
+NO-FACETS-cleansing agent.QTime.[ms] 2210 numFound 432 wallclock.[s] 2365.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"disposable"
+NO-FACETS-disposable.QTime.[ms] 880 numFound 151749 wallclock.[s] 1019.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"genus pseudobombax"
+NO-FACETS-genus pseudobombax.QTime.[ms] 514 numFound 0 wallclock.[s] 523.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"trimly"
+NO-FACETS-trimly.QTime.[ms] 573 numFound 109 wallclock.[s] 743.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"governor plum"
+NO-FACETS-governor plum.QTime.[ms] 2131 numFound 1 wallclock.[s] 2163.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"burnett"
+NO-FACETS-burnett.QTime.[ms] 836 numFound 30585 wallclock.[s] 1006.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"copyrighted"
+NO-FACETS-copyrighted.QTime.[ms] 803 numFound 168049 wallclock.[s] 893.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"deck of cards"
+NO-FACETS-deck of cards.QTime.[ms] 3310 numFound 7134 wallclock.[s] 3469.0
+URL: http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}"blaze"
+NO-FACETS-blaze.QTime.[ms] 882 numFound 114898 wallclock.[s] 992.0
+TIMING 373413.389 (s) for http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false 

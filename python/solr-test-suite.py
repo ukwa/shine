@@ -27,15 +27,22 @@ from pprint import pprint
 urlo = urllib.FancyURLopener({"http":"http://explorer.bl.uk:3127"})
 
 word_list = open('long-dictionary-word-list.txt').read().splitlines()
-num_words = 50
-run_single_facet_queries = True
-run_all_facet_queries = True
+num_words = 200
+run_no_facet_queries = True
+run_single_facet_queries = False
+run_all_facet_queries = False
+
+def elapsed_ms( start_time, end_time ):
+	dt = end_time - start_time
+	return (dt.days*24*60*60 + dt.seconds) * 1000 + dt.microseconds/1000.0
 
 def doQuery(tag, facet, url):
 	print("URL: "+url)
+	start_time = datetime.datetime.now()
 	response = urlo.open(url)
 	rj = json.load(response)
-	print(tag + ".QTime " + str(rj['responseHeader']['QTime']) + " numFound " + str(rj['response']['numFound']) )
+	end_time = datetime.datetime.now()
+	print(tag + ".QTime.[ms] %s numFound %s wallclock.[s] %s" % (rj['responseHeader']['QTime'], rj['response']['numFound'], elapsed_ms(start_time,end_time) ) )
 	# And output the first facet:
 	if rj.has_key('facet_counts'):
 		if len(rj['facet_counts']['facet_fields'][facet]) > 0:
@@ -57,8 +64,11 @@ def runQueries(endpoint):
 	words = []
 	for x in range(1,num_words):
   		words.append(random.choice(word_list)) 
-	for word in words:
-		doQuery("NO-FACETS-"+word, None, base_ndq + ("&q={!cache=false}\"%s\"" % word ) )
+
+	# Optionally skip the no-facet queries
+	if run_no_facet_queries:
+		for word in words:
+			doQuery("NO-FACETS-"+word, None, base_ndq + ("&q={!cache=false}\"%s\"" % word ) )
 
 	# Fields
 	general_fields = [ "wayback_date", "url", "text", "title", "source_file_s", "id", "hash", "description", "crawl_dates", "content_length", "content_text_length" ]
@@ -118,13 +128,25 @@ def runQueries(endpoint):
 
 	end_time = datetime.datetime.now()
 	elapsed = end_time - start_time
-	print("TIMING %s (s) for %s " %(elapsed.seconds, endpoint))
+	print("TIMING %s (s) for %s " %(elapsed_ms(start_time,end_time), endpoint))
 
-# Automatid distributed mode:
+# Automatic distributed mode:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true")
 
+# non-distributed mode:
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
+#runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
+#runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
+runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
+
+# Attempt to controlled over 6 on each server separately:
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5")
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5")
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5")
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
+
 # Attempt to control allocation of distrib mode across all four servers:
-runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
 
 # Attempt to control allocation of distrib mode across just the two dedicated servers (181,182):
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.181:8989/solr/jisc5,192.168.1.181:8990/solr/jisc5,192.168.1.181:8991/solr/jisc5,192.168.1.181:8992/solr/jisc5,192.168.1.181:8993/solr/jisc5,192.168.1.181:8994/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.182:8989/solr/jisc5,192.168.1.182:8990/solr/jisc5,192.168.1.182:8991/solr/jisc5,192.168.1.182:8992/solr/jisc5,192.168.1.182:8993/solr/jisc5,192.168.1.182:8994/solr/jisc5")
