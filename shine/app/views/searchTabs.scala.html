@@ -17,7 +17,7 @@
 @level match {
     
   case "search" => {
-  	<li class="active"><a href="@routes.Search.search()?facet.sort=index">Search</a></li>
+  	<li class="active"><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
 	@if(showOption("show_browse")) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
@@ -28,7 +28,7 @@
   }
 
   case "advanced_search" => {
-  	<li><a href="@routes.Search.search()?facet.sort=index">Search</a></li>
+  	<li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li class="active"><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
 	@if(showOption("show_browse")) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
@@ -39,7 +39,7 @@
   }
 
   case "browse" => {
-  	<li><a href="@routes.Search.search()?facet.sort=index">Search</a></li>
+  	<li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
 	@if(showOption("show_browse")) {
 		<li class="active"><a href="@routes.Search.browse()">Browse Collections</a></li>
@@ -50,7 +50,7 @@
   }
   
   case "concordance" => {
-  	<li><a href="@routes.Search.search()?facet.sort=index">Search</a></li>
+  	<li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
 	@if(showOption("show_browse")) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
