@@ -102,7 +102,7 @@ object Search extends Controller {
    	
     val action = request.getQueryString("action")
     val form = searchForm.bindFromRequest(request.queryString)
-    
+
     println("action: " + action)
     
     action match {
@@ -146,7 +146,10 @@ object Search extends Controller {
 	println("menu selected: " + q.menu)
 			
 	pagination.update(totalRecords, pageNo)
-			    
+
+//	var highlights = q.res.getHighlighting()
+//	println("highlights: " + highlights);
+	
     Cache.getAs[Map[String, FacetValue]]("facet.values") match {
 	    case Some(value) => {
 	    	play.api.Logger.debug("getting value from cache ...")

@@ -181,21 +181,35 @@
 				});
 			}
 			
-			$('#results-page').show();
-			$('#concordance-page').hide();
+			var tab = getURLParameter('tab');
+			$('#tab').val(tab);
 			
-			$('#results a').click(function (e) {
+			if (tab == 'concordance') {
+				$('#concordanceTab').addClass('active');
+				$('#resultsTab').removeClass('active');
+				$('#results').hide();
+				$('#concordance').show();
+			} else {
+				$('#resultsTab').addClass('active');
+				$('#concordanceTab').removeClass('active');
+				$('#concordance').hide();
+				$('#results').show();
+			}
+			
+			$('#resultsTab a').click(function (e) {
 				e.preventDefault()
 				$(this).tab('show');
-				$('#concordance-page').hide();
-				$('#results-page').show();
+				$('#concordance').hide();
+				$('#results').show();
+				$('#tab').val('results');
 			});
 			
-			$('#concordance a').click(function (e) {
+			$('#concordanceTab a').click(function (e) {
 				e.preventDefault()
 				$(this).tab('show');
-				$('#results-page').hide();
-				$('#concordance-page').show();
+				$('#results').hide();
+				$('#concordance').show();
+				$('#tab').val('concordance');
 			});
 
 			facetOptions();
@@ -394,6 +408,7 @@
 							<div class="panel-body">
 					   			<div class="input-group">
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
+					   				<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
 										<button type="button" class="btn btn-primary" id="search" name="action" value="search">Search</button>
 										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
@@ -424,8 +439,8 @@
 						@resultsTabs("results")
 									
 						<div class="padding-20">
-							<div id="results-page">@resultsPage(user, q, currentPage, currentSortBy, currentOrder)</div>
-							<div id="concordance-page">@concordancePage(user, q, currentPage, currentSortBy, currentOrder)</div>
+							<div id="results">@resultsPage(user, q, currentPage, currentSortBy, currentOrder)</div>
+							<div id="concordance">@concordancePage(user, q, currentPage, currentSortBy, currentOrder)</div>
 						</div>	
 					</div>
 				} else {
@@ -434,6 +449,7 @@
 							<div class="panel-body">
 					   			<div class="input-group">
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
+					   				<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
 										<button id="search" type="button" class="btn btn-primary" name="action" value="search">Search</button>
 										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
