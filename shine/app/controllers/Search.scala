@@ -92,7 +92,6 @@ object Search extends Controller {
     
     var user : User = null
     var corpora  = List[Corpus]()
-    var tab : String = "results"
     
 	request.session.get("username").map { username =>
 	  	user = User.findByEmail(username.toLowerCase())
