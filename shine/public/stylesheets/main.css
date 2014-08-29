@@ -105,4 +105,10 @@ div a.facet-heading {
 
 div.save-right {
 	margin: 20px 0;
+}
+
+p.list-group-item-text em {
+	font-family: 'Times New Roman', serif;
+	font-style:  italic;
+	color: red;
 }		

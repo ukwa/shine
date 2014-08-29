@@ -1,3 +1,98 @@
 @(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
 
-Concordance View
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(pageNo:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+
+    // Generate the link
+    routes.Search.search(q.query, pageNo, sortBy, order)
+}
+
+@pagination = {
+	@if(currentPage != null && currentPage.getTotalItems > 0) {
+		<div class="text-center paging-tabs">
+			<ul class="pagination">
+				@if(currentPage.hasPreviousPage) {
+	            	<li class="prev">
+	            		<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage-1)" class="paging" data-toggle="tooltip" data-placement="left" title="Page @(currentPage.getCurrentPage-1)">&laquo;</a>
+	                </li>
+	            } else {
+	                <li class="prev disabled">
+	                    <a class="paging">&laquo;</a>
+	                </li>
+	            }
+				@for(index <- currentPage.getPagesList) {
+					@if(index == currentPage.getCurrentPage) {
+						@if(index == currentPage.getMaxViewablePages) {
+							<span class="max-viewable-reached hide"></span>
+						}
+						<li class="active current" id="list-@(index)"><a href="#" class="paging" id="page-@(index)">@(currentPage.getCurrentPage) <span class="sr-only">(current)</span></a></li>
+					} else {
+						<li id="list-@(index)"><a href="@link(index, null)@(q.responseParameters)" id="page-@(index)" class="paging">@(index)</a></li>
+					}
+				}
+	        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
+	                <li class="next" id="list-@(index)">
+	                    <a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage+1)" class="paging" data-toggle="tooltip" data-placement="right" title="Page @(currentPage.getCurrentPage+1)">&raquo;</a>
+	                </li>
+	            } else {
+	                <li class="next disabled">
+	                    <a class="paging">&raquo;</a>
+	                </li>
+				}
+			</ul>
+			@if(user != null) {
+				<div class="form-group pull-right save-right">
+					<button type="button" class="btn btn-primary save-right save-corpus" name="action" value="corpus-save" data-toggle="tooltip" data-placement="right" title="Corpus Save">Save Selected</button>
+			    </div>
+			}
+		</div>
+	}
+}
+
+<div class="panel-body">
+
+	@pagination
+
+	<div id="concordance-set">
+		@if(q != null) {
+			@for((d, index) <- q.res.getResults().zipWithIndex) {
+				<div class="list-group">
+					<span class="list-group-item" href="#">
+						@if(q.res.getHighlighting().get(d.getFirstValue("id")) != null) {
+							<p class="list-group-item-text">
+								@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("title") != null) {
+	        						@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("title").get(0)))<br />
+								}
+	        					@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text") != null) {
+	        						@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text").get(0)))<br />
+	        					}
+							</p>
+      					}
+					</span>
+				</div>
+			}
+		}
+	</div>
+	
+	@pagination
+	
+</div>
+

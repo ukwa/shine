@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -167,7 +168,28 @@ public class Shine extends Solr {
 			}
 	    }
 		
+	    solrParameters.setHighlight(true).setHighlightSnippets(5); //set other params as needed
+	    
+	    solrParameters.setHighlightSimplePre("<em>");
+	    solrParameters.setHighlightSimplePost("</em>");
+	    
+	    solrParameters.addHighlightField("*");
+//	    solrParameters.setParam("hl.fl", "*");
+//	    solrParameters.setHighlightRequireFieldMatch(Boolean.TRUE);
+
 		solrParameters.setRows(rows);
+//		&hl=true
+//		&hl.fl=*
+//		&hl.simple.pre=%3Cem%3E
+//		&hl.simple.post=%3C/em%3E
+//		&hl.snippets=5
+		
+//		&hl=true
+//		&hl.snippets=5
+//		&hl.simple.pre=%3Cem%3E
+//		&hl.simple.post=%3C%2Fem%3E
+//		&hl.fl=*
+//		&hl.requireFieldMatch=true
 		
 //		if (parameters.get("facet.sort") == null) {
 //			Logger.info("facet.sort: " + parameters.get("facet.sort"));
@@ -388,6 +410,41 @@ public class Shine extends Solr {
 		} catch(ParseException e) {
 			throw new SolrServerException(e);
 		}
+
+	    Iterator<SolrDocument> iter = query.res.getResults().iterator();
+
+	    while (iter.hasNext()) {
+	      SolrDocument resultDoc = iter.next();
+
+	      Object title = resultDoc.getFieldValue("title");
+//	      Object subject = resultDoc.getFieldValue("subject");
+//	      Object description = resultDoc.getFieldValue("description");
+//	      Object comments = resultDoc.getFieldValue("comments");
+//	      Object author = resultDoc.getFieldValue("author");
+	      Object url = resultDoc.getFieldValue("url");
+	      
+	      Logger.info("title: " + title);
+//	      Logger.info("subject: " + subject);
+//	      Logger.info("description: " + description);
+//	      Logger.info("comments: " + comments);
+//	      Logger.info("author: " + author);
+	      Logger.info("url: " + url);
+
+	      String id = (String) resultDoc.getFieldValue("id"); //id is the uniqueKey field
+	      Logger.info("id: " + id);
+
+	      if (query.res.getHighlighting().get(id) != null) {
+	        	Logger.info("title: " + query.res.getHighlighting().get(id).get("title"));
+	        	Logger.info("content: " + query.res.getHighlighting().get(id).get("content_text"));
+	      }
+	    }		
+		
+//		Map<String, Map<String, List<String>>> highlights = query.res.getHighlighting();
+//
+//		for (Entry<String, Map<String, List<String>>> entry : highlights.entrySet()) {
+//			Logger.info("Key : " + entry.getKey());
+//			
+//		}
 		return query;
 	}
 
