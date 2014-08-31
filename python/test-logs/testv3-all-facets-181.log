@@ -1,0 +1,30 @@
+Running queries against: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&q={!cache=false}*:*
+NO-FACETS-ALL.QTime.[ms] 1620 numFound 84303336 wallclock.[ms] 1676.0
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&q={!cache=false}"causerie"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-causerie.QTime.[ms] 3679 numFound 148 wallclock.[ms] 3835.0
+ALL-FACETS-causerie.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&q={!cache=false}"many"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-many.QTime.[ms] 15361 numFound 9394975 wallclock.[ms] 15469.0
+ALL-FACETS-many.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&q={!cache=false}"common foxglove"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-common foxglove.QTime.[ms] 7339 numFound 81 wallclock.[ms] 7514.0
+ALL-FACETS-common foxglove.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&q={!cache=false}"shitty"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-shitty.QTime.[ms] 3036 numFound 16731 wallclock.[ms] 3210.0
+ALL-FACETS-shitty.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&q={!cache=false}"cubic kilometre"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-cubic kilometre.QTime.[ms] 6708 numFound 48 wallclock.[ms] 6857.0
+ALL-FACETS-cubic kilometre.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&q={!cache=false}"wipe"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-wipe.QTime.[ms] 4330 numFound 162526 wallclock.[ms] 4440.0
+ALL-FACETS-wipe.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&q={!cache=false}"day labourer"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-day labourer.QTime.[ms] 7905 numFound 207 wallclock.[ms] 8052.0
+ALL-FACETS-day labourer.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&q={!cache=false}"impregnate"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-impregnate.QTime.[ms] 2966 numFound 1844 wallclock.[ms] 3025.0
+ALL-FACETS-impregnate.facetValues[0] co.uk
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&q={!cache=false}"operose"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-operose.QTime.[ms] 1988 numFound 23 wallclock.[ms] 2193.0
+ALL-FACETS-operose.facetValues[0] co.uk
