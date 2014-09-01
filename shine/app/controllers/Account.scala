@@ -48,7 +48,7 @@ object Account extends Controller {
   def changePassword = Action { implicit request =>
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
-		Ok(html.changePassword(passwordForm, "Shine Application", user))
+		Ok(html.account.changePassword(passwordForm, "Shine Application", user))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	  }
@@ -60,7 +60,7 @@ object Account extends Controller {
 		var user = User.findByEmail(username.toLowerCase())
 		passwordForm.bindFromRequest.fold(
 	      formWithErrors => {
-	        BadRequest(html.changePassword(formWithErrors, "Shine Application", user))
+	        BadRequest(html.account.changePassword(formWithErrors, "Shine Application", user))
 	      },
 	      passwordData => {
 	        val password = passwordData.currentPassword
@@ -75,10 +75,10 @@ object Account extends Controller {
 		    		Redirect(routes.Application.index).flashing("success" -> "Your password has been updated successfully")
 		    	} else {
 		    		//passwordForm.fill(passwordData).withGlobalError("Your error message")
-	                BadRequest(html.changePassword(passwordForm.fill(passwordData).withGlobalError("New Passwords do not match"), "Shine Application", user))	    	
+	                BadRequest(html.account.changePassword(passwordForm.fill(passwordData).withGlobalError("New Passwords do not match"), "Shine Application", user))	    	
 	            }
 		    } else {
-	            BadRequest(html.changePassword(passwordForm.fill(passwordData).withGlobalError("Current Password is incorrect"), "Shine Application", user))	    	
+	            BadRequest(html.account.changePassword(passwordForm.fill(passwordData).withGlobalError("Current Password is incorrect"), "Shine Application", user))	    	
 		    }
 	      })
   	  }.getOrElse {
@@ -91,7 +91,7 @@ object Account extends Controller {
 		val user = User.findByEmail(username.toLowerCase())
 		val searches = models.Search.findByUser(user)
 		val ls = searches.asScala.toList
-	    Ok(views.html.mySearches("My Searches", user, ls))
+	    Ok(views.html.account.mySearches("My Searches", user, ls))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	  }
@@ -125,7 +125,7 @@ object Account extends Controller {
 		val user = User.findByEmail(username.toLowerCase())
 		val corpora = models.Corpus.findByUser(user)
 		val cs = corpora.asScala.toList
-	    Ok(views.html.myCorpora("My Corpora", user, cs))
+	    Ok(views.html.account.myCorpora("My Corpora", user, cs))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	  }

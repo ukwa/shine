@@ -184,11 +184,13 @@ object Search extends Controller {
   }
 
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
-    println("advanced_search")
     
     var user : User = null
+    var corpora  = List[Corpus]()
+
 	request.session.get("username").map { username =>
 	  	user = User.findByEmail(username.toLowerCase())
+	  	corpora = myCorpora(user)
     }
     
     val form = searchForm.bindFromRequest(request.queryString)
@@ -203,7 +205,7 @@ object Search extends Controller {
 
     pagination.update(totalRecords, pageNo)
 
-    Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form))
+    Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora))
   }
     
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>

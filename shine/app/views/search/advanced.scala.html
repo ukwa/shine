@@ -1,4 +1,4 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[controllers.Search.SearchData])(implicit flash: Flash, lang: play.api.i18n.Lang)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[controllers.Search.SearchData], corpora: List[Corpus])(implicit flash: Flash, lang: play.api.i18n.Lang)
 
 @import helper._
 @import bootstrap.advanced._
@@ -384,6 +384,7 @@
 			
 			validateAdvancedSearchForm();
 			saveAdvancedSearch();
+			saveCorpus();
 			csvLink();
 		});
 	</script>
@@ -448,6 +449,11 @@
 	                </li>
 				}
 			</ul>
+			@if(user != null) {
+				<div class="pull-right save-right">
+					<button type="button" class="btn btn-primary save-right save-corpus" name="action" value="corpus-save" data-toggle="tooltip" data-placement="right" title="Corpus Save">Save Selected</button>
+			    </div>
+			}
 		</div>
 	}
 }
@@ -461,6 +467,18 @@
 			}
 	      }
 	      case None => { false } 
+	}
+}
+
+@formatDate(dateText: Object) = @{
+    if (dateText != null) {
+    	var dateValue = dateText.toString
+    	var formatter: java.text.DateFormat = new java.text.SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy")
+    	var date = formatter.parse(dateValue)
+    	val newDate = new java.text.SimpleDateFormat("MMM dd yyyy HH:mm:ss z").format(date)
+    	newDate
+	} else {
+		""
 	}
 }
 
@@ -707,10 +725,10 @@
 											</a>
 										</h4>
 										<div class="checkbox pull-right">
-											<input type="checkbox" name="exclude" value="@d.getFirstValue("id_long")">
+											<input type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Select" class="resource">
 										</div>
 										<p class="list-group-item-text">
-												@d.getFirstValue("crawl_date")<br />
+												@formatDate(d.getFirstValue("crawl_date"))<br />
 												@d.getFirstValue("content_type_norm")<br />
 												@d.getFirstValue("domain")<br />
 												@d.getFirstValue("author")<br />
@@ -732,5 +750,6 @@
 	
 	@saveSearchModal()
 	@modalLoader()
+	@saveCorpusModal(corpora)
 	
 }

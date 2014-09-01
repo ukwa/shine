@@ -59,11 +59,23 @@
 				}
 			</ul>
 			@if(user != null) {
-				<div class="form-group pull-right save-right">
+				<div class="pull-right save-right">
 					<button type="button" class="btn btn-primary save-right save-corpus" name="action" value="corpus-save" data-toggle="tooltip" data-placement="right" title="Corpus Save">Save Selected</button>
 			    </div>
 			}
 		</div>
+	}
+}
+
+@formatDate(dateText: Object) = @{
+    if (dateText != null) {
+    	var dateValue = dateText.toString
+    	var formatter: java.text.DateFormat = new java.text.SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy")
+    	var date = formatter.parse(dateValue)
+    	val newDate = new java.text.SimpleDateFormat("MMM dd yyyy HH:mm:ss z").format(date)
+    	newDate
+	} else {
+		""
 	}
 }
 
@@ -115,7 +127,7 @@
 								<input type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Select" class="resource">
 							</div>
 							<p class="list-group-item-text">
-									@d.getFirstValue("crawl_date")<br />
+									@formatDate(d.getFirstValue("crawl_date"))<br />
 									@d.getFirstValue("content_type_norm")<br />
 									@d.getFirstValue("domain")<br />
 									@d.getFirstValue("sentiment_score")
