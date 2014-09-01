@@ -1,7 +1,8 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[controllers.Search.SearchData])(implicit flash: Flash, lang: play.api.i18n.Lang)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[controllers.Search.SearchData], corpora: List[Corpus])(implicit flash: Flash, lang: play.api.i18n.Lang)
 
 @import helper._
 @import bootstrap.advanced._
+@import results._
 
 @implicitFieldConstructor = @{ FieldConstructor(genericInput.f) }
 
@@ -382,74 +383,13 @@
 				});
 			}
 			
+			searchTabs();
 			validateAdvancedSearchForm();
 			saveAdvancedSearch();
+			saveCorpus();
 			csvLink();
 		});
 	</script>
-}
-
-@****************************************
-* Helper generating navigation links    *
-****************************************@
-@link(pageNo:Int, newSortBy:String) = @{
-    
-    var sortBy = currentSortBy
-    var order = currentOrder
-    
-    if(newSortBy != null) {
-        sortBy = newSortBy
-        if(currentSortBy == newSortBy) {
-            if(currentOrder == "asc") {
-                order = "desc"
-            } else {
-                order = "asc"
-            }
-        } else {
-            order = "asc"
-        }
-    }
-
-    // Generate the link
-    routes.Search.advanced_search(q.query, pageNo, sortBy, order)
-    
-}
-
-@pagination = {
-	@if(currentPage.getTotalItems > 0) {
-		<div class="text-center paging-tabs">
-			<ul class="pagination">
-				@if(currentPage.hasPreviousPage) {
-	            	<li class="prev">
-	            		<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage-1)" class="paging">&laquo;</a>
-	                </li>
-	            } else {
-	                <li class="prev disabled">
-	                    <a class="paging">&laquo;</a>
-	                </li>
-	            }
-				@for(index <- currentPage.getPagesList) {
-					@if(index == currentPage.getCurrentPage) {
-						@if(index == currentPage.getMaxViewablePages) {
-							<span class="max-viewable-reached hide"></span>
-						}
-						<li class="active current" id="list-@(index)"><a href="#" class="paging" id="page-@(index)">@(currentPage.getCurrentPage) <span class="sr-only">(current)</span></a></li>
-					} else {
-						<li id="list-@(index)"><a href="@link(index, null)@(q.responseParameters)" id="page-@(index)" class="paging">@(index)</a></li>
-					}
-				}
-	        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
-	                <li class="next" id="list-@(index)">
-	                    <a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage+1)" class="paging">&raquo;</a>
-	                </li>
-	            } else {
-	                <li class="next disabled">
-	                    <a class="paging">&raquo;</a>
-	                </li>
-				}
-			</ul>
-		</div>
-	}
 }
 
 @showOption(tab: String) = @{
@@ -662,68 +602,14 @@
 						Maximum number of results reached
 					</div>
 				</div>
-								
-				<div class="panel panel-default">
-					<div class="panel-heading filter-heading">
-	                    <h4 class="panel-title pull-left filter-heading-title">
-	                        Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
-	                    </h4>
-                        <span class="hide" id="current-url"></span>
-                       	<div class="form-inline pull-right">
-                          	@if(!q.res.getResults().isEmpty()) {
-	                         	<div class="form-group" style="margin-right:20px">
-                            		<button type="button" id="csv-export" class="btn btn-primary" name="action" value="csv">CSV</button>
-	                         	</div>
-	                         }
-							<div class="form-group" style="margin-right:15px">
-								<select class="form-control" name="sort" id="sort">
-									<!-- get from some where -->
-									<option value="content_type_norm">Title</option>
-									<option value="crawl_date">Crawl Date</option>
-									<option value="content_type_norm">Content</option>
-									<option value="domain">Domain</option>
-									<option value="sentiment_score">Score</option>
-								</select>
-							</div>
-							<div class="form-group" style="margin-right:5px">
-								<select class="form-control" name="order" id="order">
-									<option value="asc">Asc</option>
-									<option value="desc">Desc</option>
-								</select>
-							</div>
-						</div>
-					</div>
 
-					@if(!q.res.getResults().isEmpty()) {
-						<div class="panel-body">
-							@pagination
-		
-							@for((d, index) <- q.res.getResults().zipWithIndex) {
-								<div class="list-group">
-									<span class="list-group-item" href="#">
-										<h4 class="list-group-item-heading">@(currentPage.getNextIndex(index)) 
-											<a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">
-												"@d.getFirstValue("title")"
-											</a>
-										</h4>
-										<div class="checkbox pull-right">
-											<input type="checkbox" name="exclude" value="@d.getFirstValue("id_long")">
-										</div>
-										<p class="list-group-item-text">
-												@d.getFirstValue("crawl_date")<br />
-												@d.getFirstValue("content_type_norm")<br />
-												@d.getFirstValue("domain")<br />
-												@d.getFirstValue("author")<br />
-												@d.getFirstValue("sentiment_score")
-										</p>
-									</span>
-								</div>
-							}
-		
-							@pagination
-						</div>
-					}
-				</div>
+				@resultsTabs("results")
+							
+				<div class="padding-20">
+					<div id="results">@advancedResultsPage(user, q, currentPage, currentSortBy, currentOrder)</div>
+					<div id="concordance">@advancedConcordancePage(user, q, currentPage, currentSortBy, currentOrder)</div>
+				</div>	
+								
 				}
 			</div>
 		</div>
@@ -732,5 +618,6 @@
 	
 	@saveSearchModal()
 	@modalLoader()
+	@saveCorpusModal(corpora)
 	
 }
