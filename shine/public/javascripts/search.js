@@ -1049,3 +1049,36 @@ function disableInvertInputs() {
 	    }
 	});
 }
+
+function searchTabs() {
+	var tab = getURLParameter('tab');
+	$('#tab').val(tab);
+	
+	if (tab == 'concordance') {
+		$('#concordanceTab').addClass('active');
+		$('#resultsTab').removeClass('active');
+		$('#results').hide();
+		$('#concordance').show();
+	} else {
+		$('#resultsTab').addClass('active');
+		$('#concordanceTab').removeClass('active');
+		$('#concordance').hide();
+		$('#results').show();
+	}
+	
+	$('#resultsTab a').click(function (e) {
+		e.preventDefault()
+		$(this).tab('show');
+		$('#concordance').hide();
+		$('#results').show();
+		$('#tab').val('results');
+	});
+	
+	$('#concordanceTab a').click(function (e) {
+		e.preventDefault()
+		$(this).tab('show');
+		$('#results').hide();
+		$('#concordance').show();
+		$('#tab').val('concordance');
+	});
+}
