@@ -1,0 +1,3 @@
+Running queries against: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5
+URL: http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5&sort=crawl_date+asc&q={!cache=false}*:*
+NO-FACETS-ALL.QTime.[ms] 13225 numFound 337228756 wallclock.[ms] 13276.328

@@ -142,15 +142,25 @@ def runQueries(endpoint):
 
 # Attempt to controlled over 3 on each server separately:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5")
-runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5")
+#runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5")
+
+# Run 4 over one server:
+#runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5")
 
 # Querying three on 182 from 181:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5")
+
+# Querying three on 181 and three on 182:
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5")
+
 
 # Querying 2 shards on 1 server:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5")
 # Querying 2 shards on 2 servers:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.182:8983/solr/jisc5")
+
+# Querying 4 shards on 1 server:
+runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5")
 
 
 # Attempt to controlled over 6 on each server separately:
@@ -158,6 +168,8 @@ runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&shar
 #runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5")
 #runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5")
 #runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
+
+# n.b. 215 appears to have some data missing.
 
 # Attempt to control allocation of distrib mode across all four servers:
 # runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
