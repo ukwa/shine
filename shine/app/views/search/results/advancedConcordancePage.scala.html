@@ -79,6 +79,37 @@
 	}
 }
 
+@resultSnippet(d: org.apache.solr.common.SolrDocument, index: Int) = {
+	<div class="list-group">
+		<div class="list-group-item" href="#">
+			<h4 class="list-group-item-heading">
+				@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
+			</h4>
+			<div class="checkbox pull-right">
+				<input type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Select" class="resource">
+			</div>
+			<p class="list-group-item-text">
+					@formatDate(d.getFirstValue("crawl_date"))<br />
+					@d.getFirstValue("content_type_norm")<br />
+					@d.getFirstValue("domain")<br />
+					@d.getFirstValue("sentiment_score")
+			</p>
+			@if(q.res.getHighlighting().get(d.getFirstValue("id")) != null) {
+			<hr />
+				@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("title") != null) {
+     						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("title").get(0)))</p>
+				}
+				@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("url") != null) {
+     						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("url").get(0)))</p>
+				}
+ 					@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text") != null) {
+ 						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text").get(0)))</p>
+ 					}
+			}
+		</div>
+	</div>
+}
+
 <div class="panel-body">
 
 	@pagination
@@ -86,23 +117,7 @@
 	<div id="concordance-set">
 		@if(q != null) {
 			@for((d, index) <- q.res.getResults().zipWithIndex) {
-				<div class="list-group">
-					<span class="list-group-item" href="#">
-						@if(q.res.getHighlighting().get(d.getFirstValue("id")) != null) {
-							<p class="list-group-item-text">
-								@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("title") != null) {
-	        						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("title").get(0)))</p>
-								}
-								@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("url") != null) {
-	        						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("url").get(0)))</p>
-								}
-	        					@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text") != null) {
-	        						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text").get(0)))</p>
-	        					}
-							</p>
-      					}
-					</span>
-				</div>
+				@(resultSnippet(d, index))
 			}
 		}
 	</div>
