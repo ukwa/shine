@@ -131,8 +131,13 @@ object Search extends Controller {
 			}
 		}
 		case None => {
-			println("None")
-			Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
+		    println("no action do search")
+		    if (StringUtils.isNotBlank(query)) {
+		    	getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
+		    } else {
+				play.api.Logger.debug("blank query: " + query)
+				Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
+		    }
 		}
 	}
   }

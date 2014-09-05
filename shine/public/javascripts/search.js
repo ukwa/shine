@@ -812,7 +812,13 @@ function validateAdvancedSearchForm() {
 	
     $('#search-form').validate({
         rules: {
-        	query: "required",
+        	query: {
+        		required: {
+                    depends: function(element) {
+                        return $('#proximityPhrase1').val().length == 0 && $('#proximityPhrase2').val().length == 0 || $('#proximity').val().length == 0
+                    }
+        		}
+        	},
         	proximityPhrase1: {
                 required: {
                     depends: function(element) {

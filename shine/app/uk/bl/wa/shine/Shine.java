@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -402,7 +401,7 @@ public class Shine extends Solr {
 				for (Iterator<SolrDocument> iterator = docs.iterator(); iterator.hasNext(); ) {
 					SolrDocument doc = iterator.next();
 					if (query.getSelectedResources().contains(String.valueOf(doc.getFirstValue("id")))) {
-						Logger.info("matched: " + String.valueOf(doc.getFirstValue("id")) + " - " + doc.getFirstValue("title"));
+//						Logger.info("matched: " + String.valueOf(doc.getFirstValue("id")) + " - " + doc.getFirstValue("title"));
 				        iterator.remove();
 					}
 				}
@@ -411,34 +410,34 @@ public class Shine extends Solr {
 			throw new SolrServerException(e);
 		}
 
-	    Iterator<SolrDocument> iter = query.res.getResults().iterator();
-
-	    while (iter.hasNext()) {
-	      SolrDocument resultDoc = iter.next();
-
-	      Object title = resultDoc.getFieldValue("title");
+//	    Iterator<SolrDocument> iter = query.res.getResults().iterator();
+//
+//	    while (iter.hasNext()) {
+//	      SolrDocument resultDoc = iter.next();
+//
+//	      Object title = resultDoc.getFieldValue("title");
 //	      Object subject = resultDoc.getFieldValue("subject");
 //	      Object description = resultDoc.getFieldValue("description");
 //	      Object comments = resultDoc.getFieldValue("comments");
 //	      Object author = resultDoc.getFieldValue("author");
-	      Object url = resultDoc.getFieldValue("url");
-	      
-	      Logger.info("title: " + title);
+//	      Object url = resultDoc.getFieldValue("url");
+//	      
+//	      Logger.info("title: " + title);
 //	      Logger.info("subject: " + subject);
 //	      Logger.info("description: " + description);
 //	      Logger.info("comments: " + comments);
 //	      Logger.info("author: " + author);
-	      Logger.info("url: " + url);
+//	      Logger.info("url: " + url);
 
-	      String id = (String) resultDoc.getFieldValue("id"); //id is the uniqueKey field
-	      Logger.info("id: " + id);
+//	      String id = (String) resultDoc.getFieldValue("id"); //id is the uniqueKey field
+//	      Logger.info("id: " + id);
 
-	      if (query.res.getHighlighting().get(id) != null) {
-	        	Logger.info("title: " + query.res.getHighlighting().get(id).get("title"));
-	        	Logger.info("content: " + query.res.getHighlighting().get(id).get("content_text"));
-	      }
-	    }		
-		
+//	      if (query.res.getHighlighting().get(id) != null) {
+//	        	Logger.info("title: " + query.res.getHighlighting().get(id).get("title"));
+//	        	Logger.info("content: " + query.res.getHighlighting().get(id).get("content_text"));
+//	      }
+//	    }		
+//		
 //		Map<String, Map<String, List<String>>> highlights = query.res.getHighlighting();
 //
 //		for (Entry<String, Map<String, List<String>>> entry : highlights.entrySet()) {
@@ -486,7 +485,9 @@ public class Shine extends Solr {
 						.append(proximity.getPhrase2());
 			}
 			Logger.info("builder parameters: " + builder.toString());
-			parameters.setQuery(builder.toString());
+			String currentQuery = parameters.getQuery();
+			parameters.setQuery(currentQuery + " " + builder.toString());
+			Logger.info("new query: " + parameters.getQuery());
 		}
 	}
 
