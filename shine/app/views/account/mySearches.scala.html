@@ -22,6 +22,14 @@
 			            $form.trigger('submit'); // submit the form
 			        });
 			});
+			
+			$('button[name="search-saved"]').on('click', function(e){
+			    e.preventDefault();
+			    var id = $(this).attr('id');
+			    var url = $(this).parent().find('input[type=hidden]:first').val();
+			    window.location.href = url;
+			    console.log(url);
+			});
 		});
 		
 	</script>
@@ -38,14 +46,15 @@
 		
 	@if(user != null) {
         <table class="table table-condensed">
-			@for(search <- searches) {
+        	@for((search, index) <- searches.zipWithIndex) {
 				<tr>
 	               	<td>
-              			@(search.name) @(search.description)
-						<a href="../@(search.url)">
-	          					@(search.summary)
-						</a>
+              			@(search.name) @(search.description) @(search.summary)
 	               	</td>
+	               	<td>
+						<input type="hidden" value="../@(search.url)" name="search-url" />
+              		    <button type="button" class="btn btn-danger" name="search-saved" id="search-@(index)">Search</button>
+					</td>
 	               	<td>
 						@helper.form(routes.Account.deleteSearch(search.id)) {
               		    	<button type="button" data-dismiss="modal" class="btn btn-danger" name="delete_search">Delete</button>
