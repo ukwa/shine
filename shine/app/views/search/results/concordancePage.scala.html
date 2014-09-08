@@ -31,7 +31,11 @@
 			<ul class="pagination">
 				@if(currentPage.hasPreviousPage) {
 	            	<li class="prev">
-	            		<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)&tab=concordance&action=search" id="page-@(currentPage.getCurrentPage-1)" class="paging" data-toggle="tooltip" data-placement="left" title="Page @(currentPage.getCurrentPage-1)">&laquo;</a>
+	            		@if(q.mode != null) {
+	            			<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)&tab=results&action=search&mode=@(q.mode)" id="page-@(currentPage.getCurrentPage-1)" class="paging" data-toggle="tooltip" data-placement="left" title="Page @(currentPage.getCurrentPage-1)">&laquo;</a>
+	            		} else {
+	            			<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)&tab=results&action=search" id="page-@(currentPage.getCurrentPage-1)" class="paging" data-toggle="tooltip" data-placement="left" title="Page @(currentPage.getCurrentPage-1)">&laquo;</a>
+	            		}
 	                </li>
 	            } else {
 	                <li class="prev disabled">
@@ -45,12 +49,20 @@
 						}
 						<li class="active current" id="list-@(index)"><a href="#" class="paging" id="page-@(index)">@(currentPage.getCurrentPage) <span class="sr-only">(current)</span></a></li>
 					} else {
-						<li id="list-@(index)"><a href="@link(index, null)@(q.responseParameters)&tab=concordance&action=search" id="page-@(index)" class="paging">@(index)</a></li>
+						@if(q.mode != null) {
+							<li id="list-@(index)"><a href="@link(index, null)@(q.responseParameters)&tab=results&action=search&mode=@(q.mode)" id="page-@(index)" class="paging">@(index)</a></li>
+						} else {
+							<li id="list-@(index)"><a href="@link(index, null)@(q.responseParameters)&tab=results&action=search" id="page-@(index)" class="paging">@(index)</a></li>
+						}
 					}
 				}
 	        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
 	                <li class="next" id="list-@(index)">
-	                    <a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)&tab=concordance&action=search" id="page-@(currentPage.getCurrentPage+1)" class="paging" data-toggle="tooltip" data-placement="right" title="Page @(currentPage.getCurrentPage+1)">&raquo;</a>
+						@if(q.mode != null) {
+                    		<a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)&tab=results&action=search&mode=@(q.mode)" id="page-@(currentPage.getCurrentPage+1)" class="paging" data-toggle="tooltip" data-placement="right" title="Page @(currentPage.getCurrentPage+1)">&raquo;</a>
+						} else {
+                    		<a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)&tab=results&action=search" id="page-@(currentPage.getCurrentPage+1)" class="paging" data-toggle="tooltip" data-placement="right" title="Page @(currentPage.getCurrentPage+1)">&raquo;</a>
+                    	}
 	                </li>
 	            } else {
 	                <li class="next disabled">
