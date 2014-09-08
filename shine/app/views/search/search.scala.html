@@ -67,11 +67,62 @@
 				});
 			}
 
+			function switchModes(modeName) {
+				if (modeName == 'Normal Mode') {
+					$(this).html('Long Mode');
+					$(this).removeClass('btn-primary');
+					$(this).addClass('btn-success');
+					$('#modeValue').val('long');
+				} else {
+					$(this).html('Normal Mode');
+					$(this).addClass('btn-primary');
+					$(this).removeClass('btn-success');
+					$('#modeValue').val('normal');
+				}
+			}
+			
+			//read back in the search mode
+			var mode = getURLParameter('mode');
+			if (mode) {
+				$('#modeValue').val(mode);
+				if (mode == 'long') {
+					$('#mode').html('Long Mode');
+					$('#mode').removeClass('btn-primary');
+					$('#mode').addClass('btn-success');
+				}
+			} else {
+				// default mode
+				$('#modeValue').val('');
+				$('#mode').html('Normal Mode');
+				$('#mode').addClass('btn-primary');
+				$('#mode').removeClass('btn-success');
+			}
+			
+			$('#mode').on('click', function(event) {
+				var modeName = $(this).html();
+				if (modeName == 'Normal Mode') {
+					$(this).html('Long Mode');
+					$(this).removeClass('btn-primary');
+					$(this).addClass('btn-success');
+					$('#modeValue').val('long');
+				} else {
+					$(this).html('Normal Mode');
+					$(this).addClass('btn-primary');
+					$(this).removeClass('btn-success');
+					$('#modeValue').val('');
+				}
+			});
+			
 			$('#search').on('click', function(event) {
 				if ($('#search-form').valid()) {
 					if ($('#addFacet').val() == "") {
 						$('#addFacet').prop("disabled", true);
-						
+					}
+					if ($('#modeValue').val() == "") {
+						$('#modeValue').prop("disabled", true);
+					}
+					if ($('#tab').val() == "") {
+						$('#tab').prop("disabled", true);
 					}
 				    $('#modalLoader').modal({
 				        backdrop: true,
@@ -232,6 +283,7 @@
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
 					   				<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
+										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
 										<button type="button" class="btn btn-primary" id="search" name="action" value="search">Search</button>
 										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
 										@if(user != null && q != null) {
@@ -273,6 +325,7 @@
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
 					   				<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
+										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
 										<button id="search" type="button" class="btn btn-primary" name="action" value="search">Search</button>
 										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
 										<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
@@ -285,6 +338,7 @@
 					</div>
 				}
 			</div>
+			<input type="hidden" name="mode" value="normal" id="modeValue" />
 		}
 	</div>
 	<input type="hidden" id="export_url" value="@routes.Search.exportSearch()">

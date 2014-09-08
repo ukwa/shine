@@ -83,6 +83,8 @@ public class Query {
 	
 	public String order;
 	
+	public String mode;
+	
 	// incoming parameters
 	public Map<String, List<String>> parameters;
 	
@@ -105,7 +107,7 @@ public class Query {
 	
 	public Query(String query, String proximityPhrase1, String proximityPhrase2, String proximity, 
 			String exclude, String dateStart, String dateEnd, String url, String hostDomainPublicSuffix, 
-		    String fileFormat, String websiteTitle, String pageTitle, String author, String collection, Map<String,List<String>> parameters) {
+		    String fileFormat, String websiteTitle, String pageTitle, String author, String collection, Map<String,List<String>> parameters, String mode) {
 		this.query = query;
 		this.proximity = new Proximity();
 		this.proximity.setPhrase1(proximityPhrase1);
@@ -122,6 +124,7 @@ public class Query {
 		this.author = author;
 		this.collection = collection;
 		this.parameters = parameters;
+		this.mode = mode;
 		this.init();
 	}
 

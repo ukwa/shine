@@ -41,13 +41,14 @@ import uk.bl.wa.shine.service.FacetServiceImpl;
 public class Shine extends Solr {
 
 	private int perPage;
-
+	private String shards;
 	private FacetService facetService = null;
 
 	public Shine(play.Configuration config) {
 		super(config);
 		this.facetService = new FacetServiceImpl(config);
 		this.perPage = config.getInt("per_page");
+		this.shards = config.getString("shards");
 	}
 
 	private SolrQuery buildInitialParameters(Query query) {
@@ -73,6 +74,12 @@ public class Shine extends Solr {
 		
 		solrParameters.setParam(FacetParams.FACET_METHOD, FacetParams.FACET_METHOD_enum);
 		solrParameters.setParam(FacetParams.FACET_ENUM_CACHE_MINDF, "25");
+		
+		// add shard is mode set to long
+		if (StringUtils.isNotEmpty(query.mode) && StringUtils.equalsIgnoreCase(query.mode, "long") && StringUtils.isNotEmpty(shards)) {
+			Logger.info("LONG MODE");
+			solrParameters.setParam("shards", shards);
+		}
 		
 		Logger.info("facet methods set");
 		// Sorts:
