@@ -136,7 +136,7 @@ def runQueries(endpoint):
 # non-distributed mode:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
 #runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
-runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
+#runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
 #runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
 
 # Attempt to controlled over 2 on each server separately:
@@ -149,7 +149,7 @@ runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&dist
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5")
 #runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5")
 #runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5")
-#runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5")
+runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5")
 
 # Run 4 over one server:
 #runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5")
@@ -168,7 +168,7 @@ runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&dist
 # Querying 4 shards over 4 servers:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.215:8983/solr/jisc5")
 # Querying 8 shards over 4 servers:
-#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5")
+#runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5")
 # Querying 12 shards over 4 servers:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5")
 
