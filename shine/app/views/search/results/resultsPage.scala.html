@@ -121,8 +121,16 @@
 		<div class="form-inline pull-right">
 			@if(q != null && !q.res.getResults().isEmpty()) {
 			 	<div class="form-group">
-			 		<button type="button" id="csv-export" class="btn btn-primary" name="action" value="csv" data-toggle="tooltip" data-placement="top" title="Export Standard Version">CSV</button>
-			 	</div>
+					<div class="btn-group">
+					  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					    CSV <span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" role="menu">
+					    <li><a href="#" id="briefCSV" data-toggle="tooltip" data-placement="top" title="Export Standard Version">Brief</a></li>
+					    <li><a href="#" id="fullCSV" data-toggle="tooltip" data-placement="top" title="Export Full Version">Full</a></li>
+					  </ul>
+					</div>			 		
+				 	</div>
 			}
 			<div class="form-group">
 				<select class="form-control" name="sort" id="sort">

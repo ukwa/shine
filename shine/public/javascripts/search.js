@@ -854,10 +854,18 @@ function validateAdvancedSearchForm() {
 //}
 
 function csvLink() {
-	$('#csv-export').on('click', function(event) {
+	
+	$('#briefCSV').on('click', function(event) {
 		event.preventDefault();
-		window.location.href=$('#export_url').val() + $('#current-url').text();
+		window.location.href=$('#export_url').val() + $('#current-url').text() + "&action=csv";
 	});
+
+	$('#fullCSV').on('click', function(event) {
+		event.preventDefault();
+		alert('to be implemented')
+		//window.location.href=$('#export_url').val() + $('#current-url').text() + "&action=csv;
+	});
+	
 }
 
 // facet (+/-)
