@@ -59,11 +59,10 @@ $(function () {
 		var $show_more = $(this);
 		var parent = $(this).parent().parent().parent();
 		var shown = parent.find('li.facet-options.show').length;
-		console.log(">>>: " + shown);
 		
-		parent.find('ul.facet-heading').each(function(index) {
-			console.log("shown: " + $(this).find('li.facet-options').length);
-		});
+//		parent.find('ul.facet-heading').each(function(index) {
+//			console.log("shown: " + $(this).find('li.facet-options').length);
+//		});
 		
 		$(this).click(function(event) {
 			event.preventDefault();
@@ -861,6 +860,7 @@ function csvLink() {
 	});
 }
 
+// facet (+/-)
 function facetOptions() {
 	$(".facet-options").each(function(index) {
 		// check form fields
@@ -871,7 +871,7 @@ function facetOptions() {
 		var $link_span_include = $facet_option.find('a.facet.include span');
 		var $link_span_exclude = $facet_option.find('a.facet.exclude span');
 
-		var url = window.location.search;
+		var url = decodeURIComponent(window.location.search);
 
 		// rework this bit
 		// if invert is selected
@@ -908,14 +908,6 @@ function facetOptions() {
 		// for clicking on facet options (includes)
 		$(this).find('a.facet.include').each(function(index) {
 			//console.log(facet_name + " " + facet_value);
-//			var url = "search?" + $('#search-form').serialize();
-			// if not activated then remove
-/* 					facet_value_exc = facet_value_exc.replace('"', '%22').replace('"', '%22');
-			var regexExc = new RegExp("&"+ facet_name_exc + "=" + facet_value_exc);
-*/					
-//					console.log("remove: " + "&"+ facet_name_exc + "=" + facet_value_exc);
-//					url = url.replace(regexExc,'');
-//					console.log("new url: " + url);
 
 			var span = $(this).find('span.glyphicon');
 			
@@ -924,13 +916,12 @@ function facetOptions() {
 				// SELECTED
 				url = url + "&" + facet;
 			} else {
+				// facet selected
 				// i.e remove facet.in.crawl_year=%222007%22
-				facet = facet.replace('"', '%22').replace('"', '%22');
-//						console.log("facet_value: " + facet_value);
 				var regexInc = new RegExp("&"+ facet);
 				url = url.replace(regexInc,'');
-//						console.log(url);
-//						console.log("remove facet: " + facet);
+//				console.log(url);
+//				console.log("remove facet: " + facet);
 			}
 //			url = url.replace('&invert=&', '&');
 			$(this).attr('href', url);
@@ -958,15 +949,7 @@ function facetOptions() {
 		// for clicking on facet options (excludes)
 		$(this).find('a.facet.exclude').each(function(index) {
 			//console.log(facet_name + " " + facet_value);
-			var url = "search?" + $('#search-form').serialize();
-			// if not activated then remove
-/* 					facet_value_inc = facet_value_inc.replace('"', '%22').replace('"', '%22');
-			var regexInc = new RegExp("&"+ facet_name_inc + "=" + facet_value_inc); */
-			
-//					console.log("remove: " + "&"+ facet_name_inc + "=" + facet_value_inc);
-//					url = url.replace(regexInc,'');
-//					console.log("new url: " + url);
-
+			var url = decodeURIComponent("search?" + $('#search-form').serialize());
 			var span = $(this).find('span.glyphicon');
 			
 			var facet = facet_name_exc + "=" + facet_value_exc;
@@ -975,9 +958,6 @@ function facetOptions() {
 				url = url + "&" + facet;
 			} else {
 				// i.e remove facet.in.crawl_year=%222007%22
-				facet = facet.replace('"', '%22').replace('"', '%22');
-				var reg = "^\".*\"$";
-//						console.log("facet_value: " + facet_value);
 				var regexExc = new RegExp("&"+ facet);
 				url = url.replace(regexExc,'');
 //						console.log(url);
@@ -991,7 +971,6 @@ function facetOptions() {
 //						event.preventDefault();
 				// change +/-
 				facetClickToggle($link_span_exclude, $input_exclude);
-//						console.log($('#search-form').serialize());
 				
 				if ($('#search-form').valid()) {
 				    $('#modalLoader').modal({
