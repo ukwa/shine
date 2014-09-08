@@ -167,8 +167,10 @@ public class Shine extends Solr {
 			    
 				for (String facet : facets) {
 				    FacetValue selectedFacetValue = getFacetValueByName(facet);
-				    query.facets.add(facet);
-				    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
+				    if (selectedFacetValue != null) {
+					    query.facets.add(facet);
+					    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
+				    }
 				}
 
 			}
