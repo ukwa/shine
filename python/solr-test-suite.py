@@ -28,9 +28,41 @@ urlo = urllib.FancyURLopener({"http":"http://explorer.bl.uk:3127"})
 
 word_list = open('long-dictionary-word-list.txt').read().splitlines()
 num_words = 200
+allow_phrases = False
+
 run_no_facet_queries = False
 run_single_facet_queries = False
 run_all_facet_queries = True
+
+
+# Facets
+#facet_method = "&facet=true&facet.mincount=1&facet.sort=count" #&facet.method=fcs&facet.threads=100&facet.enum.cache.minDf=100"
+facet_method = "&facet=true&facet.mincount=1&facet.sort=count&facet.limit=10" 
+# This are the core facets we really need to support:
+facets = ["crawl_years", "content_language", "public_suffix", "links_public_suffixes", "domain", "links_domains", 
+          "content_type_norm", "author", "postcode_district"]
+# These are additional facets that would be nice to have:
+additional_facets = ['licence_url', 'last_modified', "last_modified_year", "keywords", "author"]
+additional_link_facets = [ "links_hosts" ]
+additional_url_facets =[ 'host', 'url_type' ]
+# Nice-to-have format-related fields/facets:
+format_facets = ["generator", "content_type", "content_type_full", "content_type_tika", "content_type_droid", "content_ffb", "content_type_ext",
+          "elements_used", "content_encoding", "content_type_served", "content_type_version", "content_first_bytes", "content_metadata_ss",
+          "parse_error", "pdf_pdfa_is_valid", "pdf_pdfa_errors", "xml_root_ns", "server" ]
+# And also the experimental ssdeep_hash_bs_* ssdeep_hash_ngram_bs_* fields.
+# Generator appears to bump RAM (bumped to 18GB during building) quite a bit - perhaps many of these should be DocValues? 
+# Added the elements_used pushed to 19GB.
+# But fast once cached.
+# Date Range Faceting (harder work I think):
+facet_date_range_1y = "&facet.date=crawl_dates&facet.date.start=1994-01-01T00:00:00Z&facet.date.end=NOW/YEAR%2B1YEAR&facet.date.gap=%2B1YEAR"
+facet_date_range_6m = "&facet.date=crawl_dates&facet.date.start=1994-01-01T00:00:00Z&facet.date.end=NOW/YEAR%2B1YEAR&facet.date.gap=%2B6MONTHS"
+# Hook it in
+#facet_method = facet_method + facet_date_range_1y
+
+# Fields
+general_fields = [ "wayback_date", "url", "text", "title", "source_file_s", "id", "hash", "description", "crawl_dates", "content_length", "content_text_length" ]
+location_fields = [ "postcode", "location" ]
+
 
 def elapsed_ms( start_time, end_time ):
 	dt = end_time - start_time
@@ -63,43 +95,15 @@ def runQueries(endpoint):
 	# Pseudo-random word queries:
 	words = []
 	for x in range(1,num_words):
-  		words.append(random.choice(word_list)) 
+		word = random.choice(word_list)
+		if ( allow_phrases is False ) and (( " " in word ) or ( "-" in word )):
+			continue
+  		words.append(word) 
 
 	# Optionally skip the no-facet queries
 	if run_no_facet_queries:
 		for word in words:
 			doQuery("NO-FACETS-"+word, None, base_ndq + ("&q={!cache=false}\"%s\"" % word ) )
-
-	# Fields
-	general_fields = [ "wayback_date", "url", "text", "title", "source_file_s", "id", "hash", "description", "crawl_dates", "content_length", "content_text_length" ]
-	location_fields = [ "postcode", "location" ]
-
-	# Facets
-	facet_method = "&facet=true&facet.mincount=1&facet.sort=count" #&facet.method=fcs&facet.threads=100&facet.enum.cache.minDf=100"
-	# This are the core facets we really need to support:
-	facets = ["crawl_years", "content_language", "public_suffix", "links_public_suffixes", "domain", "links_domains", 
-	          "content_type_norm", "author", "postcode_district"]
-	# These are additional facets that would be nice to have:
-	additional_facets = ['licence_url', 'last_modified', "last_modified_year", "keywords", "author"]
-	additional_link_facets = [ "links_hosts" ]
-	additional_url_facets =[ 'host', 'url_type' ]
-
-	# Nice-to-have format-related fields/facets:
-	format_facets = ["generator", "content_type", "content_type_full", "content_type_tika", "content_type_droid", "content_ffb", "content_type_ext",
-	          "elements_used", "content_encoding", "content_type_served", "content_type_version", "content_first_bytes", "content_metadata_ss",
-	          "parse_error", "pdf_pdfa_is_valid", "pdf_pdfa_errors", "xml_root_ns", "server" ]
-	# And also the experimental ssdeep_hash_bs_* ssdeep_hash_ngram_bs_* fields.
-
-	# Generator appears to bump RAM (bumped to 18GB during building) quite a bit - perhaps many of these should be DocValues? 
-	# Added the elements_used pushed to 19GB.
-	# But fast once cached.
-
-	# Date Range Faceting (harder work I think):
-	facet_date_range_1y = "&facet.date=crawl_dates&facet.date.start=1994-01-01T00:00:00Z&facet.date.end=NOW/YEAR%2B1YEAR&facet.date.gap=%2B1YEAR"
-	facet_date_range_6m = "&facet.date=crawl_dates&facet.date.start=1994-01-01T00:00:00Z&facet.date.end=NOW/YEAR%2B1YEAR&facet.date.gap=%2B6MONTHS"
-	# Hook it in
-	#facet_method = facet_method + facet_date_range_1y
-
 
 	# Optionally skip the single-facet queries
 	if run_single_facet_queries:
@@ -149,7 +153,7 @@ def runQueries(endpoint):
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5")
 #runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5")
 #runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5")
-runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5")
+#runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5")
 
 # Run 4 over one server:
 #runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5")
@@ -187,7 +191,7 @@ runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&shar
 #runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&fl=id&shards=192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5")
 
 # Attempt to controlled over 6 on each server separately:
-#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5")
+runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5")
 #runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5")
 #runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5")
 #runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
@@ -204,7 +208,8 @@ runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&shar
 #runQueries("http://192.168.1.215:8988/solr/jisc5/select?wt=json&indent=true&distrib=false")
 
 # Attempt to control allocation of distrib mode across all four servers:
-# runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
+#runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/jisc5,192.168.1.181:8984/solr/jisc5,192.168.1.181:8985/solr/jisc5,192.168.1.181:8986/solr/jisc5,192.168.1.181:8987/solr/jisc5,192.168.1.181:8988/solr/jisc5,192.168.1.182:8983/solr/jisc5,192.168.1.182:8984/solr/jisc5,192.168.1.182:8985/solr/jisc5,192.168.1.182:8986/solr/jisc5,192.168.1.182:8987/solr/jisc5,192.168.1.182:8988/solr/jisc5,192.168.1.203:8983/solr/jisc5,192.168.1.203:8984/solr/jisc5,192.168.1.203:8985/solr/jisc5,192.168.1.203:8986/solr/jisc5,192.168.1.203:8987/solr/jisc5,192.168.1.203:8988/solr/jisc5,192.168.1.215:8983/solr/jisc5,192.168.1.215:8984/solr/jisc5,192.168.1.215:8985/solr/jisc5,192.168.1.215:8986/solr/jisc5,192.168.1.215:8987/solr/jisc5,192.168.1.215:8988/solr/jisc5")
 
 # Attempt to control allocation of distrib mode across just the two dedicated servers (181,182):
 # 
