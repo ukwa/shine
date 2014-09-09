@@ -94,18 +94,28 @@
 @resultSnippet(d: org.apache.solr.common.SolrDocument, index: Int) = {
 	<div class="list-group">
 		<div class="list-group-item" href="#">
-			<h4 class="list-group-item-heading">
-				@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
-			</h4>
-			<div class="checkbox pull-right">
-				<input type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Select" class="resource">
+			<div class="row">
+				<div class="col-md-8 col-sm-8">
+					<h4 class="list-group-item-heading">
+						@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
+					</h4>
+					<p class="list-group-item-text">
+							@formatDate(d.getFirstValue("crawl_date"))<br />
+							@d.getFirstValue("content_type_norm")<br />
+							@d.getFirstValue("domain")<br />
+							@d.getFirstValue("sentiment_score")
+					</p>
+				</div>
+				<div class="col-md-4 col-sm-4 checkbox">
+					<div class="panel panel-default">
+						<div class="panel-body">
+						 	<div class="checkbox"> <label> <input type="checkbox" name="addToList" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Add to List" class="addToList"> Add to List </label> </div>
+						 	<div class="checkbox"> <label> <input type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Exclude" class="resource"> Exclude </label> </div>
+						 	<div class="checkbox"> <label> <input type="checkbox" name="excludeHost" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Exclude Host" class="excludeHost"> Exclude Host</label> </div>
+						</div>
+					</div>
+				</div>
 			</div>
-			<p class="list-group-item-text">
-					@formatDate(d.getFirstValue("crawl_date"))<br />
-					@d.getFirstValue("content_type_norm")<br />
-					@d.getFirstValue("domain")<br />
-					@d.getFirstValue("sentiment_score")
-			</p>
 		</div>
 	</div>
 }
@@ -130,7 +140,7 @@
 					    <li><a href="#" id="fullCSV" data-toggle="tooltip" data-placement="top" title="Export Full Version">Full</a></li>
 					  </ul>
 					</div>			 		
-				 	</div>
+			 	</div>
 			}
 			<div class="form-group">
 				<select class="form-control" name="sort" id="sort">

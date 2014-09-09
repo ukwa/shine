@@ -170,19 +170,37 @@ object Search extends Controller {
     }
   }
   
-  def exportSearch() = Action { implicit request =>
-    var user : User = null
-	request.session.get("username").map { username =>
-	  	user = User.findByEmail(username.toLowerCase())
+  def export(exportType: String,  version: String) = Action { implicit request =>
+    println(exportType + " - " + version)
+	exportType match {
+    	case "csv" => {
+    		var user : User = null
+			request.session.get("username").map { username =>
+			  	user = User.findByEmail(username.toLowerCase())
+		    }
+			var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
+			val query = request.getQueryString("query").get
+			println("query: " + query)
+			val q = doExport(query, parameters)
+			val totalRecords = q.res.getResults().getNumFound().intValue()
+    		version match {
+    		  case "brief" => {
+				println("exporting to BRIEF CSV #: " + totalRecords)
+				// retrieve based on total records
+				Ok(views.csv.brief("Search", user, q)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+    		  }
+    		  case "full" => {
+				println("exporting to FULL CSV #: " + totalRecords)
+				// retrieve based on total records
+				Ok(views.csv.full("Search", user, q)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+    		  }
+    		}
+      	}
+      	case _ => { 
+			Ok("")
+      	}
     }
-	var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
-	val query = request.getQueryString("query").get
-	println("query: " + query)
-	val q = doExport(query, parameters)
-	val totalRecords = q.res.getResults().getNumFound().intValue()
-	println("exporting to CSV #: " + totalRecords)
-	// retrieve based on total records
-	Ok(views.csv.export("Search", user, q)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+    
   }
 
   def getData(x: Option[String]) = x match {
