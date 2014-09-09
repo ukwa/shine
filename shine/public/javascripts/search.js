@@ -857,13 +857,14 @@ function csvLink() {
 	
 	$('#briefCSV').on('click', function(event) {
 		event.preventDefault();
-		window.location.href=$('#export_url').val() + $('#current-url').text() + "&action=csv";
+		var url = $('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=brief";
+		console.log(url);
+		window.location.href=url;
 	});
 
 	$('#fullCSV').on('click', function(event) {
 		event.preventDefault();
-		alert('to be implemented')
-		//window.location.href=$('#export_url').val() + $('#current-url').text() + "&action=csv;
+		window.location.href=$('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=full";
 	});
 	
 }
@@ -1073,5 +1074,12 @@ function searchTabs() {
 		$('#results').hide();
 		$('#concordance').show();
 		$('#tab').val('concordance');
+	});
+}
+
+function modalLoader() {
+	$('#modalLoader').modal({
+	    backdrop: true,
+	    keyboard: true
 	});
 }

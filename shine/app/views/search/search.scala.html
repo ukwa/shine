@@ -124,10 +124,7 @@
 					if ($('#tab').val() == "") {
 						$('#tab').prop("disabled", true);
 					}
-				    $('#modalLoader').modal({
-				        backdrop: true,
-				        keyboard: true
-				    });
+					modalLoader();
 				    $('#action').val('search');
 				    // add to parameters then submit
 				    // &facet.fields=postcode_district
@@ -341,7 +338,7 @@
 			<input type="hidden" name="mode" value="normal" id="modeValue" />
 		}
 	</div>
-	<input type="hidden" id="export_url" value="@routes.Search.exportSearch()">
+	<input type="hidden" id="export_url" value="@routes.Search.export()">
 	
 	@saveSearchModal()
 	@modalLoader()
