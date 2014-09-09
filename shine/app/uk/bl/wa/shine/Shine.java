@@ -71,6 +71,8 @@ public class Shine extends Solr {
 		}
 
 		solrParameters.set("start", start);
+		// may make this configurable
+		solrParameters.setFacetLimit(10);
 		
 		solrParameters.setParam(FacetParams.FACET_METHOD, FacetParams.FACET_METHOD_enum);
 		solrParameters.setParam(FacetParams.FACET_ENUM_CACHE_MINDF, "25");
