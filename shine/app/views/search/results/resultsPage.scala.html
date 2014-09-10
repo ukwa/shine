@@ -107,13 +107,9 @@
 					</p>
 				</div>
 				<div class="col-md-4 col-sm-4 checkbox">
-					<div class="panel panel-default">
-						<div class="panel-body">
-						 	<div class="checkbox"> <label> <input type="checkbox" name="addToList" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Add to List" class="addToList"> Add to List </label> </div>
-						 	<div class="checkbox"> <label> <input type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Exclude" class="resource"> Exclude </label> </div>
-						 	<div class="checkbox"> <label> <input type="checkbox" name="excludeHost" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Exclude Host" class="excludeHost"> Exclude Host</label> </div>
-						</div>
-					</div>
+				 	<div class="checkbox pull-right">
+				 		<input type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Exclude" class="resource">
+				 	</div>
 				</div>
 			</div>
 		</div>
