@@ -112,3 +112,7 @@ p.list-group-item-text em {
 	font-weight: bold;
 	color: #fff;
 }
+
+span.glyphicon.glyphicon-remove-sign.removeExcluded {
+	cursor:pointer;
+}

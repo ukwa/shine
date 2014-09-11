@@ -124,18 +124,8 @@
 					if ($('#tab').val() == "") {
 						$('#tab').prop("disabled", true);
 					}
-					var resources = getURLParameters('selectedResource');
-					// with these resources create some hidden inputs
-
-					resources.forEach(function(value) {
-						var id = decodeURIComponent(value)
-						console.log(id);
-						var selectedResource = $("<input>")
-			       			.attr("type", "hidden")
-			       			.attr("name", "selectedResource").val(id);
-				    
-				    	$('#search-form').append($(selectedResource));
-					});	
+					
+					processSelectedResources();
 
 					modalLoader();
 				    $('#action').val('search');
@@ -238,11 +228,43 @@
 					    }
 
 					});
-
-
 				});
+				
+				var resources = getURLParameters('selectedResource');
+				// with these resources create some hidden inputs
+				resources.forEach(function(value) {
+					var id = decodeURIComponent(value)
+//					console.log(id);
+					var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' id='" + id + "'></span>";
+					var text = $('<li>').html("Exclude: " + id + span);
+					$('#search-summary').append(text);
+				});	
 			}
 			
+			function processSelectedResources(exclude) {
+				var resources = getURLParameters('selectedResource');
+				// with these resources create some hidden inputs
+
+				if (exclude !== undefined) {
+					for (var i=resources.length-1; i>=0; i--) {
+					    if (decodeURIComponent(resources[i]) === exclude) {
+							console.log("removing " + exclude);
+					    	resources.splice(i, 1);
+					        break;       //<-- Uncomment  if only the first term has to be removed
+					    }
+					}					
+				}
+				console.log("updated resources: " + resources);
+				resources.forEach(function(value) {
+					var id = decodeURIComponent(value)
+					var selectedResource = $("<input>")
+		       			.attr("type", "hidden")
+		       			.attr("name", "selectedResource").val(id);
+			    
+			    	$('#search-form').append($(selectedResource));
+				});	
+			}
+
 			searchTabs();
 			facetOptions();
 			showFacets();
@@ -251,23 +273,19 @@
 			validateSearchForm();
 			applyInverts();
 			csvLink();
+			createSummary();
 			
-			@if(q != null && q.res.getResults().isEmpty()) {
-				//console.log('no results');
-				$('#summary').addClass('hide');
-			} else {
-				createSummary();
-			}
-			
-/*			var exclusions = getURLParameters('exclude');
-			console.log("exclusions: "+ exclusions);
-			$("input[name='exclude']").each(function() {
-				var checkBox = $(this);
-				var found = $.inArray(checkBox.val(), exclusions) > -1;
-				if (found) {
-					checkBox.attr('checked', 'checked');
-				}
-			});*/
+			$('span.glyphicon.glyphicon-remove-sign.removeExcluded').on('click', function(event) {
+				// remove it from parameters
+				// submit
+				var id = $(this).attr('id');
+				processSelectedResources(id);
+				modalLoader();
+			    $('#action').val('search');
+			    // add to parameters then submit
+			    // &facet.fields=postcode_district
+				$('#search-form').submit();
+			});
 		});
 	</script>
 }
