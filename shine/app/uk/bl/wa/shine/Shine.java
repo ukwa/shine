@@ -21,6 +21,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.FacetParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
@@ -183,7 +184,7 @@ public class Shine extends Solr {
 	    solrParameters.setHighlightSimplePre("<em>");
 	    solrParameters.setHighlightSimplePost("</em>");
 	    
-	    solrParameters.addHighlightField("*");
+	    solrParameters.addHighlightField("content,title");
 //	    solrParameters.setParam("hl.fl", "*");
 //	    solrParameters.setHighlightRequireFieldMatch(Boolean.TRUE);
 
@@ -284,10 +285,22 @@ public class Shine extends Solr {
 			// add everything to parameters for solr
 			if (solrParameters == null)
 				solrParameters = new SolrQuery();
-			// The query:
-			// ?start=0&sort=content_type_norm+asc&q=wikipedia+crawl_date:[2009-06-01T00%3A00%3A00Z+TO+2011-06-01T00%3A00%3A00Z]&facet.field={!ex%3Dcrawl_year}crawl_year&facet.field={!ex%3Dpublic_suffix}public_suffix&facet=true&facet.mincount=1&rows=10
-			solrParameters.add("q", query.query);
 	
+			// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
+			StringBuilder exclude = new StringBuilder();
+			for (String id : query.getSelectedResources()) {
+				exclude.append("AND -id:").append("\"").append(id).append("\"").append(" ");
+			}
+
+			Logger.info("excluded: " + exclude.toString().trim());
+			
+			// The query:
+			String q = query.query;
+			if (StringUtils.isNotEmpty(exclude.toString())) {
+				q = q + " " + exclude.toString().trim();
+			}
+			solrParameters.add("q", q);
+			
 			Map<String, FacetValue> facetValues = query.facetValues;
 			
 			// should get updated list of added/removed facet values
@@ -343,6 +356,7 @@ public class Shine extends Solr {
 					fq.add(filter);
 				}
 			}
+			
 			if (fq.size() > 0) {
 				solrParameters.setFilterQueries(fq.toArray(new String[fq.size()]));
 			}
@@ -367,7 +381,6 @@ public class Shine extends Solr {
 				
 				processHostDomainPublicSuffix(solrParameters, query.hostDomainPublicSuffix);
 //				processUrlHostDomainPublicSuffix(parameters, query.urlHostDomainPublicSuffix);
-				
 			} catch (ParseException e) {
 				throw new SolrServerException(e);
 			}
@@ -389,34 +402,16 @@ public class Shine extends Solr {
 			
 			
 			Logger.info("Query: " + solrParameters.toString());
+			
 			// Perform the query:
 			QueryResponse res = solr.query(solrParameters);
+			
 			Logger.info("QTime: " + res.getQTime());
 			Logger.info("Response Header: " + res.getResponseHeader());
 			
-			
-			
-	//		List<FacetField> fields = res.getFacetFields();
-	//		for (FacetField field : fields) {
-	//			FacetValue fv = facetService.getAll().get(field.getName());
-	//			Logger.info("fv: " + fv.getName() + " - " + fv.getValue());
-	//		}
 			query.res = res;
 			query.processQueryResponse();
 			
-			// might take a long time
-			List<SolrDocument> docs = query.res.getResults();
-			
-			// filter exclusions
-			if (!query.res.getResults().isEmpty()) {
-				for (Iterator<SolrDocument> iterator = docs.iterator(); iterator.hasNext(); ) {
-					SolrDocument doc = iterator.next();
-					if (query.getSelectedResources().contains(String.valueOf(doc.getFirstValue("id")))) {
-//						Logger.info("matched: " + String.valueOf(doc.getFirstValue("id")) + " - " + doc.getFirstValue("title"));
-				        iterator.remove();
-					}
-				}
-			}
 		} catch(ParseException e) {
 			throw new SolrServerException(e);
 		}

@@ -124,6 +124,19 @@
 					if ($('#tab').val() == "") {
 						$('#tab').prop("disabled", true);
 					}
+					var resources = getURLParameters('selectedResource');
+					// with these resources create some hidden inputs
+
+					resources.forEach(function(value) {
+						var id = decodeURIComponent(value)
+						console.log(id);
+						var selectedResource = $("<input>")
+			       			.attr("type", "hidden")
+			       			.attr("name", "selectedResource").val(id);
+				    
+				    	$('#search-form').append($(selectedResource));
+					});	
+
 					modalLoader();
 				    $('#action').val('search');
 				    // add to parameters then submit
@@ -277,10 +290,12 @@
 						<div class="panel panel-default">
 							<div class="panel-body">
 					   			<div class="input-group">
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
+									</span>
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
 					   				<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
-										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
 										<button type="button" class="btn btn-primary" id="search" name="action" value="search">Search</button>
 										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
 										@if(user != null && q != null) {
