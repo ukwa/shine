@@ -89,7 +89,11 @@ public class Query {
 	public Map<String, List<String>> parameters;
 	
 	private List<String> selectedResources;
+
+	private List<String> excludes;
 	
+	private List<String> excludeHosts;
+
 	public Map<String,String> menu;
 	
 	public Query() {}
@@ -132,6 +136,8 @@ public class Query {
 		this.facets = new ArrayList<String>();
 		this.facetValues = new HashMap<String, FacetValue>();
 		this.selectedResources = new ArrayList<String>();
+		this.excludes = new ArrayList<String>();
+		this.excludeHosts = new ArrayList<String>();
 		this.menu = new HashMap<String,String>();
 		this.parseParameters();
 	}
@@ -168,10 +174,23 @@ public class Query {
 			}
 		}
 		
-//		if (parameters.get("facet.sort") != null) {
-//			String facetSort = parameters.get("facet.sort").get(0);
-//			Logger.info("facetSort: " + facetSort);
-//		}
+		if (parameters.get("exclude") != null) {
+			Iterator<String> iterator = parameters.get("exclude").iterator();
+			while (iterator.hasNext()) {
+				String exclude = iterator.next();
+				Logger.info("exclude >>>" + exclude);
+				excludes.add(exclude);
+			}
+		}
+
+		if (parameters.get("excludeHost") != null) {
+			Iterator<String> iterator = parameters.get("excludeHost").iterator();
+			while (iterator.hasNext()) {
+				String excludeHost = iterator.next();
+				Logger.info("excludeHost >>>" + excludeHost);
+				excludeHosts.add(excludeHost);
+			}
+		}
 		
 		// non facets
 
@@ -372,6 +391,14 @@ public class Query {
 
 	public List<String> getSelectedResources() {
 		return selectedResources;
+	}
+
+	public List<String> getExcludes() {
+		return excludes;
+	}
+
+	public List<String> getExcludeHosts() {
+		return excludeHosts;
 	}
 
 	private String responseFacetParameters() {

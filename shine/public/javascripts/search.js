@@ -623,6 +623,9 @@ function saveCorpus() {
     	
     	$(this).on('click', function(event) {
     		event.preventDefault();
+			$('input.resource').each(function() {
+				$(this).attr('name', 'selectedResource');
+			});
     		$("#save-corpus-form").modal('show');
     	});
     	

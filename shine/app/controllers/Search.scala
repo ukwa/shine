@@ -130,6 +130,12 @@ object Search extends Controller {
 					play.api.Logger.debug("blank query: " + query)
 					Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
 			    }
+			  case "exclude" =>
+			    println("exclude")
+		    	getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
+			  case "excludeHost" =>
+			    println("excludeHost")
+		    	getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
 			}
 		}
 		case None => {

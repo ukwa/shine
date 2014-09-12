@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,8 +19,6 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.FacetParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
@@ -116,68 +113,6 @@ public class Shine extends Solr {
 	}
 
 	private Query search(Query query, SolrQuery solrParameters, int rows) throws SolrServerException {
-		
-		Map<String, List<String>> parameters = query.getParameters();
-		
-	    List<String> actionParameters = parameters.get("action");
-
-	    
-	    query.facetValues = facetService.getSelected();
-	    
-	    List<String> removeFacets = parameters.get("removeFacet");
-	    
-	    // check incoming parameter list
-	    Logger.info("actionParameters: " + actionParameters);
-	    Logger.info("parameters: " + parameters);
-	    
-	    if (actionParameters != null) {
-	    	
-		    String action = actionParameters.get(0);
-		    
-	    	// got through all that state removeFacet=[facet1, facet2, etc] and remove from list
-		    if (removeFacets != null) {
-			    for (String removeFacet : removeFacets) {
-				    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
-				    // from url parameters
-					query.facets.remove(removeFacet);
-				    // for filtering
-				    query.facetValues.remove(removeFacet);
-				    // for dropdown list
-				    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
-				    Logger.info("removing>>>> " + selectedFacetValue.getName());
-			    }
-		    }
-	    	
-			if (action.equals("add-facet")) {
-			    String addFacet = parameters.get("addFacet").get(0);
-			    
-			    FacetValue addFacetValue = getFacetValueByName(addFacet);
-			    
-			    // TODO: if it doesn't already haveit in there
-			    if (!query.facets.contains(addFacet)) {
-				    // from url parameters
-				    query.facets.add(addFacet);
-				    // for filtering
-				    query.facetValues.put(addFacetValue.getName(), addFacetValue);
-				    // for dropdown list
-				    facetService.getOptionals().remove(addFacet);
-			    }
-			} else if (action.equals("search")) {
-				//parameters.setParam("wt", "json");
-				// get the defaults
-				// facets that come from url parameters
-			    String[] facets = query.facets.toArray(new String[query.facets.size()]);
-			    
-				for (String facet : facets) {
-				    FacetValue selectedFacetValue = getFacetValueByName(facet);
-				    if (selectedFacetValue != null) {
-					    query.facets.add(facet);
-					    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
-				    }
-				}
-
-			}
-	    }
 		
 	    solrParameters.setHighlight(true).setHighlightSnippets(5); //set other params as needed
 	    
@@ -283,22 +218,88 @@ public class Shine extends Solr {
 
 		try {
 			// add everything to parameters for solr
-			if (solrParameters == null)
+			if (solrParameters == null) {
 				solrParameters = new SolrQuery();
-	
-			// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
-			StringBuilder exclude = new StringBuilder();
-			for (String id : query.getSelectedResources()) {
-				exclude.append("AND -id:").append("\"").append(id).append("\"").append(" ");
 			}
-
-			Logger.info("excluded: " + exclude.toString().trim());
 			
 			// The query:
 			String q = query.query;
-			if (StringUtils.isNotEmpty(exclude.toString())) {
-				q = q + " " + exclude.toString().trim();
-			}
+
+		    query.facetValues = facetService.getSelected();
+		    
+			Map<String, List<String>> parameters = query.getParameters();
+		    List<String> actionParameters = parameters.get("action");
+		    List<String> removeFacets = parameters.get("removeFacet");
+		    
+		    // check incoming parameter list
+		    Logger.info("actionParameters: " + actionParameters);
+		    Logger.info("parameters: " + parameters);
+		    
+		    if (actionParameters != null) {
+		    	
+			    String action = actionParameters.get(0);
+			    
+		    	// got through all that state removeFacet=[facet1, facet2, etc] and remove from list
+			    if (removeFacets != null) {
+				    for (String removeFacet : removeFacets) {
+					    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
+					    // from url parameters
+						query.facets.remove(removeFacet);
+					    // for filtering
+					    query.facetValues.remove(removeFacet);
+					    // for dropdown list
+					    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
+					    Logger.info("removing>>>> " + selectedFacetValue.getName());
+				    }
+			    }
+		    	
+				if (action.equals("add-facet")) {
+				    String addFacet = parameters.get("addFacet").get(0);
+				    
+				    FacetValue addFacetValue = getFacetValueByName(addFacet);
+				    
+				    // TODO: if it doesn't already haveit in there
+				    if (!query.facets.contains(addFacet)) {
+					    // from url parameters
+					    query.facets.add(addFacet);
+					    // for filtering
+					    query.facetValues.put(addFacetValue.getName(), addFacetValue);
+					    // for dropdown list
+					    facetService.getOptionals().remove(addFacet);
+				    }
+				} else if (action.equals("search")) {
+					//parameters.setParam("wt", "json");
+					// get the defaults
+					// facets that come from url parameters
+				    String[] facets = query.facets.toArray(new String[query.facets.size()]);
+				    
+					for (String facet : facets) {
+					    FacetValue selectedFacetValue = getFacetValueByName(facet);
+					    if (selectedFacetValue != null) {
+						    query.facets.add(facet);
+						    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
+					    }
+					}
+					// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
+					StringBuilder selected = new StringBuilder();
+					for (String value : query.getExcludes()) {
+						selected.append("AND -id:").append(value).append(" ");
+					}
+					Logger.info("excluded: " + selected.toString().trim());
+					
+					// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
+//					StringBuilder selected = new StringBuilder();
+					for (String value : query.getExcludeHosts()) {
+						selected.append("AND -host:").append(value).append(" ");
+					}
+					Logger.info("excludeHost: " + selected.toString().trim());
+					
+					if (StringUtils.isNotEmpty(selected.toString())) {
+						q = q + " " + selected.toString().trim();
+					}
+				}
+		    }
+
 			solrParameters.add("q", q);
 			
 			Map<String, FacetValue> facetValues = query.facetValues;

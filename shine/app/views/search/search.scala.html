@@ -113,7 +113,43 @@
 				}
 			});
 			
-			$('#search').on('click', function(event) {
+			$('#search').on('click', function() {
+				doSearch();
+			});
+			
+			function resetFacets() {
+				$('#reset-facets').on('click', function(event) {
+					if ($('#search-form').valid()) {
+						
+						//var url = "search" + window.location.search;
+	
+						// reset non-default facets
+						//url = url.replace("&facet.fields=crawl_year", '').replace("&facet.fields=public_suffix", '');
+						//&facet.fields=crawl_year
+						//&f.crawl_year.facet.sort=
+						//&facet.fields=public_suffix
+						//&f.public_suffix.facet.sort=
+						//&facet.in.public_suffix=%22org.uk%22
+						
+						//&action=resetfacets&query=wikipedia&sort=content_type_norm&order=asc
+						//console.log(url);
+						if ($('#addFacet').val() == "") {
+							$('#addFacet').prop("disabled", true);				
+						}
+					    $('#modalLoader').modal({
+					        backdrop: true,
+					        keyboard: true
+					    });
+						clearFacets();
+						resetFacets();
+					    $('#action').val('resetfacets');
+		
+						$('#search-form').submit();
+					}
+				});
+			}
+			
+			function doSearch(action) {
 				if ($('#search-form').valid()) {
 					if ($('#addFacet').val() == "") {
 						$('#addFacet').prop("disabled", true);
@@ -126,45 +162,16 @@
 					}
 					
 					processSelectedResources();
+				    $('#action').val('search');
 
 					modalLoader();
-				    $('#action').val('search');
 				    // add to parameters then submit
 				    // &facet.fields=postcode_district
 				    
 					$('#search-form').submit();
 				}
-			});
-			
-			$('#reset-facets').on('click', function(event) {
-				if ($('#search-form').valid()) {
-					
-					//var url = "search" + window.location.search;
 
-					// reset non-default facets
-					//url = url.replace("&facet.fields=crawl_year", '').replace("&facet.fields=public_suffix", '');
-					//&facet.fields=crawl_year
-					//&f.crawl_year.facet.sort=
-					//&facet.fields=public_suffix
-					//&f.public_suffix.facet.sort=
-					//&facet.in.public_suffix=%22org.uk%22
-					
-					//&action=resetfacets&query=wikipedia&sort=content_type_norm&order=asc
-					//console.log(url);
-					if ($('#addFacet').val() == "") {
-						$('#addFacet').prop("disabled", true);				
-					}
-				    $('#modalLoader').modal({
-				        backdrop: true,
-				        keyboard: true
-				    });
-					clearFacets();
-					resetFacets();
-				    $('#action').val('resetfacets');
-	
-					$('#search-form').submit();
-				}
-			});
+			}
 			
 			function buildDefaultFacets() {
 			    var crawl_year = $("<input>")
@@ -230,31 +237,57 @@
 					});
 				});
 				
-				var resources = getURLParameters('selectedResource');
+				var excludes = getURLParameters('exclude');
 				// with these resources create some hidden inputs
-				resources.forEach(function(value) {
+				excludes.forEach(function(value) {
 					var id = decodeURIComponent(value)
 //					console.log(id);
 					var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' id='" + id + "'></span>";
 					var text = $('<li>').html("Exclude: " + id + span);
 					$('#search-summary').append(text);
-				});	
+				});
+				
+				var excludeHosts = getURLParameters('excludeHost');
+				excludeHosts.forEach(function(value) {
+					var host = decodeURIComponent(value)
+//					console.log(id);
+					var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' id='" + host + "'></span>";
+					var text = $('<li>').html("Exclude Host: " + host + span);
+					$('#search-summary').append(text);
+				});
+
 			}
 			
-			function processSelectedResources(exclude) {
+			function processSelectedResources(selected) {
+				// selected can be id or host name
+				
 				var resources = getURLParameters('selectedResource');
-				// with these resources create some hidden inputs
+				var currentExcludes = getURLParameters('exclude');
+				var currentExcludeHosts = getURLParameters('excludeHost');
 
-				if (exclude !== undefined) {
-					for (var i=resources.length-1; i>=0; i--) {
-					    if (decodeURIComponent(resources[i]) === exclude) {
-							console.log("removing " + exclude);
-					    	resources.splice(i, 1);
-					        break;       //<-- Uncomment  if only the first term has to be removed
+				// with these resources create some hidden inputs
+				
+				if (selected !== undefined) {
+					for (var i=currentExcludes.length-1; i>=0; i--) {
+					    if (decodeURIComponent(currentExcludes[i]) === selected) {
+							console.log("removing exclude " + selected);
+							currentExcludes.splice(i, 1);
+					        break;
 					    }
-					}					
+					}
+					
+					for (var i=currentExcludeHosts.length-1; i>=0; i--) {
+					    if (decodeURIComponent(currentExcludeHosts[i]) === selected) {
+							console.log("removing exclude hosts " + selected);
+							currentExcludeHosts.splice(i, 1);
+					        break;
+					    }
+					}
+					
 				}
-				console.log("updated resources: " + resources);
+				console.log("updated excludes: " + currentExcludes);
+				console.log("updated exclude hosts: " + currentExcludeHosts);
+				
 				resources.forEach(function(value) {
 					var id = decodeURIComponent(value)
 					var selectedResource = $("<input>")
@@ -262,9 +295,66 @@
 		       			.attr("name", "selectedResource").val(id);
 			    
 			    	$('#search-form').append($(selectedResource));
+				});
+				
+				currentExcludes.forEach(function(value) {
+					var id = decodeURIComponent(value)
+					var selectedResource = $("<input>")
+		       			.attr("type", "hidden")
+		       			.attr("name", "exclude").val(id);
+			    
+			    	$('#search-form').append($(selectedResource));
+				});
+				
+				currentExcludeHosts.forEach(function(value) {
+					var id = decodeURIComponent(value)
+					var selectedResource = $("<input>")
+		       			.attr("type", "hidden")
+		       			.attr("name", "excludeHost").val(id);
+			    
+			    	$('#search-form').append($(selectedResource));
 				});	
+
 			}
 
+			function resetExcluded() {
+				$('span.glyphicon.glyphicon-remove-sign.removeExcluded').on('click', function(event) {
+					// remove it from parameters
+					// submit
+					var id = $(this).attr('id');
+					processSelectedResources(id);
+					modalLoader();
+				    $('#action').val('search');
+				    // add to parameters then submit
+				    // &facet.fields=postcode_district
+					$('#search-form').submit();
+				});
+			}
+			
+			function actionButtons() {
+				$('.excludeButton').on('click', function(event) {
+					event.preventDefault();
+					console.log('exclude');
+					$('input.resource').each(function() {
+						var resid = $(this).attr('resid');
+						$(this).val(resid);
+						$(this).attr('name', 'exclude');
+					});
+					doSearch('exclude');
+				});
+				$('.excludeHostButton').on('click', function(event) {
+					event.preventDefault();
+					console.log('exclude host');
+					$('input.resource').each(function() {
+						var host = $(this).attr('host');
+						$(this).val(host);
+						$(this).attr('name', 'excludeHost');
+					});
+					doSearch('excludeHost');
+				});
+			}
+			
+			resetFacets();
 			searchTabs();
 			facetOptions();
 			showFacets();
@@ -274,18 +364,9 @@
 			applyInverts();
 			csvLink();
 			createSummary();
+			resetExcluded();
+			actionButtons();
 			
-			$('span.glyphicon.glyphicon-remove-sign.removeExcluded').on('click', function(event) {
-				// remove it from parameters
-				// submit
-				var id = $(this).attr('id');
-				processSelectedResources(id);
-				modalLoader();
-			    $('#action').val('search');
-			    // add to parameters then submit
-			    // &facet.fields=postcode_district
-				$('#search-form').submit();
-			});
 		});
 	</script>
 }
@@ -352,10 +433,13 @@
 						<div class="panel panel-default">
 							<div class="panel-body">
 					   			<div class="input-group">
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
+										<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
+									</span>
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
 					   				<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
-										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
 										<button id="search" type="button" class="btn btn-primary" name="action" value="search">Search</button>
 										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
 										<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->

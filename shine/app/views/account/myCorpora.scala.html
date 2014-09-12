@@ -55,7 +55,7 @@
 						<ul>
               				@for(resource <- corpus.resources) {
              					<li>
-             						@(resource.id) @(resource.resource_id)
+             						@(resource.id) @(resource.resource_id) @(resource.lastUpdate)
              						@helper.form(routes.Account.deleteResource(resource.id)) {
              		    				<button type="button" data-dismiss="modal-resource" class="btn btn-danger" name="delete_resource">Delete Resource</button>
 									}

@@ -123,70 +123,72 @@
 		}
 		
 		@for(corpus <- corpora) {
-			<div class="panel-body @(corpus.name)">
-   				<div class="facet-main">
-   					<a class="facet-heading"><strong>@(corpus.name)</strong></a> <span class="badge">0</span>
-   					<input type="hidden" name="facet.fields" value="@(corpus.name)" id="@(corpus.name)">
-   					<input type="hidden" name="invert" value="" id="invert_@(corpus.name)">
-					<div class="btn-group">
-						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-							<span class="glyphicon glyphicon-cog"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							@if(getSortableFacet(corpus.name) != null) {
-								<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+ corpus.name +".facet.sort", "index")</a></li>
-								<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+ corpus.name +".facet.sort", "count")</a></li>
+			@if(corpus.name != "") {
+				<div class="panel-body @(corpus.name)">
+	   				<div class="facet-main">
+	   					<a class="facet-heading"><strong>@(corpus.name)</strong></a> <span class="badge">0</span>
+	   					<input type="hidden" name="facet.fields" value="@(corpus.name)" id="@(corpus.name)">
+	   					<input type="hidden" name="invert" value="" id="invert_@(corpus.name)">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+								<span class="glyphicon glyphicon-cog"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								@if(getSortableFacet(corpus.name) != null) {
+									<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+ corpus.name +".facet.sort", "index")</a></li>
+									<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+ corpus.name +".facet.sort", "count")</a></li>
+								}
+								<li><a href="#" class="facet-invert" id="invertmenu_@(corpus.name)">(+-) Exclude selected values</a></li>
+								<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(corpus.name, "facet-remove")</a></li>
+								<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(corpus.name, "facet-search")</a></li>
+							</ul>
+						</div>
+	   				</div>
+	   				<div class="facet-index">
+						<ul class="list-unstyled facet-heading">
+							@for((resource, index) <- corpus.resources.zipWithIndex) {
+								@if(index >= facetLimit) {
+	   								<li class="facet-options hide">
+								} else {
+	   								<li class="facet-options show" data-attr="default">
+								}
+									<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
+									<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
+									<a class="facet-name">@(Html(resource.resource_id))</a> <span class="badge">99</span>
+									<input class="include hide" type="checkbox" name="facet.in.@(corpus.name)" value='"@(resource.title)"' @(q.getCheckedInString(corpus.name, resource.title)) onclick="this.form.submit();"/>
+									<input class="exclude hide" type="checkbox" name="facet.out.@(corpus.name)" value='"@(resource.title)"' @(q.getCheckedOutString(corpus.name, resource.title)) onclick="this.form.submit();"/>
+								</li>
+						        <!-- dynamically add checked="true"? -->
+						        <!-- OR use some kind of link constructor? -->
 							}
-							<li><a href="#" class="facet-invert" id="invertmenu_@(corpus.name)">(+-) Exclude selected values</a></li>
-							<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(corpus.name, "facet-remove")</a></li>
-							<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(corpus.name, "facet-search")</a></li>
+							@if((corpus.resources.size - facetLimit) > 0) {
+								<li> 
+									<a id="@(corpus.name)" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
+								</li>
+							}
+							<li>
+								<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
+							</li>
 						</ul>
-					</div>
-   				</div>
-   				<div class="facet-index">
-					<ul class="list-unstyled facet-heading">
-						@for((resource, index) <- corpus.resources.zipWithIndex) {
-							@if(index >= facetLimit) {
-   								<li class="facet-options hide">
-							} else {
-   								<li class="facet-options show" data-attr="default">
-							}
-								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
-								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-								<a class="facet-name">@(Html(resource.resource_id))</a> <span class="badge">99</span>
-								<input class="include hide" type="checkbox" name="facet.in.@(corpus.name)" value='"@(resource.title)"' @(q.getCheckedInString(corpus.name, resource.title)) onclick="this.form.submit();"/>
-								<input class="exclude hide" type="checkbox" name="facet.out.@(corpus.name)" value='"@(resource.title)"' @(q.getCheckedOutString(corpus.name, resource.title)) onclick="this.form.submit();"/>
-							</li>
-					        <!-- dynamically add checked="true"? -->
-					        <!-- OR use some kind of link constructor? -->
-						}
-						@if((corpus.resources.size - facetLimit) > 0) {
-							<li> 
-								<a id="@(corpus.name)" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
-							</li>
-						}
-						<li>
-							<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
-						</li>
-					</ul>
-					<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
-						<span class="input-group-btn">
-							<button class="add-facet-button btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
-						</span>
-						<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
-						<span class="input-group-sm input-group-addon">
-							<a href="#" title="Include" class="add-facet-value">
-								<span class="glyphicon glyphicon-plus-sign"></span>
-							</a>&nbsp;
-							<a href="#" title="Exclude" class="remove-facet-value">
-								<span class="glyphicon glyphicon-minus-sign"></span>
-							</a>
-						</span>
-						<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
-						</span>
-					</div>
-   				</div>
-			</div>									
+						<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
+							<span class="input-group-btn">
+								<button class="add-facet-button btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+							</span>
+							<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
+							<span class="input-group-sm input-group-addon">
+								<a href="#" title="Include" class="add-facet-value">
+									<span class="glyphicon glyphicon-plus-sign"></span>
+								</a>&nbsp;
+								<a href="#" title="Exclude" class="remove-facet-value">
+									<span class="glyphicon glyphicon-minus-sign"></span>
+								</a>
+							</span>
+							<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
+							</span>
+						</div>
+	   				</div>
+				</div>		
+			}							
 		}		
 	}
 	
