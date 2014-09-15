@@ -49,11 +49,12 @@
         	@for((search, index) <- searches.zipWithIndex) {
 				<tr>
 	               	<td>
-              			@(search.name) @(search.description) @(search.summary)
+              			<span class="search-name">@(search.name)</span>: @(search.description)<br/>
+              			@(search.summary)
 	               	</td>
 	               	<td>
 						<input type="hidden" value="../@(search.url)" name="search-url" />
-              		    <button type="button" class="btn btn-danger" name="search-saved" id="search-@(index)">Search</button>
+              		    <button type="button" class="btn btn-danger pull-right" name="search-saved" id="search-@(index)">Search</button>
 					</td>
 	               	<td>
 						@helper.form(routes.Account.deleteSearch(search.id)) {
