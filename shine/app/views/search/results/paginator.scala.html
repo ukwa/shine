@@ -1,0 +1,97 @@
+@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, page: String, tab: String)
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(pageNo:Int, newSortBy:String) = @{
+    
+    var sortBy = currentSortBy
+    var order = currentOrder
+    
+    if(newSortBy != null) {
+        sortBy = newSortBy
+        if(currentSortBy == newSortBy) {
+            if(currentOrder == "asc") {
+                order = "desc"
+            } else {
+                order = "asc"
+            }
+        } else {
+            order = "asc"
+        }
+    }
+
+    // Generate the link for search or advanced_search
+    page match {
+    	case "search" => routes.Search.search(q.query, pageNo, sortBy, order)
+	    case "advanced" => routes.Search.advanced_search(q.query, pageNo, sortBy, order)
+    }
+    
+}
+
+@if(currentPage != null && currentPage.getTotalItems > 0) {
+	<div class="row">
+		<div class="col-md-7 col-sm7">
+			<div class="text-center paging-tabs">
+				<ul class="pagination">
+					@if(currentPage.hasPreviousPage) {
+		            	<li class="prev">
+		            		@if(q.mode != null) {
+		            			<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)&tab=@(tab)&action=search&mode=@(q.mode)" id="page-@(currentPage.getCurrentPage-1)" class="paging" data-toggle="tooltip" data-placement="left" title="Page @(currentPage.getCurrentPage-1)">&laquo;</a>
+		            		} else {
+		            			<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)&tab=@(tab)&action=search" id="page-@(currentPage.getCurrentPage-1)" class="paging" data-toggle="tooltip" data-placement="left" title="Page @(currentPage.getCurrentPage-1)">&laquo;</a>
+		            		}
+		                </li>
+		            } else {
+		                <li class="prev disabled">
+		                    <a class="paging">&laquo;</a>
+		                </li>
+		            }
+					@for(index <- currentPage.getPagesList) {
+						@if(index == currentPage.getCurrentPage) {
+							@if(index == currentPage.getMaxViewablePages) {
+								<span class="max-viewable-reached hide"></span>
+							}
+							<li class="active current" id="list-@(index)"><a href="#" class="paging" id="page-@(index)">@(currentPage.getCurrentPage) <span class="sr-only">(current)</span></a></li>
+						} else {
+							@if(q.mode != null) {
+								<li id="list-@(index)"><a href="@link(index, null)@(q.responseParameters)&tab=@(tab)&action=search&mode=@(q.mode)" id="page-@(index)" class="paging">@(index)</a></li>
+							} else {
+								<li id="list-@(index)"><a href="@link(index, null)@(q.responseParameters)&tab=@(tab)&action=search" id="page-@(index)" class="paging">@(index)</a></li>
+							}
+						}
+					}
+		        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
+		                <li class="next" id="list-@(index)">
+							@if(q.mode != null) {
+	                    		<a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)&tab=@(tab)&action=search&mode=@(q.mode)" id="page-@(currentPage.getCurrentPage+1)" class="paging" data-toggle="tooltip" data-placement="right" title="Page @(currentPage.getCurrentPage+1)">&raquo;</a>
+							} else {
+	                    		<a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)&tab=@(tab)&action=search" id="page-@(currentPage.getCurrentPage+1)" class="paging" data-toggle="tooltip" data-placement="right" title="Page @(currentPage.getCurrentPage+1)">&raquo;</a>
+	                    	}
+		                </li>
+		            } else {
+		                <li class="next disabled">
+		                    <a class="paging">&raquo;</a>
+		                </li>
+					}
+				</ul>
+			</div>
+		</div>
+		<div class="col-md-5 col-sm5">
+			@if(user != null) {
+				<div class="pull-right save-right">
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+							Action <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#" class="save-corpus">Add to list</a></li>
+							<li><a href="#" class="excludeButton">Exclude</a></li>
+							<li><a href="#" class="excludeHostButton">Exclude Host</a></li>
+						</ul>
+					</div>
+			    </div>
+			}
+		</div>
+	</div>
+}

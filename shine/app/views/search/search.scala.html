@@ -149,7 +149,7 @@
 				});
 			}
 			
-			function doSearch(action) {
+			function doSearch() {
 				if ($('#search-form').valid()) {
 					if ($('#addFacet').val() == "") {
 						$('#addFacet').prop("disabled", true);
@@ -340,7 +340,7 @@
 						$(this).val(resid);
 						$(this).attr('name', 'exclude');
 					});
-					doSearch('exclude');
+					doSearch();
 				});
 				$('.excludeHostButton').on('click', function(event) {
 					event.preventDefault();
@@ -350,7 +350,7 @@
 						$(this).val(host);
 						$(this).attr('name', 'excludeHost');
 					});
-					doSearch('excludeHost');
+					doSearch();
 				});
 			}
 			
