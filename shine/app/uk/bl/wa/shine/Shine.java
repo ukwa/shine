@@ -283,14 +283,14 @@ public class Shine extends Solr {
 					// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
 					StringBuilder selected = new StringBuilder();
 					for (String value : query.getExcludes()) {
-						selected.append("AND -id:").append(value).append(" ");
+						selected.append("AND -id:").append("\"").append(value).append("\"").append(" ");
 					}
 					Logger.info("excluded: " + selected.toString().trim());
 					
 					// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
 //					StringBuilder selected = new StringBuilder();
 					for (String value : query.getExcludeHosts()) {
-						selected.append("AND -host:").append(value).append(" ");
+						selected.append("AND -host:").append("\"").append(value).append("\"").append(" ");
 					}
 					Logger.info("excludeHost: " + selected.toString().trim());
 					

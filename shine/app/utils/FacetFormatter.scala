@@ -6,7 +6,7 @@ object FacetFormatter {
 		if (facetMap != null) {
 			facetMap.get(facetName) match {
 		      case Some(value) => {
-		      	println("value: " + value.getLimit.toInt) 
+//		      	println("value: " + value.getLimit.toInt) 
 		      	value.getLimit.toInt
 		      }
 		      case None => { 5 }
