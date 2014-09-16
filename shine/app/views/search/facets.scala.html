@@ -1,12 +1,16 @@
 @(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: List[Object], corpora: List[Corpus])
 
-@getName(facetName: String) = @{
+@getFacetName(facetName: String) = @{
     if (cachedFacets != null) {
 		cachedFacets.get(facetName) match {
 	      case Some(value) => { value.getValue }
 	      case None => { println("nothing") }
 		}
 	}
+}
+
+@getFacetLimit(facetName: String) = @{
+    utils.FacetFormatter.getFacetLimit(facetName, cachedFacets)
 }
 
 @getSortableFacet(facetName: String) = @{
@@ -58,7 +62,8 @@
 		@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 			<div class="panel-body @(fc.getName())">
    				<div class="facet-main">
-					<a class="facet-heading"><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
+							------ @getFacetLimit(fc.getName())
+					<a class="facet-heading"><strong>@getFacetName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
 					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
 					<input type="hidden" name="invert" value="" id="invert_@(fc.getName())">
 					<div class="btn-group">
@@ -79,7 +84,7 @@
    				<div class="facet-index">
 					<ul class="list-unstyled facet-heading">
 						@for((f, i) <- fc.getValues().zipWithIndex) {
-							@if(i >= facetLimit) {
+							@if(i >= getFacetLimit(fc.getName())) {
    								<li class="facet-options hide">
 							} else {
    								<li class="facet-options show" data-attr="default">
@@ -93,7 +98,7 @@
 					        <!-- dynamically add checked="true"? -->
 					        <!-- OR use some kind of link constructor? -->
 						}
-						@if((fc.getValues().size - facetLimit) > 0) {
+						@if((fc.getValues().size - getFacetLimit(fc.getName())) > 0) {
 							<li> 
     							<a id="@(fc.getName())" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
      						</li>
@@ -147,7 +152,7 @@
 	   				<div class="facet-index">
 						<ul class="list-unstyled facet-heading">
 							@for((resource, index) <- corpus.resources.zipWithIndex) {
-								@if(index >= facetLimit) {
+								@if(index >=  getFacetLimit(corpus.name)) {
 	   								<li class="facet-options hide">
 								} else {
 	   								<li class="facet-options show" data-attr="default">
@@ -161,7 +166,7 @@
 						        <!-- dynamically add checked="true"? -->
 						        <!-- OR use some kind of link constructor? -->
 							}
-							@if((corpus.resources.size - facetLimit) > 0) {
+							@if((corpus.resources.size - getFacetLimit(corpus.name)) > 0) {
 								<li> 
 									<a id="@(corpus.name)" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
 								</li>

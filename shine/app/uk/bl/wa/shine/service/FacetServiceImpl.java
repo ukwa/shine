@@ -29,10 +29,13 @@ public class FacetServiceImpl implements FacetService {
 			Map<String, Object> map = configuration.getConfig("facets").asMap();
 			for (String facetHeader : map.keySet()) {
 				@SuppressWarnings("unchecked")
-				Map<String, String> values = (Map<String, String>) map.get(facetHeader);
+				Map<String, Map<String,String>> values = (Map<String, Map<String,String>>) map.get(facetHeader);
 				for (String key : values.keySet()) {
-					String value = values.get(key);
-					FacetValue facetValue = new FacetValue(key, value);
+					Map<String,String> facet = values.get(key);
+					String name = facet.get("name");
+					String limit = facet.get("limit");
+					Logger.info(key + " : " + name + "=" + limit);
+					FacetValue facetValue = new FacetValue(key, name, Integer.valueOf(limit));
 					Logger.info("facetValue: " + facetValue.getName() + "=" + facetValue.getValue());
 					// just load the basic (default) ones first
 					if (facetHeader.equals("basic")) {
