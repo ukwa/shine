@@ -78,14 +78,16 @@
 			</div>
 		</div>
 		<div class="col-md-5 col-sm5">
-			@if(user != null) {
+			@if(tab == "results") {
 				<div class="pull-right save-right">
 					<div class="btn-group">
 						<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 							Action <span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="#" class="save-corpus">Add to list</a></li>
+							@if(user != null) {
+								<li><a href="#" class="save-corpus">Add to list</a></li>
+							}
 							<li><a href="#" class="excludeButton">Exclude</a></li>
 							<li><a href="#" class="excludeHostButton">Exclude Host</a></li>
 						</ul>
