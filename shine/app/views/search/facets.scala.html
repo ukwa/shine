@@ -62,7 +62,6 @@
 		@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
 			<div class="panel-body @(fc.getName())">
    				<div class="facet-main">
-							------ @getFacetLimit(fc.getName())
 					<a class="facet-heading"><strong>@getFacetName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
 					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
 					<input type="hidden" name="invert" value="" id="invert_@(fc.getName())">
