@@ -235,7 +235,9 @@ object Search extends Controller {
     println("Page #: " + pageNo)
     println("totalRecords #: " + totalRecords)
 
-	getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
+    pagination.update(totalRecords, pageNo)
+
+    Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora))
   }
     
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
