@@ -67,17 +67,20 @@
 				});
 			}
 
+			var sample = 'Sample Mode';
+			var full = 'Full Mode';
+			
 			function switchModes(modeName) {
-				if (modeName == 'Normal Mode') {
-					$(this).html('Long Mode');
+				if (modeName == sample) {
+					$(this).html(full);
 					$(this).removeClass('btn-primary');
 					$(this).addClass('btn-success');
-					$('#modeValue').val('long');
+					$('#modeValue').val('full');
 				} else {
-					$(this).html('Normal Mode');
+					$(this).html(sample);
 					$(this).addClass('btn-primary');
 					$(this).removeClass('btn-success');
-					$('#modeValue').val('normal');
+					$('#modeValue').val('sample');
 				}
 			}
 			
@@ -85,28 +88,28 @@
 			var mode = getURLParameter('mode');
 			if (mode) {
 				$('#modeValue').val(mode);
-				if (mode == 'long') {
-					$('#mode').html('Long Mode');
+				if (mode == 'full') {
+					$('#mode').html(full);
 					$('#mode').removeClass('btn-primary');
 					$('#mode').addClass('btn-success');
 				}
 			} else {
 				// default mode
 				$('#modeValue').val('');
-				$('#mode').html('Normal Mode');
+				$('#mode').html(sample);
 				$('#mode').addClass('btn-primary');
 				$('#mode').removeClass('btn-success');
 			}
 			
 			$('#mode').on('click', function(event) {
 				var modeName = $(this).html();
-				if (modeName == 'Normal Mode') {
-					$(this).html('Long Mode');
+				if (modeName == sample) {
+					$(this).html(full);
 					$(this).removeClass('btn-primary');
 					$(this).addClass('btn-success');
-					$('#modeValue').val('long');
+					$('#modeValue').val('full');
 				} else {
-					$(this).html('Normal Mode');
+					$(this).html(sample);
 					$(this).addClass('btn-primary');
 					$(this).removeClass('btn-success');
 					$('#modeValue').val('');
@@ -297,7 +300,7 @@
 							<div class="panel-body">
 					   			<div class="input-group">
 									<span class="input-group-btn">
-										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
+										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Sample Mode</button>
 									</span>
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
 					   				<input type="hidden" name="tab" value="results" id="tab" />

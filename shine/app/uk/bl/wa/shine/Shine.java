@@ -76,8 +76,8 @@ public class Shine extends Solr {
 		solrParameters.setParam(FacetParams.FACET_ENUM_CACHE_MINDF, "25");
 		
 		// add shard is mode set to long
-		if (StringUtils.isNotEmpty(query.mode) && StringUtils.equalsIgnoreCase(query.mode, "long") && StringUtils.isNotEmpty(shards)) {
-			Logger.info("LONG MODE");
+		if (StringUtils.isNotEmpty(query.mode) && StringUtils.equalsIgnoreCase(query.mode, "full") && StringUtils.isNotEmpty(shards)) {
+			Logger.info("FULL MODE");
 			solrParameters.setParam("shards", shards);
 		}
 		
