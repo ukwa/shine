@@ -130,12 +130,6 @@ object Search extends Controller {
 					play.api.Logger.debug("blank query: " + query)
 					Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
 			    }
-			  case "exclude" =>
-			    println("exclude")
-		    	getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
-			  case "excludeHost" =>
-			    println("excludeHost")
-		    	getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
 			}
 		}
 		case None => {
@@ -588,7 +582,6 @@ object Search extends Controller {
 	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
 	val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("excludeWords")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava, getData(form.data.get("mode")))
 	println("form: " + form.data.get("action"))
-    println("doAdvancedForm: " + query)
     solr.search(query)
   }
 

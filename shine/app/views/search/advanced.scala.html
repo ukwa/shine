@@ -286,13 +286,17 @@
 					$('input', '#search-form').each(function(){
 					    $(this).val() == "" && $(this).prop("disabled", true);
 					})
-				    $('#modalLoader').modal({
-				        backdrop: true,
-				        keyboard: true
-				    }).css({
-				    });
+
+					processSelectedResources();
+					
+				    $('#action').prop("disabled", false).val('search');
+
+					modalLoader();
+				    // add to parameters then submit
+				    // &facet.fields=postcode_district
+				    
+					$('#search-form').submit();					
 				}
-				$('#search-form').submit();
 			}
 
 			function createSummary() {
@@ -417,6 +421,7 @@
 			saveAdvancedSearch();
 			saveCorpus();
 			csvLink();
+			resetExcluded();
 			actionButtons();
 		});
 	</script>
@@ -513,6 +518,7 @@
 										@inputText(searchForm("excludeWords"), '_label -> "None of these words:", 'class -> "form-control", 'placeholder -> "rodent, Jack Russell", 'id -> "exclude-field")
 									</div>
 									<input type="hidden" name="tab" value="results" id="tab" />
+									<input type="hidden" name="action" value="" id="action" />
 								</div>
 							</div>
 						</div>

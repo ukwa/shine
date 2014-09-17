@@ -1142,3 +1142,79 @@ function createSummaryExclusions() {
 	});
 }
 
+function processSelectedResources(selected) {
+	// selected can be id or host name
+	
+	var resources = getURLParameters('selectedResource');
+	var currentExcludes = getURLParameters('exclude');
+	var currentExcludeHosts = getURLParameters('excludeHost');
+
+	console.log(resources);
+	console.log(currentExcludes);
+	console.log(currentExcludeHosts);
+	
+	// with these resources create some hidden inputs
+	
+	if (selected !== undefined) {
+		for (var i=currentExcludes.length-1; i>=0; i--) {
+		    if (decodeURIComponent(currentExcludes[i]) === selected) {
+				console.log("removing exclude " + selected);
+				currentExcludes.splice(i, 1);
+		        break;
+		    }
+		}
+		
+		for (var i=currentExcludeHosts.length-1; i>=0; i--) {
+		    if (decodeURIComponent(currentExcludeHosts[i]) === selected) {
+				console.log("removing exclude hosts " + selected);
+				currentExcludeHosts.splice(i, 1);
+		        break;
+		    }
+		}
+		
+	}
+	console.log("updated excludes: " + currentExcludes);
+	console.log("updated exclude hosts: " + currentExcludeHosts);
+	
+	resources.forEach(function(value) {
+		var id = decodeURIComponent(value)
+		var selectedResource = $("<input>")
+   			.attr("type", "hidden")
+   			.attr("name", "selectedResource").val(id);
+    
+    	$('#search-form').append($(selectedResource));
+	});
+	
+	currentExcludes.forEach(function(value) {
+		var id = decodeURIComponent(value)
+		var selectedResource = $("<input>")
+   			.attr("type", "hidden")
+   			.attr("name", "exclude").val(id);
+    
+    	$('#search-form').append($(selectedResource));
+	});
+	
+	currentExcludeHosts.forEach(function(value) {
+		var id = decodeURIComponent(value)
+		var selectedResource = $("<input>")
+   			.attr("type", "hidden")
+   			.attr("name", "excludeHost").val(id);
+    
+    	$('#search-form').append($(selectedResource));
+	});	
+
+}
+
+function resetExcluded() {
+	$('span.glyphicon.glyphicon-remove-sign.removeExcluded').on('click', function(event) {
+		// remove it from parameters
+		// submit
+		var id = $(this).attr('id');
+		processSelectedResources(id);
+		modalLoader();
+	    $('#action').val('search');
+	    // add to parameters then submit
+	    // &facet.fields=postcode_district
+		$('#search-form').submit();
+	});
+}
