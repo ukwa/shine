@@ -277,6 +277,10 @@
 					}
 				});
 				
+				doSearch();
+			});
+
+			function doSearch() {
 				if($("#search-form").valid()) {
 					console.log('no errors');
 					$('input', '#search-form').each(function(){
@@ -289,9 +293,8 @@
 				    });
 				}
 				$('#search-form').submit();
+			}
 
-			});
-			
 			function createSummary() {
 				
 				if($('#query').val() != '') {
@@ -347,6 +350,9 @@
 				if ($('#search-summary').html().trim().length > 0) {
 					$('#summary').removeClass('hide');
 				}
+				
+				createSummaryExclusions();
+
 			}
 			
 			@if(q.res.getResults().isEmpty()) {
@@ -383,11 +389,35 @@
 				});
 			}
 			
+			function actionButtons(page) {
+				$('.excludeButton').on('click', function(event) {
+					event.preventDefault();
+					console.log('exclude');
+					$('input.resource').each(function() {
+						var resid = $(this).attr('resid');
+						$(this).val(resid);
+						$(this).attr('name', 'exclude');
+					});
+					doSearch();
+				});
+				$('.excludeHostButton').on('click', function(event) {
+					event.preventDefault();
+					console.log('exclude host');
+					$('input.resource').each(function() {
+						var host = $(this).attr('host');
+						$(this).val(host);
+						$(this).attr('name', 'excludeHost');
+					});
+					doSearch();
+				});
+			}
+			
 			searchTabs();
 			validateAdvancedSearchForm();
 			saveAdvancedSearch();
 			saveCorpus();
 			csvLink();
+			actionButtons();
 		});
 	</script>
 }
@@ -480,7 +510,7 @@
 									</div>
 									
 									<div class="form-group">
-										@inputText(searchForm("exclude"), '_label -> "None of these words:", 'class -> "form-control", 'placeholder -> "rodent, Jack Russell", 'id -> "exclude-field")
+										@inputText(searchForm("excludeWords"), '_label -> "None of these words:", 'class -> "form-control", 'placeholder -> "rodent, Jack Russell", 'id -> "exclude-field")
 									</div>
 									<input type="hidden" name="tab" value="results" id="tab" />
 								</div>

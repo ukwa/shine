@@ -38,7 +38,7 @@ object Search extends Controller {
       proximityPhrase1: Option[String], 
       proximityPhrase2: Option[String], 
       proximity: Option[String], 
-      exclude: Option[String], 
+      excludeWords: Option[String], 
       dateStart: Option[Date], 
       dateEnd: Option[Date], 
       url: Option[String],
@@ -57,7 +57,7 @@ object Search extends Controller {
 	  "proximityPhrase1" -> optional(text),
 	  "proximityPhrase1" -> optional(text),
 	  "proximity" -> optional(text),
-	  "exclude" -> optional(text),
+	  "excludeWords" -> optional(text),
 	  "dateStart" -> optional(date("yyyy-MM-dd")),
 	  "dateEnd" -> optional(date("yyyy-MM-dd")),
 	  "url" -> optional(text),
@@ -231,12 +231,11 @@ object Search extends Controller {
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
+
     println("Page #: " + pageNo)
     println("totalRecords #: " + totalRecords)
 
-    pagination.update(totalRecords, pageNo)
-
-    Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora))
+	getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
   }
     
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -568,7 +567,7 @@ object Search extends Controller {
 	    getField("proximityPhrase1", parameters), 
 	    getField("proximityPhrase2", parameters), 
 	    getField("proximity", parameters), 
-	    getField("exclude", parameters), 
+	    getField("excludeWords", parameters), 
 	    getField("dateStart", parameters), 
 	    getField("dateEnd", parameters),  
 	    getField("url", parameters), 
@@ -585,7 +584,7 @@ object Search extends Controller {
   
   def doSearchForm(form: Form[controllers.Search.SearchData], parameters: Map[String, Seq[String]]) = {
 	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
-	val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("exclude")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava, getData(form.data.get("mode")))
+	val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("excludeWords")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava, getData(form.data.get("mode")))
 	println("form: " + form.data.get("action"))
     println("doAdvancedForm: " + query)
     solr.search(query)
