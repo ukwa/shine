@@ -320,48 +320,11 @@ public class Shine extends Solr {
 	//			parameters.addFacetField("{!ex=" + facet + "}" + facet);
 	//		}
 			
-			Map<String, List<String>> filters = query.filters;
-	
 			solrParameters.setFacetMinCount(1);
-			List<String> fq = new ArrayList<String>();
-			for (String filterKey : filters.keySet()) {
-				String field = filterKey;
-//				if (!param.equals("facet.sort")) {
-//					parameters.setFacetSort(FacetParams.FACET_SORT_INDEX);
-//				}
-				// Excluded tags are ANDed together:
-				if (filterKey.startsWith("-")) {
-					field = field.replaceFirst("-", "");
-					for (String val : filters.get(filterKey)) {
-						if (val.isEmpty()) {
-							Logger.info("No Value just filterKey: " + filterKey + " - "+ val);
-							fq.add("{!tag=" + field + "}" + filterKey);
-						} else {
-							fq.add("{!tag=" + field + "}" + filterKey + ":" + val); // TODO
-						}
-																			// Escape
-																			// correctly?
-					}
-				} else {
-					// Included tags are ORed together:
-					String filter = "{!tag=" + field + "}" + filterKey + ":(";
-					int counter = 0;
-					for (String val : filters.get(filterKey)) {
-						if (counter > 0)
-							filter += " OR ";
-						filter += "" + val + ""; // TODO Escape correctly?
-						counter++;
-	
-					}
-					filter += ")";
-					fq.add(filter);
-				}
-			}
+
+			// give it a new list to add to
+			List<String> fq = processFilterQueries(solrParameters, query.filters, new ArrayList<String>());
 			
-			if (fq.size() > 0) {
-				solrParameters.setFilterQueries(fq.toArray(new String[fq.size()]));
-			}
-	
 			try {
 				processExcluded(solrParameters, query.excluded);
 				
@@ -383,7 +346,19 @@ public class Shine extends Solr {
 				processDateRange(solrParameters, query.dateStart, query.dateEnd);
 				processProximity(solrParameters, query.proximity);
 				
-				processHostDomainPublicSuffix(solrParameters, query.hostDomainPublicSuffix);
+				if (StringUtils.isNotEmpty(query.hostDomainPublicSuffix)) {
+//					{!tag=host}host:("theregister.co.uk")
+//					{!tag=public_suffix}public_suffix:("co.uk" OR "theregister.co.uk")
+//					{!tag=domain}domain:("theregister.co.uk")
+					Map<String, List<String>> filters = new HashMap<String, List<String>>();
+					List<String> fqList = new ArrayList<String>();
+					fqList.add(query.hostDomainPublicSuffix);
+					filters.put("or-host", fqList);
+					filters.put("or-domain", fqList);
+					filters.put("or-public_suffix", fqList);
+					processFilterQueries(solrParameters, filters, fq);
+				}
+//				processHostDomainPublicSuffix(solrParameters, query.hostDomainPublicSuffix);
 //				processUrlHostDomainPublicSuffix(parameters, query.urlHostDomainPublicSuffix);
 			} catch (ParseException e) {
 				throw new SolrServerException(e);
@@ -404,6 +379,9 @@ public class Shine extends Solr {
 				}
 			}
 			
+			if (fq.size() > 0) {
+				solrParameters.setFilterQueries(fq.toArray(new String[fq.size()]));
+			}
 			
 			Logger.info("Query: " + solrParameters.toString());
 			
@@ -457,6 +435,59 @@ public class Shine extends Solr {
 		return query;
 	}
 
+	private List<String> processFilterQueries(SolrQuery solrParameters, Map<String, List<String>> filters, List<String> fq) {
+		
+		Logger.info("filters >>>>>>>> " + filters);
+		StringBuilder filterBuilder = new StringBuilder();
+		int filterCounter = 0;
+		for (String filterKey : filters.keySet()) {
+			
+			String field = filterKey;
+			// Excluded tags are ANDed together:
+			if (filterKey.startsWith("-")) {
+				field = field.replaceFirst("-", "");
+				for (String val : filters.get(filterKey)) {
+					if (val.isEmpty()) {
+						Logger.info("No Value just filterKey: " + filterKey + " - "+ val);
+						fq.add("{!tag=" + field + "}" + filterKey);
+					} else {
+						fq.add("{!tag=" + field + "}" + filterKey + ":" + val); // TODO
+					}
+				}
+			} else if (filterKey.startsWith("or-")) {
+				field = field.replaceFirst("or-", "");
+//				{!tag=host}host:(theregister.co.uk)
+				for (String val : filters.get(filterKey)) {
+					if (filterCounter > 0) {
+						filterBuilder.append(" OR ");
+					}
+					filterBuilder.append("{!tag=").append(field).append("}").append(field).append(":").append(val);
+					filterCounter++;
+				}
+			} else {
+				// Included tags are ORed together:
+				String filter = "{!tag=" + field + "}" + filterKey + ":(";
+				int counter = 0;
+				for (String val : filters.get(filterKey)) {
+					Logger.info("key: " + val);
+					if (counter > 0)
+						Logger.info("counter: " + counter);
+						filter += " OR ";
+					filter += "" + val + ""; // TODO Escape correctly?
+					counter++;
+
+				}
+				filter += ")";
+				fq.add(filter);
+			}
+		}
+		if (filterBuilder.length() > 0) {
+			fq.add(filterBuilder.toString());
+		}
+		Logger.info("OR >>> " + filterBuilder.toString());
+		return fq;
+	}
+	
 	private void processDateRange(SolrQuery parameters, String dateStart,
 			String dateEnd) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -522,7 +553,14 @@ public class Shine extends Solr {
 	private void processHostDomainPublicSuffix(SolrQuery parameters, String hostDomainPublicSuffix) {
 //		Host = 'host' or 'domain' depending on Solr index schema version.
 		if (StringUtils.isNotEmpty(hostDomainPublicSuffix)) {
+			
+//			{!tag=host}host:("theregister.co.uk")
+//			{!tag=public_suffix}public_suffix:("co.uk" OR "theregister.co.uk")
+//			{!tag=domain}domain:("theregister.co.uk")
+
+			parameters.add("host", hostDomainPublicSuffix);
 			parameters.add("domain", hostDomainPublicSuffix);
+			parameters.add("public_suffix", hostDomainPublicSuffix);
 		}
 	}
 
