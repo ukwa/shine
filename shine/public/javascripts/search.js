@@ -1097,38 +1097,29 @@ function createSummaryExclusions() {
 	var excludes = getURLParameters('exclude');
 	// with these resources create some hidden inputs
 	excludes.forEach(function(value) {
-		var id = decodeURIComponent(value)
+		value = value.trim();
+		var values = decodeURIComponent(value).split(';;;');
 //		console.log(id);
-		var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' id='" + id + "'></span>";
+		var date = values[1].trim().replace(/\+/g, " ");
+		var title = values[2].trim().replace(/\+/g, " ");
+		var domain = values[3].trim().replace(/\+/g, " ");
+		var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' removeID='" + value + "'></span>";
+
+		console.log(date + " " + title + " " + domain);
 		
 		// from ID create date
 		// sha:20080512022450/Rb3smjlTBo0eGxmAf1NEWA or 20080512022450/Rb3smjlTBo0eGxmAf1NEWA or ???
 		//id = "sha:20080512022450/Rb3smjlTBo0eGxmAf1NEWA"; // A TEST
-		var dateString;
-		var pre = id.split(":");
-		if (pre[1] !== undefined) {
-			dateString = pre[1].split('/')[0];
-		} else {
-			dateString = id.split('/')[0];
-		}
-		console.log(dateString);
-		
-		var year = dateString.substring(0,4);
-		var month = dateString.substring(4,6);
-		var day = dateString.substring(6,8);
 		//var hours = dateString.substring(8,10);
 		//var minutes = dateString.substring(10,12);
 		//var seconds = dateString.substring(12,14);
 		
 		// var date = new Date(year, month, day, hours, minutes, seconds, 0);
 		
-		var formattedDate = year + "-" + month + "-" + day; 
 		//getMonthName(date.getMonth()) + " " + date.getDate() + " " + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 
-		console.log(formattedDate);
-		
 		// format May 14 2008 13:56:02 BST
-		var text = $('<li>').html("Exclude: " + "(" + formattedDate + ") " + id + span);
+		var text = $('<li>').html("Exclude: " + date + " - " + domain + " - " + title + span);
 		$('#search-summary').append(text);
 	});
 	
@@ -1136,7 +1127,7 @@ function createSummaryExclusions() {
 	excludeHosts.forEach(function(value) {
 		var host = decodeURIComponent(value)
 //		console.log(id);
-		var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' id='" + host + "'></span>";
+		var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' removeID='" + host + "'></span>";
 		var text = $('<li>').html("Exclude Host: " + host + span);
 		$('#search-summary').append(text);
 	});
@@ -1209,8 +1200,8 @@ function resetExcluded() {
 	$('span.glyphicon.glyphicon-remove-sign.removeExcluded').on('click', function(event) {
 		// remove it from parameters
 		// submit
-		var id = $(this).attr('id');
-		processSelectedResources(id);
+		var removeID = $(this).attr('removeID');
+		processSelectedResources(decodeURIComponent(removeID));
 		modalLoader();
 	    $('#action').val('search');
 	    // add to parameters then submit

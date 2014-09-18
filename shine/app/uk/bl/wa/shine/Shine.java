@@ -283,7 +283,9 @@ public class Shine extends Solr {
 					// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
 					StringBuilder selected = new StringBuilder();
 					for (String value : query.getExcludes()) {
-						selected.append("AND -id:").append("\"").append(value).append("\"").append(" ");
+						String[] values = value.split(";;;");
+						String id = values[0].trim();
+						selected.append("AND -id:").append("\"").append(id).append("\"").append(" ");
 					}
 					Logger.info("excluded: " + selected.toString().trim());
 					

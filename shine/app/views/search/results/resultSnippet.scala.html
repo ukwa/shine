@@ -1,5 +1,9 @@
 @(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, d: org.apache.solr.common.SolrDocument, index: Int)
 
+@checkBoxValue(document: org.apache.solr.common.SolrDocument) = {
+7	@document.getFirstValue("id").toString.trim;;;@document.getFirstValue("crawl_date").toString.trim;;;@document.getFirstValue("title");;;@d.getFirstValue("domain")
+}
+
 <div class="list-group">
 	<div class="list-group-item" href="#">
 		<div class="row">
@@ -15,20 +19,20 @@
 						@if(q.res.getHighlighting().get(d.getFirstValue("id")) != null) {
 						<hr />
 							@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("title") != null) {
-			     						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("title").get(0)))</p>
+	     						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("title").get(0)))</p>
 							}
 							@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("url") != null) {
-			     						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("url").get(0)))</p>
+	     						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("url").get(0)))</p>
 							}
-			 					@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text") != null) {
-			 						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text").get(0)))</p>
-			 					}
+		 					@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text") != null) {
+		 						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text").get(0)))</p>
+		 					}
 						}
 				</p>
 			</div>
 			<div class="col-md-4 col-sm-4 checkbox">
 			 	<div class="checkbox pull-right">
-			 		<input host="@d.getFirstValue("host")" resid="@d.getFirstValue("id")" type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="select" class="resource">
+			 		<input host="@d.getFirstValue("host")" type="checkbox" name="selectedResource" value="@checkBoxValue(d)" data-toggle="tooltip" data-placement="top" title="select" class="resource">
 			 	</div>
 			</div>
 		</div>
