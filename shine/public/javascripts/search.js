@@ -1095,6 +1095,7 @@ function getMonthName(monthNumber) {
 
 function createSummaryExclusions() {
 	var excludes = getURLParameters('exclude');
+	console.log("excludes: " + excludes);
 	// with these resources create some hidden inputs
 	excludes.forEach(function(value) {
 		value = value.trim();

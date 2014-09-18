@@ -396,10 +396,7 @@
 			function actionButtons(page) {
 				$('.excludeButton').on('click', function(event) {
 					event.preventDefault();
-					console.log('exclude');
 					$('input.resource').each(function() {
-						var resid = $(this).attr('resid');
-						$(this).val(resid);
 						$(this).attr('name', 'exclude');
 					});
 					doSearch();
