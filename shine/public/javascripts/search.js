@@ -755,7 +755,7 @@ function saveResourceDetails() {
 		var selectedResources = "";
 		docs.each(function() {
 			console.log("val: " + $(this).val());
-			selectedResources += $(this).val() + ";";
+			selectedResources += $(this).val().trim() + ",,,,,";
 		});
 		if (selectedResources.length > 0) {
 			jsRoutes.controllers.Account.saveResources($("select#selectedCorpus").val(), selectedResources).ajax({

@@ -1,7 +1,15 @@
 @(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, d: org.apache.solr.common.SolrDocument, index: Int)
 
 @checkBoxValue(document: org.apache.solr.common.SolrDocument) = {
-	@document.getFirstValue("id").toString.trim;;;@document.getFirstValue("crawl_date").toString.trim;;;@document.getFirstValue("title");;;@d.getFirstValue("domain")
+	@checkValue(document.getFirstValue("id"));;;@checkValue(document.getFirstValue("crawl_date"));;;@checkValue(document.getFirstValue("title"));;;@checkValue(d.getFirstValue("domain"));;;@checkValue(d.getFirstValue("url"));;;@checkValue(d.getFirstValue("wayback_date"))
+}
+
+@checkValue(value: java.lang.Object) = @{
+	if(value == null) {
+		" "
+	} else {
+		value.toString.trim
+	}
 }
 
 <div class="list-group">

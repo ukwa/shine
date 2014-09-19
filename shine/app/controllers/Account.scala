@@ -6,6 +6,7 @@ import play.api.data._
 import play.api.data.Forms._
 import models._
 import views._
+import utils.Formatter
 import org.apache.commons.lang.StringUtils
 import uk.bl.wa.shine._
 import scala.collection.JavaConverters._
@@ -163,10 +164,17 @@ object Account extends Controller {
 		val user = User.findByEmail(username.toLowerCase())
 		val corpus = models.Corpus.find(id.toLong)
 		println("Corpus found: " + corpus)
-		val res = resources.split(";")
+		val res = resources.split(",,,,,")
+		  
 		for(resource <- res ){
-			println("resource: " + resource)
-			val res = new models.Resource("", "", resource)
+			val r = resource.split(";;;")
+			val id = r(0)
+			val title = r(2)
+			val url = r(4)
+			val wayback = r(5).toString()
+			val waybackDate = Formatter.getDate(wayback)
+			println("id: " + id + " " + title + " " + waybackDate)
+			val res = new models.Resource(title, url, id, waybackDate)
 			res.corpus = corpus
 			res.save()
 		}
