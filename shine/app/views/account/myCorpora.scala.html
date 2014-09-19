@@ -68,20 +68,28 @@
 				<tr>
 	               	<td>
               			@(corpus.name) @(corpus.description)
-						<ul>
+						<table>
               				@for(resource <- corpus.resources) {
-             					<li>
-             						@(resource.id) @(resource.lastUpdate) <a href="http://web.archive.org/web/@(convertDate(resource.waybackDate))/@(resource.url)">@(convertTitle(resource.title))</a>
-             						@helper.form(routes.Account.deleteResource(resource.id)) {
-             		    				<button type="button" data-dismiss="modal-resource" class="btn btn-danger" name="delete_resource">Delete Resource</button>
-									}
-             		    		</li>
+             					<tr>
+             						<td>@(resource.id)</td>
+									<td>@(resource.lastUpdate)</td>
+             						<td><a href="http://web.archive.org/web/@(convertDate(resource.waybackDate))/@(resource.url)">@(convertTitle(resource.title))</a></td>
+             						<td class="pull-right">
+             							@helper.form(routes.Account.deleteResource(resource.id)) {
+             		    					<button type="button" data-dismiss="modal-resource" class="btn btn-danger" name="delete_resource">
+												<span class="glyphicon glyphicon-remove"></span>
+											</button>
+										}
+									</td>
+             		    		</tr>
           					}
-						</ul>
+						</table>
 	               	</td>
 	               	<td>
 						@helper.form(routes.Account.deleteCorpus(corpus.id)) {
-              		    	<button type="button" data-dismiss="modal" class="btn btn-danger" name="delete_corpus">Delete</button>
+              		    	<button type="button" data-dismiss="modal" class="btn btn-danger" name="delete_corpus">
+  								<span class="glyphicon glyphicon-remove"></span>
+							</button>
 						}
 					</td>	       		
 				</tr>
