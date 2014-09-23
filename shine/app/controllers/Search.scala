@@ -80,6 +80,7 @@ object Search extends Controller {
   val maxNumberOfLinksOnPage = config.getInt("max_number_of_links_on_page")
   val maxViewablePages = config.getInt("max_viewable_pages")
   val facetLimit = config.getInt("facet_limit")
+  val webArchiveUrl = config.getString("web_archive_url")
   
   val sortableFacets = config.getConfig("sorts").asMap().keySet().toArray().toList
   println("sortableFacets" + sortableFacets)
@@ -181,18 +182,18 @@ object Search extends Controller {
 			var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 			val query = request.getQueryString("query").get
 			println("query: " + query)
-			val q = doExport(query, parameters)
-			val totalRecords = q.res.getResults().getNumFound().intValue()
+			val exportList = doExport(query, parameters).asScala.toList
+//			val totalRecords = q.res.getResults().getNumFound().intValue()
     		version match {
     		  case "brief" => {
-				println("exporting to BRIEF CSV #: " + totalRecords)
+//				println("exporting to BRIEF CSV #: " + totalRecords)
 				// retrieve based on total records
-				Ok(views.csv.brief("Search", user, q)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+				Ok(views.csv.brief("Search", user, exportList, webArchiveUrl)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
     		  }
     		  case "full" => {
-				println("exporting to FULL CSV #: " + totalRecords)
+//				println("exporting to FULL CSV #: " + totalRecords)
 				// retrieve based on total records
-				Ok(views.csv.full("Search", user, q)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+				Ok(views.csv.full("Search", user, exportList, webArchiveUrl)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
     		  }
     		}
       	}

@@ -19,6 +19,7 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.FacetParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.Logger;
 import play.libs.Json;
 import uk.bl.wa.shine.model.FacetValue;
+import uk.bl.wa.shine.model.SearchData;
 import uk.bl.wa.shine.service.FacetService;
 import uk.bl.wa.shine.service.FacetServiceImpl;
 
@@ -39,6 +41,8 @@ import uk.bl.wa.shine.service.FacetServiceImpl;
 public class Shine extends Solr {
 
 	private int perPage;
+	private int csvMaxLimit;
+	private int csvIntervalLimit;
 	private String shards;
 	private FacetService facetService = null;
 
@@ -46,6 +50,8 @@ public class Shine extends Solr {
 		super(config);
 		this.facetService = new FacetServiceImpl(config);
 		this.perPage = config.getInt("per_page");
+		this.csvMaxLimit = config.getInt("csv_max_limit");
+		this.csvIntervalLimit = config.getInt("csv_interval_limit");
 		this.shards = config.getString("shards");
 	}
 
@@ -68,7 +74,7 @@ public class Shine extends Solr {
 			start = 0;
 		}
 
-		solrParameters.set("start", start);
+		solrParameters.setStart(start);
 		// may make this configurable
 		solrParameters.setFacetLimit(10);
 		
@@ -105,11 +111,52 @@ public class Shine extends Solr {
 		return this.graph(query, buildInitialParameters(query));
 	}
 	
-	public Query export(Query query) throws SolrServerException {
+	public List<SearchData> export(Query query) throws SolrServerException {
 		Query q = this.search(query, 0);
 		int total = (int)q.res.getResults().getNumFound();
+		
+		Logger.info("true total: " + total);
+		
+		if (total > this.csvMaxLimit) {
+			total = this.csvMaxLimit;
+		}
 		Logger.info("exporting total: " + total);
-		return this.search(query, total);
+		
+		SolrQuery solrParameters = new SolrQuery(query.query);
+		solrParameters.setRows(this.csvIntervalLimit);
+		
+//		start 0
+//		start=10
+//		start 20
+//		
+//		&rows=10
+//		0, 500, 1000, 1500
+		int times = total / this.csvIntervalLimit;
+		
+		int start = 0;
+		
+		List<SearchData> exportDataList = new ArrayList<SearchData>();
+		for (int i = 0; i < times; i++) {
+			solrParameters.setStart(start); // than increment
+			Query search = doSearch(query, solrParameters);
+			Logger.info("Export Query: " + solrParameters.toString());
+			Logger.info(total + " / " +  this.csvIntervalLimit + "  = " + times + " ... start " + start);
+			for (SolrDocument document : search.res.getResults()) {
+				String title = document.getFirstValue("title") == null ? "" : document.getFirstValue("title").toString();
+				String host = document.getFirstValue("host") == null ? "" : document.getFirstValue("host").toString();
+				String publicSuffix = document.getFirstValue("public_suffix") == null ? "" : document.getFirstValue("public_suffix").toString();
+				String crawlYear = document.getFirstValue("crawl_year") == null ? "" : document.getFirstValue("crawl_year").toString();
+				String contentTypeNorm = document.getFirstValue("content_type_norm") == null ? "" : document.getFirstValue("content_type_norm").toString();
+				String contentLanguage = document.getFirstValue("content_language") == null ? "" : document.getFirstValue("content_language").toString();
+				String crawlDate = document.getFirstValue("crawl_date") == null ? "" : document.getFirstValue("crawl_date").toString();
+				String waybackDate = document.getFirstValue("wayback_date") == null ? "" : document.getFirstValue("wayback_date").toString();
+				String url = document.getFirstValue("url") == null ? "" : document.getFirstValue("url").toString();
+				SearchData searchData = new SearchData(title, host, publicSuffix, crawlYear, contentTypeNorm, contentLanguage, crawlDate, url, waybackDate);
+				exportDataList.add(searchData);
+			}
+			start += this.csvIntervalLimit;
+		}
+		return exportDataList;
 	}
 
 	private Query search(Query query, SolrQuery solrParameters, int rows) throws SolrServerException {
@@ -330,8 +377,6 @@ public class Shine extends Solr {
 			try {
 				processExcluded(solrParameters, query.excluded);
 				
-				Logger.info("after... " + solrParameters.toString());
-
 				processWebsiteTitle(solrParameters, query.websiteTitle);
 				if (StringUtils.isNotEmpty(query.pageTitle)) {
 					solrParameters.addFilterQuery("title:" + query.pageTitle);
