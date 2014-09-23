@@ -45,39 +45,62 @@ object InitialData {
     	val user = User.create("kinman.li@bl.uk", "secret")
     	user.roles.add(role)
     	user.save()
+    	getExternalUsers()
+    	
     }
     
   }
   
-  def getUsers() {
+  def getExternalUsers() {
 
-	val create = new Permission("Create", "Create")
-    create.save()
-    
-    val read = new Permission("Read", "Read")
-    read.save()
-    
-    val update = new Permission("Update", "Update")
-    update.save()
-    
-    val delete = new Permission("Delete", "Delete")
-    delete.save()
-    	
+    val read = Permission.findByName("Read")
     val role = new Role("Reader", "Reader")
-
 	role.permissions.add(read)
+	role.save()
 	
-	User.create("alison.kay@northumbria.ac.uk", "secret").roles.add(role)
-	User.create("r.cran@alumni.ucl.ac.uk", "secret").roles.add(role)
-	User.create("fryerc@parliament.uk", "secret").roles.add(role)
-	User.create("Gareth.Millward@lshtm.ac.uk", "secret").roles.add(role)
-	User.create("H.Raffal@2006.hull.ac.uk", "secret").roles.add(role)
-	User.create("helenlouisetaylor@gmail.com", "secret").roles.add(role)
-	User.create("mm2015@cam.ac.uk", "secret").roles.add(role)
-	User.create("R.Deswarte@uea.ac.uk", "secret").roles.add(role)
-	User.create("l.richardson@ucl.ac.uk", "secret").roles.add(role)
-	User.create("daust01@mail.bbk.ac.uk", "secret").roles.add(role)
-	User.create("S.V.Huc-Hepher@westminster.ac.uk", "secret").roles.add(role)
+	var user = User.create("alison.kay@northumbria.ac.uk", "secret")
+	user.roles.add(role)
+	user.save()
+	
+	user = User.create("r.cran@alumni.ucl.ac.uk", "secret")
+	user.roles.add(role)
+	user.save()
+	
+	user = User.create("fryerc@parliament.uk", "secret")
+	user.roles.add(role)
+	user.save()
+	
+	user = User.create("Gareth.Millward@lshtm.ac.uk", "secret")
+	user.roles.add(role)
+	user.save()
+	
+	user = User.create("H.Raffal@2006.hull.ac.uk", "secret")
+	user.roles.add(role)
+	user.save()
+	
+	user = User.create("helenlouisetaylor@gmail.com", "secret")
+	user.roles.add(role)
+	user.save()
+	
+	user = User.create("mm2015@cam.ac.uk", "secret")
+	user.roles.add(role)
+	user.save()
+	
+	user = User.create("R.Deswarte@uea.ac.uk", "secret")
+	user.roles.add(role)
+	user.save()
+	
+	user = User.create("l.richardson@ucl.ac.uk", "secret")
+	user.roles.add(role)
+	user.save()
+
+	user = User.create("daust01@mail.bbk.ac.uk", "secret")
+	user.roles.add(role)
+	user.save()
+
+	user = User.create("S.V.Huc-Hepher@westminster.ac.uk", "secret")
+	user.roles.add(role)
+	user.save()
   }
   
   
