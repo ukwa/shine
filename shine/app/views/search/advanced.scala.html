@@ -37,6 +37,8 @@
 			
 	  		$('#current-url').text(window.location.search);
 
+			$('#export-message').addClass('hide');
+
 	    	//$('#filter-panel').collapse('show');
 	    	
 	    	// start of title suggestions
@@ -627,6 +629,9 @@
 					<div class="alert alert-info">
 						<ul id="search-summary">
 						</ul>
+					</div>
+					<div class="alert alert-danger alert-dismissible" id="export-message" role="alert">
+						<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 					</div>
 				</div>
 				

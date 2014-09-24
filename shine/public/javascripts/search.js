@@ -860,13 +860,13 @@ function csvLink() {
 	
 	$('#briefCSV').on('click', function(event) {
 		event.preventDefault();
-		var url = $('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=brief";
-		console.log(url);
-		window.location.href=url;
+		exportMessage();
+		window.location.href=$('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=brief";
 	});
 
 	$('#fullCSV').on('click', function(event) {
 		event.preventDefault();
+		exportMessage();
 		window.location.href=$('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=full";
 	});
 	
@@ -1210,3 +1210,9 @@ function resetExcluded() {
 		$('#search-form').submit();
 	});
 }
+
+function exportMessage() {
+	$('#export-message').removeClass('hide');
+	$('#export-message').append('Exporting to CSV - This may take a while. Please wait...');
+}
+
