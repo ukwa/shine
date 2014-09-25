@@ -24,6 +24,10 @@ if ($s_d) { open D, $s_d or die "Failed to read-open $s_d\n"; }
 if ($s_e) { open E, $s_e or die "Failed to read-open $s_e\n"; }
 
 check_log_lines();
+print "a: $s_a\nb: $s_b\n";
+if ($s_c) { print "c: $s_c\n"; }
+if ($s_d) { print "d: $s_d\n"; }
+if ($s_e) { print "e: $s_e\n"; }
 
 # for each line of each log
 while ($s_linea = shift @a_a) {
