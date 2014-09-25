@@ -1,0 +1,429 @@
+Running queries against: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&q=*:*
+NO-FACETS-ALL.QTime 10
+NO-FACETS-ALL.numFound 277946761
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&q="led"
+NO-FACETS-led.QTime 302
+NO-FACETS-led.numFound 5364733
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&q="women"
+NO-FACETS-women.QTime 315
+NO-FACETS-women.numFound 6552790
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&q="rhythm"
+NO-FACETS-rhythm.QTime 15
+NO-FACETS-rhythm.numFound 306722
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&q="blow"
+NO-FACETS-blow.QTime 203
+NO-FACETS-blow.numFound 801739
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&q="sherlock holmes"
+NO-FACETS-sherlock holmes.QTime 694
+NO-FACETS-sherlock holmes.numFound 120254
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&q="office"
+NO-FACETS-office.QTime 369
+NO-FACETS-office.numFound 15570114
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&q="plants"
+NO-FACETS-plants.QTime 227
+NO-FACETS-plants.numFound 1868284
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&q="steel"
+NO-FACETS-steel.QTime 207
+NO-FACETS-steel.numFound 973463
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&q="yellow"
+NO-FACETS-yellow.QTime 219
+NO-FACETS-yellow.numFound 1316319
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=crawl_years
+ONE-FACET-crawl_years.QTime 142
+ONE-FACET-crawl_years.numFound 277946761
+ONE-FACET-crawl_years.facetValues[0] 2012
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=content_language
+ONE-FACET-content_language.QTime 1833
+ONE-FACET-content_language.numFound 277946761
+ONE-FACET-content_language.facetValues[0] en
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=public_suffix
+ONE-FACET-public_suffix.QTime 2155
+ONE-FACET-public_suffix.numFound 277946761
+ONE-FACET-public_suffix.facetValues[0] org.uk
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes.QTime 129
+ONE-FACET-links_public_suffixes.numFound 277946761
+ONE-FACET-links_public_suffixes.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=domain
+ONE-FACET-domain.QTime 4513
+ONE-FACET-domain.numFound 277946761
+ONE-FACET-domain.facetValues[0] geograph.org.uk
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=links_domains
+ONE-FACET-links_domains.QTime 17504
+ONE-FACET-links_domains.numFound 277946761
+ONE-FACET-links_domains.facetValues[0] twitter.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=content_type_norm
+ONE-FACET-content_type_norm.QTime 1855
+ONE-FACET-content_type_norm.numFound 277946761
+ONE-FACET-content_type_norm.facetValues[0] other
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=author
+ONE-FACET-author.QTime 2082
+ONE-FACET-author.numFound 277946761
+ONE-FACET-author.facetValues[0] 
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q=*:*&facet.field=postcode_district
+ONE-FACET-postcode_district.QTime 52
+ONE-FACET-postcode_district.numFound 277946761
+ONE-FACET-postcode_district.facetValues[0] CF11
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="led"&facet.field=crawl_years
+ONE-FACET-crawl_years-led.QTime 269
+ONE-FACET-crawl_years-led.numFound 5364733
+ONE-FACET-crawl_years-led.facetValues[0] 2012
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="led"&facet.field=content_language
+ONE-FACET-content_language-led.QTime 73
+ONE-FACET-content_language-led.numFound 5364733
+ONE-FACET-content_language-led.facetValues[0] en
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="led"&facet.field=public_suffix
+ONE-FACET-public_suffix-led.QTime 96
+ONE-FACET-public_suffix-led.numFound 5364733
+ONE-FACET-public_suffix-led.facetValues[0] org
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="led"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-led.QTime 196
+ONE-FACET-links_public_suffixes-led.numFound 5364733
+ONE-FACET-links_public_suffixes-led.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="led"&facet.field=domain
+ONE-FACET-domain-led.QTime 299
+ONE-FACET-domain-led.numFound 5364733
+ONE-FACET-domain-led.facetValues[0] blogspot.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="led"&facet.field=links_domains
+ONE-FACET-links_domains-led.QTime 1637
+ONE-FACET-links_domains-led.numFound 5364733
+ONE-FACET-links_domains-led.facetValues[0] twitter.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="led"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-led.QTime 75
+ONE-FACET-content_type_norm-led.numFound 5364733
+ONE-FACET-content_type_norm-led.facetValues[0] html
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="led"&facet.field=author
+ONE-FACET-author-led.QTime 121
+ONE-FACET-author-led.numFound 5364733
+ONE-FACET-author-led.facetValues[0] 
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="led"&facet.field=postcode_district
+ONE-FACET-postcode_district-led.QTime 114
+ONE-FACET-postcode_district-led.numFound 5364733
+ONE-FACET-postcode_district-led.facetValues[0] CF11
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="women"&facet.field=crawl_years
+ONE-FACET-crawl_years-women.QTime 270
+ONE-FACET-crawl_years-women.numFound 6552790
+ONE-FACET-crawl_years-women.facetValues[0] 2012
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="women"&facet.field=content_language
+ONE-FACET-content_language-women.QTime 89
+ONE-FACET-content_language-women.numFound 6552790
+ONE-FACET-content_language-women.facetValues[0] en
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="women"&facet.field=public_suffix
+ONE-FACET-public_suffix-women.QTime 102
+ONE-FACET-public_suffix-women.numFound 6552790
+ONE-FACET-public_suffix-women.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="women"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-women.QTime 200
+ONE-FACET-links_public_suffixes-women.numFound 6552790
+ONE-FACET-links_public_suffixes-women.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="women"&facet.field=domain
+ONE-FACET-domain-women.QTime 308
+ONE-FACET-domain-women.numFound 6552790
+ONE-FACET-domain-women.facetValues[0] blogspot.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="women"&facet.field=links_domains
+ONE-FACET-links_domains-women.QTime 1904
+ONE-FACET-links_domains-women.numFound 6552790
+ONE-FACET-links_domains-women.facetValues[0] twitter.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="women"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-women.QTime 78
+ONE-FACET-content_type_norm-women.numFound 6552790
+ONE-FACET-content_type_norm-women.facetValues[0] html
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="women"&facet.field=author
+ONE-FACET-author-women.QTime 129
+ONE-FACET-author-women.numFound 6552790
+ONE-FACET-author-women.facetValues[0] 
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="women"&facet.field=postcode_district
+ONE-FACET-postcode_district-women.QTime 110
+ONE-FACET-postcode_district-women.numFound 6552790
+ONE-FACET-postcode_district-women.facetValues[0] CF11
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=crawl_years
+ONE-FACET-crawl_years-rhythm.QTime 39
+ONE-FACET-crawl_years-rhythm.numFound 306722
+ONE-FACET-crawl_years-rhythm.facetValues[0] 2012
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=content_language
+ONE-FACET-content_language-rhythm.QTime 27
+ONE-FACET-content_language-rhythm.numFound 306722
+ONE-FACET-content_language-rhythm.facetValues[0] en
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=public_suffix
+ONE-FACET-public_suffix-rhythm.QTime 27
+ONE-FACET-public_suffix-rhythm.numFound 306722
+ONE-FACET-public_suffix-rhythm.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-rhythm.QTime 40
+ONE-FACET-links_public_suffixes-rhythm.numFound 306722
+ONE-FACET-links_public_suffixes-rhythm.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=domain
+ONE-FACET-domain-rhythm.QTime 82
+ONE-FACET-domain-rhythm.numFound 306722
+ONE-FACET-domain-rhythm.facetValues[0] blogspot.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=links_domains
+ONE-FACET-links_domains-rhythm.QTime 205
+ONE-FACET-links_domains-rhythm.numFound 306722
+ONE-FACET-links_domains-rhythm.facetValues[0] twitter.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-rhythm.QTime 23
+ONE-FACET-content_type_norm-rhythm.numFound 306722
+ONE-FACET-content_type_norm-rhythm.facetValues[0] html
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=author
+ONE-FACET-author-rhythm.QTime 31
+ONE-FACET-author-rhythm.numFound 306722
+ONE-FACET-author-rhythm.facetValues[0] wendy.young
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=postcode_district
+ONE-FACET-postcode_district-rhythm.QTime 36
+ONE-FACET-postcode_district-rhythm.numFound 306722
+ONE-FACET-postcode_district-rhythm.facetValues[0] LN1
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="blow"&facet.field=crawl_years
+ONE-FACET-crawl_years-blow.QTime 71
+ONE-FACET-crawl_years-blow.numFound 801739
+ONE-FACET-crawl_years-blow.facetValues[0] 2012
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="blow"&facet.field=content_language
+ONE-FACET-content_language-blow.QTime 30
+ONE-FACET-content_language-blow.numFound 801739
+ONE-FACET-content_language-blow.facetValues[0] en
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="blow"&facet.field=public_suffix
+ONE-FACET-public_suffix-blow.QTime 34
+ONE-FACET-public_suffix-blow.numFound 801739
+ONE-FACET-public_suffix-blow.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="blow"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-blow.QTime 59
+ONE-FACET-links_public_suffixes-blow.numFound 801739
+ONE-FACET-links_public_suffixes-blow.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="blow"&facet.field=domain
+ONE-FACET-domain-blow.QTime 129
+ONE-FACET-domain-blow.numFound 801739
+ONE-FACET-domain-blow.facetValues[0] blogspot.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="blow"&facet.field=links_domains
+ONE-FACET-links_domains-blow.QTime 477
+ONE-FACET-links_domains-blow.numFound 801739
+ONE-FACET-links_domains-blow.facetValues[0] twitter.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="blow"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-blow.QTime 25
+ONE-FACET-content_type_norm-blow.numFound 801739
+ONE-FACET-content_type_norm-blow.facetValues[0] html
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="blow"&facet.field=author
+ONE-FACET-author-blow.QTime 506
+ONE-FACET-author-blow.numFound 801739
+ONE-FACET-author-blow.facetValues[0] 
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="blow"&facet.field=postcode_district
+ONE-FACET-postcode_district-blow.QTime 50
+ONE-FACET-postcode_district-blow.numFound 801739
+ONE-FACET-postcode_district-blow.facetValues[0] CF11
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sherlock holmes"&facet.field=crawl_years
+ONE-FACET-crawl_years-sherlock holmes.QTime 154
+ONE-FACET-crawl_years-sherlock holmes.numFound 120254
+ONE-FACET-crawl_years-sherlock holmes.facetValues[0] 2012
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sherlock holmes"&facet.field=content_language
+ONE-FACET-content_language-sherlock holmes.QTime 20
+ONE-FACET-content_language-sherlock holmes.numFound 120254
+ONE-FACET-content_language-sherlock holmes.facetValues[0] en
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sherlock holmes"&facet.field=public_suffix
+ONE-FACET-public_suffix-sherlock holmes.QTime 20
+ONE-FACET-public_suffix-sherlock holmes.numFound 120254
+ONE-FACET-public_suffix-sherlock holmes.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sherlock holmes"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-sherlock holmes.QTime 22
+ONE-FACET-links_public_suffixes-sherlock holmes.numFound 120254
+ONE-FACET-links_public_suffixes-sherlock holmes.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sherlock holmes"&facet.field=domain
+ONE-FACET-domain-sherlock holmes.QTime 42
+ONE-FACET-domain-sherlock holmes.numFound 120254
+ONE-FACET-domain-sherlock holmes.facetValues[0] wordpress.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sherlock holmes"&facet.field=links_domains
+ONE-FACET-links_domains-sherlock holmes.QTime 127
+ONE-FACET-links_domains-sherlock holmes.numFound 120254
+ONE-FACET-links_domains-sherlock holmes.facetValues[0] wordpress.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sherlock holmes"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-sherlock holmes.QTime 15
+ONE-FACET-content_type_norm-sherlock holmes.numFound 120254
+ONE-FACET-content_type_norm-sherlock holmes.facetValues[0] html
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sherlock holmes"&facet.field=author
+ONE-FACET-author-sherlock holmes.QTime 16
+ONE-FACET-author-sherlock holmes.numFound 120254
+ONE-FACET-author-sherlock holmes.facetValues[0] Chris Grundy
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sherlock holmes"&facet.field=postcode_district
+ONE-FACET-postcode_district-sherlock holmes.QTime 130
+ONE-FACET-postcode_district-sherlock holmes.numFound 120254
+ONE-FACET-postcode_district-sherlock holmes.facetValues[0] CB24
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="office"&facet.field=crawl_years
+ONE-FACET-crawl_years-office.QTime 427
+ONE-FACET-crawl_years-office.numFound 15570114
+ONE-FACET-crawl_years-office.facetValues[0] 2012
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="office"&facet.field=content_language
+ONE-FACET-content_language-office.QTime 160
+ONE-FACET-content_language-office.numFound 15570114
+ONE-FACET-content_language-office.facetValues[0] en
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="office"&facet.field=public_suffix
+ONE-FACET-public_suffix-office.QTime 195
+ONE-FACET-public_suffix-office.numFound 15570114
+ONE-FACET-public_suffix-office.facetValues[0] org.uk
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="office"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-office.QTime 256
+ONE-FACET-links_public_suffixes-office.numFound 15570114
+ONE-FACET-links_public_suffixes-office.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="office"&facet.field=domain
+ONE-FACET-domain-office.QTime 488
+ONE-FACET-domain-office.numFound 15570114
+ONE-FACET-domain-office.facetValues[0] aberystwythartscentre.co.uk
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="office"&facet.field=links_domains
+ONE-FACET-links_domains-office.QTime 2991
+ONE-FACET-links_domains-office.numFound 15570114
+ONE-FACET-links_domains-office.facetValues[0] twitter.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="office"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-office.QTime 174
+ONE-FACET-content_type_norm-office.numFound 15570114
+ONE-FACET-content_type_norm-office.facetValues[0] html
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="office"&facet.field=author
+ONE-FACET-author-office.QTime 218
+ONE-FACET-author-office.numFound 15570114
+ONE-FACET-author-office.facetValues[0] 
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="office"&facet.field=postcode_district
+ONE-FACET-postcode_district-office.QTime 181
+ONE-FACET-postcode_district-office.numFound 15570114
+ONE-FACET-postcode_district-office.facetValues[0] SY23
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="plants"&facet.field=crawl_years
+ONE-FACET-crawl_years-plants.QTime 108
+ONE-FACET-crawl_years-plants.numFound 1868284
+ONE-FACET-crawl_years-plants.facetValues[0] 2012
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="plants"&facet.field=content_language
+ONE-FACET-content_language-plants.QTime 46
+ONE-FACET-content_language-plants.numFound 1868284
+ONE-FACET-content_language-plants.facetValues[0] en
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="plants"&facet.field=public_suffix
+ONE-FACET-public_suffix-plants.QTime 52
+ONE-FACET-public_suffix-plants.numFound 1868284
+ONE-FACET-public_suffix-plants.facetValues[0] ac.uk
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="plants"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-plants.QTime 84
+ONE-FACET-links_public_suffixes-plants.numFound 1868284
+ONE-FACET-links_public_suffixes-plants.facetValues[0] org.uk
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="plants"&facet.field=domain
+ONE-FACET-domain-plants.QTime 173
+ONE-FACET-domain-plants.numFound 1868284
+ONE-FACET-domain-plants.facetValues[0] brc.ac.uk
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="plants"&facet.field=links_domains
+ONE-FACET-links_domains-plants.QTime 570
+ONE-FACET-links_domains-plants.numFound 1868284
+ONE-FACET-links_domains-plants.facetValues[0] twitter.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="plants"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-plants.QTime 41
+ONE-FACET-content_type_norm-plants.numFound 1868284
+ONE-FACET-content_type_norm-plants.facetValues[0] html
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="plants"&facet.field=author
+ONE-FACET-author-plants.QTime 72
+ONE-FACET-author-plants.numFound 1868284
+ONE-FACET-author-plants.facetValues[0] 
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="plants"&facet.field=postcode_district
+ONE-FACET-postcode_district-plants.QTime 47
+ONE-FACET-postcode_district-plants.numFound 1868284
+ONE-FACET-postcode_district-plants.facetValues[0] SW1Y
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="steel"&facet.field=crawl_years
+ONE-FACET-crawl_years-steel.QTime 87
+ONE-FACET-crawl_years-steel.numFound 973463
+ONE-FACET-crawl_years-steel.facetValues[0] 2012
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="steel"&facet.field=content_language
+ONE-FACET-content_language-steel.QTime 37
+ONE-FACET-content_language-steel.numFound 973463
+ONE-FACET-content_language-steel.facetValues[0] en
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="steel"&facet.field=public_suffix
+ONE-FACET-public_suffix-steel.QTime 46
+ONE-FACET-public_suffix-steel.numFound 973463
+ONE-FACET-public_suffix-steel.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="steel"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-steel.QTime 82
+ONE-FACET-links_public_suffixes-steel.numFound 973463
+ONE-FACET-links_public_suffixes-steel.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="steel"&facet.field=domain
+ONE-FACET-domain-steel.QTime 155
+ONE-FACET-domain-steel.numFound 973463
+ONE-FACET-domain-steel.facetValues[0] blogspot.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="steel"&facet.field=links_domains
+ONE-FACET-links_domains-steel.QTime 494
+ONE-FACET-links_domains-steel.numFound 973463
+ONE-FACET-links_domains-steel.facetValues[0] twitter.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="steel"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-steel.QTime 33
+ONE-FACET-content_type_norm-steel.numFound 973463
+ONE-FACET-content_type_norm-steel.facetValues[0] html
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="steel"&facet.field=author
+ONE-FACET-author-steel.QTime 53
+ONE-FACET-author-steel.numFound 973463
+ONE-FACET-author-steel.facetValues[0] 
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="steel"&facet.field=postcode_district
+ONE-FACET-postcode_district-steel.QTime 43
+ONE-FACET-postcode_district-steel.numFound 973463
+ONE-FACET-postcode_district-steel.facetValues[0] E1
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="yellow"&facet.field=crawl_years
+ONE-FACET-crawl_years-yellow.QTime 98
+ONE-FACET-crawl_years-yellow.numFound 1316319
+ONE-FACET-crawl_years-yellow.facetValues[0] 2012
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="yellow"&facet.field=content_language
+ONE-FACET-content_language-yellow.QTime 36
+ONE-FACET-content_language-yellow.numFound 1316319
+ONE-FACET-content_language-yellow.facetValues[0] en
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="yellow"&facet.field=public_suffix
+ONE-FACET-public_suffix-yellow.QTime 40
+ONE-FACET-public_suffix-yellow.numFound 1316319
+ONE-FACET-public_suffix-yellow.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="yellow"&facet.field=links_public_suffixes
+ONE-FACET-links_public_suffixes-yellow.QTime 74
+ONE-FACET-links_public_suffixes-yellow.numFound 1316319
+ONE-FACET-links_public_suffixes-yellow.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="yellow"&facet.field=domain
+ONE-FACET-domain-yellow.QTime 160
+ONE-FACET-domain-yellow.numFound 1316319
+ONE-FACET-domain-yellow.facetValues[0] blogspot.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="yellow"&facet.field=links_domains
+ONE-FACET-links_domains-yellow.QTime 633
+ONE-FACET-links_domains-yellow.numFound 1316319
+ONE-FACET-links_domains-yellow.facetValues[0] twitter.com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="yellow"&facet.field=content_type_norm
+ONE-FACET-content_type_norm-yellow.QTime 29
+ONE-FACET-content_type_norm-yellow.numFound 1316319
+ONE-FACET-content_type_norm-yellow.facetValues[0] html
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="yellow"&facet.field=author
+ONE-FACET-author-yellow.QTime 53
+ONE-FACET-author-yellow.numFound 1316319
+ONE-FACET-author-yellow.facetValues[0] 
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="yellow"&facet.field=postcode_district
+ONE-FACET-postcode_district-yellow.QTime 40
+ONE-FACET-postcode_district-yellow.numFound 1316319
+ONE-FACET-postcode_district-yellow.facetValues[0] G42
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="led"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-led.QTime 2193
+ALL-FACETS-led.numFound 5364733
+ALL-FACETS-led.facetValues[0] org
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="women"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-women.QTime 2406
+ALL-FACETS-women.numFound 6552790
+ALL-FACETS-women.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="rhythm"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-rhythm.QTime 328
+ALL-FACETS-rhythm.numFound 306722
+ALL-FACETS-rhythm.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="blow"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-blow.QTime 640
+ALL-FACETS-blow.numFound 801739
+ALL-FACETS-blow.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="sherlock holmes"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-sherlock holmes.QTime 160
+ALL-FACETS-sherlock holmes.numFound 120254
+ALL-FACETS-sherlock holmes.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="office"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-office.QTime 3535
+ALL-FACETS-office.numFound 15570114
+ALL-FACETS-office.facetValues[0] org.uk
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="plants"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-plants.QTime 755
+ALL-FACETS-plants.numFound 1868284
+ALL-FACETS-plants.facetValues[0] ac.uk
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="steel"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-steel.QTime 645
+ALL-FACETS-steel.numFound 973463
+ALL-FACETS-steel.facetValues[0] com
+URL: http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true&sort=crawl_date+asc&facet=true&facet.mincount=1&facet.sort=count&facet.threads=20&q="yellow"&facet.field=crawl_years&facet.field=content_language&facet.field=public_suffix&facet.field=links_public_suffixes&facet.field=domain&facet.field=links_domains&facet.field=content_type_norm&facet.field=author&facet.field=postcode_district
+ALL-FACETS-yellow.QTime 792
+ALL-FACETS-yellow.numFound 1316319
+ALL-FACETS-yellow.facetValues[0] com
+TIMING 63 (s) for http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true 
+&shards=192.168.45.30:8983/solr/ukwa,192.168.45.30:8984/solr/ukwa,192.168.45.30:8985/solr/ukwa
