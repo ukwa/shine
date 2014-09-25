@@ -1,0 +1,20 @@
+@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, d: org.apache.solr.common.SolrDocument, index: Int)
+
+<tr>
+	<td>
+		<a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">@utils.Formatter.formatDate(d.getFirstValue("crawl_date"))</a>
+	</td>
+	<td>@d.getFirstValue("domain")</td>
+	<td>
+		@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("title") != null) {
+						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("title").get(0)))</p>
+		}
+		@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("url") != null) {
+						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("url").get(0)))</p>
+		}
+		@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text") != null) {
+			<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text").get(0)))</p>
+		}
+	</td>
+</tr>
+

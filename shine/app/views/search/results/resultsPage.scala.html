@@ -1,0 +1,64 @@
+@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
+
+@pagination = {
+	@paginator(user, q, currentPage, currentSortBy, currentOrder, "search", "results")
+}
+
+@resultSnippets(d: org.apache.solr.common.SolrDocument, index: Int) = {
+	@resultSnippet(q, currentPage, d, index)
+}
+
+<div class="panel panel-default">
+	<div class="panel-heading filter-heading">
+		<h4 class="panel-title pull-left filter-heading-title">
+			@if(currentPage != null) {
+			    Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
+			}
+		</h4>
+		<span class="hide" id="current-url"></span>
+		<div class="form-inline pull-right">
+			@if(q != null && !q.res.getResults().isEmpty()) {
+			 	<div class="form-group">
+					<div class="btn-group">
+					  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					    CSV <span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" role="menu">
+					    <li><a href="#" id="briefCSV" data-toggle="tooltip" data-placement="top" title="Export Standard Version">Brief</a></li>
+					    <li><a href="#" id="fullCSV" data-toggle="tooltip" data-placement="top" title="Export Full Version">Full</a></li>
+					  </ul>
+					</div>			 		
+			 	</div>
+			}
+			<div class="form-group">
+				<select class="form-control" name="sort" id="sort">
+					<!-- get from some where -->
+					<option value="content_type_norm">Title</option>
+					<option value="crawl_date">Crawl Date</option>
+					<option value="content_type_norm">Content</option>
+					<option value="domain">Domain</option>
+					<option value="sentiment_score">Score</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<select class="form-control" name="order" id="order">
+					<option value="asc">Asc</option>
+					<option value="desc">Desc</option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel-body">
+		@pagination
+
+		<div id="result-set">
+			@if(q != null) {
+				@for((d, index) <- q.res.getResults().zipWithIndex) {
+					@(resultSnippets(d, index))
+				}
+			}
+		</div>
+		@pagination
+	</div>
+</div>

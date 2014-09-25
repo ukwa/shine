@@ -6,9 +6,14 @@ import play.api.data._
 import play.api.data.Forms._
 import models._
 import views._
+import utils.Formatter
 import org.apache.commons.lang.StringUtils
 import uk.bl.wa.shine._
-import scala.collection.JavaConverters
+import scala.collection.JavaConverters._
+import play.api.libs.json.Json
+import play.api.libs.json.JsString
+import play.api.libs.json.JsNumber
+
 
 object Account extends Controller {
 
@@ -44,7 +49,7 @@ object Account extends Controller {
   def changePassword = Action { implicit request =>
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
-		Ok(html.changePassword(passwordForm, "Shine Application", user))
+		Ok(html.account.changePassword(passwordForm, "Shine Application", user))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	  }
@@ -56,7 +61,7 @@ object Account extends Controller {
 		var user = User.findByEmail(username.toLowerCase())
 		passwordForm.bindFromRequest.fold(
 	      formWithErrors => {
-	        BadRequest(html.changePassword(formWithErrors, "Shine Application", user))
+	        BadRequest(html.account.changePassword(formWithErrors, "Shine Application", user))
 	      },
 	      passwordData => {
 	        val password = passwordData.currentPassword
@@ -71,10 +76,10 @@ object Account extends Controller {
 		    		Redirect(routes.Application.index).flashing("success" -> "Your password has been updated successfully")
 		    	} else {
 		    		//passwordForm.fill(passwordData).withGlobalError("Your error message")
-	                BadRequest(html.changePassword(passwordForm.fill(passwordData).withGlobalError("New Passwords do not match"), "Shine Application", user))	    	
+	                BadRequest(html.account.changePassword(passwordForm.fill(passwordData).withGlobalError("New Passwords do not match"), "Shine Application", user))	    	
 	            }
 		    } else {
-	            BadRequest(html.changePassword(passwordForm.fill(passwordData).withGlobalError("Current Password is incorrect"), "Shine Application", user))	    	
+	            BadRequest(html.account.changePassword(passwordForm.fill(passwordData).withGlobalError("Current Password is incorrect"), "Shine Application", user))	    	
 		    }
 	      })
   	  }.getOrElse {
@@ -86,8 +91,8 @@ object Account extends Controller {
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
 		val searches = models.Search.findByUser(user)
-		val ls = JavaConverters.asScalaBufferConverter(searches).asScala.toList
-	    Ok(views.html.mySearches("My Searches", user, ls))
+		val ls = searches.asScala.toList
+	    Ok(views.html.account.mySearches("My Searches", user, ls))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	  }
@@ -120,8 +125,8 @@ object Account extends Controller {
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
 		val corpora = models.Corpus.findByUser(user)
-		val cs = JavaConverters.asScalaBufferConverter(corpora).asScala.toList
-	    Ok(views.html.myCorpora("My Corpora", user, cs))
+		val cs = corpora.asScala.toList
+	    Ok(views.html.account.myCorpora("My Corpora", user, cs))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	  }
@@ -131,7 +136,18 @@ object Account extends Controller {
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
 		val corpus = models.Corpus.create(name, description, user.id)
-		Ok("false")
+		
+		var myCorpora = models.Corpus.findByUser(user)
+		
+		var results = Json.arr()
+
+		for (c <- myCorpora.asScala) {
+		  println("c: " + c.name)
+		  val json = Json.obj("id" -> JsNumber(c.id.longValue()), "name" -> JsString(c.name))
+		  results = results :+ json
+		}
+
+		Ok(results)
 	    //Redirect(routes.Account.mySearches).flashing("success" -> "Search was added")
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
@@ -148,10 +164,17 @@ object Account extends Controller {
 		val user = User.findByEmail(username.toLowerCase())
 		val corpus = models.Corpus.find(id.toLong)
 		println("Corpus found: " + corpus)
-		val res = resources.split(";")
+		val res = resources.split(",,,,,")
+		  
 		for(resource <- res ){
-			println("resource: " + resource)
-			val res = new models.Resource("", "", resource)
+			val r = resource.split(";;;")
+			val id = r(0)
+			val title = r(2)
+			val url = r(4)
+			val wayback = r(5).toString()
+			val waybackDate = Formatter.getDate(wayback)
+			println("id: " + id + " " + title + " " + waybackDate)
+			val res = new models.Resource(title, url, id, waybackDate)
 			res.corpus = corpus
 			res.save()
 		}
@@ -163,4 +186,8 @@ object Account extends Controller {
 	  }
   }
 
+  def deleteResource(id:Long) = Action { implicit request =>
+    	models.Resource.find(id).delete
+        Redirect(routes.Account.myCorpora()).flashing("success" -> "Your resource has been deleted")
+  }
 }

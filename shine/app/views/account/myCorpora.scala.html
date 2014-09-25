@@ -1,0 +1,129 @@
+@(title: String, user: User, corpora: List[Corpus])(implicit flash: play.api.mvc.Flash)
+
+@styles = {
+	<style>
+		.modal-vertical-centered {
+			transform: translate(0, 50%) !important;
+			-ms-transform: translate(0, 50%) !important; /* IE 9 */
+			-webkit-transform: translate(0, 50%) !important; /* Safari and Chrome */
+		}	
+	</style>
+}
+
+@scripts = {
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('button[name="delete_corpus"]').on('click', function(e){
+			    var $form = $(this).closest('form'); 
+			    e.preventDefault();
+			    $('#confirmCorpus').modal('show')
+			        .on('click', '#deleteCorpus', function() {
+			        	console.log('delete');
+			            $form.trigger('submit'); // submit the form
+			        });
+			});
+			
+			$('button[name="delete_resource"]').on('click', function(e){
+			    var $form = $(this).closest('form'); 
+			    e.preventDefault();
+			    $('#confirmResource').modal('show')
+			        .on('click', '#deleteResource', function() {
+			            $form.trigger('submit'); // submit the form
+			        });
+			});
+
+		});
+		
+	</script>
+}
+
+@convertTitle(title: String) = @{
+	if (org.apache.commons.lang.StringUtils.isBlank(title)) {
+		"blank title"
+	} else {
+		title
+	}
+}
+
+@convertDate(date: java.util.Date) = @{
+	if(date == null) {
+		" "
+	} else {
+		utils.Formatter.formatToLongDate(date)
+	}
+}
+
+@main(title, styles, scripts, user) {
+
+	@flash.get("success").map { message =>
+		<div class="alert alert-success">
+			@message
+		</div>
+	}
+	<h1>@title</h1>
+		
+	@if(user != null) {
+        <table class="table table-condensed">
+			@for(corpus <- corpora) {
+				<tr>
+	               	<td>
+              			@(corpus.name) @(corpus.description)
+						<table>
+              				@for(resource <- corpus.resources) {
+             					<tr>
+             						<td>@(resource.id)</td>
+									<td>@(resource.lastUpdate)</td>
+             						<td><a href="http://web.archive.org/web/@(convertDate(resource.waybackDate))/@(resource.url)">@(convertTitle(resource.title))</a></td>
+             						<td class="pull-right">
+             							@helper.form(routes.Account.deleteResource(resource.id)) {
+             		    					<button type="button" data-dismiss="modal-resource" class="btn btn-danger" name="delete_resource">
+												<span class="glyphicon glyphicon-remove"></span>
+											</button>
+										}
+									</td>
+             		    		</tr>
+          					}
+						</table>
+	               	</td>
+	               	<td>
+						@helper.form(routes.Account.deleteCorpus(corpus.id)) {
+              		    	<button type="button" data-dismiss="modal" class="btn btn-danger" name="delete_corpus">
+  								<span class="glyphicon glyphicon-remove"></span>
+							</button>
+						}
+					</td>	       		
+				</tr>
+	        }
+		</table>	    
+		<div id="confirmCorpus" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-vertical-centered">
+		    	<div class="modal-content">
+		  			<div class="modal-body">
+		    			Are you sure you want to delete this corpus?
+		  			</div>
+		  			<div class="modal-footer">
+					    <button type="button" data-dismiss="modal" class="btn btn-danger" id="deleteCorpus">Delete</button>
+					    <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="confirmResource" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-vertical-centered">
+		    	<div class="modal-content">
+		  			<div class="modal-body">
+		    			Are you sure you want to delete this resource?
+		  			</div>
+		  			<div class="modal-footer">
+					    <button type="button" data-dismiss="modal" class="btn btn-danger" id="deleteResource">Delete</button>
+					    <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	}
+	
+}
+

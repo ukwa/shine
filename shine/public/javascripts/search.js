@@ -59,11 +59,10 @@ $(function () {
 		var $show_more = $(this);
 		var parent = $(this).parent().parent().parent();
 		var shown = parent.find('li.facet-options.show').length;
-		console.log(">>>: " + shown);
 		
-		parent.find('ul.facet-heading').each(function(index) {
-			console.log("shown: " + $(this).find('li.facet-options').length);
-		});
+//		parent.find('ul.facet-heading').each(function(index) {
+//			console.log("shown: " + $(this).find('li.facet-options').length);
+//		});
 		
 		$(this).click(function(event) {
 			event.preventDefault();
@@ -617,65 +616,162 @@ function saveAdvancedSearch() {
 	});
 }
 
-function initCorpusModal() {
-    $('#corpus-modal-form').validate({
-        rules: {
-		    saveCorpusName: {
-			    required: {
-			        depends: function(element) {
-			            return $('#dropdownCorpora');
-			        }
-			    }
-			},
-        }
-	});
+function saveCorpus() {
     
+    // to open the modal and add events
     $('.save-corpus').each(function() {
+    	
     	$(this).on('click', function(event) {
     		event.preventDefault();
+			$('input.resource').each(function() {
+				$(this).attr('name', 'selectedResource');
+			});
     		$("#save-corpus-form").modal('show');
     	});
+    	
     	$('#dismiss-corpus-x').click(function() {
+			$("#save-resource-save").text('Save Resource(s)');
     		$("#save-corpus-form").modal('hide');
     	});
-    	if($('#dropdownCorpora') === undefined) {
-    		$("#save-corpus-save").prop('disabled', true);
-    		$('#corpus-modal-form input').on('keyup blur', function () {
-	            if ($('#corpus-modal-form').valid()) {
-	        		$("#save-corpus-save").prop('disabled', false);
-	            } else {
-	        		$("#save-corpus-save").prop('disabled', 'disabled');
-	            }
-	        });
+    	
+    	$('#save-corpus-close').click(function() {
+			$("#save-resource-save").text('Save Resource(s)');
+    		$("#save-corpus-form").modal('hide');
+    	});
+    	
+    });
+    
+    updateCorpusDropdown();
+    validateCorpusName();
+
+    $('#saveCorpusName').on('keyup', function(event) {
+    	if($('#saveCorpusName').length > 0) {
+    		$("#save-corpus-save").show();
+    		$("#save-resource-save").hide();
     	}
     });
+    
+	// no dropdown
+	if($('#saveCorpusName').length > 0) {
+
+		$("#save-corpus-save").show();
+		$("#save-resource-save").hide();
+		
+		$("#save-corpus-save").prop('disabled', true);
+		$('#corpus-modal-form input').on('keyup blur', function () {
+            if ($('#corpus-modal-form').valid()) {
+        		$("#save-corpus-save").prop('disabled', false);
+            } else {
+        		$("#save-corpus-save").prop('disabled', 'disabled');
+            }
+        });
+	    saveCorpusDetails();
+	} else {
+		$("#save-corpus-save").hide();
+		$("#save-resource-save").show();
+		// we have a dropdown to choose from
+		saveResourceDetails();
+	}
+
 }
 
-function saveCorpus() {
+function validateCorpusName() {
 	
-	initCorpusModal();
+	// validate name
+    $('#corpus-modal-form').validate({
+        rules: {
+        	saveCorpusName: {
+                required: {
+                    depends: function(element) {
+                        return ($('#selectedCorpus').val() == undefined) || ($('#selectedCorpus').length > 0 && $('#selectedCorpus').val().length == 0)
+                    }
+                }
+        	}
+        }
+	});
+}
+
+function updateCorpusDropdown() {
+	$('#selectedCorpus').on('change', function(event) {
+		event.preventDefault();
+	    validateCorpusName();
+		console.log($('#selectedCorpus').val().length);
+		if ($('#selectedCorpus').val().length > 0) {
+			// buttons now change save resource
+			$("#save-corpus-save").hide();
+			$("#save-resource-save").show();
+			saveResourceDetails();
+		} else {
+			$("#save-corpus-save").show();
+			$("#save-resource-save").hide();
+			saveCorpusDetails();
+		}
+	});
+}
+
+function saveCorpusDetails() {
 	
-	$('#save-corpus-save').on('click', function() {
-		
-		console.log($("select#dropdownCorpora" ).val());
+	$('#save-corpus-save').on('click', function(event) {
+		event.preventDefault();
+		$("#save-resource-save").text('Save Resource(s)');
+
 		var docs = $('input:checkbox[name="selectedResource"]:checked');
+		
 		var selectedResources = "";
 		docs.each(function() {
 			console.log("val: " + $(this).val());
 			selectedResources += $(this).val() + ";";
 		});
-
-		jsRoutes.controllers.Account.saveResources($("select#dropdownCorpora" ).val(), selectedResources).ajax({success:successFn, error:errorFn});
-		$("#save-corpus-form").modal('hide');
+		
+		jsRoutes.controllers.Account.saveCorpus($('#saveCorpusName').val(), $('#save-corpus-description').val()).ajax({
+			success: function(data) {
+				// show dropdown list
+				$('#currentCorpusDropDown').remove();
+				$('#corpusDropDownPanel').empty();
+			    $('#corpusDropDownPanel').append("<div class='form-group'><label for='saveCorpusName' class='col-sm-2 control-label'>Corpus</label><div class='col-sm-10'><div class='dropdown'><select class='form-control' name='selectedCorpus' id='selectedCorpus'><option value='' selected='selected'>&#060;Please Select&#062;</option>");
+				$.each($(data), function(key, value) {
+					$('#selectedCorpus').append("<option value='" + value.id + "'>" + value.name + "</option>");
+				});
+				$('#corpusDropDownPanel').append("</select></div></div></div>");
+			    updateCorpusDropdown();
+			},
+		    error: function() {
+		    	console.debug("Error of ajax Call");
+				console.debug(err);
+		    }
+		});
+		
+//		$("#save-corpus-form").modal('hide');
 		$('#saveCorpusName').val('');
 		$('#save-corpus-description').val('');
-		var successFn = function(data) {
-			console.debug("Success of Ajax Call");
-			console.debug(data);
-		};
-		var errorFn = function(err) {
-			console.debug("Error of ajax Call");
-			console.debug(err);
+		
+		// close and reset form
+	});
+}
+
+function saveResourceDetails() {
+	$('#save-resource-save').on('click', function() {
+		var docs = $('input:checkbox[name="selectedResource"]:checked');
+		var selectedResources = "";
+		docs.each(function() {
+			console.log("val: " + $(this).val());
+			selectedResources += $(this).val().trim() + ",,,,,";
+		});
+		if (selectedResources.length > 0) {
+			jsRoutes.controllers.Account.saveResources($("select#selectedCorpus").val(), selectedResources).ajax({
+		          success: function(data) {
+		  			console.debug("Success of Ajax Call");
+					console.debug(data);
+		          },
+			      error: function() {
+					console.debug("Error of ajax Call");
+					console.debug(err);
+			      }			
+			});
+			$("#save-corpus-form").modal('hide');
+		} else {
+			$("#save-resource-save").text('No resources selected');
+			
 		}
 		// close and reset form
 	});
@@ -718,7 +814,13 @@ function validateAdvancedSearchForm() {
 	
     $('#search-form').validate({
         rules: {
-        	query: "required",
+        	query: {
+        		required: {
+                    depends: function(element) {
+                        return $('#proximityPhrase1').val().length == 0 && $('#proximityPhrase2').val().length == 0 || $('#proximity').val().length == 0
+                    }
+        		}
+        	},
         	proximityPhrase1: {
                 required: {
                     depends: function(element) {
@@ -755,12 +857,22 @@ function validateAdvancedSearchForm() {
 //}
 
 function csvLink() {
-	$('#csv-export').on('click', function(event) {
+	
+	$('#briefCSV').on('click', function(event) {
 		event.preventDefault();
-		window.location.href=$('#export_url').val() + $('#current-url').text();
+		exportMessage();
+		window.location.href=$('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=brief";
 	});
+
+	$('#fullCSV').on('click', function(event) {
+		event.preventDefault();
+		exportMessage();
+		window.location.href=$('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=full";
+	});
+	
 }
 
+// facet (+/-)
 function facetOptions() {
 	$(".facet-options").each(function(index) {
 		// check form fields
@@ -771,7 +883,7 @@ function facetOptions() {
 		var $link_span_include = $facet_option.find('a.facet.include span');
 		var $link_span_exclude = $facet_option.find('a.facet.exclude span');
 
-		var url = window.location.search;
+		var url = decodeURIComponent(window.location.search);
 
 		// rework this bit
 		// if invert is selected
@@ -808,14 +920,6 @@ function facetOptions() {
 		// for clicking on facet options (includes)
 		$(this).find('a.facet.include').each(function(index) {
 			//console.log(facet_name + " " + facet_value);
-//			var url = "search?" + $('#search-form').serialize();
-			// if not activated then remove
-/* 					facet_value_exc = facet_value_exc.replace('"', '%22').replace('"', '%22');
-			var regexExc = new RegExp("&"+ facet_name_exc + "=" + facet_value_exc);
-*/					
-//					console.log("remove: " + "&"+ facet_name_exc + "=" + facet_value_exc);
-//					url = url.replace(regexExc,'');
-//					console.log("new url: " + url);
 
 			var span = $(this).find('span.glyphicon');
 			
@@ -824,13 +928,12 @@ function facetOptions() {
 				// SELECTED
 				url = url + "&" + facet;
 			} else {
+				// facet selected
 				// i.e remove facet.in.crawl_year=%222007%22
-				facet = facet.replace('"', '%22').replace('"', '%22');
-//						console.log("facet_value: " + facet_value);
 				var regexInc = new RegExp("&"+ facet);
 				url = url.replace(regexInc,'');
-//						console.log(url);
-//						console.log("remove facet: " + facet);
+//				console.log(url);
+//				console.log("remove facet: " + facet);
 			}
 //			url = url.replace('&invert=&', '&');
 			$(this).attr('href', url);
@@ -858,15 +961,7 @@ function facetOptions() {
 		// for clicking on facet options (excludes)
 		$(this).find('a.facet.exclude').each(function(index) {
 			//console.log(facet_name + " " + facet_value);
-			var url = "search?" + $('#search-form').serialize();
-			// if not activated then remove
-/* 					facet_value_inc = facet_value_inc.replace('"', '%22').replace('"', '%22');
-			var regexInc = new RegExp("&"+ facet_name_inc + "=" + facet_value_inc); */
-			
-//					console.log("remove: " + "&"+ facet_name_inc + "=" + facet_value_inc);
-//					url = url.replace(regexInc,'');
-//					console.log("new url: " + url);
-
+			var url = decodeURIComponent("search?" + $('#search-form').serialize());
 			var span = $(this).find('span.glyphicon');
 			
 			var facet = facet_name_exc + "=" + facet_value_exc;
@@ -875,9 +970,6 @@ function facetOptions() {
 				url = url + "&" + facet;
 			} else {
 				// i.e remove facet.in.crawl_year=%222007%22
-				facet = facet.replace('"', '%22').replace('"', '%22');
-				var reg = "^\".*\"$";
-//						console.log("facet_value: " + facet_value);
 				var regexExc = new RegExp("&"+ facet);
 				url = url.replace(regexExc,'');
 //						console.log(url);
@@ -891,7 +983,6 @@ function facetOptions() {
 //						event.preventDefault();
 				// change +/-
 				facetClickToggle($link_span_exclude, $input_exclude);
-//						console.log($('#search-form').serialize());
 				
 				if ($('#search-form').valid()) {
 				    $('#modalLoader').modal({
@@ -955,3 +1046,173 @@ function disableInvertInputs() {
 	    }
 	});
 }
+
+function searchTabs() {
+	var tab = getURLParameter('tab');
+	$('#tab').val(tab);
+	
+	if (tab == 'concordance') {
+		$('#concordanceTab').addClass('active');
+		$('#resultsTab').removeClass('active');
+		$('#results').hide();
+		$('#concordance').show();
+	} else {
+		$('#resultsTab').addClass('active');
+		$('#concordanceTab').removeClass('active');
+		$('#concordance').hide();
+		$('#results').show();
+	}
+	
+	$('#resultsTab a').click(function (e) {
+		e.preventDefault()
+		$(this).tab('show');
+		$('#concordance').hide();
+		$('#results').show();
+		$('#tab').val('results');
+	});
+	
+	$('#concordanceTab a').click(function (e) {
+		e.preventDefault()
+		$(this).tab('show');
+		$('#results').hide();
+		$('#concordance').show();
+		$('#tab').val('concordance');
+	});
+}
+
+function modalLoader() {
+	$('#modalLoader').modal({
+	    backdrop: true,
+	    keyboard: true
+	});
+}
+
+function getMonthName(monthNumber) {
+	var months = ['January', 'February', 'March', 'April', 'May', 'June',
+	              'July', 'August', 'September', 'October', 'November', 'December'];
+	return months[monthNumber-1];
+}
+
+function createSummaryExclusions() {
+	var excludes = getURLParameters('exclude');
+	console.log("excludes: " + excludes);
+	// with these resources create some hidden inputs
+	excludes.forEach(function(value) {
+		value = value.trim();
+		var values = decodeURIComponent(value).split(';;;');
+//		console.log(id);
+		var date = values[1].trim().replace(/\+/g, " ");
+		var title = values[2].trim().replace(/\+/g, " ");
+		var domain = values[3].trim().replace(/\+/g, " ");
+		var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' removeID='" + value + "'></span>";
+
+		console.log(date + " " + title + " " + domain);
+		
+		// from ID create date
+		// sha:20080512022450/Rb3smjlTBo0eGxmAf1NEWA or 20080512022450/Rb3smjlTBo0eGxmAf1NEWA or ???
+		//id = "sha:20080512022450/Rb3smjlTBo0eGxmAf1NEWA"; // A TEST
+		//var hours = dateString.substring(8,10);
+		//var minutes = dateString.substring(10,12);
+		//var seconds = dateString.substring(12,14);
+		
+		// var date = new Date(year, month, day, hours, minutes, seconds, 0);
+		
+		//getMonthName(date.getMonth()) + " " + date.getDate() + " " + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+		// format May 14 2008 13:56:02 BST
+		var text = $('<li>').html("Exclude: " + date + " - " + domain + " - " + title + span);
+		$('#search-summary').append(text);
+	});
+	
+	var excludeHosts = getURLParameters('excludeHost');
+	excludeHosts.forEach(function(value) {
+		var host = decodeURIComponent(value)
+//		console.log(id);
+		var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' removeID='" + host + "'></span>";
+		var text = $('<li>').html("Exclude Host: " + host + span);
+		$('#search-summary').append(text);
+	});
+}
+
+function processSelectedResources(selected) {
+	// selected can be id or host name
+	
+	var resources = getURLParameters('selectedResource');
+	var currentExcludes = getURLParameters('exclude');
+	var currentExcludeHosts = getURLParameters('excludeHost');
+
+	console.log(resources);
+	console.log(currentExcludes);
+	console.log(currentExcludeHosts);
+	
+	// with these resources create some hidden inputs
+	
+	if (selected !== undefined) {
+		for (var i=currentExcludes.length-1; i>=0; i--) {
+		    if (decodeURIComponent(currentExcludes[i]) === selected) {
+				console.log("removing exclude " + selected);
+				currentExcludes.splice(i, 1);
+		        break;
+		    }
+		}
+		
+		for (var i=currentExcludeHosts.length-1; i>=0; i--) {
+		    if (decodeURIComponent(currentExcludeHosts[i]) === selected) {
+				console.log("removing exclude hosts " + selected);
+				currentExcludeHosts.splice(i, 1);
+		        break;
+		    }
+		}
+		
+	}
+	console.log("updated excludes: " + currentExcludes);
+	console.log("updated exclude hosts: " + currentExcludeHosts);
+	
+	resources.forEach(function(value) {
+		var id = decodeURIComponent(value)
+		var selectedResource = $("<input>")
+   			.attr("type", "hidden")
+   			.attr("name", "selectedResource").val(id);
+    
+    	$('#search-form').append($(selectedResource));
+	});
+	
+	currentExcludes.forEach(function(value) {
+		var id = decodeURIComponent(value)
+		var selectedResource = $("<input>")
+   			.attr("type", "hidden")
+   			.attr("name", "exclude").val(id);
+    
+    	$('#search-form').append($(selectedResource));
+	});
+	
+	currentExcludeHosts.forEach(function(value) {
+		var id = decodeURIComponent(value)
+		var selectedResource = $("<input>")
+   			.attr("type", "hidden")
+   			.attr("name", "excludeHost").val(id);
+    
+    	$('#search-form').append($(selectedResource));
+	});	
+
+}
+
+function resetExcluded() {
+	$('span.glyphicon.glyphicon-remove-sign.removeExcluded').on('click', function(event) {
+		// remove it from parameters
+		// submit
+		var removeID = $(this).attr('removeID');
+		processSelectedResources(decodeURIComponent(removeID));
+		modalLoader();
+	    $('#action').val('search');
+	    // add to parameters then submit
+	    // &facet.fields=postcode_district
+		$('#search-form').submit();
+	});
+}
+
+function exportMessage() {
+	$('#export-message').removeClass('hide');
+	$('#export-message').append('Exporting to CSV - This may take a while. Please wait...');
+}
+

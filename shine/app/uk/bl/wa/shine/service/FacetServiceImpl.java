@@ -2,7 +2,6 @@ package uk.bl.wa.shine.service;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import play.Configuration;
 import play.Logger;
 import uk.bl.wa.shine.model.FacetValue;
@@ -26,13 +25,21 @@ public class FacetServiceImpl implements FacetService {
 	public FacetServiceImpl(Configuration configuration) {
 		init();
 		if (configuration != null) {
+
 			Map<String, Object> map = configuration.getConfig("facets").asMap();
+
 			for (String facetHeader : map.keySet()) {
+				Logger.info("facetHeader: " + facetHeader); // i.e additions
+				// i.e. content_language { name="Language", limit="5", maxlimit="10" },
 				@SuppressWarnings("unchecked")
-				Map<String, String> values = (Map<String, String>) map.get(facetHeader);
+				Map<String, Map<String,Object>> values = (Map<String, Map<String,Object>>) map.get(facetHeader);
 				for (String key : values.keySet()) {
-					String value = values.get(key);
-					FacetValue facetValue = new FacetValue(key, value);
+					Map<String,Object> facet = values.get(key);
+					String name = facet.get("name").toString();
+					Integer limit = Integer.valueOf(facet.get("limit").toString());
+					Integer maxLimit = Integer.valueOf(facet.get("maxLimit").toString());
+					Logger.info(key + " { " + name + ", " + limit + ", " + maxLimit + "}");
+					FacetValue facetValue = new FacetValue(key, name, limit, 10);
 					Logger.info("facetValue: " + facetValue.getName() + "=" + facetValue.getValue());
 					// just load the basic (default) ones first
 					if (facetHeader.equals("basic")) {

@@ -105,4 +105,18 @@ div a.facet-heading {
 
 div.save-right {
 	margin: 20px 0;
-}		
+}
+
+p.list-group-item-text em {
+	background: #428bca;
+	font-weight: bold;
+	color: #fff;
+}
+
+span.glyphicon.glyphicon-remove-sign.removeExcluded {
+	cursor:pointer;
+}
+
+.search-name {
+	font-weight: bold;
+}

@@ -19,7 +19,7 @@ GET     /search/browse            			controllers.Search.browse(query ?= "*:*", p
 
 GET     /search/concordance                 controllers.Search.concordance(query ?= "*:*")
 
-GET     /search/export/csv					controllers.Search.exportSearch()
+GET     /search/export						controllers.Search.export(exportType ?= "csv", version ?= "brief")
 
 POST    /search/reset/facets				controllers.Search.resetFacets(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
 
@@ -41,10 +41,11 @@ GET     /search/mysearches                  controllers.Account.mySearches
 GET     /search/mysearches/save             controllers.Account.saveSearch(name, description, summary, url)
 POST    /search/mysearches/:id/delete       controllers.Account.deleteSearch(id:Long)
 
-GET     /search/mycorpora                  	controllers.Account.myCorpora
-GET     /search/mycorpora/save             	controllers.Account.saveCorpus(name, description)
-POST    /search/mycorpora/:id/delete       	controllers.Account.deleteCorpus(id:Long)
-GET     /search/mycorpora/saveResources    	controllers.Account.saveResources(corpusId, resources)
+GET     /search/mycorpora                  		controllers.Account.myCorpora
+GET     /search/mycorpora/save             		controllers.Account.saveCorpus(name, description)
+POST    /search/mycorpora/:id/delete       		controllers.Account.deleteCorpus(id:Long)
+GET     /search/mycorpora/resources/save    	controllers.Account.saveResources(corpusId, resources)
+POST    /search/mycorpora/resource/:id/delete	controllers.Account.deleteResource(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
 

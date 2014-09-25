@@ -2,6 +2,7 @@ package models;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import javax.persistence.Column;
 
 import play.db.ebean.Model;
 
@@ -33,17 +35,21 @@ public class Resource extends Model {
     public String title;
     
     public String url;
+
+    @Column(name = "waybackdate")
+    public Date waybackDate;
     
     @Version
     public Timestamp lastUpdate;
 
     public static Model.Finder<String,Resource> find = new Model.Finder<String,Resource>(String.class, Resource.class);
 
-    public Resource(String title, String url, String resource_id) {
+    public Resource(String title, String url, String resource_id, Date waybackDate) {
 		super();
 		this.title = title;
 		this.url = url;
 		this.resource_id = resource_id;
+		this.waybackDate = waybackDate;
 	}
 
 	public static List<Resource> findByCorpus(Corpus corpus) {
@@ -56,7 +62,7 @@ public class Resource extends Model {
         return find.all();
     }
 
-    public static Resource find(Long resourceId) {
-    	return find.where().eq("resource_id", resourceId).findUnique();
+    public static Resource find(Long id) {
+    	return find.where().eq("id", id).findUnique();
     }
 }

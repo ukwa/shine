@@ -2,6 +2,7 @@
 
 @import helper._
 @import bootstrap.search._
+@import results._
 
 @implicitFieldConstructor = @{ FieldConstructor(searchInput.f) }
 
@@ -22,6 +23,8 @@
 
 	  		$('#current-url').text(window.location.search);
 	  		
+			$('#export-message').addClass('hide');
+			
 	  		// if facet.show=crawl_year
 	  		var facetShow = getURLParameter("facet.show");
 	  		if (facetShow) {
@@ -66,53 +69,111 @@
 				});
 			}
 
-			$('#search').on('click', function(event) {
+			var sample = 'Sample Mode';
+			var full = 'Full Mode';
+			
+			function switchModes(modeName) {
+				if (modeName == sample) {
+					$(this).html(full);
+					$(this).removeClass('btn-primary');
+					$(this).addClass('btn-success');
+					$('#modeValue').val('full');
+				} else {
+					$(this).html(sample);
+					$(this).addClass('btn-primary');
+					$(this).removeClass('btn-success');
+					$('#modeValue').val('sample');
+				}
+			}
+			
+			//read back in the search mode
+			var mode = getURLParameter('mode');
+			if (mode) {
+				$('#modeValue').val(mode);
+				if (mode == 'full') {
+					$('#mode').html(full);
+					$('#mode').removeClass('btn-primary');
+					$('#mode').addClass('btn-success');
+				}
+			} else {
+				// default mode
+				$('#modeValue').val('');
+				$('#mode').html(sample);
+				$('#mode').addClass('btn-primary');
+				$('#mode').removeClass('btn-success');
+			}
+			
+			$('#mode').on('click', function(event) {
+				var modeName = $(this).html();
+				if (modeName == sample) {
+					$(this).html(full);
+					$(this).removeClass('btn-primary');
+					$(this).addClass('btn-success');
+					$('#modeValue').val('full');
+				} else {
+					$(this).html(sample);
+					$(this).addClass('btn-primary');
+					$(this).removeClass('btn-success');
+					$('#modeValue').val('');
+				}
+			});
+			
+			$('#search').on('click', function() {
+				doSearch();
+			});
+			
+			function resetFacets() {
+				$('#reset-facets').on('click', function(event) {
+					if ($('#search-form').valid()) {
+						
+						//var url = "search" + window.location.search;
+	
+						// reset non-default facets
+						//url = url.replace("&facet.fields=crawl_year", '').replace("&facet.fields=public_suffix", '');
+						//&facet.fields=crawl_year
+						//&f.crawl_year.facet.sort=
+						//&facet.fields=public_suffix
+						//&f.public_suffix.facet.sort=
+						//&facet.in.public_suffix=%22org.uk%22
+						
+						//&action=resetfacets&query=wikipedia&sort=content_type_norm&order=asc
+						//console.log(url);
+						if ($('#addFacet').val() == "") {
+							$('#addFacet').prop("disabled", true);				
+						}
+						modalLoader()
+						clearFacets();
+						resetFacets();
+					    $('#action').val('resetfacets');
+		
+						$('#search-form').submit();
+					}
+				});
+			}
+			
+			function doSearch() {
 				if ($('#search-form').valid()) {
 					if ($('#addFacet').val() == "") {
 						$('#addFacet').prop("disabled", true);
-						
 					}
-				    $('#modalLoader').modal({
-				        backdrop: true,
-				        keyboard: true
-				    });
+					if ($('#modeValue').val() == "") {
+						$('#modeValue').prop("disabled", true);
+					}
+					if ($('#tab').val() == "") {
+						$('#tab').prop("disabled", true);
+					}
+					
+					processSelectedResources();
 				    $('#action').val('search');
+
+					modalLoader();
 				    // add to parameters then submit
 				    // &facet.fields=postcode_district
 				    
 					$('#search-form').submit();
 				}
-			});
-			
-			$('#reset-facets').on('click', function(event) {
-				if ($('#search-form').valid()) {
-					
-					//var url = "search" + window.location.search;
 
-					// reset non-default facets
-					//url = url.replace("&facet.fields=crawl_year", '').replace("&facet.fields=public_suffix", '');
-					//&facet.fields=crawl_year
-					//&f.crawl_year.facet.sort=
-					//&facet.fields=public_suffix
-					//&f.public_suffix.facet.sort=
-					//&facet.in.public_suffix=%22org.uk%22
-					
-					//&action=resetfacets&query=wikipedia&sort=content_type_norm&order=asc
-					//console.log(url);
-					if ($('#addFacet').val() == "") {
-						$('#addFacet').prop("disabled", true);				
-					}
-				    $('#modalLoader').modal({
-				        backdrop: true,
-				        keyboard: true
-				    });
-					clearFacets();
-					resetFacets();
-				    $('#action').val('resetfacets');
-	
-					$('#search-form').submit();
-				}
-			});
+			}
 			
 			function buildDefaultFacets() {
 			    var crawl_year = $("<input>")
@@ -176,17 +237,35 @@
 					    }
 
 					});
+				});
+				
+				createSummaryExclusions();
 
+			}
 
+			function actionButtons() {
+				$('.excludeButton').on('click', function(event) {
+					event.preventDefault();
+					console.log('exclude');
+					$('input.resource').each(function() {
+						$(this).attr('name', 'exclude');
+					});
+					doSearch();
+				});
+				$('.excludeHostButton').on('click', function(event) {
+					event.preventDefault();
+					console.log('exclude host');
+					$('input.resource').each(function() {
+						var host = $(this).attr('host');
+						$(this).val(host);
+						$(this).attr('name', 'excludeHost');
+					});
+					doSearch();
 				});
 			}
 			
-			$(".dropdown-menu li a").click(function() {
-				var text = $(this).parents(".input-group-btn").find('.btn').text($(this).text());
-				var value = $(this).parents(".input-group-btn").find('.btn').val($(this).text());
-				console.log(text + "-" + value);
-			});
-			
+			resetFacets();
+			searchTabs();
 			facetOptions();
 			showFacets();
 			saveSearch();
@@ -194,132 +273,12 @@
 			validateSearchForm();
 			applyInverts();
 			csvLink();
+			createSummary();
+			resetExcluded();
+			actionButtons();
 			
-			@if(q != null && q.res.getResults().isEmpty()) {
-				//console.log('no results');
-				$('#summary').addClass('hide');
-			} else {
-				createSummary();
-			}
-			
-/*			var exclusions = getURLParameters('exclude');
-			console.log("exclusions: "+ exclusions);
-			$("input[name='exclude']").each(function() {
-				var checkBox = $(this);
-				var found = $.inArray(checkBox.val(), exclusions) > -1;
-				if (found) {
-					checkBox.attr('checked', 'checked');
-				}
-			});*/
 		});
 	</script>
-}
-
-@getName(facetName: String) = @{
-    if (cachedFacets != null) {
-		cachedFacets.get(facetName) match {
-	      case Some(value) => { value.getValue }
-	      case None => { println("nothing") }
-		}
-	}
-}
-
-@getSortableFacet(facetName: String) = @{
-    if (sortableFacets != null) {
-		sortableFacets match {
-	      case List(value) => { 
-	      	if (value.equals(facetName)) {
-	      		value
-	      	} else {
-	      		null
-	      	}
-	      }
-	      case _ => { null }
-		}
-	}
-}
-
-@getSelected(facetName: String, value: String) = @{
-    if (q.menu != null) {
-    	// if contained in menu list then set it
-    	// f.public_suffix.facet.sort=index, f.crawl_year.facet.sort=index
-    	// facet.out.public_suffix
-    	var prop = q.menu.get(facetName)
-//    	println(facetName + "=" + value)
-    	if(prop != null) {
-    		if(prop.equals(value)) {
-	    		println("selected: " + facetName + "=" + prop + " - " + value)
-				<span class='glyphicon glyphicon-ok'></span>
-			}
-		}
-	}
-}
-
-@****************************************
-* Helper generating navigation links    *
-****************************************@
-@link(pageNo:Int, newSortBy:String) = @{
-    
-    var sortBy = currentSortBy
-    var order = currentOrder
-    
-    if(newSortBy != null) {
-        sortBy = newSortBy
-        if(currentSortBy == newSortBy) {
-            if(currentOrder == "asc") {
-                order = "desc"
-            } else {
-                order = "asc"
-            }
-        } else {
-            order = "asc"
-        }
-    }
-
-    // Generate the link
-    routes.Search.search(q.query, pageNo, sortBy, order)
-}
-
-@pagination = {
-	@if(currentPage != null && currentPage.getTotalItems > 0) {
-		<div class="text-center paging-tabs">
-			<ul class="pagination">
-				@if(currentPage.hasPreviousPage) {
-	            	<li class="prev">
-	            		<a href="@link(currentPage.getCurrentPage-1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage-1)" class="paging" data-toggle="tooltip" data-placement="left" title="Page @(currentPage.getCurrentPage-1)">&laquo;</a>
-	                </li>
-	            } else {
-	                <li class="prev disabled">
-	                    <a class="paging">&laquo;</a>
-	                </li>
-	            }
-				@for(index <- currentPage.getPagesList) {
-					@if(index == currentPage.getCurrentPage) {
-						@if(index == currentPage.getMaxViewablePages) {
-							<span class="max-viewable-reached hide"></span>
-						}
-						<li class="active current" id="list-@(index)"><a href="#" class="paging" id="page-@(index)">@(currentPage.getCurrentPage) <span class="sr-only">(current)</span></a></li>
-					} else {
-						<li id="list-@(index)"><a href="@link(index, null)@(q.responseParameters)" id="page-@(index)" class="paging">@(index)</a></li>
-					}
-				}
-	        	@if(currentPage.hasNextPage && !currentPage.hasMaxViewablePagedReached) {
-	                <li class="next" id="list-@(index)">
-	                    <a href="@link(currentPage.getCurrentPage+1, null)@(q.responseParameters)" id="page-@(currentPage.getCurrentPage+1)" class="paging" data-toggle="tooltip" data-placement="right" title="Page @(currentPage.getCurrentPage+1)">&raquo;</a>
-	                </li>
-	            } else {
-	                <li class="next disabled">
-	                    <a class="paging">&raquo;</a>
-	                </li>
-				}
-			</ul>
-			@if(user != null) {
-				<div class="form-group pull-right save-right">
-					<button type="button" class="btn btn-primary save-right save-corpus" name="action" value="corpus-save" data-toggle="tooltip" data-placement="right" title="Corpus Save">Save Selected</button>
-			    </div>
-			}
-		</div>
-	}
 }
 
 @main(title, styles, scripts, user, pageName) {
@@ -333,123 +292,18 @@
 			<div class="row">
 				@if(q != null) {
 					<div class="col-md-4 col-sm-4">
-						<div class="panel panel-default">
-								<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
-								@if(currentPage != null) {
-									<input type="hidden" name="page" value="@(currentPage.getCurrentPage)" />
-								}
-								<div class="padding-5 pull-right">
-									<button class="facet-sort btn btn-primary btn-xs" type="button" value="value" id="facet-sort-value" data-toggle="tooltip" data-placement="top" title="Sort by Index">
-										<span class="glyphicon glyphicon-sort-by-alphabet"></span>
-									</button>
-									<button class="facet-sort btn btn-primary btn-xs" type="button" value="count" id="facet-sort-count" data-toggle="tooltip" data-placement="top" title="Sort by Count">
-										<span class="glyphicon glyphicon-sort-by-order-alt"></span>
-									</button>
-								</div>
-							
-								@if(q.res.getFacetFields() != null) {
-									@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
-										<div class="panel-body @(fc.getName())">
-						    				<div class="facet-main">
-					        					<a class="facet-heading"><strong>@getName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
-					        					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
-					        					<input type="hidden" name="invert" value="" id="invert_@(fc.getName())">
-												<div class="btn-group">
-													<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-														<span class="glyphicon glyphicon-cog"></span>
-													</button>
-													<ul class="dropdown-menu" role="menu">
-														@if(getSortableFacet(fc.getName) != null) {
-															<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+fc.getName()+".facet.sort", "index")</a></li>
-															<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+fc.getName()+".facet.sort", "count")</a></li>
-														}
-														<li><a href="#" class="facet-invert" id="invertmenu_@(fc.getName())">(+-) Exclude selected values</a></li>
-														<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(fc.getName(), "facet-remove")</a></li>
-														<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(fc.getName(), "facet-search")</a></li>
-													</ul>
-												</div>
-						    				</div>
-						    				<div class="facet-index">
-					      						<ul class="list-unstyled facet-heading">
-													@for((f, i) <- fc.getValues().zipWithIndex) {
-														@if(i >= facetLimit) {
-					        								<li class="facet-options hide">
-														} else {
-					        								<li class="facet-options show" data-attr="default">
-														}
-					        								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
-					        								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-					        								<a class="facet-name">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span>
-					          								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-					          								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-														</li>
-												        <!-- dynamically add checked="true"? -->
-												        <!-- OR use some kind of link constructor? -->
-													}
-													@if((fc.getValues().size - facetLimit) > 0) {
-														<li> 
-				        									<a id="@(fc.getName())" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
-				        								</li>
-			        								}
-													<li>
-			        									<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
-													</li>
-													
-					    						</ul>
-												<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
-													<span class="input-group-btn">
-			        									<button class="add-facet-button btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
-			      									</span>
-													<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
-													<span class="input-group-sm input-group-addon">
-														<a href="#" title="Include" class="add-facet-value">
-															<span class="glyphicon glyphicon-plus-sign"></span>
-														</a>&nbsp;
-														<a href="#" title="Exclude" class="remove-facet-value">
-															<span class="glyphicon glyphicon-minus-sign"></span>
-														</a>
-													</span>
-													<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
-													</span>
-			
-												</div>
-						    				</div>
-						  				</div>
-									}
-								}
-								<div class="panel-body">
-									<div class="row pull-right">
-										<div class="col-md-12 col-sm-12">
-											@if(optionalFacets.size >= 1) {
-												<div class="input-group">
-													<select class="form-control" name="addFacet" id="addFacet">
-														<option value="" selected="selected">&#060;Please Select&#062;</option>
-														@for((key, value) <- optionalFacets) {
-															<option value="@key">@value.getValue()</option>
-														}
-													</select>
-													<span class="input-group-btn">
-														<button id="add-facet" class="btn btn-primary" type="button" name="action" value="add-facet" data-toggle="tooltip" data-placement="top" title="Add Facet to the above list"><span>Add Facet</span> <span class="glyphicon glyphicon-plus"></span></button>
-													</span>
-												</div><!-- /input-group -->
-												<input type="hidden" name="action" value="search" id="action" />
-											}
-										</div>
-									</div>
-									<div class="row pull-right reset-facets">
-										<div class="col-md-12 col-sm-12">
-											<button id="reset-facets" class="btn btn-primary" type="button" name="action" value="reset-facets" data-toggle="tooltip" data-placement="left" title="Resets Optional Facets"><span>Reset All Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
-										</div>
-									</div>
-								</div>
-						</div>
+						@facets(user, q, currentPage, facetLimit, optionalFacets, cachedFacets, sortableFacets, corpora)
 					</div>
 			
 					<div class="col-md-8 col-sm-8">
 						<div class="panel panel-default">
 							<div class="panel-body">
 					   			<div class="input-group">
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Sample Mode</button>
+									</span>
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
+					   				<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
 										<button type="button" class="btn btn-primary" id="search" name="action" value="search">Search</button>
 										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
@@ -468,6 +322,9 @@
 								<ul id="search-summary">
 								</ul>
 							</div>
+							<div class="alert alert-danger alert-dismissible" id="export-message" role="alert">
+								<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							</div>
 						</div>					
 	
 						<div class="padding-20 hide" id="max-view-reached">
@@ -476,76 +333,25 @@
 								Maximum number of results reached
 							</div>
 						</div>
+
+						@resultsTabs("results")
 									
-						<div class="panel panel-default">
-							<div class="panel-heading filter-heading">
-	                            <h4 class="panel-title pull-left filter-heading-title">
-	                            @if(currentPage != null) {
-	                                Results <span id="displayingXOfY">@currentPage.getDisplayXtoYofZ(" to "," of ")</span>
-	                            }
-	                            </h4>
-	                            <span class="hide" id="current-url"></span>
-	                            <div class="form-inline pull-right">
-	                            	@if(q != null && !q.res.getResults().isEmpty()) {
-		                            	<div class="form-group">
-		                            		<button type="button" id="csv-export" class="btn btn-primary" name="action" value="csv" data-toggle="tooltip" data-placement="top" title="Export Standard Version">CSV</button>
-		                            	</div>
-	                            	}
-									<div class="form-group">
-										<select class="form-control" name="sort" id="sort">
-											<!-- get from some where -->
-											<option value="content_type_norm">Title</option>
-											<option value="crawl_date">Crawl Date</option>
-											<option value="content_type_norm">Content</option>
-											<option value="domain">Domain</option>
-											<option value="sentiment_score">Score</option>
-										</select>
-									</div>
-									<div class="form-group">
-										<select class="form-control" name="order" id="order">
-											<option value="asc">Asc</option>
-											<option value="desc">Desc</option>
-										</select>
-									</div>
-								</div>
-							</div>
-	
-							<div class="panel-body">
-								@pagination
-		
-								<div id="result-set">
-									@if(q != null) {
-										@for((d, index) <- q.res.getResults().zipWithIndex) {
-											<div class="list-group">
-												<span class="list-group-item" href="#">
-													<h4 class="list-group-item-heading">
-														@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
-													</h4>
-													<div class="checkbox pull-right">
-														<input type="checkbox" name="selectedResource" value="@d.getFirstValue("id")" data-toggle="tooltip" data-placement="top" title="Select" class="resource">
-													</div>
-													<p class="list-group-item-text">
-															@d.getFirstValue("crawl_date")<br />
-															@d.getFirstValue("content_type_norm")<br />
-															@d.getFirstValue("domain")<br />
-															@d.getFirstValue("sentiment_score")
-													</p>
-												</span>
-											</div>
-										}
-									}
-								</div>
-								@pagination
-							</div>
-						</div>
-	
+						<div class="padding-20">
+							<div id="results">@resultsPage(user, q, currentPage, currentSortBy, currentOrder)</div>
+							<div id="concordance">@concordancePage(user, q, currentPage, currentSortBy, currentOrder)</div>
+						</div>	
 					</div>
 				} else {
 					<div class="col-md-12 col-sm12">
 						<div class="panel panel-default">
 							<div class="panel-body">
 					   			<div class="input-group">
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
+										<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
+									</span>
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
+					   				<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
 										<button id="search" type="button" class="btn btn-primary" name="action" value="search">Search</button>
 										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
@@ -559,9 +365,10 @@
 					</div>
 				}
 			</div>
+			<input type="hidden" name="mode" value="normal" id="modeValue" />
 		}
 	</div>
-	<input type="hidden" id="export_url" value="@routes.Search.exportSearch()">
+	<input type="hidden" id="export_url" value="@routes.Search.export()">
 	
 	@saveSearchModal()
 	@modalLoader()

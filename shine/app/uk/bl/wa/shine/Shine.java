@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +30,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.Logger;
 import play.libs.Json;
 import uk.bl.wa.shine.model.FacetValue;
+import uk.bl.wa.shine.model.SearchData;
 import uk.bl.wa.shine.service.FacetService;
 import uk.bl.wa.shine.service.FacetServiceImpl;
 
@@ -41,13 +41,18 @@ import uk.bl.wa.shine.service.FacetServiceImpl;
 public class Shine extends Solr {
 
 	private int perPage;
-
+	private int csvMaxLimit;
+	private int csvIntervalLimit;
+	private String shards;
 	private FacetService facetService = null;
 
 	public Shine(play.Configuration config) {
 		super(config);
 		this.facetService = new FacetServiceImpl(config);
 		this.perPage = config.getInt("per_page");
+		this.csvMaxLimit = config.getInt("csv_max_limit");
+		this.csvIntervalLimit = config.getInt("csv_interval_limit");
+		this.shards = config.getString("shards");
 	}
 
 	private SolrQuery buildInitialParameters(Query query) {
@@ -69,10 +74,18 @@ public class Shine extends Solr {
 			start = 0;
 		}
 
-		solrParameters.set("start", start);
+		solrParameters.setStart(start);
+		// may make this configurable
+		solrParameters.setFacetLimit(10);
 		
 		solrParameters.setParam(FacetParams.FACET_METHOD, FacetParams.FACET_METHOD_enum);
 		solrParameters.setParam(FacetParams.FACET_ENUM_CACHE_MINDF, "25");
+		
+		// add shard is mode set to long
+		if (StringUtils.isNotEmpty(query.mode) && StringUtils.equalsIgnoreCase(query.mode, "full") && StringUtils.isNotEmpty(shards)) {
+			Logger.info("FULL MODE");
+			solrParameters.setParam("shards", shards);
+		}
 		
 		Logger.info("facet methods set");
 		// Sorts:
@@ -98,76 +111,78 @@ public class Shine extends Solr {
 		return this.graph(query, buildInitialParameters(query));
 	}
 	
-	public Query export(Query query) throws SolrServerException {
+	public List<SearchData> export(Query query) throws SolrServerException {
 		Query q = this.search(query, 0);
 		int total = (int)q.res.getResults().getNumFound();
+		
+		Logger.info("true total: " + total);
+		
+		if (total > this.csvMaxLimit) {
+			total = this.csvMaxLimit;
+		}
 		Logger.info("exporting total: " + total);
-		return this.search(query, total);
+		
+		SolrQuery solrParameters = new SolrQuery(query.query);
+		solrParameters.setRows(this.csvIntervalLimit);
+		
+//		start 0
+//		start=10
+//		start 20
+//		
+//		&rows=10
+//		0, 500, 1000, 1500
+		int times = total / this.csvIntervalLimit;
+		
+		int start = 0;
+		
+		List<SearchData> exportDataList = new ArrayList<SearchData>();
+		for (int i = 0; i < times; i++) {
+			solrParameters.setStart(start); // than increment
+			Query search = doSearch(query, solrParameters);
+			Logger.info("Export Query: " + solrParameters.toString());
+			Logger.info(total + " / " +  this.csvIntervalLimit + "  = " + times + " ... start " + start);
+			for (SolrDocument document : search.res.getResults()) {
+				String title = document.getFirstValue("title") == null ? "" : document.getFirstValue("title").toString();
+				String host = document.getFirstValue("host") == null ? "" : document.getFirstValue("host").toString();
+				String publicSuffix = document.getFirstValue("public_suffix") == null ? "" : document.getFirstValue("public_suffix").toString();
+				String crawlYear = document.getFirstValue("crawl_year") == null ? "" : document.getFirstValue("crawl_year").toString();
+				String contentTypeNorm = document.getFirstValue("content_type_norm") == null ? "" : document.getFirstValue("content_type_norm").toString();
+				String contentLanguage = document.getFirstValue("content_language") == null ? "" : document.getFirstValue("content_language").toString();
+				String crawlDate = document.getFirstValue("crawl_date") == null ? "" : document.getFirstValue("crawl_date").toString();
+				String waybackDate = document.getFirstValue("wayback_date") == null ? "" : document.getFirstValue("wayback_date").toString();
+				String url = document.getFirstValue("url") == null ? "" : document.getFirstValue("url").toString();
+				SearchData searchData = new SearchData(title, host, publicSuffix, crawlYear, contentTypeNorm, contentLanguage, crawlDate, url, waybackDate);
+				exportDataList.add(searchData);
+			}
+			start += this.csvIntervalLimit;
+		}
+		return exportDataList;
 	}
 
 	private Query search(Query query, SolrQuery solrParameters, int rows) throws SolrServerException {
 		
-		Map<String, List<String>> parameters = query.getParameters();
-		
-	    List<String> actionParameters = parameters.get("action");
+	    solrParameters.setHighlight(true).setHighlightSnippets(5); //set other params as needed
+	    
+	    solrParameters.setHighlightSimplePre("<em>");
+	    solrParameters.setHighlightSimplePost("</em>");
+	    
+	    solrParameters.addHighlightField("content,title");
+//	    solrParameters.setParam("hl.fl", "*");
+//	    solrParameters.setHighlightRequireFieldMatch(Boolean.TRUE);
 
-	    
-	    query.facetValues = facetService.getSelected();
-	    
-	    List<String> removeFacets = parameters.get("removeFacet");
-	    
-	    // check incoming parameter list
-	    Logger.info("actionParameters: " + actionParameters);
-	    Logger.info("parameters: " + parameters);
-	    
-	    if (actionParameters != null) {
-	    	
-		    String action = actionParameters.get(0);
-		    
-	    	// got through all that state removeFacet=[facet1, facet2, etc] and remove from list
-		    if (removeFacets != null) {
-			    for (String removeFacet : removeFacets) {
-				    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
-				    // from url parameters
-					query.facets.remove(removeFacet);
-				    // for filtering
-				    query.facetValues.remove(removeFacet);
-				    // for dropdown list
-				    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
-				    Logger.info("removing>>>> " + selectedFacetValue.getName());
-			    }
-		    }
-	    	
-			if (action.equals("add-facet")) {
-			    String addFacet = parameters.get("addFacet").get(0);
-			    
-			    FacetValue addFacetValue = getFacetValueByName(addFacet);
-			    
-			    // TODO: if it doesn't already haveit in there
-			    if (!query.facets.contains(addFacet)) {
-				    // from url parameters
-				    query.facets.add(addFacet);
-				    // for filtering
-				    query.facetValues.put(addFacetValue.getName(), addFacetValue);
-				    // for dropdown list
-				    facetService.getOptionals().remove(addFacet);
-			    }
-			} else if (action.equals("search")) {
-				//parameters.setParam("wt", "json");
-				// get the defaults
-				// facets that come from url parameters
-			    String[] facets = query.facets.toArray(new String[query.facets.size()]);
-			    
-				for (String facet : facets) {
-				    FacetValue selectedFacetValue = getFacetValueByName(facet);
-				    query.facets.add(facet);
-				    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
-				}
-
-			}
-	    }
-		
 		solrParameters.setRows(rows);
+//		&hl=true
+//		&hl.fl=*
+//		&hl.simple.pre=%3Cem%3E
+//		&hl.simple.post=%3C/em%3E
+//		&hl.snippets=5
+		
+//		&hl=true
+//		&hl.snippets=5
+//		&hl.simple.pre=%3Cem%3E
+//		&hl.simple.post=%3C%2Fem%3E
+//		&hl.fl=*
+//		&hl.requireFieldMatch=true
 		
 //		if (parameters.get("facet.sort") == null) {
 //			Logger.info("facet.sort: " + parameters.get("facet.sort"));
@@ -250,12 +265,92 @@ public class Shine extends Solr {
 
 		try {
 			// add everything to parameters for solr
-			if (solrParameters == null)
+			if (solrParameters == null) {
 				solrParameters = new SolrQuery();
+			}
+			
 			// The query:
-			// ?start=0&sort=content_type_norm+asc&q=wikipedia+crawl_date:[2009-06-01T00%3A00%3A00Z+TO+2011-06-01T00%3A00%3A00Z]&facet.field={!ex%3Dcrawl_year}crawl_year&facet.field={!ex%3Dpublic_suffix}public_suffix&facet=true&facet.mincount=1&rows=10
-			solrParameters.add("q", query.query);
-	
+			String q = query.query;
+
+		    query.facetValues = facetService.getSelected();
+		    
+			Map<String, List<String>> parameters = query.getParameters();
+		    List<String> actionParameters = parameters.get("action");
+		    List<String> removeFacets = parameters.get("removeFacet");
+		    
+		    // check incoming parameter list
+		    Logger.info("actionParameters: " + actionParameters);
+		    Logger.info("parameters: " + parameters);
+		    
+		    if (actionParameters != null) {
+		    	
+			    String action = actionParameters.get(0);
+			    
+		    	// got through all that state removeFacet=[facet1, facet2, etc] and remove from list
+			    if (removeFacets != null) {
+				    for (String removeFacet : removeFacets) {
+					    FacetValue selectedFacetValue = getFacetValueByName(removeFacet);
+					    // from url parameters
+						query.facets.remove(removeFacet);
+					    // for filtering
+					    query.facetValues.remove(removeFacet);
+					    // for dropdown list
+					    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
+					    Logger.info("removing>>>> " + selectedFacetValue.getName());
+				    }
+			    }
+		    	
+				if (action.equals("add-facet")) {
+				    String addFacet = parameters.get("addFacet").get(0);
+				    
+				    FacetValue addFacetValue = getFacetValueByName(addFacet);
+				    
+				    // TODO: if it doesn't already haveit in there
+				    if (!query.facets.contains(addFacet)) {
+					    // from url parameters
+					    query.facets.add(addFacet);
+					    // for filtering
+					    query.facetValues.put(addFacetValue.getName(), addFacetValue);
+					    // for dropdown list
+					    facetService.getOptionals().remove(addFacet);
+				    }
+				} else if (action.equals("search")) {
+					//parameters.setParam("wt", "json");
+					// get the defaults
+					// facets that come from url parameters
+				    String[] facets = query.facets.toArray(new String[query.facets.size()]);
+				    
+					for (String facet : facets) {
+					    FacetValue selectedFacetValue = getFacetValueByName(facet);
+					    if (selectedFacetValue != null) {
+						    query.facets.add(facet);
+						    query.facetValues.put(selectedFacetValue.getName(), selectedFacetValue);
+					    }
+					}
+					// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
+					StringBuilder selected = new StringBuilder();
+					for (String value : query.getExcludes()) {
+						String[] values = value.split(";;;");
+						String id = values[0].trim();
+						selected.append("AND -id:").append("\"").append(id).append("\"").append(" ");
+					}
+					Logger.info("excluded: " + selected.toString().trim());
+					
+					// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
+//					StringBuilder selected = new StringBuilder();
+					for (String value : query.getExcludeHosts()) {
+						selected.append("AND -host:").append("\"").append(value).append("\"").append(" ");
+					}
+					Logger.info("excludeHost: " + selected.toString().trim());
+					
+					if (StringUtils.isNotEmpty(selected.toString())) {
+						q = q + " " + selected.toString().trim();
+					}
+				}
+		    }
+
+			solrParameters.add("q", q);
+			
 			Map<String, FacetValue> facetValues = query.facetValues;
 			
 			// should get updated list of added/removed facet values
@@ -274,49 +369,14 @@ public class Shine extends Solr {
 	//			parameters.addFacetField("{!ex=" + facet + "}" + facet);
 	//		}
 			
-			Map<String, List<String>> filters = query.filters;
-	
 			solrParameters.setFacetMinCount(1);
-			List<String> fq = new ArrayList<String>();
-			for (String filterKey : filters.keySet()) {
-				String field = filterKey;
-//				if (!param.equals("facet.sort")) {
-//					parameters.setFacetSort(FacetParams.FACET_SORT_INDEX);
-//				}
-				// Excluded tags are ANDed together:
-				if (filterKey.startsWith("-")) {
-					field = field.replaceFirst("-", "");
-					for (String val : filters.get(filterKey)) {
-						if (val.isEmpty()) {
-							Logger.info("No Value just filterKey: " + filterKey + " - "+ val);
-							fq.add("{!tag=" + field + "}" + filterKey);
-						} else {
-							fq.add("{!tag=" + field + "}" + filterKey + ":" + val); // TODO
-						}
-																			// Escape
-																			// correctly?
-					}
-				} else {
-					// Included tags are ORed together:
-					String filter = "{!tag=" + field + "}" + filterKey + ":(";
-					int counter = 0;
-					for (String val : filters.get(filterKey)) {
-						if (counter > 0)
-							filter += " OR ";
-						filter += "" + val + ""; // TODO Escape correctly?
-						counter++;
-	
-					}
-					filter += ")";
-					fq.add(filter);
-				}
-			}
-			if (fq.size() > 0) {
-				solrParameters.setFilterQueries(fq.toArray(new String[fq.size()]));
-			}
-	
+
+			// give it a new list to add to
+			List<String> fq = processFilterQueries(solrParameters, query.filters, new ArrayList<String>());
+			
 			try {
 				processExcluded(solrParameters, query.excluded);
+				
 				processWebsiteTitle(solrParameters, query.websiteTitle);
 				if (StringUtils.isNotEmpty(query.pageTitle)) {
 					solrParameters.addFilterQuery("title:" + query.pageTitle);
@@ -333,9 +393,20 @@ public class Shine extends Solr {
 				processDateRange(solrParameters, query.dateStart, query.dateEnd);
 				processProximity(solrParameters, query.proximity);
 				
-				processHostDomainPublicSuffix(solrParameters, query.hostDomainPublicSuffix);
+				if (StringUtils.isNotEmpty(query.hostDomainPublicSuffix)) {
+//					{!tag=host}host:("theregister.co.uk")
+//					{!tag=public_suffix}public_suffix:("co.uk" OR "theregister.co.uk")
+//					{!tag=domain}domain:("theregister.co.uk")
+					Map<String, List<String>> filters = new HashMap<String, List<String>>();
+					List<String> fqList = new ArrayList<String>();
+					fqList.add(query.hostDomainPublicSuffix);
+					filters.put("or-host", fqList);
+					filters.put("or-domain", fqList);
+					filters.put("or-public_suffix", fqList);
+					processFilterQueries(solrParameters, filters, fq);
+				}
+//				processHostDomainPublicSuffix(solrParameters, query.hostDomainPublicSuffix);
 //				processUrlHostDomainPublicSuffix(parameters, query.urlHostDomainPublicSuffix);
-				
 			} catch (ParseException e) {
 				throw new SolrServerException(e);
 			}
@@ -355,42 +426,115 @@ public class Shine extends Solr {
 				}
 			}
 			
+			if (fq.size() > 0) {
+				solrParameters.setFilterQueries(fq.toArray(new String[fq.size()]));
+			}
 			
 			Logger.info("Query: " + solrParameters.toString());
+			
 			// Perform the query:
 			QueryResponse res = solr.query(solrParameters);
+			
 			Logger.info("QTime: " + res.getQTime());
 			Logger.info("Response Header: " + res.getResponseHeader());
 			
-			
-			
-	//		List<FacetField> fields = res.getFacetFields();
-	//		for (FacetField field : fields) {
-	//			FacetValue fv = facetService.getAll().get(field.getName());
-	//			Logger.info("fv: " + fv.getName() + " - " + fv.getValue());
-	//		}
 			query.res = res;
 			query.processQueryResponse();
 			
-			// might take a long time
-			List<SolrDocument> docs = query.res.getResults();
-			
-			// filter exclusions
-			if (!query.res.getResults().isEmpty()) {
-				for (Iterator<SolrDocument> iterator = docs.iterator(); iterator.hasNext(); ) {
-					SolrDocument doc = iterator.next();
-					if (query.getSelectedResources().contains(String.valueOf(doc.getFirstValue("id")))) {
-						Logger.info("matched: " + String.valueOf(doc.getFirstValue("id")) + " - " + doc.getFirstValue("title"));
-				        iterator.remove();
-					}
-				}
-			}
 		} catch(ParseException e) {
 			throw new SolrServerException(e);
 		}
+
+//	    Iterator<SolrDocument> iter = query.res.getResults().iterator();
+//
+//	    while (iter.hasNext()) {
+//	      SolrDocument resultDoc = iter.next();
+//
+//	      Object title = resultDoc.getFieldValue("title");
+//	      Object subject = resultDoc.getFieldValue("subject");
+//	      Object description = resultDoc.getFieldValue("description");
+//	      Object comments = resultDoc.getFieldValue("comments");
+//	      Object author = resultDoc.getFieldValue("author");
+//	      Object url = resultDoc.getFieldValue("url");
+//	      
+//	      Logger.info("title: " + title);
+//	      Logger.info("subject: " + subject);
+//	      Logger.info("description: " + description);
+//	      Logger.info("comments: " + comments);
+//	      Logger.info("author: " + author);
+//	      Logger.info("url: " + url);
+
+//	      String id = (String) resultDoc.getFieldValue("id"); //id is the uniqueKey field
+//	      Logger.info("id: " + id);
+
+//	      if (query.res.getHighlighting().get(id) != null) {
+//	        	Logger.info("title: " + query.res.getHighlighting().get(id).get("title"));
+//	        	Logger.info("content: " + query.res.getHighlighting().get(id).get("content_text"));
+//	      }
+//	    }		
+//		
+//		Map<String, Map<String, List<String>>> highlights = query.res.getHighlighting();
+//
+//		for (Entry<String, Map<String, List<String>>> entry : highlights.entrySet()) {
+//			Logger.info("Key : " + entry.getKey());
+//			
+//		}
 		return query;
 	}
 
+	private List<String> processFilterQueries(SolrQuery solrParameters, Map<String, List<String>> filters, List<String> fq) {
+		
+		Logger.info("filters >>>>>>>> " + filters);
+		StringBuilder filterBuilder = new StringBuilder();
+		int filterCounter = 0;
+		for (String filterKey : filters.keySet()) {
+			
+			String field = filterKey;
+			// Excluded tags are ANDed together:
+			if (filterKey.startsWith("-")) {
+				field = field.replaceFirst("-", "");
+				for (String val : filters.get(filterKey)) {
+					if (val.isEmpty()) {
+						Logger.info("No Value just filterKey: " + filterKey + " - "+ val);
+						fq.add("{!tag=" + field + "}" + filterKey);
+					} else {
+						fq.add("{!tag=" + field + "}" + filterKey + ":" + val); // TODO
+					}
+				}
+			} else if (filterKey.startsWith("or-")) {
+				field = field.replaceFirst("or-", "");
+//				{!tag=host}host:(theregister.co.uk)
+				for (String val : filters.get(filterKey)) {
+					if (filterCounter > 0) {
+						filterBuilder.append(" OR ");
+					}
+					filterBuilder.append("{!tag=").append(field).append("}").append(field).append(":").append(val);
+					filterCounter++;
+				}
+			} else {
+				// Included tags are ORed together:
+				String filter = "{!tag=" + field + "}" + filterKey + ":(";
+				int counter = 0;
+				for (String val : filters.get(filterKey)) {
+					Logger.info("key: " + val);
+					if (counter > 0)
+						Logger.info("counter: " + counter);
+						filter += " OR ";
+					filter += "" + val + ""; // TODO Escape correctly?
+					counter++;
+
+				}
+				filter += ")";
+				fq.add(filter);
+			}
+		}
+		if (filterBuilder.length() > 0) {
+			fq.add(filterBuilder.toString());
+		}
+		Logger.info("OR >>> " + filterBuilder.toString());
+		return fq;
+	}
+	
 	private void processDateRange(SolrQuery parameters, String dateStart,
 			String dateEnd) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -429,7 +573,9 @@ public class Shine extends Solr {
 						.append(proximity.getPhrase2());
 			}
 			Logger.info("builder parameters: " + builder.toString());
-			parameters.setQuery(builder.toString());
+			String currentQuery = parameters.getQuery();
+			parameters.setQuery(currentQuery + " " + builder.toString());
+			Logger.info("new query: " + parameters.getQuery());
 		}
 	}
 
@@ -442,6 +588,7 @@ public class Shine extends Solr {
 	}
 
 	private void processExcluded(SolrQuery parameters, String excluded) {
+		Logger.info("excluded: " + excluded);
 		if (StringUtils.isNotEmpty(excluded)) {
 			String[] exclusions = excluded.split(",");
 			for (String exclude : exclusions) {
@@ -453,7 +600,14 @@ public class Shine extends Solr {
 	private void processHostDomainPublicSuffix(SolrQuery parameters, String hostDomainPublicSuffix) {
 //		Host = 'host' or 'domain' depending on Solr index schema version.
 		if (StringUtils.isNotEmpty(hostDomainPublicSuffix)) {
+			
+//			{!tag=host}host:("theregister.co.uk")
+//			{!tag=public_suffix}public_suffix:("co.uk" OR "theregister.co.uk")
+//			{!tag=domain}domain:("theregister.co.uk")
+
+			parameters.add("host", hostDomainPublicSuffix);
 			parameters.add("domain", hostDomainPublicSuffix);
+			parameters.add("public_suffix", hostDomainPublicSuffix);
 		}
 	}
 

@@ -1,0 +1,18 @@
+@(level: String = "results")
+
+<ul class="nav nav-tabs">
+ 
+	@level match {
+	    
+	  case "results" => {
+	  	<li class="active" id="resultsTab"><a href="#">Results</a></li>
+		<li id="concordanceTab"><a href="#">Concordance</a></li>
+	  }
+	
+	  case "concordance" => {
+	  	<li><a href="#" id="resultsTab">Results</a></li>
+		<li class="active" id="concordanceTab"><a href="#">Concordance</a></li>
+	  }
+	}
+
+</ul>

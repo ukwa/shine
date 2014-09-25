@@ -1,0 +1,40 @@
+@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
+
+@pagination = {
+	@paginator(user, q, currentPage, currentSortBy, currentOrder, "advanced", "concordance")
+}
+
+@concordanceSnippets(d: org.apache.solr.common.SolrDocument, index: Int) = {
+	@concordanceSnippet(q, currentPage, d, index)
+}
+
+<div class="panel-body">
+
+	@pagination
+
+	<div id="concordance-set">
+	
+		<div class="list-group">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Domain</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>					  				
+					@if(q != null) {
+						@for((d, index) <- q.res.getResults().zipWithIndex) {
+							@(concordanceSnippets(d, index))
+						}
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	@pagination
+	
+</div>
+

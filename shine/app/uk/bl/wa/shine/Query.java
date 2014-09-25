@@ -83,11 +83,17 @@ public class Query {
 	
 	public String order;
 	
+	public String mode;
+	
 	// incoming parameters
 	public Map<String, List<String>> parameters;
 	
 	private List<String> selectedResources;
+
+	private List<String> excludes;
 	
+	private List<String> excludeHosts;
+
 	public Map<String,String> menu;
 	
 	public Query() {}
@@ -105,7 +111,7 @@ public class Query {
 	
 	public Query(String query, String proximityPhrase1, String proximityPhrase2, String proximity, 
 			String exclude, String dateStart, String dateEnd, String url, String hostDomainPublicSuffix, 
-		    String fileFormat, String websiteTitle, String pageTitle, String author, String collection, Map<String,List<String>> parameters) {
+		    String fileFormat, String websiteTitle, String pageTitle, String author, String collection, Map<String,List<String>> parameters, String mode) {
 		this.query = query;
 		this.proximity = new Proximity();
 		this.proximity.setPhrase1(proximityPhrase1);
@@ -122,6 +128,7 @@ public class Query {
 		this.author = author;
 		this.collection = collection;
 		this.parameters = parameters;
+		this.mode = mode;
 		this.init();
 	}
 
@@ -129,6 +136,8 @@ public class Query {
 		this.facets = new ArrayList<String>();
 		this.facetValues = new HashMap<String, FacetValue>();
 		this.selectedResources = new ArrayList<String>();
+		this.excludes = new ArrayList<String>();
+		this.excludeHosts = new ArrayList<String>();
 		this.menu = new HashMap<String,String>();
 		this.parseParameters();
 	}
@@ -165,10 +174,23 @@ public class Query {
 			}
 		}
 		
-//		if (parameters.get("facet.sort") != null) {
-//			String facetSort = parameters.get("facet.sort").get(0);
-//			Logger.info("facetSort: " + facetSort);
-//		}
+		if (parameters.get("exclude") != null) {
+			Iterator<String> iterator = parameters.get("exclude").iterator();
+			while (iterator.hasNext()) {
+				String exclude = iterator.next();
+				Logger.info("exclude >>>" + exclude);
+				excludes.add(exclude);
+			}
+		}
+
+		if (parameters.get("excludeHost") != null) {
+			Iterator<String> iterator = parameters.get("excludeHost").iterator();
+			while (iterator.hasNext()) {
+				String excludeHost = iterator.next();
+				Logger.info("excludeHost >>>" + excludeHost);
+				excludeHosts.add(excludeHost);
+			}
+		}
 		
 		// non facets
 
@@ -369,6 +391,14 @@ public class Query {
 
 	public List<String> getSelectedResources() {
 		return selectedResources;
+	}
+
+	public List<String> getExcludes() {
+		return excludes;
+	}
+
+	public List<String> getExcludeHosts() {
+		return excludeHosts;
 	}
 
 	private String responseFacetParameters() {

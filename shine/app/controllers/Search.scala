@@ -26,12 +26,10 @@ import scala.collection.mutable.MutableList
 import org.apache.solr.client.solrj.response.QueryResponse
 import org.apache.solr.client.solrj.response.RangeFacet
 import org.apache.solr.common.SolrDocument
-import scala.collection.JavaConverters._
 import models.User
 import views.Csv
 import java.util.Date
 import play.api.mvc.Result
-import scala.collection.JavaConverters
 
 object Search extends Controller {
 
@@ -40,7 +38,7 @@ object Search extends Controller {
       proximityPhrase1: Option[String], 
       proximityPhrase2: Option[String], 
       proximity: Option[String], 
-      exclude: Option[String], 
+      excludeWords: Option[String], 
       dateStart: Option[Date], 
       dateEnd: Option[Date], 
       url: Option[String],
@@ -49,7 +47,8 @@ object Search extends Controller {
       websiteTitle: Option[String],
       pageTitle: Option[String],
       author: Option[String],
-      collection: Option[String]
+      collection: Option[String],
+      mode: String
   )
 
   val searchForm = Form(
@@ -58,7 +57,7 @@ object Search extends Controller {
 	  "proximityPhrase1" -> optional(text),
 	  "proximityPhrase1" -> optional(text),
 	  "proximity" -> optional(text),
-	  "exclude" -> optional(text),
+	  "excludeWords" -> optional(text),
 	  "dateStart" -> optional(date("yyyy-MM-dd")),
 	  "dateEnd" -> optional(date("yyyy-MM-dd")),
 	  "url" -> optional(text),
@@ -67,7 +66,8 @@ object Search extends Controller {
 	  "websiteTitle" -> optional(text),
 	  "pageTitle" -> optional(text),
 	  "author" -> optional(text),
-	  "collection" -> optional(text)
+	  "collection" -> optional(text),
+	  "mode" -> text
 	)(SearchData.apply)(SearchData.unapply)
   )
 
@@ -80,6 +80,7 @@ object Search extends Controller {
   val maxNumberOfLinksOnPage = config.getInt("max_number_of_links_on_page")
   val maxViewablePages = config.getInt("max_viewable_pages")
   val facetLimit = config.getInt("facet_limit")
+  val webArchiveUrl = config.getString("web_archive_url")
   
   val sortableFacets = config.getConfig("sorts").asMap().keySet().toArray().toList
   println("sortableFacets" + sortableFacets)
@@ -104,7 +105,7 @@ object Search extends Controller {
    	
     val action = request.getQueryString("action")
     val form = searchForm.bindFromRequest(request.queryString)
-    
+
     println("action: " + action)
     
     action match {
@@ -133,8 +134,13 @@ object Search extends Controller {
 			}
 		}
 		case None => {
-			println("None")
-			Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
+		    println("no action do search")
+		    if (StringUtils.isNotBlank(query)) {
+		    	getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
+		    } else {
+				play.api.Logger.debug("blank query: " + query)
+				Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
+		    }
 		}
 	}
   }
@@ -148,7 +154,10 @@ object Search extends Controller {
 	println("menu selected: " + q.menu)
 			
 	pagination.update(totalRecords, pageNo)
-			    
+
+//	var highlights = q.res.getHighlighting()
+//	println("highlights: " + highlights);
+	
     Cache.getAs[Map[String, FacetValue]]("facet.values") match {
 	    case Some(value) => {
 	    	play.api.Logger.debug("getting value from cache ...")
@@ -162,19 +171,37 @@ object Search extends Controller {
     }
   }
   
-  def exportSearch() = Action { implicit request =>
-    var user : User = null
-	request.session.get("username").map { username =>
-	  	user = User.findByEmail(username.toLowerCase())
+  def export(exportType: String,  version: String) = Action { implicit request =>
+    println(exportType + " - " + version)
+	exportType match {
+    	case "csv" => {
+    		var user : User = null
+			request.session.get("username").map { username =>
+			  	user = User.findByEmail(username.toLowerCase())
+		    }
+			var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
+			val query = request.getQueryString("query").get
+			println("query: " + query)
+			val exportList = doExport(query, parameters).asScala.toList
+//			val totalRecords = q.res.getResults().getNumFound().intValue()
+    		version match {
+    		  case "brief" => {
+//				println("exporting to BRIEF CSV #: " + totalRecords)
+				// retrieve based on total records
+				Ok(views.csv.brief("Search", user, exportList, webArchiveUrl)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+    		  }
+    		  case "full" => {
+//				println("exporting to FULL CSV #: " + totalRecords)
+				// retrieve based on total records
+				Ok(views.csv.full("Search", user, exportList, webArchiveUrl)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+    		  }
+    		}
+      	}
+      	case _ => { 
+			Ok("")
+      	}
     }
-	var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
-	val query = request.getQueryString("query").get
-	println("query: " + query)
-	val q = doExport(query, parameters)
-	val totalRecords = q.res.getResults().getNumFound().intValue()
-	println("exporting to CSV #: " + totalRecords)
-	// retrieve based on total records
-	Ok(views.csv.export("Search", user, q)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+    
   }
 
   def getData(x: Option[String]) = x match {
@@ -183,11 +210,13 @@ object Search extends Controller {
   }
 
   def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
-    println("advanced_search")
     
     var user : User = null
+    var corpora  = List[Corpus]()
+
 	request.session.get("username").map { username =>
 	  	user = User.findByEmail(username.toLowerCase())
+	  	corpora = myCorpora(user)
     }
     
     val form = searchForm.bindFromRequest(request.queryString)
@@ -197,12 +226,13 @@ object Search extends Controller {
 
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
+
     println("Page #: " + pageNo)
     println("totalRecords #: " + totalRecords)
 
     pagination.update(totalRecords, pageNo)
 
-    Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form))
+    Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora))
   }
     
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
@@ -534,7 +564,7 @@ object Search extends Controller {
 	    getField("proximityPhrase1", parameters), 
 	    getField("proximityPhrase2", parameters), 
 	    getField("proximity", parameters), 
-	    getField("exclude", parameters), 
+	    getField("excludeWords", parameters), 
 	    getField("dateStart", parameters), 
 	    getField("dateEnd", parameters),  
 	    getField("url", parameters), 
@@ -544,16 +574,15 @@ object Search extends Controller {
 	    getField("pageTitle", parameters),  
 	    getField("author", parameters),  
 	    getField("collection", parameters),  
-	    parametersAsJava)
+	    parametersAsJava, null)
     
     solr.export(q)
   }
   
   def doSearchForm(form: Form[controllers.Search.SearchData], parameters: Map[String, Seq[String]]) = {
 	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
-	val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("exclude")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava)
+	val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("excludeWords")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava, getData(form.data.get("mode")))
 	println("form: " + form.data.get("action"))
-    println("doAdvancedForm: " + query)
     solr.search(query)
   }
 
@@ -773,7 +802,7 @@ object Search extends Controller {
   def myCorpora(user: User) = {
 	val corpora = models.Corpus.findByUser(user)
 	println("corpora size: " + corpora.size())
-	JavaConverters.asScalaBufferConverter(corpora).asScala.toList
+	corpora.asScala.toList
   }
 
 }
