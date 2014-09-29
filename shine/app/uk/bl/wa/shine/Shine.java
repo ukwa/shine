@@ -537,7 +537,13 @@ public class Shine extends Solr {
 	
 	private void processDateRange(SolrQuery parameters, String dateStart,
 			String dateEnd) throws ParseException {
+		Logger.info("processDateRange: " + dateStart + " - " + dateEnd);
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		// chrome issue
+		if (dateStart.contains("-") || dateEnd.contains("-")) {
+			formatter = new SimpleDateFormat("yyyy-MM-dd");
+			Logger.info("chrome data format");
+		}
 		Date dateObjStart = null;
 		Date dateObjEnd = null;
 		if (StringUtils.isNotEmpty(dateStart)) {

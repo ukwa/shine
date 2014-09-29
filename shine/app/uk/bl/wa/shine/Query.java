@@ -214,11 +214,13 @@ public class Query {
 			order = parameters.get("order").get(0);
 		}
 
-		if (parameters.get("datestart") != null) {
-			dateStart = parameters.get("datestart").get(0).replace("\"", "");
+		Logger.info("datestart >>>> " + parameters.get("dateStart"));
+		if (parameters.get("dateStart") != null) {
+			dateStart = parameters.get("dateStart").get(0).replace("\"", "");
+			Logger.info("changing date: " + dateStart);
 		}
-		if (parameters.get("dateend") != null) {
-			dateEnd = parameters.get("dateend").get(0).replace("\"", "");
+		if (parameters.get("dateEnd") != null) {
+			dateEnd = parameters.get("dateEnd").get(0).replace("\"", "");
 		}
 		Logger.info("filters: " + filters);
 	}
