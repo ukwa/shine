@@ -45,64 +45,52 @@ object InitialData {
     	val user = User.create("kinman.li@bl.uk", "secret")
     	user.roles.add(role)
     	user.save()
-    	getExternalUsers()
-    	
     }
+	getExternalUsers()
     
   }
   
   def getExternalUsers() {
 
-    val read = Permission.findByName("Read")
-    val role = new Role("Reader", "Reader")
-	role.permissions.add(read)
-	role.save()
-	
-	var user = User.create("alison.kay@northumbria.ac.uk", "secret")
-	user.roles.add(role)
-	user.save()
-	
-	user = User.create("r.cran@alumni.ucl.ac.uk", "secret")
-	user.roles.add(role)
-	user.save()
-	
-	user = User.create("fryerc@parliament.uk", "secret")
-	user.roles.add(role)
-	user.save()
-	
-	user = User.create("Gareth.Millward@lshtm.ac.uk", "secret")
-	user.roles.add(role)
-	user.save()
-	
-	user = User.create("H.Raffal@2006.hull.ac.uk", "secret")
-	user.roles.add(role)
-	user.save()
-	
-	user = User.create("helenlouisetaylor@gmail.com", "secret")
-	user.roles.add(role)
-	user.save()
-	
-	user = User.create("mm2015@cam.ac.uk", "secret")
-	user.roles.add(role)
-	user.save()
-	
-	user = User.create("R.Deswarte@uea.ac.uk", "secret")
-	user.roles.add(role)
-	user.save()
-	
-	user = User.create("l.richardson@ucl.ac.uk", "secret")
-	user.roles.add(role)
-	user.save()
-
-	user = User.create("daust01@mail.bbk.ac.uk", "secret")
-	user.roles.add(role)
-	user.save()
-
-	user = User.create("S.V.Huc-Hepher@westminster.ac.uk", "secret")
-	user.roles.add(role)
-	user.save()
+	createUser("alison.kay@northumbria.ac.uk")
+	createUser("r.cran@alumni.ucl.ac.uk")
+	createUser("fryerc@parliament.uk")
+	createUser("Gareth.Millward@lshtm.ac.uk")
+	createUser("H.Raffal@2006.hull.ac.uk")
+	createUser("helenlouisetaylor@gmail.com")
+	createUser("mm2015@cam.ac.uk")
+	createUser("R.Deswarte@uea.ac.uk")
+	createUser("l.richardson@ucl.ac.uk")
+	createUser("daust01@mail.bbk.ac.uk")
+	createUser("S.V.Huc-Hepher@westminster.ac.uk")
+	createUser("rowanaust@gmail.com")
+	createUser("jane.winters@sas.ac.uk")
+	createUser("jonathan.blaney@sas.ac.uk")
+	createUser("ralph.schroeder@oii.ox.ac.uk")
+	createUser("josh.cowls@oii.ox.ac.uk")
+	createUser("nb@dac.au.dk")
   }
   
-  
+  def createUser(email: String) {
+    var role = Role.findByName("Reader")
+    if (role == null) {
+    	role = new Role("Reader", "Reader")
+	    var read = Permission.findByName("Read")
+	    if (read == null) {
+	    	read = new Permission("Read", "Read")
+	    	read.save()
+	    }
+		role.permissions.add(read)
+		role.save()
+    }
 
+	var user = User.findByEmail(email)
+	if (user == null) {
+		user = User.create(email, "secret")
+		user.roles.add(role)
+		user.save()
+	}
+
+    
+  }
 }
