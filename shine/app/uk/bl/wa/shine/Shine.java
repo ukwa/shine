@@ -518,7 +518,6 @@ public class Shine extends Solr {
 				for (String val : filters.get(filterKey)) {
 					Logger.info("key: " + val);
 					if (counter > 0)
-						Logger.info("counter: " + counter);
 						filter += " OR ";
 					filter += "" + val + ""; // TODO Escape correctly?
 					counter++;

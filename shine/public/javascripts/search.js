@@ -1120,7 +1120,9 @@ function createSummaryExclusions() {
 		//getMonthName(date.getMonth()) + " " + date.getDate() + " " + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 
 		// format May 14 2008 13:56:02 BST
-		var text = $('<li>').html("Exclude: " + date + " - " + domain + " - " + title + span);
+		// now May 14 2008
+		var text = $('<li>').html("Exclude: " + domain + " - " + title + " - " + date + span);
+		//Exclude: telegraph.co.uk - Wikipedia ends unrestricted editing of articles -Telegraph - May 14 2008
 		$('#search-summary').append(text);
 	});
 	
