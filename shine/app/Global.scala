@@ -85,12 +85,17 @@ object InitialData {
     }
 
 	var user = User.findByEmail(email)
+	
 	if (user == null) {
 		user = User.create(email, "secret")
 		user.roles.add(role)
-		user.save()
-	}
 
-    
+	} else if (user.email.matches("^(.*?[A-Z]){1,}.*$")) {
+		println("convert user found: " + user.email)
+		val lowerCaseEmail = user.email.toLowerCase()
+		println("convert user found: " + user.email + " to " + lowerCaseEmail)
+		User.updatePassword(lowerCaseEmail, "secret")
+		User.updateEmail(user.email, lowerCaseEmail)
+	}
   }
 }

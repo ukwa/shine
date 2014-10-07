@@ -124,13 +124,22 @@ public class User extends Model {
 		return user;
 	}
 	
-    public static User update(String email, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static User updatePassword(String email, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
     	User user = User.findByEmail(email);
     	String passwordHash = PasswordHash.createHash(password);
-    	Logger.info("convert: " + password + " - " + passwordHash);
+//    	Logger.info("convert: " + password + " - " + passwordHash);
     	user.password = passwordHash;
     	user.save();
         return user;
     }
+    
+    public static User updateEmail(String oldEmail, String newEmail) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    	Logger.info(oldEmail + " to " + newEmail);
+    	User user = User.findByEmail(oldEmail);
+    	user.email = newEmail;
+    	user.save();
+        return user;
+    }
+
 }
 

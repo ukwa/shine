@@ -72,7 +72,7 @@ object Account extends Controller {
 		    if (authenticate) {
 		    	if (newPassword1.equals(newPassword2)) {
 		    		// save password
-		    		user = User.update(username, newPassword1)
+		    		user = User.updatePassword(username, newPassword1)
 		    		Redirect(routes.Application.index).flashing("success" -> "Your password has been updated successfully")
 		    	} else {
 		    		//passwordForm.fill(passwordData).withGlobalError("Your error message")
