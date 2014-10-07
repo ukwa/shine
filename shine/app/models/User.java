@@ -125,7 +125,7 @@ public class User extends Model {
 	}
 	
     public static User updatePassword(String email, String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
-    	User user = User.findByEmail(email);
+    	User user = find.where().ieq("email", email).findUnique();
     	String passwordHash = PasswordHash.createHash(password);
 //    	Logger.info("convert: " + password + " - " + passwordHash);
     	user.password = passwordHash;
