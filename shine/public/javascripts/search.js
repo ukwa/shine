@@ -1090,7 +1090,7 @@ function modalLoader() {
 function getMonthName(monthNumber) {
 	var months = ['January', 'February', 'March', 'April', 'May', 'June',
 	              'July', 'August', 'September', 'October', 'November', 'December'];
-	return months[monthNumber-1];
+	return months[monthNumber];
 }
 
 function createSummaryExclusions() {
@@ -1101,27 +1101,20 @@ function createSummaryExclusions() {
 		value = value.trim();
 		var values = decodeURIComponent(value).split(';;;');
 //		console.log(id);
-		var date = values[1].trim().replace(/\+/g, " ");
+		var dateString = values[1].trim().replace(/\+/g, " ");
 		var title = values[2].trim().replace(/\+/g, " ");
 		var domain = values[3].trim().replace(/\+/g, " ");
 		var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' removeID='" + value + "'></span>";
 
-		console.log(date + " " + title + " " + domain);
 		
-		// from ID create date
-		// sha:20080512022450/Rb3smjlTBo0eGxmAf1NEWA or 20080512022450/Rb3smjlTBo0eGxmAf1NEWA or ???
-		//id = "sha:20080512022450/Rb3smjlTBo0eGxmAf1NEWA"; // A TEST
-		//var hours = dateString.substring(8,10);
-		//var minutes = dateString.substring(10,12);
-		//var seconds = dateString.substring(12,14);
+		var date = new Date(dateString);
+		//console.log(date + " " + title + " " + domain);
 		
-		// var date = new Date(year, month, day, hours, minutes, seconds, 0);
-		
-		//getMonthName(date.getMonth()) + " " + date.getDate() + " " + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-
-		// format May 14 2008 13:56:02 BST
+		// format Thu Nov 14 03:28:36 GMT 1999
 		// now May 14 2008
-		var text = $('<li>').html("Exclude: " + domain + " - " + title + " - " + date + span);
+		var dateFormatted = getMonthName(date.getMonth()) + " " + date.getDate() + " " + date.getFullYear();
+
+		var text = $('<li>').html("Exclude: " + domain + " - " + title + " - " + dateFormatted + span);
 		//Exclude: telegraph.co.uk - Wikipedia ends unrestricted editing of articles -Telegraph - May 14 2008
 		$('#search-summary').append(text);
 	});
