@@ -1088,8 +1088,8 @@ function modalLoader() {
 }
 
 function getMonthName(monthNumber) {
-	var months = ['January', 'February', 'March', 'April', 'May', 'June',
-	              'July', 'August', 'September', 'October', 'November', 'December'];
+	var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+	              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 	return months[monthNumber];
 }
 
@@ -1101,14 +1101,17 @@ function createSummaryExclusions() {
 		value = value.trim();
 		var values = decodeURIComponent(value).split(';;;');
 //		console.log(id);
-		var dateString = values[1].trim().replace(/\+/g, " ");
+		var dateString = values[1].trim().replace(/\+/g, " ").replace("BST", "");
 		var title = values[2].trim().replace(/\+/g, " ");
 		var domain = values[3].trim().replace(/\+/g, " ");
 		var span = " <span class='glyphicon glyphicon-remove-sign removeExcluded' removeID='" + value + "'></span>";
 
+//		var testDate = "Sat May 06 23:35:01 BST 2006";
+//		var d = new Date(testDate);
+//		console.log("d: " + d);
 		
 		var date = new Date(dateString);
-		//console.log(date + " " + title + " " + domain);
+		console.log(dateString + " " + date + " " + title + " " + domain);
 		
 		// format Thu Nov 14 03:28:36 GMT 1999
 		// now May 14 2008
