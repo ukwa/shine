@@ -3,7 +3,6 @@ package utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class Formatter {
@@ -19,12 +18,29 @@ public class Formatter {
 				e.printStackTrace();
 				return "";
 			}
-			String newDate = new java.text.SimpleDateFormat("MMM dd yyyy HH:mm:ss z").format(date);
+			String newDate = new java.text.SimpleDateFormat("MMM dd yyyy").format(date);
 			return newDate;
     	}
 		return "";
 	}
     
+    public static String formatDateTime(Object dateText) {
+    	if (dateText != null) {
+			String dateValue = dateText.toString();
+			DateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+			Date date;
+			try {
+				date = formatter.parse(dateValue);
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return "";
+			}
+			String newDate = new java.text.SimpleDateFormat("MMM dd yyyy HH:mm:ss z").format(date);
+			return newDate;
+    	}
+		return "";
+	}
+
     public static Date getDate(String dateText) {
     	Date date = null;
     	if (dateText != null) {

@@ -20,7 +20,7 @@
 					@(currentPage.getNextIndex(index)) <a href="http://web.archive.org/web/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
 				</h4>
 				<p class="list-group-item-text">
-						@utils.Formatter.formatDate(d.getFirstValue("crawl_date"))<br />
+						@utils.Formatter.formatDateTime(d.getFirstValue("crawl_date"))<br />
 						@d.getFirstValue("content_type_norm")<br />
 						<span class="result-host">@d.getFirstValue("host")</span><br />
 						@d.getFirstValue("sentiment_score")

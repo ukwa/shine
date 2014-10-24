@@ -100,8 +100,6 @@ object Search extends Controller {
 	  	user = User.findByEmail(username.toLowerCase())
 	  	corpora = myCorpora(user)
     }
-
-//   	println("action: " + request.body.asFormUrlEncoded.get("action"))
    	
     val action = request.getQueryString("action")
     val form = searchForm.bindFromRequest(request.queryString)
