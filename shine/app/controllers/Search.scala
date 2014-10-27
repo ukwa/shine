@@ -154,7 +154,6 @@ object Search extends Controller {
 	pagination.update(totalRecords, pageNo)
 
 //	var highlights = q.res.getHighlighting()
-//	println("highlights: " + highlights);
 	
     Cache.getAs[Map[String, FacetValue]]("facet.values") match {
 	    case Some(value) => {

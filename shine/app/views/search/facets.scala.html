@@ -102,9 +102,6 @@
     							<a id="@(fc.getName())" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
      						</li>
     					}
-						<li>
-    						<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
-						</li>
 					</ul>
 					<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
 						<span class="input-group-btn">
@@ -114,10 +111,14 @@
 						<span class="input-group-sm input-group-addon">
 							<a href="#" title="Include" class="add-facet-value">
 								<span class="glyphicon glyphicon-plus-sign"></span>
-							</a>&nbsp;
+							</a>
 							<a href="#" title="Exclude" class="remove-facet-value">
 								<span class="glyphicon glyphicon-minus-sign"></span>
 							</a>
+							<a href="#" title="Close" class="close-facet-value" id="close-search-@(index)">
+								<span class="glyphicon glyphicon-remove-sign"></span>
+							</a>
+							
 						</span>
 						<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
 						</span>

@@ -40,18 +40,21 @@ $(function () {
 		}
 	});
 
-	$(".add-more-button").each(function(index) {
+	$(".facet-search").each(function(index) {
 		$(this).click(function(event) {
 			event.preventDefault();
+			console.log(index);
 			var addMoreSelector = "#add-more-option-" + index;
-			var buttonText = "#add-more-button-text-" + index;
-			if ($(addMoreSelector).hasClass('hide')) {
-				$(addMoreSelector).removeClass('hide');
-				$(buttonText).html("Close")
-			} else {
-				$(addMoreSelector).addClass('hide');
-				$(buttonText).html("Add")
-			}
+			$(addMoreSelector).removeClass('hide');
+		});
+	});
+	
+	$(".close-facet-value").each(function(index) {
+		$(this).click(function(event) {
+			event.preventDefault();
+			console.log("closing: " + index);
+			var addMoreSelector = "#add-more-option-" + index;
+			$(addMoreSelector).addClass('hide');
 		});
 	});
 	
@@ -1095,7 +1098,7 @@ function getMonthName(monthNumber) {
 
 function createSummaryExclusions() {
 	var excludes = getURLParameters('exclude');
-	console.log("excludes: " + excludes);
+//	console.log("excludes: " + excludes);
 	// with these resources create some hidden inputs
 	excludes.forEach(function(value) {
 		value = value.trim();
