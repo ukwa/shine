@@ -43,7 +43,7 @@ $(function () {
 	$(".facet-search").each(function(index) {
 		$(this).click(function(event) {
 			event.preventDefault();
-			console.log(index);
+//			console.log(index);
 			var addMoreSelector = "#add-more-option-" + index;
 			$(addMoreSelector).removeClass('hide');
 		});
@@ -58,41 +58,7 @@ $(function () {
 		});
 	});
 	
-	$('.show-more').each(function(index) {
-		var $show_more = $(this);
-		var parent = $(this).parent().parent().parent();
-		var shown = parent.find('li.facet-options.show').length;
-		
-//		parent.find('ul.facet-heading').each(function(index) {
-//			console.log("shown: " + $(this).find('li.facet-options').length);
-//		});
-		
-		$(this).click(function(event) {
-			event.preventDefault();
-			// click on link and do something....
-			parent.parent().find('li.facet-options').each(function(index) {
-				$li = $(this);
-				var $show_more_icon = $show_more.find('span:nth-child(1)');
-				var $show_more_span = $show_more.find('span:nth-child(2)');
-				var $link_text = $show_more.find('span:nth-child(2)').html();
-				var $default_show = $li.attr('data-attr');
-				if ($li.hasClass('hide')) {
-					$li.addClass('show');
-					$li.removeClass('hide');
-					$show_more_icon.removeClass('glyphicon-plus-sign');
-					$show_more_icon.addClass('glyphicon-minus-sign');
-					$show_more_span.html("Hide");
-				} 
-				else if ($li.hasClass('show') && $default_show !== 'default') {
-					$li.addClass('hide');
-					$li.removeClass('show');
-					$show_more_icon.removeClass('glyphicon-minus-sign');
-					$show_more_icon.addClass('glyphicon-plus-sign');
-					$show_more_span.html("Show more...");
-				}
-			});
-		});
-	});
+
 	
 	if ($('.max-viewable-reached').attr('class') != undefined) {
 		$('#max-view-reached').removeClass('hide');
@@ -187,7 +153,7 @@ $(function () {
 				var $copied_value = $value.clone();
 				$copied_value.find("span").remove();
 				var $value = $copied_value.html().trim(); 
-				console.log($value + " " + $search_field.val());
+//				console.log($value + " " + $search_field.val());
 				if ($value.indexOf($search_field.val().trim()) == 0) {
 					var found = $.inArray($value, inList) > -1;
 					if (!found) {
@@ -215,7 +181,7 @@ $(function () {
 				event.preventDefault();
 				// copy field
 				var $face_value = $(this).html();
-				console.log("$face_value: " + $face_value);
+//				console.log("$face_value: " + $face_value);
 				var $add_more_options = $(this).parent().parent().parent().parent().parent().parent();
 				var $add_field = $add_more_options.find('input.form-control.add-facet-field');
 				$add_field.val($face_value);
@@ -233,10 +199,13 @@ $(function () {
 							$copied_value.find("span").remove();
 							$value = $copied_value.html().trim(); 
 							var $local_field = $link.parent().parent().find('input.form-control.add-facet-field');
-							console.log(index + " " + $value + " " + $local_field.val());
+//							console.log(index + " " + $value + " " + $local_field.val());
 							if ($local_field.val().trim() == $value) {
 								$(this).removeClass('hide');
 								$(this).addClass('show');
+								$(this).attr('data-attr', 'default');
+								console.log('just added, need to reapply show-more links');
+//								applyShowMoreLinks();
 							}
 						});
 					});
@@ -1217,3 +1186,44 @@ function exportMessage() {
 	$('#export-message').append('Exporting to CSV - This may take a while. Please wait...');
 }
 
+function applyShowMoreLinks() {
+	$('.show-more').each(function(index) {
+		var $show_more = $(this);
+		var parent = $(this).parent().parent().parent();
+		
+		$(this).click(function(event) {
+			event.preventDefault();
+			// click on link and do something....
+			parent.parent().find('li.facet-options').each(function(index) {
+				$li = $(this);
+				var $show_more_icon = $show_more.find('span:nth-child(1)');
+				var $show_more_span = $show_more.find('span:nth-child(2)');
+				var $link_text = $show_more.find('span:nth-child(2)').html();
+				var $default_show = $li.attr('data-attr');
+				var $name = $li.find('a:nth-child(3)').html();
+				
+				console.log($name + " - " + $li.attr('class') + " - " + $default_show);
+				
+				if ($li.hasClass('hide')) {
+					$li.addClass('show');
+					$li.removeClass('hide');
+					$show_more_icon.removeClass('glyphicon-plus-sign');
+					$show_more_icon.addClass('glyphicon-minus-sign');
+					$show_more_span.html("Hide");
+				} else if ($li.hasClass('show') && $default_show !== 'default') {
+					$li.addClass('hide');
+					$li.removeClass('show');
+					$show_more_icon.removeClass('glyphicon-minus-sign');
+					$show_more_icon.addClass('glyphicon-plus-sign');
+					$show_more_span.html("Show more...");
+				} else if ($li.hasClass('show') && $default_show == 'user-add') {
+					console.log('here');
+					$li.addClass('show');
+					$li.removeClass('hide');
+					$show_more_icon.removeClass('glyphicon-minus-sign');
+					$show_more_icon.addClass('glyphicon-plus-sign');
+				} 
+			});
+		});
+	});
+}
