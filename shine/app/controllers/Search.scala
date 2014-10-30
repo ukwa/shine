@@ -117,14 +117,14 @@ object Search extends Controller {
 				var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 				resetParameters(parameters)
 				println("resetted parameters: " + parameters)
-			    getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
+			    getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
 			  case "add-facet" =>
 			    println("add-facet")
-			    getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
+			    getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
 			  case "search" =>
 			    println("searching")
 			    if (StringUtils.isNotBlank(query)) {
-			    	getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
+			    	getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
 			    } else {
 					play.api.Logger.debug("blank query: " + query)
 					Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
@@ -134,7 +134,7 @@ object Search extends Controller {
 		case None => {
 		    println("no action do search")
 		    if (StringUtils.isNotBlank(query)) {
-		    	getResults(form, request.queryString, pageNo, sort, order, user, solr, sortableFacets, corpora)
+		    	getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
 		    } else {
 				play.api.Logger.debug("blank query: " + query)
 				Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
@@ -143,7 +143,7 @@ object Search extends Controller {
 	}
   }
   
-  def getResults(form: Form[controllers.Search.SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, shine: Shine, sortableFacets: List[Object], corpora: List[Corpus]) = {
+  def getResults(form: Form[controllers.Search.SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, sortableFacets: List[Object], corpora: List[Corpus]) = {
 	val q = doSearchForm(form, queryString)
 	val totalRecords = q.res.getResults().getNumFound().intValue()
 			
@@ -158,7 +158,7 @@ object Search extends Controller {
     Cache.getAs[Map[String, FacetValue]]("facet.values") match {
 	    case Some(value) => {
 	    	play.api.Logger.debug("getting value from cache ...")
-	    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, shine.getOptionalFacets().asScala.toMap, value, "search", form, sortableFacets, corpora))
+	    	Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search", form, sortableFacets, corpora))
 		}
 		case None => {
 			println("None")
@@ -229,7 +229,17 @@ object Search extends Controller {
 
     pagination.update(totalRecords, pageNo)
 
-    Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora))
+    Cache.getAs[Map[String, FacetValue]]("facet.values") match {
+	    case Some(value) => {
+	    	play.api.Logger.debug("getting value from cache ...")
+	    	Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora, facetLimit, solr.getOptionalFacets().asScala.toMap, value, sortableFacets))
+		}
+		case None => {
+			println("None")
+			// doesn't go this far
+	    	Ok("")
+		}
+    }
   }
     
   def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>

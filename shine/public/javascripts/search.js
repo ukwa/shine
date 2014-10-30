@@ -153,7 +153,7 @@ $(function () {
 				var $copied_value = $value.clone();
 				$copied_value.find("span").remove();
 				var $value = $copied_value.html().trim(); 
-//				console.log($value + " " + $search_field.val());
+				console.log($value + " " + $search_field.val());
 				if ($value.indexOf($search_field.val().trim()) == 0) {
 					var found = $.inArray($value, inList) > -1;
 					if (!found) {
@@ -1225,5 +1225,17 @@ function applyShowMoreLinks() {
 				} 
 			});
 		});
+	});
+}
+
+function resetFacets() {
+	$("input[name='facet.fields']").each(function() {
+		var facet = $(this);
+		if (facet.val() == "crawl_year" || facet.val() == "public_suffix") {
+//			console.log("not removing: " + facet.val());
+		} else {
+//			console.log("removing: " + facet.val());
+			facet.remove();
+		}
 	});
 }

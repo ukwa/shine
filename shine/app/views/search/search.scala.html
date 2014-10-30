@@ -57,18 +57,6 @@
 				return "/search?facet.sort=index&query=" + $("#query").val();
 			}
 
-			function resetFacets() {
-				$("input[name='facet.fields']").each(function() {
-					var facet = $(this);
-					if (facet.val() == "crawl_year" || facet.val() == "public_suffix") {
-						console.log("not removing: " + facet.val());
-					} else {
-						console.log("removing: " + facet.val());
-						facet.remove();
-					}
-				});
-			}
-
 			var sample = 'Sample Mode';
 			var full = 'Full Mode';
 			
@@ -121,35 +109,6 @@
 			$('#search').on('click', function() {
 				doSearch();
 			});
-			
-			function resetFacets() {
-				$('#reset-facets').on('click', function(event) {
-					if ($('#search-form').valid()) {
-						
-						//var url = "search" + window.location.search;
-	
-						// reset non-default facets
-						//url = url.replace("&facet.fields=crawl_year", '').replace("&facet.fields=public_suffix", '');
-						//&facet.fields=crawl_year
-						//&f.crawl_year.facet.sort=
-						//&facet.fields=public_suffix
-						//&f.public_suffix.facet.sort=
-						//&facet.in.public_suffix=%22org.uk%22
-						
-						//&action=resetfacets&query=wikipedia&sort=content_type_norm&order=asc
-						//console.log(url);
-						if ($('#addFacet').val() == "") {
-							$('#addFacet').prop("disabled", true);				
-						}
-						modalLoader()
-						clearFacets();
-						resetFacets();
-					    $('#action').val('resetfacets');
-		
-						$('#search-form').submit();
-					}
-				});
-			}
 			
 			function doSearch() {
 				if ($('#search-form').valid()) {

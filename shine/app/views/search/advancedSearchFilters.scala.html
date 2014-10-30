@@ -1,0 +1,175 @@
+@(user: User, q: uk.bl.wa.shine.Query, searchForm: Form[controllers.Search.SearchData])(implicit flash: Flash, lang: play.api.i18n.Lang)
+
+@import helper._
+@import bootstrap.advanced._
+
+@implicitFieldConstructor = @{ FieldConstructor(genericInput.f) }
+
+@showOption(tab: String) = @{
+	play.api.Play.current.configuration.getConfig("shine") match {
+	      case Some(config) => { 
+	      	config.getBoolean(tab) match {
+				case Some(option) => { option.asInstanceOf[Boolean] }
+				case None => { false } 
+			}
+	      }
+	      case None => { false } 
+	}
+}
+
+<div class="panel panel-default">
+	<div class="panel-heading filter-heading">
+	    <h4 class="panel-title pull-left filter-heading-title">
+	    	Search For
+	    </h4>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-md-12">
+				@helper.inputText(searchForm("query"),
+					'_label -> "Search Terms:",
+				    'id -> "query",
+				    'class -> "form-control",
+				    'placeholder -> "<TEXT FIELD>, <MATCH TYPE>",
+				    '_error -> searchForm("query").error.map(_.withMessage("Enter Query"))
+				)(FieldConstructor(fullSearchInput.f), lang)
+			
+				<div class="form-group">
+					<label for="" class="col-sm-2 control-label">
+						Proximity:
+					</label>
+					@helper.inputText(searchForm("proximityPhrase1"),
+					    'id -> "proximityPhrase1",
+					    'class -> "form-control search-field",
+					    'placeholder -> "phrase",
+					    '_error -> searchForm("proximityPhrase1").error.map(_.withMessage("Enter Proximity Values"))
+					)(FieldConstructor(proximityInput.f), lang)
+
+					@helper.inputText(searchForm("proximityPhrase2"),
+					    'id -> "proximityPhrase2",
+					    'class -> "form-control search-field",
+					    'placeholder -> "phrase",
+					    '_error -> searchForm("proximityPhrase2").error.map(_.withMessage("Enter Proximity Values"))
+					)(FieldConstructor(proximityInput.f), lang)
+
+					@helper.inputText(searchForm("proximity"),
+					    'id -> "proximity",
+					    'class -> "form-control search-field",
+					    'placeholder -> "25",
+					    '_error -> searchForm("proximityPhrase1").error.map(_.withMessage("Enter Proximity Values"))
+					)(FieldConstructor(proximityInput.f), lang)
+					<div class="col-sm-4">
+						<p class="text-success">If you wish to search for word that appear together, try a proximity search. For example, the following finds resources where the words 'coffee' and 'java' occur within 25 words of each other.</p>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					@inputText(searchForm("excludeWords"), '_label -> "None of these words:", 'class -> "form-control", 'placeholder -> "rodent, Jack Russell", 'id -> "exclude-field")
+				</div>
+				<input type="hidden" name="tab" value="results" id="tab" />
+				<input type="hidden" name="action" value="" id="action" />
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading filter-heading">
+                 <h4 class="panel-title pull-left filter-heading-title">
+                 	Within Resources
+                 </h4>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label for="option2" class="col-sm-2 control-label">
+						Date Range:
+					</label>
+					@helper.inputDate(searchForm("dateStart"),
+					    'id -> "date-from",
+					    'class -> "form-control search-field",
+					    'placeholder -> "dd/mm/yyyy",
+					    '_error -> searchForm("dateStart").error.map(_.withMessage("Enter Date Ranges"))
+					)(FieldConstructor(dateInput.f), lang)
+					@helper.inputDate(searchForm("dateEnd"),
+					    'id -> "date-to",
+					    'class -> "form-control search-field",
+					    'placeholder -> "dd/mm/yyyy",
+					    '_error -> searchForm("dateEnd").error.map(_.withMessage("Enter Date Ranges"))
+					)(FieldConstructor(dateInput.f), lang)
+					<div class="col-sm-4">
+						<p class="text-success">Restrict by date (Format: dd/mm/yyyy)</p>
+					</div>
+				</div>
+				<div class="form-group">
+					@inputText(searchForm("url"), '_label -> "URL:", 'class -> "form-control", 'placeholder -> "URL", 'id -> "url-field")
+					<div class="col-sm-4">
+						<p class="text-success">URL</p>
+					</div>
+				</div>
+				<div class="form-group">
+					@inputText(searchForm("hostDomainPublicSuffix"), '_label -> "Host, Domain or Public Suffix:", 'class -> "form-control", 'placeholder -> "Host, Domain or Public Suffix", 'id -> "host-domain-public-field")
+					<div class="col-sm-4">
+						<p class="text-success">Match the values in the 'host', 'domain' or 'public_suffix' fields</p>
+					</div>
+				</div>
+				<div class="form-group">
+					@inputText(searchForm("fileFormat"), '_label -> "File Format:", 'class -> "form-control", 'placeholder -> "File Format", 'id -> "file-format-field")
+					<div class="col-sm-4">
+						<p class="text-success">File format</p>
+					</div>
+				</div>
+				<div class="form-group">
+					@inputText(searchForm("websiteTitle"), '_label -> "Website Title:", 'class -> "form-control", 'placeholder -> "Website Title", 'id -> "website-title-field")
+					<div class="col-sm-4">
+						<p class="text-success">Website title</p>
+					</div>
+				</div>
+				<div class="form-group">
+					@inputText(searchForm("pageTitle"), '_label -> "Page Title:", 'class -> "form-control", 'placeholder -> "Page Title", 'id -> "page-title-field")
+					<div class="col-sm-4">
+						<p class="text-success">Page title</p>
+					</div>
+				</div>
+				<div class="form-group">
+					@inputText(searchForm("author"), '_label -> "Author:", 'class -> "form-control", 'placeholder -> "Author", 'id -> "author-field")
+					<div class="col-sm-4">
+						<p class="text-success">Author</p>
+					</div>
+				</div>
+
+				@if(showOption("show_collections_field")) {
+					<div class="form-group">
+						@inputText(searchForm("collection"), '_label -> "Collection:", 'class -> "typeahead form-control search-field", 'placeholder -> "Collection", 'id -> "collection-field")
+						<div class="col-sm-4">
+							<p class="text-success">Collection</p>
+						</div>
+					</div>
+				}
+				<!-- 
+			<div class="form-group">
+				<label for="option3" class="col-sm-2 control-label">
+					URL, Host, Domain or Public Suffix
+				</label>
+				<div class="col-sm-6" id="links-to">
+					<input type="text" class="typeahead form-control search-field" name="facet.in.links_hosts" placeholder="URL, Host, Domain or Public Suffix" value="@(q.urlHostDomainPublicSuffix)" id="url-host-domain-public-field">
+				</div>
+				<div class="col-sm-4">
+					<p class="text-success">Match the values in the 'url', 'host', 'domain' or 'public_suffix' fields.</p>
+				</div>
+			</div>
+			 -->
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						<button type="button" class="btn btn-primary" name="action" value="search" id="search">Search</button>
+						<button type="reset" class="btn btn-primary" name="action" value="reset" id="reset">Reset</button>
+						@if(user != null) {
+							<button type="button" class="btn btn-primary" id="save-search" name="action" value="save">Save Search</button>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>			
