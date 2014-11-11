@@ -1,0 +1,5 @@
+curl -o sax_errors_1.csv "http://192.168.1.181:8983/solr/jisc5/select?distrib=false&rows=100000&q=parse_error%3Aorg.xml.sax.SAXParseException*&fl=wayback_date%2Curl%2Ccontent_length%2Ccontent_type_tika%2Cparse_error&wt=csv&indent=true&sort=random_10+asc"
+curl -o sax_errors_2.csv "http://192.168.1.181:8984/solr/jisc5/select?distrib=false&rows=100000&q=parse_error%3Aorg.xml.sax.SAXParseException*&fl=wayback_date%2Curl%2Ccontent_length%2Ccontent_type_tika%2Cparse_error&wt=csv&indent=true&sort=random_10+asc"
+curl -o sax_errors_3.csv "http://192.168.1.181:8985/solr/jisc5/select?distrib=false&rows=100000&q=parse_error%3Aorg.xml.sax.SAXParseException*&fl=wayback_date%2Curl%2Ccontent_length%2Ccontent_type_tika%2Cparse_error&wt=csv&indent=true&sort=random_10+asc"
+curl -o sax_errors_4.csv "http://192.168.1.181:8986/solr/jisc5/select?distrib=false&rows=100000&q=parse_error%3Aorg.xml.sax.SAXParseException*&fl=wayback_date%2Curl%2Ccontent_length%2Ccontent_type_tika%2Cparse_error&wt=csv&indent=true&sort=random_10+asc"
+
