@@ -25,7 +25,8 @@ POST    /search/reset/facets				controllers.Search.resetFacets(query ?= "*:*", p
 
 # TBD: The main hook for the explore/trend analysis/delve UI.
 
-GET     /graph								controllers.Search.plot_graph(query ?= "*:*", year_start ?= "2000", year_end ?= "2015")
+GET     /graph								controllers.Search.plot_graph(query ?= "*:*", year_start ?= "1995", year_end ?= "2015")
+GET     /processChart                       controllers.Search.processChart
 
 # The web half-life/rescued visualisation:
 GET     /halflife                   		controllers.Shiner.halflife
@@ -76,7 +77,5 @@ GET    	/suggestCollection/:name			controllers.Search.suggestCollection(name)
 GET    	/suggestCollections/:name			controllers.Search.suggestCollections(name)
 
 GET    	/getFacets							controllers.Search.getFacets
-
-GET		/processChart						controllers.Search.processChart
 
 GET		/ajaxSearch							controllers.Search.ajaxSearch

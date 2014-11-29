@@ -41,8 +41,8 @@
 			});
 
 			$('#update').on('click', function() {
-				//$('form').submit();
-				processChart();
+				$('form').submit();
+				//processChart();
 			});
 		
 			$('#ajax-loader').hide();
@@ -124,7 +124,7 @@
 					}
 				}
 	
-				runGraph(points, @(year_start)-1, @(year_end)+1);
+				runGraph(points, @(year_start), @(year_end));
 			}
 			
 			initialGraphLoad();
