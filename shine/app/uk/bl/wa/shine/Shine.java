@@ -14,8 +14,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
@@ -23,16 +23,16 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.FacetParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import play.Logger;
 import play.libs.Json;
 import uk.bl.wa.shine.model.FacetValue;
 import uk.bl.wa.shine.model.SearchData;
 import uk.bl.wa.shine.service.FacetService;
 import uk.bl.wa.shine.service.FacetServiceImpl;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
@@ -232,7 +232,7 @@ public class Shine extends Solr {
 		// facets that come from url parameters
 
 		if (StringUtils.isEmpty(query.yearStart)) {
-			query.yearStart = "1980";
+			query.yearStart = "1995";
 		}
 
 		Calendar cal = Calendar.getInstance();
@@ -534,27 +534,29 @@ public class Shine extends Solr {
 		return fq;
 	}
 	
+	private Date parseDateString(String dateString) throws ParseException {
+		if (StringUtils.isNotEmpty(dateString)) {
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			// chrome issue
+			if (dateString.contains("-")) {
+				formatter = new SimpleDateFormat("yyyy-MM-dd");
+				Logger.info("chrome data format for " + dateString);
+			}
+			return formatter.parse(dateString);
+		}
+		return null;
+
+	}
+
 	private void processDateRange(SolrQuery parameters, String dateStart,
 			String dateEnd) throws ParseException {
 		Logger.info("processDateRange: " + dateStart + " - " + dateEnd);
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		// chrome issue
-		if (dateStart.contains("-") || dateEnd.contains("-")) {
-			formatter = new SimpleDateFormat("yyyy-MM-dd");
-			Logger.info("chrome data format");
-		}
-		Date dateObjStart = null;
-		Date dateObjEnd = null;
-		if (StringUtils.isNotEmpty(dateStart)) {
-			dateObjStart = formatter.parse(dateStart);
-			Logger.info("dateStart: " + dateStart);
-		}
-		if (StringUtils.isNotEmpty(dateEnd)) {
-			dateObjEnd = formatter.parse(dateEnd);
-			Logger.info("dateStart: " + dateEnd);
-		}
+		Date dateObjStart = parseDateString(dateStart);
+		Date dateObjEnd = parseDateString(dateEnd);
+		Logger.info("dateStart: " + dateStart + " dateEnd: " + dateEnd);
 		if (dateObjStart != null && dateObjEnd != null) {
-			formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+			SimpleDateFormat formatter = new SimpleDateFormat(
+					"yyyy-MM-dd'T'HH:mm:ss'Z'");
 			parameters.addFilterQuery("crawl_date:["
 					+ formatter.format(dateObjStart) + " TO "
 					+ formatter.format(dateObjEnd) + "]");

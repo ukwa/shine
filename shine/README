@@ -3,6 +3,8 @@ Shine - Visualising Web Archive via Solr
 
 This is a front-end for Solr indicies created using the warc-discovery package.
 
+    % play -Dconfig.file=conf/application-localhost-solr.conf run
+
 Ideas
 -----
     
