@@ -19,27 +19,6 @@
 		$(document).ready(function(){
 
 			
-			$('#query').keypress(function(event){
-				var keycode = (event.keyCode ? event.keyCode : event.which);
-				if(keycode == '13'){
-				    processChart();
-				}
-			});
-
-			$('#year-start').keypress(function(event){
-				var keycode = (event.keyCode ? event.keyCode : event.which);
-				if(keycode == '13'){
-				    processChart();
-				}
-			});
-
-			$('#year-end').keypress(function(event){
-				var keycode = (event.keyCode ? event.keyCode : event.which);
-				if(keycode == '13'){
-				    processChart();
-				}
-			});
-
 			$('#update').on('click', function() {
 				$('form').submit();
 				//processChart();
