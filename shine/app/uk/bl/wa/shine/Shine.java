@@ -3,6 +3,7 @@
  */
 package uk.bl.wa.shine;
 
+import static java.lang.Math.abs;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,14 +84,14 @@ public class Shine extends Solr {
 		
 		// add shard is mode set to long
 		if (StringUtils.isNotEmpty(query.mode) && StringUtils.equalsIgnoreCase(query.mode, "full") && StringUtils.isNotEmpty(shards)) {
-			Logger.info("FULL MODE");
+			Logger.debug("FULL MODE");
 			solrParameters.setParam("shards", shards);
 		}
 		
-		Logger.info("facet methods set");
+		Logger.debug("facet methods set");
 		// Sorts:
 		// parameters.setSort("sentiment_score", ORDER.asc);
-		Logger.info("params: " + solrParameters);
+		Logger.debug("params: " + solrParameters);
 		
 		return solrParameters;
 	}
@@ -98,9 +99,13 @@ public class Shine extends Solr {
 	public Query search(Query query) throws SolrServerException {
 		return this.search(query, perPage);
 	}
-
+	
 	public Query search(Query query, int rows) throws SolrServerException {
-		return this.search(query, buildInitialParameters(query), rows);
+		return this.search(query, rows, null);
+	}
+	
+	public Query search(Query query, int rows, Integer start) throws SolrServerException {
+		return this.search(query, buildInitialParameters(query), rows, start);
 	}
 	
 	public Query browse(Query query) throws SolrServerException {
@@ -111,19 +116,33 @@ public class Shine extends Solr {
 		return this.graph(query, buildInitialParameters(query));
 	}
 	
+	public int roundUp(int num, int divisor) {
+	    int sign = (num > 0 ? 1 : -1) * (divisor > 0 ? 1 : -1);
+	    return sign * (abs(num) + abs(divisor) - 1) / abs(divisor);
+	}
+	
 	public List<SearchData> export(Query query) throws SolrServerException {
 		Query q = this.search(query, 0);
 		int total = (int)q.res.getResults().getNumFound();
 		
-		Logger.info("true total: " + total);
-		
 		if (total > this.csvMaxLimit) {
 			total = this.csvMaxLimit;
 		}
-		Logger.info("exporting total: " + total);
+		Logger.debug("get total: " + total);
+
+//		Query exportList = this.search(query, this.csvIntervalLimit);
+//		
+//		int testTotal = (int)exportList.res.getResults().getNumFound();
+//		
+//		Logger.debug("Test Total: " + testTotal);
+
+//		SolrQuery solrParameters = new SolrQuery(query.query);
+//		solrParameters.setRows(this.csvIntervalLimit);
 		
-		SolrQuery solrParameters = new SolrQuery(query.query);
-		solrParameters.setRows(this.csvIntervalLimit);
+//		Logger.debug("solrParameters: " + solrParameters);
+		
+//		SolrQuery solrParameters = new SolrQuery(query.query);
+//		solrParameters.setRows(this.csvIntervalLimit);
 		
 //		start 0
 //		start=10
@@ -131,16 +150,21 @@ public class Shine extends Solr {
 //		
 //		&rows=10
 //		0, 500, 1000, 1500
-		int times = total / this.csvIntervalLimit;
+//		int times = total / this.csvIntervalLimit;
+		int times = this.roundUp(total, this.csvIntervalLimit);
 		
 		int start = 0;
 		
 		List<SearchData> exportDataList = new ArrayList<SearchData>();
+		// 61 / 1000 / 0 / 0
+		Logger.debug(total + " / " +  this.csvIntervalLimit + "  = " + times + " ... start " + start);
 		for (int i = 0; i < times; i++) {
-			solrParameters.setStart(start); // than increment
-			Query search = doSearch(query, solrParameters);
-			Logger.info("Export Query: " + solrParameters.toString());
-			Logger.info(total + " / " +  this.csvIntervalLimit + "  = " + times + " ... start " + start);
+//			solrParameters.setStart(start); // than increment
+//			Query search = doSearch(query, solrParameters);			
+			Query search = search(query, this.csvIntervalLimit, Integer.valueOf(start));
+			Logger.debug("in chunks total: " + search.res.getResults().getNumFound());
+			Logger.debug("Export Query: " + query.parameters);
+			Logger.debug(total + " / " +  this.csvIntervalLimit + "  = " + times + " ... start " + start);
 			for (SolrDocument document : search.res.getResults()) {
 				String title = document.getFirstValue("title") == null ? "" : document.getFirstValue("title").toString();
 				String host = document.getFirstValue("host") == null ? "" : document.getFirstValue("host").toString();
@@ -158,8 +182,8 @@ public class Shine extends Solr {
 		}
 		return exportDataList;
 	}
-
-	private Query search(Query query, SolrQuery solrParameters, int rows) throws SolrServerException {
+	
+	private Query search(Query query, SolrQuery solrParameters, int rows, Integer start) throws SolrServerException {
 		
 	    solrParameters.setHighlight(true).setHighlightSnippets(5); //set other params as needed
 	    
@@ -171,6 +195,10 @@ public class Shine extends Solr {
 //	    solrParameters.setHighlightRequireFieldMatch(Boolean.TRUE);
 
 		solrParameters.setRows(rows);
+		
+		if (start != null) {
+			solrParameters.setStart(start);
+		}
 //		&hl=true
 //		&hl.fl=*
 //		&hl.simple.pre=%3Cem%3E
@@ -185,12 +213,12 @@ public class Shine extends Solr {
 //		&hl.requireFieldMatch=true
 		
 //		if (parameters.get("facet.sort") == null) {
-//			Logger.info("facet.sort: " + parameters.get("facet.sort"));
+//			Logger.debug("facet.sort: " + parameters.get("facet.sort"));
 //			solrParameters.setFacetSort("index");
-//			Logger.info("set to index");
+//			Logger.debug("set to index");
 //		}
 		
-		Logger.info("solrParameters: " + solrParameters);
+		Logger.debug("solrParameters: " + solrParameters);
 
 		return doSearch(query, solrParameters);
 	}
@@ -203,7 +231,7 @@ public class Shine extends Solr {
 		facetValues.put(collectionFacetValue.getName(), collectionFacetValue);
 		facetValues.put(collectionsFacetValue.getName(), collectionsFacetValue);
 		// build up the facets and add to map to pass on 
-		Logger.info("browse facetValues: " + facetValues);
+		Logger.debug("browse facetValues: " + facetValues);
 		parameters.setRows(perPage);
 		query.facetValues = facetValues;
 		return doSearch(query, parameters);
@@ -253,8 +281,8 @@ public class Shine extends Solr {
 		cal.set(Calendar.YEAR, Integer.parseInt(query.yearEnd));
 		//cal.add(Calendar.YEAR, 1); // to get previous year add -1
 		Date end = cal.getTime();
-		Logger.info("start date: " + start);
-		Logger.info("end date: " + end);
+		Logger.debug("start date: " + start);
+		Logger.debug("end date: " + end);
 		solrParameters.addDateRangeFacet("crawl_date", start, end, "+1YEAR");
 		solrParameters.setFacetSort(FacetParams.FACET_SORT_INDEX);
 		return doSearch(query, solrParameters);
@@ -279,8 +307,8 @@ public class Shine extends Solr {
 		    List<String> removeFacets = parameters.get("removeFacet");
 		    
 		    // check incoming parameter list
-		    Logger.info("actionParameters: " + actionParameters);
-		    Logger.info("parameters: " + parameters);
+		    Logger.debug("actionParameters: " + actionParameters);
+		    Logger.debug("parameters: " + parameters);
 		    
 		    if (actionParameters != null) {
 		    	
@@ -296,7 +324,7 @@ public class Shine extends Solr {
 					    query.facetValues.remove(removeFacet);
 					    // for dropdown list
 					    facetService.getOptionals().put(selectedFacetValue.getName(), selectedFacetValue);
-					    Logger.info("removing>>>> " + selectedFacetValue.getName());
+					    Logger.debug("removing>>>> " + selectedFacetValue.getName());
 				    }
 			    }
 		    	
@@ -334,14 +362,14 @@ public class Shine extends Solr {
 						String id = values[0].trim();
 						selected.append("AND -id:").append("\"").append(id).append("\"").append(" ");
 					}
-					Logger.info("excluded: " + selected.toString().trim());
+					Logger.debug("excluded: " + selected.toString().trim());
 					
 					// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
 //					StringBuilder selected = new StringBuilder();
 					for (String value : query.getExcludeHosts()) {
 						selected.append("AND -host:").append("\"").append(value).append("\"").append(" ");
 					}
-					Logger.info("excludeHost: " + selected.toString().trim());
+					Logger.debug("excludeHost: " + selected.toString().trim());
 					
 					if (StringUtils.isNotEmpty(selected.toString())) {
 						q = q + " " + selected.toString().trim();
@@ -354,7 +382,7 @@ public class Shine extends Solr {
 			Map<String, FacetValue> facetValues = query.facetValues;
 			
 			// should get updated list of added/removed facet values
-			Logger.info("doSearch:facetValues: " + facetValues);
+			Logger.debug("doSearch:facetValues: " + facetValues);
 			if (facetValues != null) {
 				for (String key : facetValues.keySet()) {
 					FacetValue facetValue = facetValues.get(key);
@@ -414,7 +442,7 @@ public class Shine extends Solr {
 			Map<String, List<String>> params = query.parameters;
 			// remaining parameters
 			for(String key : params.keySet()) {
-				Logger.info("remaining parameters: " + key + "=" + params.get(key).get(0));
+				Logger.debug("remaining parameters: " + key + "=" + params.get(key).get(0));
 				if (key.equals("facet.sort")) {
 					// there's only one sort
 					solrParameters.setFacetSort(params.get(key).get(0));
@@ -430,13 +458,13 @@ public class Shine extends Solr {
 				solrParameters.setFilterQueries(fq.toArray(new String[fq.size()]));
 			}
 			
-			Logger.info("Query: " + solrParameters.toString());
+			Logger.debug("Query: " + solrParameters.toString());
 			
 			// Perform the query:
 			QueryResponse res = solr.query(solrParameters);
 			
-			Logger.info("QTime: " + res.getQTime());
-			Logger.info("Response Header: " + res.getResponseHeader());
+			Logger.debug("QTime: " + res.getQTime());
+			Logger.debug("Response Header: " + res.getResponseHeader());
 			
 			query.res = res;
 			query.processQueryResponse();
@@ -457,26 +485,26 @@ public class Shine extends Solr {
 //	      Object author = resultDoc.getFieldValue("author");
 //	      Object url = resultDoc.getFieldValue("url");
 //	      
-//	      Logger.info("title: " + title);
-//	      Logger.info("subject: " + subject);
-//	      Logger.info("description: " + description);
-//	      Logger.info("comments: " + comments);
-//	      Logger.info("author: " + author);
-//	      Logger.info("url: " + url);
+//	      Logger.debug("title: " + title);
+//	      Logger.debug("subject: " + subject);
+//	      Logger.debug("description: " + description);
+//	      Logger.debug("comments: " + comments);
+//	      Logger.debug("author: " + author);
+//	      Logger.debug("url: " + url);
 
 //	      String id = (String) resultDoc.getFieldValue("id"); //id is the uniqueKey field
-//	      Logger.info("id: " + id);
+//	      Logger.debug("id: " + id);
 
 //	      if (query.res.getHighlighting().get(id) != null) {
-//	        	Logger.info("title: " + query.res.getHighlighting().get(id).get("title"));
-//	        	Logger.info("content: " + query.res.getHighlighting().get(id).get("content_text"));
+//	        	Logger.debug("title: " + query.res.getHighlighting().get(id).get("title"));
+//	        	Logger.debug("content: " + query.res.getHighlighting().get(id).get("content_text"));
 //	      }
 //	    }		
 //		
 //		Map<String, Map<String, List<String>>> highlights = query.res.getHighlighting();
 //
 //		for (Entry<String, Map<String, List<String>>> entry : highlights.entrySet()) {
-//			Logger.info("Key : " + entry.getKey());
+//			Logger.debug("Key : " + entry.getKey());
 //			
 //		}
 		return query;
@@ -484,7 +512,7 @@ public class Shine extends Solr {
 
 	private List<String> processFilterQueries(SolrQuery solrParameters, Map<String, List<String>> filters, List<String> fq) {
 		
-		Logger.info("filters >>>>>>>> " + filters);
+		Logger.debug("filters >>>>>>>> " + filters);
 		StringBuilder filterBuilder = new StringBuilder();
 		int filterCounter = 0;
 		for (String filterKey : filters.keySet()) {
@@ -495,7 +523,7 @@ public class Shine extends Solr {
 				field = field.replaceFirst("-", "");
 				for (String val : filters.get(filterKey)) {
 					if (val.isEmpty()) {
-						Logger.info("No Value just filterKey: " + filterKey + " - "+ val);
+						Logger.debug("No Value just filterKey: " + filterKey + " - "+ val);
 						fq.add("{!tag=" + field + "}" + filterKey);
 					} else {
 						fq.add("{!tag=" + field + "}" + filterKey + ":" + val); // TODO
@@ -516,7 +544,7 @@ public class Shine extends Solr {
 				String filter = "{!tag=" + field + "}" + filterKey + ":(";
 				int counter = 0;
 				for (String val : filters.get(filterKey)) {
-					Logger.info("key: " + val);
+					Logger.debug("key: " + val);
 					if (counter > 0)
 						filter += " OR ";
 					filter += "" + val + ""; // TODO Escape correctly?
@@ -530,7 +558,7 @@ public class Shine extends Solr {
 		if (filterBuilder.length() > 0) {
 			fq.add(filterBuilder.toString());
 		}
-		Logger.info("OR >>> " + filterBuilder.toString());
+		Logger.debug("OR >>> " + filterBuilder.toString());
 		return fq;
 	}
 	
@@ -540,7 +568,7 @@ public class Shine extends Solr {
 			// chrome issue
 			if (dateString.contains("-")) {
 				formatter = new SimpleDateFormat("yyyy-MM-dd");
-				Logger.info("chrome data format for " + dateString);
+				Logger.debug("chrome data format for " + dateString);
 			}
 			return formatter.parse(dateString);
 		}
@@ -550,10 +578,10 @@ public class Shine extends Solr {
 
 	private void processDateRange(SolrQuery parameters, String dateStart,
 			String dateEnd) throws ParseException {
-		Logger.info("processDateRange: " + dateStart + " - " + dateEnd);
+		Logger.debug("processDateRange: " + dateStart + " - " + dateEnd);
 		Date dateObjStart = parseDateString(dateStart);
 		Date dateObjEnd = parseDateString(dateEnd);
-		Logger.info("dateStart: " + dateStart + " dateEnd: " + dateEnd);
+		Logger.debug("dateStart: " + dateStart + " dateEnd: " + dateEnd);
 		if (dateObjStart != null && dateObjEnd != null) {
 			SimpleDateFormat formatter = new SimpleDateFormat(
 					"yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -579,10 +607,10 @@ public class Shine extends Solr {
 				builder.append(proximity.getPhrase1()).append(" AND ")
 						.append(proximity.getPhrase2());
 			}
-			Logger.info("builder parameters: " + builder.toString());
+			Logger.debug("builder parameters: " + builder.toString());
 			String currentQuery = parameters.getQuery();
 			parameters.setQuery(currentQuery + " " + builder.toString());
-			Logger.info("new query: " + parameters.getQuery());
+			Logger.debug("new query: " + parameters.getQuery());
 		}
 	}
 
@@ -595,7 +623,7 @@ public class Shine extends Solr {
 	}
 
 	private void processExcluded(SolrQuery parameters, String excluded) {
-		Logger.info("excluded: " + excluded);
+		Logger.debug("excluded: " + excluded);
 		if (StringUtils.isNotEmpty(excluded)) {
 			String[] exclusions = excluded.split(",");
 			for (String exclude : exclusions) {
@@ -690,7 +718,7 @@ public class Shine extends Solr {
 			SpellCheckResponse spellCheckResponse = response
 					.getSpellCheckResponse();
 
-			Logger.info("spellCheckResponse: " + spellCheckResponse);
+			Logger.debug("spellCheckResponse: " + spellCheckResponse);
 
 			List<Suggestion> suggestions = spellCheckResponse.getSuggestions();
 
@@ -713,7 +741,7 @@ public class Shine extends Solr {
 			testChild.put("title",
 					"Suggestions server isn't working at present");
 			result.add(testChild);
-			Logger.info("result: " + result);
+			Logger.debug("result: " + result);
 			jsonData = Json.toJson(result);
 		}
 		return jsonData;

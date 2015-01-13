@@ -179,7 +179,9 @@ object Search extends Controller {
 			var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
 			val query = request.getQueryString("query").get
 			println("query: " + query)
+			println("parameters: " + parameters)
 			val exportList = doExport(query, parameters).asScala.toList
+//			println("exportList: " + exportList)
 //			val totalRecords = q.res.getResults().getNumFound().intValue()
     		version match {
     		  case "brief" => {
@@ -565,7 +567,7 @@ object Search extends Controller {
     // parses parameters and creates me a query object
 	val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
 
-	println("doExport")
+	println("doExport: " + parametersAsJava)
 
 	val q = new Query(query, 
 	    getField("proximityPhrase1", parameters), 

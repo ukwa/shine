@@ -833,13 +833,17 @@ function csvLink() {
 	$('#briefCSV').on('click', function(event) {
 		event.preventDefault();
 		exportMessage();
-		window.location.href=$('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=brief";
+		var url = $('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=brief";
+		console.log(url);
+		window.location.href=url;
 	});
 
 	$('#fullCSV').on('click', function(event) {
 		event.preventDefault();
 		exportMessage();
-		window.location.href=$('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=full";
+		var url = $('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=full";
+		console.log(url);
+		window.location.href=url;
 	});
 	
 }
