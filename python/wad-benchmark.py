@@ -27,7 +27,7 @@ urlo=urllib.URLopener()
 #urlo = urllib.FancyURLopener({"http":"http://explorer.bl.uk:3127"})
 
 word_list = open('long-dictionary-word-list.txt').read().splitlines()
-num_words = 200
+num_words = 500
 allow_phrases = False
 
 run_no_facet_queries = False
@@ -91,14 +91,15 @@ def doQuery(tag, facet, url):
 
 
 def runQueries(endpoint):
-	print("Running queries against: "+endpoint)
+	#print("Running queries against: "+endpoint)
 	start_time = datetime.datetime.now()
 	# Config:
 	base_ndq = "%s&sort=crawl_date+asc" % endpoint
 	# "&cache=false"
 
 	# Query for *:*:
-	doQuery("NO-FACETS-ALL", None, base_ndq + "&q={!cache=false}*:*")
+	if run_no_facet_queries:
+		doQuery("NO-FACETS-ALL", None, base_ndq + "&q={!cache=false}*:*")
 
 	# Pseudo-random word queries:
 	words = []
@@ -143,10 +144,10 @@ def runQueries(endpoint):
 	print("TIMING %s [ms] for %s " %(elapsed_ms(start_time,end_time), endpoint))
 
 # Automatic distributed mode:
-runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true")
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true")
 
 # non-distributed mode:
-#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
+runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
 #runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
 #runQueries("http://192.168.1.203:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
 #runQueries("http://192.168.1.215:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
