@@ -451,9 +451,9 @@ public class Query {
 			parameters.append("&excluded=").append(excluded);
 		if (proximity != null) {
 			if (StringUtils.isNotEmpty(proximity.getPhrase1()))
-				parameters.append("&proximity=").append(proximity.getPhrase1());
+				parameters.append("&proximityPhrase1=").append(proximity.getPhrase1());
 			if (StringUtils.isNotEmpty(proximity.getPhrase2()))
-				parameters.append("&proximity=").append(proximity.getPhrase2());
+				parameters.append("&proximityPhrase2=").append(proximity.getPhrase2());
 			if (StringUtils.isNotEmpty(proximity.getProximity()))
 				parameters.append("&proximity=").append(proximity.getProximity());
 		}
