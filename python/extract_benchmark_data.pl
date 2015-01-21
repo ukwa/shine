@@ -14,7 +14,7 @@ my $B_VERBOSE;
 
 # Variables ------------------------------------------------
 my ($s_inf, $s_outf);
-my %h_data;
+my %h_raw;
 
 # Main -----------------------------------------------------
 getargs();
@@ -66,7 +66,7 @@ sub read_data {
 
 		# Determine magnitude of nf; store magnitude > numFound > QTime
 		my $i_mag = length $i_nf;
-		$h_data{$i_mag}{$i_nf}{$i_qt}++;
+		$h_raw{$i_mag}{$i_nf}{$i_qt}++;
 	}
 	close IN or die "Failed to read-close [$s_inf]: $!\n";
 }
@@ -74,12 +74,54 @@ sub read_data {
 sub save_data {
 	open OUT, '>', $s_outf or die "Failed to write-open [$s_outf]: $!\n";
 
-	foreach my $i_mag (sort keys %h_data) {
-		foreach my $i_nf (sort keys %{$h_data{$i_mag}}) {
-			foreach my $i_qt (sort keys %{$h_data{$i_mag}{$i_nf}}) {
-				print OUT "$i_mag\t$i_nf\t$i_qt\n";
+	my %h_data;
+	foreach my $i_mag (sort keys %h_raw) {
+		foreach my $i_nf (sort keys %{$h_raw{$i_mag}}) {
+			my ($i_highest, $i_num);
+			foreach my $i_qt (sort keys %{$h_raw{$i_mag}{$i_nf}}) {
+				# Store lowest value
+				if (! defined $h_data{$i_mag}{low}) {
+					$h_data{$i_mag}{low} = $i_qt;
+				} elsif ($h_data{$i_mag}{low} > $i_qt) {
+					$h_data{$i_mag}{low} = $i_qt;
+				}
+
+				# Capture highest value
+				unless (defined $i_highest) { $i_highest = $i_qt; }
+
+				# Increment count of values in magnitude
+				$i_num++;
+			}
+
+			# Calculate 95% high value, 25th quartile, 75th quartile
+			my $i_h95 = ($i_highest - $h_data{$i_mag}{low}) * 0.95;
+			my $i_o25 = $i_num * 0.25;
+			my $i_c75 = $i_num * 0.75;
+
+			my $i_pos;
+			foreach my $i_qt (sort keys %{$h_raw{$i_mag}{$i_nf}}) {
+				# Store 95th value
+				if ($i_qt <= $i_h95) {
+					if (! defined $h_data{$i_mag}{high}) {
+						$h_data{$i_mag}{high} = $i_qt;
+					} elsif ($h_data{$i_mag}{high} < $i_qt) {
+						$h_data{$i_mag}{high} = $i_qt;
+					}
+				}
+
+				$i_pos++;
+				if (($i_pos >= $i_o25) && (! defined $h_data{$i_mag}{open}))
+					{ $h_data{$i_mag}{open} = $i_qt; }
+				if ($i_pos <= $i_c75)
+					{ $h_data{$i_mag}{close} = $i_qt; }
 			}
 		}
+
+		print "Magnitude: 10^$i_mag\n";
+		print "Low:\t$h_data{$i_mag}{low}\n";
+		print "Open:\t$h_data{$i_mag}{open}\n";
+		print "Close:\t$h_data{$i_mag}{close}\n";
+		print "High:\t$h_data{$i_mag}{high}\n";
 	}
 
 	close OUT or die "Failed to write-close [$s_outf]: $!\n";
