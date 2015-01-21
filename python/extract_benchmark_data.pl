@@ -52,16 +52,16 @@ sub read_data {
 	open IN, $s_inf or die "Failed to read-open [$s_inf]: $!\n";
 	foreach my $s_line (<IN>) {
 		# Skip non-results lines
-		next unless $s_line =~ m@QTime\.\[ms\]@;
+		next unless $s_line =~ m@wallclock\.\[ms\]@;
 
 		# Format of results: ALL-FACETS-chervil.QTime.[ms] 8806 numFound 45997 wallclock.[ms] 8811.698
- 		$s_line =~ m@QTime\.\[ms\] (\d+) numFound (\d+)@;
-		my $i_qt = $1;
-		my $i_nf = $2;
+ 		$s_line =~ m@numFound (\d+) wallclock\.\[ms\] (\d+)@;
+		my $i_nf = $1;
+		my $i_wc = $2;
 
 		# Determine magnitude of nf; store magnitude > QTime
 		my $i_mag = length $i_nf;
-		$h_raw{$i_mag}{$i_qt}++;
+		$h_raw{$i_mag}{$i_wc}++;
 	}
 	close IN or die "Failed to read-close [$s_inf]: $!\n";
 }
@@ -75,21 +75,21 @@ sub save_data {
 
 		my ($i_highest, $i_num);
 		# Identify lowest and highest QTime values in magnitude, to calculate 95% & quartiles
-		foreach my $i_qt (sort {$a <=> $b} keys %{$h_raw{$i_mag}}) {
-			if (DEBUG) { print "\t10^$i_mag\t$i_qt\n"; }
+		foreach my $i_wc (sort {$a <=> $b} keys %{$h_raw{$i_mag}}) {
+			if (DEBUG) { print "\t10^$i_mag\t$i_wc\n"; }
 
 			# Store lowest value
 			if (! defined $h_data{$i_mag}{low}) {
-				$h_data{$i_mag}{low} = $i_qt;
-			} elsif ($h_data{$i_mag}{low} > $i_qt) {
-				$h_data{$i_mag}{low} = $i_qt;
+				$h_data{$i_mag}{low} = $i_wc;
+			} elsif ($h_data{$i_mag}{low} > $i_wc) {
+				$h_data{$i_mag}{low} = $i_wc;
 			}
 
 			# Capture highest value
 			if (! defined $i_highest) {
-				$i_highest = $i_qt;
-			} elsif ($i_highest < $i_qt) {
-				$i_highest = $i_qt;
+				$i_highest = $i_wc;
+			} elsif ($i_highest < $i_wc) {
+				$i_highest = $i_wc;
 			}
 
 			# Increment count of values in magnitude
@@ -109,35 +109,35 @@ sub save_data {
 
 		my $i_pos;
 		# Determine open, close & high values
-		foreach my $i_qt (sort {$a <=> $b} keys %{$h_raw{$i_mag}}) {
+		foreach my $i_wc (sort {$a <=> $b} keys %{$h_raw{$i_mag}}) {
 			$i_pos++;
 
 			# open - store first value at/after 25th quartile
 			if ($i_pos >= $i_o25) {
 				if (! defined $h_data{$i_mag}{open}) {
-					if (DEBUG) { print "\t\tOpen: defined -> ".$i_qt."\n"; }
-					$h_data{$i_mag}{open} = $i_qt;
+					if (DEBUG) { print "\t\tOpen: defined -> ".$i_wc."\n"; }
+					$h_data{$i_mag}{open} = $i_wc;
 				}
 			}
 
 			# close - store last value within 75th quartile
 			if ($i_pos <= $i_c75) {
 				if (defined $h_data{$i_mag}{close}) {
-					if (DEBUG) { print "\t\tClose: ".$h_data{$i_mag}{close}." -> ".$i_qt."\n"; }
+					if (DEBUG) { print "\t\tClose: ".$h_data{$i_mag}{close}." -> ".$i_wc."\n"; }
 				} else {
-					if (DEBUG) { print "\t\tClose: defined -> ".$i_qt."\n"; }
+					if (DEBUG) { print "\t\tClose: defined -> ".$i_wc."\n"; }
 				}
-				$h_data{$i_mag}{close} = $i_qt;
+				$h_data{$i_mag}{close} = $i_wc;
 			}
 
 			# high - store last value within 95%
-			if ($i_qt <= $i_h95) {
+			if ($i_wc <= $i_h95) {
 				if (defined $h_data{$i_mag}{high}) {
-					if (DEBUG) { print "\t\tHigh: ".$h_data{$i_mag}{high}.' -> '.$i_qt."\n"; }
+					if (DEBUG) { print "\t\tHigh: ".$h_data{$i_mag}{high}.' -> '.$i_wc."\n"; }
 				} else {
-					if (DEBUG) { print "\t\tHigh: defined -> ".$i_qt."\n"; }
+					if (DEBUG) { print "\t\tHigh: defined -> ".$i_wc."\n"; }
 				}
-				$h_data{$i_mag}{high} = $i_qt;
+				$h_data{$i_mag}{high} = $i_wc;
 			}
 		}
 
