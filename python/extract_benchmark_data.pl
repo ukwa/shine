@@ -5,7 +5,6 @@ use English;
 # Modules --------------------------------------------------
 use Getopt::Long;
 use File::Spec;
-use Data::Dumper;
 
 # Globals --------------------------------------------------
 use constant DEBUG => 0;

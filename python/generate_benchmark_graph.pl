@@ -5,7 +5,6 @@ use English;
 # Modules --------------------------------------------------
 use Getopt::Long;
 use File::Spec;
-use Data::Dumper;
 use List::Util qw(min max);
 use GD::Graph::candlesticks;
 
@@ -56,8 +55,6 @@ sub read_data {
 		push @a_data, @a;
 	}
 	close IN or die "Failed to read-close [$s_inf]: $!\n";
-	print Dumper @a_data;
-
 }
 
 sub generate_graph {
