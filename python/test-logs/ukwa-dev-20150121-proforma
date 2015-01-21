@@ -1,0 +1,22 @@
+Solr Benchmark Proforma
+=======================
+
+Date: 2015 01 21
+Description of benchmark: ukwa01.solr.wa dev Solr
+Operator: Gil
+
+Hardware
+--------
+Machine: ukwa01.solr.wa
+CPU: HP ProLiant DL380 G5
+RAM: 32GB
+Storage: SAN Nexsan B01, 4TB volume
+
+Solr
+----
+Version: 4.9.0
+NumShards: 3
+Shard Xmx: 9216m
+DirectoryFactory: NIOSFS
+ShardSize (GB): 320.18
+ShardDocs: 92,661,433
