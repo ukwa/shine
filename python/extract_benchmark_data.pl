@@ -38,7 +38,7 @@ sub getargs {
 	$s_outf = $s_inf.'.graph_data';
 
 	if ($s_error) {
-		print "Usage: $PROGRAM_NAME --inputfile --outputfile\nERROR/S:\n$s_error\n";
+		print "Usage: $PROGRAM_NAME --inputfile\nERROR/S:\n$s_error\n";
 		exit 1;
 	}
 	if ($B_VERBOSE) {
