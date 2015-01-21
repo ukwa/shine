@@ -5,9 +5,10 @@ use English;
 # Modules --------------------------------------------------
 use Getopt::Long;
 use File::Spec;
+use Data::Dumper;
 
 # Globals --------------------------------------------------
-use constant DEBUG => 1;
+use constant DEBUG => 0;
 my $S_INPUTFILE;
 my $B_VERBOSE;
 
@@ -68,7 +69,6 @@ sub read_data {
 
 sub save_data {
 	open OUT, '>', $s_outf or die "Failed to write-open [$s_outf]: $!\n";
-	print OUT "(";
 
 	my %h_data;
 	# Traverse raw magnitude, numFound, QTime
@@ -155,10 +155,9 @@ sub save_data {
 		# Data format
 		# (     #  open       high       low        close
 		# ["2007/12/18", "34.6400", "35.0000", "34.2100", "34.7400"], #
-		print OUT '["10^'.$i_mag.'", "'.$h_data{$i_mag}{open}.'", "'.$h_data{$i_mag}{high}.'", "'.$h_data{$i_mag}{low}.'", "'.$h_data{$i_mag}{close}."\"], ";
 		# );
+		print OUT '["10^'.$i_mag.'", "'.$h_data{$i_mag}{open}.'", "'.$h_data{$i_mag}{high}.'", "'.$h_data{$i_mag}{low}.'", "'.$h_data{$i_mag}{close}."\"], \n";
 	}
 
-	print OUT ");";
 	close OUT or die "Failed to write-close [$s_outf]: $!\n";
 }
