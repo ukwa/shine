@@ -1,0 +1,22 @@
+Solr Benchmark Proforma
+=======================
+
+Date: 
+Description of benchmark: 
+Operator: 
+
+Hardware
+--------
+Machine: 
+CPU: 
+RAM: 
+Storage: 
+
+Solr
+----
+Version: 
+NumShards: 
+Shard Xmx: 
+DirectoryFactory: 
+ShardSize (GB): 
+ShardDocs:
