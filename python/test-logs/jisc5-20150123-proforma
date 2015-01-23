@@ -1,0 +1,25 @@
+Solr Benchmark Proforma
+=======================
+
+Date: 2015 01 23
+Description of benchmark: BUDDAH after reducing Xmx and changing to MMapDirectoryFactory
+Operator: Gil
+
+Hardware
+--------
+Machine: jisc1 & jisc2
+CPU: 	Intel Xeon E5-2640v2 @2Ghz
+RAM: 	256GB
+Storage: Local 4TB HD, 1 per shard
+
+Solr
+----
+Version: 4.7.1
+NumShards: 24
+Shard Xmx: 10240m
+DirectoryFactory: MMap
+
+jisc1 solrnode1
+---------------
+ShardSize (GB): 645.71
+ShardDocs: 84,303,336
