@@ -23,17 +23,16 @@ from pprint import pprint
 # - Carrot Clustering?
 
 # The URL Opener:
-urlo=urllib.URLopener()
-#urlo = urllib.FancyURLopener({"http":"http://explorer.bl.uk:3127"})
+#urlo=urllib.URLopener()
+urlo = urllib.FancyURLopener({"http":"http://explorer.bl.uk:3127"})
 
 word_list = open('long-dictionary-word-list.txt').read().splitlines()
-num_words = 500
+num_words = 2000
 allow_phrases = False
 
 run_no_facet_queries = False
 run_single_facet_queries = False
 run_all_facet_queries = True
-run_date_range_facet_queries = False
 
 
 # Facets
@@ -42,7 +41,6 @@ facet_method = "&facet=true&facet.mincount=1&facet.sort=count&facet.limit=10"
 # This are the core facets we really need to support:
 facets = ["crawl_years", "content_language", "public_suffix", "links_public_suffixes", "domain", "links_domains", 
           "content_type_norm", "author", "postcode_district"]
-          
 # Core facets, but skipping DocValues ones and replacing them with ones with only a few values:
 #facets = ["crawl_years", "content_language", "public_suffix", "links_public_suffixes", "content_encoding", "url_type", 
 #          "content_type_norm", "author", "postcode_district"]
@@ -59,13 +57,11 @@ format_facets = ["generator", "content_type", "content_type_full", "content_type
 # Generator appears to bump RAM (bumped to 18GB during building) quite a bit - perhaps many of these should be DocValues? 
 # Added the elements_used pushed to 19GB.
 # But fast once cached.
-
-# Date Range Faceting:
+# Date Range Faceting (harder work I think):
 facet_date_range_1y = "&facet.date=crawl_dates&facet.date.start=1994-01-01T00:00:00Z&facet.date.end=NOW/YEAR%2B1YEAR&facet.date.gap=%2B1YEAR"
 facet_date_range_6m = "&facet.date=crawl_dates&facet.date.start=1994-01-01T00:00:00Z&facet.date.end=NOW/YEAR%2B1YEAR&facet.date.gap=%2B6MONTHS"
 # Hook it in
-if run_date_range_facet_queries:
-    facet_method = facet_method + facet_date_range_1y
+#facet_method = facet_method + facet_date_range_1y
 
 # Fields
 general_fields = [ "wayback_date", "url", "text", "title", "source_file_s", "id", "hash", "description", "crawl_dates", "content_length", "content_text_length" ]
@@ -91,15 +87,14 @@ def doQuery(tag, facet, url):
 
 
 def runQueries(endpoint):
-	#print("Running queries against: "+endpoint)
+	print("Running queries against: "+endpoint)
 	start_time = datetime.datetime.now()
 	# Config:
 	base_ndq = "%s&sort=crawl_date+asc" % endpoint
 	# "&cache=false"
 
 	# Query for *:*:
-	if run_no_facet_queries:
-		doQuery("NO-FACETS-ALL", None, base_ndq + "&q={!cache=false}*:*")
+	doQuery("NO-FACETS-ALL", None, base_ndq + "&q={!cache=false}*:*")
 
 	# Pseudo-random word queries:
 	words = []
@@ -144,8 +139,7 @@ def runQueries(endpoint):
 	print("TIMING %s [ms] for %s " %(elapsed_ms(start_time,end_time), endpoint))
 
 # Automatic distributed mode:
-runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
-#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true")
+runQueries("http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true")
 
 # non-distributed mode:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
