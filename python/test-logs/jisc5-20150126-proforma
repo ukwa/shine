@@ -1,0 +1,26 @@
+Solr Benchmark Proforma
+=======================
+
+Date: 2015 01 26
+Description of benchmark:	BUDDAH / jisc1 & jisc2 using 20m Xmx on principal solr node
+				Also rerun to test minor amendments to benchmarking script
+Operator: Gil
+
+Hardware
+--------
+Machine: jisc1 & jisc2
+CPU:    Intel Xeon E5-2640v2 @2Ghz
+RAM:    256GB
+Storage: Local 4TB HD, 1 per shard
+
+Solr
+----
+Version: 4.7.1
+NumShards: 24
+Shard Xmx: solrnode1 20m, rest 10m
+DirectoryFactory: MMap
+
+jisc1 solrnode1
+---------------
+ShardSize (GB): 645.71
+ShardDocs: 84,303,336
