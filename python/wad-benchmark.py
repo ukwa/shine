@@ -41,14 +41,14 @@ run_date_range_facet_queries = False
 facet_method = "&facet=true&facet.mincount=1&facet.sort=count&facet.limit=10" 
 # This are the core facets we really need to support:
 facets = ["crawl_years", "content_language", "public_suffix", "links_public_suffixes", "domain", "links_domains", 
-          "content_type_norm", "author", "postcode_district"]
+          "content_type_norm"]
           
 # Core facets, but skipping DocValues ones and replacing them with ones with only a few values:
 #facets = ["crawl_years", "content_language", "public_suffix", "links_public_suffixes", "content_encoding", "url_type", 
 #          "content_type_norm", "author", "postcode_district"]
 
 # These are additional facets that would be nice to have:
-additional_facets = ['licence_url', 'last_modified', "last_modified_year", "keywords", "author"]
+additional_facets = ['licence_url', 'last_modified', "last_modified_year", "keywords", "author", "postcode_district"]
 additional_link_facets = [ "links_hosts" ]
 additional_url_facets =[ 'host', 'url_type' ]
 # Nice-to-have format-related fields/facets:
