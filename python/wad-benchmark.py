@@ -26,7 +26,7 @@ from pprint import pprint
 urlo=urllib.URLopener()
 #urlo = urllib.FancyURLopener({"http":"http://explorer.bl.uk:3127"})
 
-word_list = open('long-dictionary-word-list.txt').read().splitlines()
+word_list = open('long-dictionary-word-list-no-phrases.txt').read().splitlines()
 num_words = 500
 allow_phrases = False
 
