@@ -297,6 +297,10 @@ object Search extends Controller {
 
       var map: Map[Query, Map[String, ListBuffer[GraphData]]] = Map()
 
+      // Get the baseline value: 
+      //val baseline = doGraph("*:*", request.queryString)
+      // Then normalise WRT it below.
+      
       for (text <- values) {
         val value = text.trim
         val q = doGraph(value, request.queryString)

@@ -26,6 +26,7 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 
 import play.Logger;
 import play.libs.Json;
+import play.cache.Cache;
 import uk.bl.wa.shine.model.FacetValue;
 import uk.bl.wa.shine.model.SearchData;
 import uk.bl.wa.shine.service.FacetService;
@@ -273,13 +274,12 @@ public class Shine extends Solr {
 		cal.set(Calendar.MILLISECOND, 0);
 		Date start = cal.getTime();
 		
-		// for +1 year
-		cal.setTime(new Date());
+		// Up to next year, or query.yearEnd:
 		if (StringUtils.isEmpty(query.yearEnd)) {
-			query.yearEnd = String.valueOf(cal.get(Calendar.YEAR));
+			Calendar nowCal = Calendar.getInstance();
+			query.yearEnd = String.valueOf(nowCal.get(Calendar.YEAR)+1);
 		}
 		cal.set(Calendar.YEAR, Integer.parseInt(query.yearEnd));
-		//cal.add(Calendar.YEAR, 1); // to get previous year add -1
 		Date end = cal.getTime();
 		Logger.debug("start date: " + start);
 		Logger.debug("end date: " + end);
@@ -458,14 +458,22 @@ public class Shine extends Solr {
 				solrParameters.setFilterQueries(fq.toArray(new String[fq.size()]));
 			}
 			
-			Logger.debug("Query: " + solrParameters.toString());
-			
-			// Perform the query:
-			QueryResponse res = solr.query(solrParameters);
-			
-			Logger.debug("QTime: " + res.getQTime());
-			Logger.debug("Response Header: " + res.getResponseHeader());
-			
+			// Check the cache:
+			String qkey = "solr-query/"+solrParameters.toString();
+			Logger.info("Checking cache under key: "+qkey);
+			QueryResponse res = (QueryResponse) Cache.get(qkey);
+			// Perform the query if not cached:
+			if( res == null ) {
+				Logger.info("Cache miss, so running query... "+solrParameters.toString());
+				res = solr.query(solrParameters);
+				// Cache for an hour:
+				Cache.set(qkey, res, 60 * 60);
+				Logger.debug("QTime: " + res.getQTime());
+				Logger.debug("Response Header: " + res.getResponseHeader());
+			} else {
+				Logger.info("Cache hit!");
+			}
+			// Post-process:
 			query.res = res;
 			query.processQueryResponse();
 			
