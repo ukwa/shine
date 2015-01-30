@@ -80,8 +80,8 @@ public class Shine extends Solr {
 		// may make this configurable
 		solrParameters.setFacetLimit(10);
 		
-		solrParameters.setParam(FacetParams.FACET_METHOD, FacetParams.FACET_METHOD_enum);
-		solrParameters.setParam(FacetParams.FACET_ENUM_CACHE_MINDF, "25");
+		//solrParameters.setParam(FacetParams.FACET_METHOD, FacetParams.FACET_METHOD_enum);
+		//solrParameters.setParam(FacetParams.FACET_ENUM_CACHE_MINDF, "25");
 		
 		// add shard is mode set to long
 		if (StringUtils.isNotEmpty(query.mode) && StringUtils.equalsIgnoreCase(query.mode, "full") && StringUtils.isNotEmpty(shards)) {
@@ -186,12 +186,12 @@ public class Shine extends Solr {
 	
 	private Query search(Query query, SolrQuery solrParameters, int rows, Integer start) throws SolrServerException {
 		
-	    solrParameters.setHighlight(true).setHighlightSnippets(5); //set other params as needed
+	    solrParameters.setHighlight(true).setHighlightSnippets(10); //set other params as needed
 	    
 	    solrParameters.setHighlightSimplePre("<em>");
 	    solrParameters.setHighlightSimplePost("</em>");
 	    
-	    solrParameters.addHighlightField("content,title");
+	    solrParameters.addHighlightField("content,title,url");
 //	    solrParameters.setParam("hl.fl", "*");
 //	    solrParameters.setHighlightRequireFieldMatch(Boolean.TRUE);
 

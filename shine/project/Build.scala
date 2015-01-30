@@ -22,9 +22,11 @@ object ApplicationBuild extends Build {
     "org.apache.maven.wagon" % "wagon-provider-api" % "2.6",
     "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
     "org.jbehave" % "jbehave-maven-plugin" % "3.9.1",
-	"org.apache.commons" % "commons-email" % "1.3.2",
-	"commons-io" % "commons-io" % "2.3",
-	"org.avaje" % "ebean" % "2.7.1"  
+    "org.apache.commons" % "commons-email" % "1.3.2",
+    "commons-io" % "commons-io" % "2.3",
+    "org.avaje" % "ebean" % "2.7.1",
+    "net.sf.opencsv" % "opencsv" % "2.3"
+
   )
 
 

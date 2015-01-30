@@ -1,18 +1,13 @@
 @(title: String, user: User, q: String, labelX: String, labelY: String, year_start: String, year_end: String, graphMap:scala.collection.immutable.Map[uk.bl.wa.shine.Query,scala.collection.immutable.Map[String,scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]]], pageName: String)
 
 @styles = {
-	<link rel="stylesheet" type="text/css" href="@routes.Assets.at("jqplot/jquery.jqplot.min.css")">
 }
 
 @scripts = {
-	<!--[if lt IE 9]><script src="@routes.Assets.at("javascripts/jqplot/excanvas.min.js")" type="text/javascript"></script><![endif]-->
-	<script src="@routes.Assets.at("jqplot/jquery.jqplot.min.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("jqplot/plugins/jqplot.canvasTextRenderer.min.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("jqplot/plugins/jqplot.cursor.min.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("jqplot/plugins/jqplot.highlighter.min.js")" type="text/javascript"></script>
 	<script src="@routes.Assets.at("javascripts/search.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/d3.v3.4.8.min.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/dimple.v2.1.3.min.js")" type="text/javascript"></script>
+    
 	
 	<script type="text/javascript">
 	
@@ -44,137 +39,51 @@
 				$('#reset').removeAttr('disabled');
 			}
 			
-			function processChart() {
-				disableForm();
-				var query = $("#query").val();
-				var year_start = $("#year-start").val();
-				var year_end = $("#year-end").val();
-				
-				$("input[name='interval']").each(function() {
-					var value = $(this).val();
-					console.log("interval: " + value);
-				});
-
-				var url = "processChart?query=" + query + "&year_start=" + year_start + "&year_end=" + year_end;
-
-				//	[{"query":"nhs","data":[{"value":"1994","count":3},{"value":"1995","count":1},{"value":"1996","count":439},{"value":"1997","count":2529},{"value":"1998","count":2792},{"value":"1999","count":7345},{"value":"2000","count":9946},{"value":"2001","count":36838},{"value":"2002","count":97371},{"value":"2003","count":236514},{"value":"2004","count":277319},{"value":"2005","count":207931}]},{"query":" wikipedia","data":[{"value":"2001","count":12},{"value":"2002","count":67},{"value":"2003","count":464},{"value":"2004","count":8030},{"value":"2005","count":64540}]}]
-				$.ajax({
-	    	    	url: url,
-	    	    	dataType: 'json',
-	    	    	success: function(data) {
-	    	    		var graphPoints = [];
-	    	    		$.each( data, function( index, obj ) {
-		    	    		var results = [];
-		    	    		$.each( obj.data, function( index, value) {
-//			    	    		console.log(">>> : " + value.value + " " + value.count);
-			    	    		results.push([value.value, value.count, obj.query]);
-		    	    		});
-		    	    		graphPoints.push(results)
-	    	    		});
-	    		    	var start = parseInt($("#year-start").val())-1;
-	    	    		var end = parseInt($("#year-end").val())+1;
-	    	    		
-	    				runGraph(graphPoints, start, end);
-	    				enableForm();
-	    	    	},
-	    	    	error: function(jqXHR, textStatus, errorThrown) {
-	    		    	console.log("error " + jqXHR.status + " " + textStatus + " " + errorThrown);
-	    	    	}
-	    	    });
-			}
-			
-			
-			function initialGraphLoad() {
-				// each key has a tab/page
-				// also need to set chartgraph id to key
-				var points = [];
-				
-				@if(graphMap != null) {
-					@for(((search, map), index) <- graphMap.zipWithIndex) {
-						var array@(index) = [];
-						@for((key, data) <- map) {
-							//console.log("k d: @key @data");
-							var @key = [];
-							@data.map { graphData =>
-								array@(index).push(["@(graphData.getValue)", @(graphData.getCount), "@(search.query)"]);
-							}
-						}
-						points.push(array@(index));
-					}
-				}
-	
-				runGraph(points, @(year_start), @(year_end));
-			}
-			
-			initialGraphLoad();
-			
-			function runGraph(points, start, end) {
-				// Some simple loops to build up data arrays.
-	    		console.log("x axis: " + start + " " + end + " p:" + points.length);
-
-				var plotter = $.jqplot('chart-search', points, {
-					
-				    title:'Ngram',
-					axes:{
-				        xaxis:{
-				            renderer:$.jqplot.DateAxisRenderer,
-				            min: start,
-				            max: end,
-                            autoscale:true,
-                            tickOptions:{
-                                formatString:'%d'
-                            }, 
-	                        label:'@(labelX)'
-						},
-						yaxis:{
-                            min: 0,
-	                        autoscale:true,
-	                        tickOptions:{
-	                            formatString:'%d'
-	                        }, 
-							label:'@(labelY)'
-						}
-					},
-				    highlighter: {
-						show: true,
-						sizeAdjust: 7.5,
-						yvalues: 4,
-						formatString: '<h2>%d (%d) %s</h2>'
-			        },
-					cursor:{ 
-					   	show: true,
-						zoom: false, 
-						showTooltip: false
-					}
-					
-				}).replot();
-				
-		        $('#chart-search').on('jqplotDataClick', 
-	                function (ev, seriesIndex, pointIndex, data) {
-	        			var year = data[0];
-	        			var count = data[1];
-	        			var query = data[2];
-	        			var url = "search?facet.fields=crawl_year&facet.in.crawl_year=\"" + year + "\"&query=" + query + "&action=search&sort=content_type_norm&order=asc&facet.show=crawl_year";
-	        			window.location.href = url;
-	                }
-	            );
-		        
-		        $('#chart-search').on('jqplotDataMouseOver', function (ev, seriesIndex, pointIndex, data, radius) {
-		        	$('.jqplot-event-canvas').css( 'cursor', 'pointer' );
-		       	});
-		        
-		        $('#chart-search').on('jqplotDataUnhighlight', function() {
-		            $('.jqplot-event-canvas').css('cursor', 'auto');
-		        });
-		        
-				$('.button-reset').on('click', function() {
-					//plotter.resetZoom(); 
-					console.log("reset");
-				});
-			}
-			
 			$("#year-start").val(@(year_start));
 			$("#year-end").val(@(year_end));
+			
+    var svg = dimple.newSvg("#chartContainer", "100%", 300);
+    disableForm();
+    d3.tsv("@routes.Shiner.trendsTsv(q,year_start,year_end)", function (data) {
+	  enableForm();
+      var myChart = new dimple.chart(svg, data);
+      myChart.setMargins("100px", "30px", "60px", "60px");
+      var x = myChart.addCategoryAxis("x", "Date");
+      x.addOrderRule("Date");
+      myChart.addMeasureAxis("y", "Percentage");
+      var s = myChart.addSeries("Query", dimple.plot.line);
+      s.getTooltipText = function (e) {
+          // Load the sample results:
+          $.getJSON('@{routes.Shiner.sampleFromRange()}' + '?query=' + e.aggField[0] + '&year=' + e.x, function(data) {
+        	 $("#samplesTable tr.sample-row").remove();
+        	 $.each(data, function( index, value ) {
+        	     if( value.matches.length > 0 ) {
+		        	 $("#samplesTable").append("<tr class='sample-row'><td class='fragment-left'><span class='fragment-left-inner'>"+value.matches[0][0]+"</span></td><td class='fragment-match'><a href='http://web.archive.org/web/"+value.wayback_date+"/"+value.url+"'>"+value.matches[0][1]+"</a></td><td class='fragment-right'>"+value.matches[0][2]+"</td></tr>");
+		         }
+	         });
+  		  });
+          // And return the tool-tip
+          return [
+              "\"" + e.aggField[0] + "\"",
+              e.yValue.toPrecision(4) + "% of resources", "crawled in " + e.x
+          ];
+      };
+      s.interpolation = "step";
+      //s.lineWeight = 1;
+      myChart.addLegend(100, 10, "100%", 100, "left");
+      myChart.draw();
+      
+    // Add a method to draw the chart on resize of the window
+	window.onresize = function () {
+    	// As of 1.1.0 the second parameter here allows you to draw
+    	// without reprocessing data.  This saves a lot on performance
+    	// when you know the data won't have changed.
+    	myChart.draw(0, true);
+	};
+			
+      
+    });
+    
 		});
 	</script>
 }
@@ -184,21 +93,21 @@
 	<!-- Tab panes -->
 	<div class="tab-content">
   		<div class="tab-pane active" id="plot">
-			<div class="padding-20" id="graph-container">
+			<div id="graph-container">
 				@helper.form(action=routes.Search.plot_graph()) {
-					<div class="row padding-10">
-						<div class="col-md-12 text-center">
+					<div class="row padding-5 text-center">
+						<div class="col-md-4">
 							<input type="text" class="form-control" name="query" placeholder="Comma separated terms" value="@(q)" id="query" />
 						</div>
-					</div>
-					<div class="row padding-10 text-center">
-						<div class="col-md-12">
+						<div class="col-md-8">
 							<div class="form-inline">
+							    <!-- 
 							    <div class="form-group">
 									<input type="radio" name="interval" value="3month"> <label>3 Month</label>
 									<input type="radio" name="interval" value="6month"> <label>6 Month</label>
 									<input type="radio" name="interval" value="1year"> <label>1 Year</label>
 								</div>							
+							     -->
 								<div class="form-group">
 									<label class="sr-only" for="from-date">From:</label>
 									<input type="text" class="form-control field-right" id="year-start" name="year_start">
@@ -207,15 +116,20 @@
 									<label class="sr-only" for="to-date">To:</label>
 									<input type="text" class="form-control field-right" id="year-end" name="year_end">
 								</div>
-								<button type="button" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
+								<button type="submit" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
 								<button type="reset" class="btn btn-primary button-reset" id="reset" name="action" value="reset">Reset All</button>
 								<img id="ajax-loader" src="assets/images/ajax-loader.gif">
 							</div>
 						</div>
 					</div>
 			    }
-		    	<div id="chart-search"></div>
+		    	
+			<div id="chartContainer">
 			</div>
+		    	
+			</div>
+			<table id="samplesTable" class="table table-striped">
+			</table>
 		</div>
   	</div>
 

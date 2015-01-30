@@ -335,7 +335,7 @@ object Search extends Controller {
       user = User.findByEmail(username.toLowerCase())
     }
 
-    Ok(views.html.graphs.plot("NGram", user, query, "Years", "Count", yearStart, yearEnd, graphMap, "graph"))
+    Ok(views.html.graphs.plot("Trend results "+yearStart+"-"+yearEnd+" for "+query, user, query, "Years", "Count", yearStart, yearEnd, graphMap, "graph"))
   }
 
   def processChart = Action { implicit request =>

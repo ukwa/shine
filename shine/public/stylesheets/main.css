@@ -120,3 +120,30 @@ span.glyphicon.glyphicon-remove-sign.removeExcluded {
 .search-name {
 	font-weight: bold;
 }
+
+#samplesTable .sample-row td {
+	padding: 4px 2px;
+	white-space: nowrap;
+}
+#samplesTable .fragment-left {
+	text-align: right;
+	width: 49%;
+	max-width: 200px;
+	padding-right:0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    direction:rtl;
+}
+#samplesTable .fragment-match {
+	text-align: center;
+	width: 2%;
+	font-weight: bold;
+}
+#samplesTable .fragment-right {
+	text-align: left;
+	padding-left: 0;
+	width: 49%;
+	max-width: 200px;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}

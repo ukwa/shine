@@ -3,12 +3,33 @@
  */
 package controllers;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.FacetField.Count;
+import org.apache.solr.client.solrj.response.RangeFacet;
+import org.apache.solr.common.SolrDocument;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import au.com.bytecode.opencsv.CSVWriter;
 import play.*;
 import play.mvc.*;
+import play.libs.Json;
+import uk.bl.wa.shine.Query;
+import uk.bl.wa.shine.Shine;
+import uk.bl.wa.shine.model.TrendData;
 import uk.bl.wa.shine.vis.Rescued;
 
 /**
@@ -20,6 +41,8 @@ public class Shiner extends Controller {
 	static Configuration config = play.Play.application().configuration().getConfig("shine");
 
 	static Rescued rescued = new Rescued(config);
+	
+	static Shine solr = new Shine(config);
 	  
 	public static Result halflife() {
 		try {
@@ -33,5 +56,156 @@ public class Shiner extends Controller {
 		}
 		return ok( views.html.vis.rescued.render("Half-life...", "halflife") );
 	}
+	
+	public static Result trendsTsv(String query, String year_start, String year_end) throws SolrServerException {
+		Logger.info("Q: "+query+" "+year_start+" "+year_end);
+		
+		// Set up the query parameters:
+		Map<String, List<String>> params = getQueryParams(year_start,year_end);
+		
+		// Grab the baseline data:
+		Query baseline = solr.graph(new Query("*:*",params));
+		Logger.info("BASELINE: "+baseline.res);
+		TrendData baseTrend = extractTrendData(baseline);
+		Map<Date, Long> baseHits = baseTrend.getHits();
+		
+		// Start building up the TSV
+		StringWriter s = new StringWriter();
+	    CSVWriter writer = new CSVWriter(s, '\t');
+	    // feed in your array (or convert your data to an array)
+	    String[] entries = new String[] { "Query", "Date", "Hits", "Percentage" };
+	    writer.writeNext(entries);
+
+		
+		// Loop through the query terms to grab the results:
+		String[] terms = query.split(",");
+		String[] line = new String[4];
+		for( String term : terms ) {
+			Query q = new Query(term, params);
+		
+			// Do the graph:
+			q = solr.graph(q);
+			Logger.info("Found: "+q.res.getResults().getNumFound());
+			
+			// Write the result:
+			TrendData td = extractTrendData(q);
+			Map<Date, Long> hits = td.getHits();
+			for( Date date : hits.keySet()) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(date);
+				line[0] = term;
+				line[1] = Integer.toString(cal.get(Calendar.YEAR));
+				line[2] = hits.get(date).toString();
+				if( baseHits.get(date) > 0 ) {
+					line[3] = Double.toString(100.0*(double)hits.get(date)/(double)baseHits.get(date));
+				} else {
+					line[3] = "0.0";
+				}
+				writer.writeNext(line);
+			}
+		}
+		
+		// Get the TSV
+	    try {
+			writer.close();
+		} catch (IOException e) {
+			Logger.error("Exception while closing TSV: ",e);
+		}
+		String tsv = s.toString();
+		
+		// Serve the result
+		response().setContentType("text/tab-separated-values");
+		response().setHeader("Content-disposition","attachment; filename=trend-" + 
+				year_start + "-" + year_end + "-" + query + ".tsv");
+		return ok(tsv);
+	}
+	
+	private static Map<String, List<String>> getQueryParams(String year_start, String year_end) {
+		Map<String, List<String>> params = new HashMap<String,List<String>>();
+		params.put("year_start", Arrays.asList( year_start ) );
+		params.put("year_end", Arrays.asList( year_end ) );
+		return params;
+	}
+	
+	/**
+	 * 
+	 * @param q
+	 * @return
+	 */
+	private static TrendData extractTrendData(Query q) {
+		int start = Integer.parseInt(q.getParameters().get("year_start").get(0));
+		int end = Integer.parseInt(q.getParameters().get("year_end").get(0));
+		TrendData td = new TrendData(start, end, 1);
+		for( @SuppressWarnings("rawtypes") RangeFacet fr : q.res.getFacetRanges()) {
+			Logger.info("FR: "+fr.getName()+ " "+fr.getCounts());
+			if( "crawl_date".equals(fr.getName()) ) {
+				RangeFacet.Date frd = (RangeFacet.Date) fr;
+				for(  RangeFacet.Count c: frd.getCounts()) {
+					Calendar cDate = javax.xml.bind.DatatypeConverter.parseDateTime(c.getValue());
+					Logger.info("FRDC: "+cDate.get(Calendar.YEAR)+" "+c.getCount());
+					td.setHitsForYear(cDate.get(Calendar.YEAR), c.getCount());
+				}
+			}
+		}
+		return td;
+	}
+
+
+	/**
+	 * 
+	 * @param query
+	 * @param year_start
+	 * @param year_end
+	 * @return
+	 * @throws SolrServerException
+	 */
+	public static Result sampleFromRange(String query, String year) throws SolrServerException {
+		// Set up the query parameters:
+		Map<String, List<String>> params = getQueryParams(year,Integer.toString(Integer.parseInt(year)+1));
+		
+		// Grab the baseline data:
+		params.put("sort",Arrays.asList(new String[] { "random_12" } ));
+		params.put("facet.in.crawl_years", Arrays.asList(new String[] { year } ));
+		Query sample = new Query(query,params);
+		// Do the search:
+		sample = solr.search(sample,20);
+		
+		// Set up a Json output:
+		ObjectNode result = Json.newObject();
+		
+		// Pull out the highlights:
+		for( String id : sample.res.getHighlighting().keySet() ) {
+			ObjectNode item = result.putObject(id);
+			// Pick up highlights
+			Map<String, List<String>> hls = sample.res.getHighlighting().get(id);			
+			ArrayNode matches = item.putArray("matches");
+			for( String field : hls.keySet() ) {
+				for( String match: hls.get(field)) {
+					ArrayNode m = matches.addArray();
+					String[] parts = match.split("<em>");
+					m.add(parts[0]);
+					String[] tail = parts[1].split("</em>");
+					m.add(tail[0]);
+					if( tail.length > 1 ) {
+						m.add(tail[1]);
+					} else {
+						m.add("");
+					}
+				}
+			}
+			// And look for other info:
+			for( SolrDocument doc : sample.res.getResults()) {
+				if( id.equals(doc.get("id"))) {
+					item.put("domain", (String)doc.get("domain"));
+					item.put("url", (String)doc.get("url"));
+					item.put("wayback_date", (String)doc.get("wayback_date"));
+				}
+			}
+		}
+		
+		// Return the sample summary:
+		return ok(result);
+	}
+	
 	
 }
