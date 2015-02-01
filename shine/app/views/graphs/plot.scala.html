@@ -39,6 +39,15 @@
 				$('#reset').removeAttr('disabled');
 			}
 			
+			function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
+			
 			$("#year-start").val(@(year_start));
 			$("#year-end").val(@(year_end));
 			
@@ -58,7 +67,15 @@
         	 $("#samplesTable tr.sample-row").remove();
         	 $.each(data, function( index, value ) {
         	     if( value.matches.length > 0 ) {
-		        	 $("#samplesTable").append("<tr class='sample-row'><td class='fragment-left'><span class='fragment-left-inner'>"+value.matches[0][0]+"</span></td><td class='fragment-match'><a href='http://web.archive.org/web/"+value.wayback_date+"/"+value.url+"'>"+value.matches[0][1]+"</a></td><td class='fragment-right'>"+value.matches[0][2]+"</td></tr>");
+        	         mid = Math.floor((value.matches.length-1)/2);
+		        	 $("#samplesTable").append(
+		        	   "<tr class='sample-row'><td class='fragment-left'><span class='fragment-left-inner'>" +
+		        	   escapeHtml(value.matches[mid][0]) + 
+		        	   "</span></td><td class='fragment-match'><a href='http://web.archive.org/web/"+value.wayback_date+"/"+value.url+"'>" + 
+		        	   escapeHtml(value.matches[mid][1]) + 
+		        	   "</a></td><td class='fragment-right'>" + 
+		        	   escapeHtml(value.matches[mid][2]) + 
+		        	   "</td></tr>");
 		         }
 	         });
   		  });
