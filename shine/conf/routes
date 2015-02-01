@@ -25,8 +25,7 @@ POST    /search/reset/facets				controllers.Search.resetFacets(query ?= "*:*", p
 
 # TBD: The main hook for the explore/trend analysis/delve UI.
 
-GET     /graph								controllers.Search.plot_graph(query ?= "bbc", year_start ?= "1995", year_end ?= "2015")
-GET     /processChart                       controllers.Search.processChart
+GET     /graph								controllers.Search.plot_graph(query ?= "bbc", year_start ?= "1996", year_end ?= "2010")
 GET     /trends/tsv                         controllers.Shiner.trendsTsv(query, year_start, year_end)
 GET     /trends/sampleFromYear              controllers.Shiner.sampleFromRange(query ?= "test", year ?= "2000")
 

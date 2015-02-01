@@ -115,8 +115,8 @@ public class Shiner extends Controller {
 		
 		// Serve the result
 		response().setContentType("text/tab-separated-values");
-		response().setHeader("Content-disposition","attachment; filename=trend-" + 
-				year_start + "-" + year_end + "-" + query + ".tsv");
+		//response().setHeader("Content-disposition","attachment; filename=trend-" + 
+		//		year_start + "-" + year_end + "-" + query + ".tsv");
 		return ok(tsv);
 	}
 	

@@ -279,7 +279,6 @@ object Search extends Controller {
   def plot_graph(query: String, year_start: String, year_end: String) = Action { implicit request =>
     // public suffixes and domains too?
 
-    // select?q=*:*&facet=true&facet.date=crawl_date&facet.date.gap=%2B1YEAR&facet.date.start=1994-01-01T00:00:00.00Z&facet.date.end=NOW%2B1YEAR
     var yearStart = year_start
     var yearEnd = year_end
 
