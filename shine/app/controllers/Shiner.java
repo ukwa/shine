@@ -181,7 +181,6 @@ public class Shiner extends Controller {
 			ArrayNode matches = item.putArray("matches");
 			for( String field : hls.keySet() ) {
 				for( String match: hls.get(field)) {
-					Logger.info("Splitting: "+match);
 					ArrayNode m = matches.addArray();
 					// Merge contiguous matches:
 					// c.f. better approaches in http://stackoverflow.com/questions/19266432/highlighting-exact-phrases-with-solr
