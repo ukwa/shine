@@ -40,13 +40,8 @@
 			}
 			
 			function escapeHtml(unsafe) {
-    return unsafe
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
- }
+				return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+ 			}
 			
 			$("#year-start").val(@(year_start));
 			$("#year-end").val(@(year_end));
@@ -69,15 +64,20 @@
            	 $("#samplesTitle").text("Found "+Object.keys(data).length+" samples from "+e.x+"...");
         	 $.each(data, function( index, value ) {
         	     if( value.matches.length > 0 ) {
-        	         mid = Math.floor((value.matches.length-1)/2);
-		        	 $("#samplesTable").append(
-		        	   "<tr class='sample-row'><td class='fragment-left'><span class='fragment-left-inner'>" +
-		        	   escapeHtml(value.matches[mid][0]) + 
-		        	   "</span></td><td class='fragment-match'><a href='http://web.archive.org/web/"+value.wayback_date+"/"+value.url+"'>" + 
-		        	   escapeHtml(value.matches[mid][1]) + 
-		        	   "</a></td><td class='fragment-right'>" + 
-		        	   escapeHtml(value.matches[mid][2]) + 
-		        	   "</td></tr>");
+        	         line = "<tr class='sample-row'><td class='fragment-left'><span class='fragment-left-inner'>";
+        	         for( i=0; i< value.matches.length; i++ ) {
+	        	         line = line + escapeHtml(value.matches[i][0])+"<br/>";
+	        	     }
+	        	     line = line +"</span></td><td class='fragment-match'><a href='http://web.archive.org/web/"+value.wayback_date+"/"+value.url+"'>";
+        	         for( i=0; i< value.matches.length; i++ ) {
+	        	         line = line + escapeHtml(value.matches[i][1])+"<br/>";
+	        	     }
+	        	     line = line + "</a></td><td class='fragment-right'>";
+        	         for( i=0; i< value.matches.length; i++ ) {
+	        	         line = line + escapeHtml(value.matches[i][2])+"<br/>";
+	        	     }
+		        	 line = line + "</td></tr>";
+		        	 $("#samplesTable").append(line);
 		         }
 	         });
   		  });
