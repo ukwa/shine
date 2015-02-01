@@ -293,49 +293,12 @@ object Search extends Controller {
 
     var values = query.split(",")
 
-    var graphMap: Map[Query, Map[String, ListBuffer[GraphData]]] = {
-
-      var map: Map[Query, Map[String, ListBuffer[GraphData]]] = Map()
-
-      // Get the baseline value: 
-      //val baseline = doGraph("*:*", request.queryString)
-      // Then normalise WRT it below.
-      
-      for (text <- values) {
-        val value = text.trim
-        val q = doGraph(value, request.queryString)
-
-        println("query: " + q.query);
-
-        val totalRecords = q.res.getResults().getNumFound().intValue()
-        println("totalRecords: " + totalRecords);
-
-        var listMap: Map[String, ListBuffer[GraphData]] = getGraphData(q)
-
-        if (StringUtils.isNotEmpty(q.dateStart)) {
-          yearStart = q.dateStart
-        }
-        if (StringUtils.isNotEmpty(q.dateEnd)) {
-          yearEnd = q.dateEnd
-        }
-        if (!listMap.isEmpty) {
-          map += (q -> listMap)
-        }
-      }
-      map
-    }
-
-    //    val head = graphMap.head
-    //    val q = head._1
-    //    val listMap = head._2
-    //    q.query = query
-
     var user: User = null
     request.session.get("username").map { username =>
       user = User.findByEmail(username.toLowerCase())
     }
 
-    Ok(views.html.graphs.plot("Trend results "+yearStart+"-"+yearEnd+" for "+query, user, query, "Years", "Count", yearStart, yearEnd, graphMap, "graph"))
+    Ok(views.html.graphs.plot("Trend results "+yearStart+"-"+yearEnd+" for "+query, user, query, "Years", "Count", yearStart, yearEnd, "graph"))
   }
 
   def processChart = Action { implicit request =>

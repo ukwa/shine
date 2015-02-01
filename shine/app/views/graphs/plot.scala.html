@@ -1,4 +1,4 @@
-@(title: String, user: User, q: String, labelX: String, labelY: String, year_start: String, year_end: String, graphMap:scala.collection.immutable.Map[uk.bl.wa.shine.Query,scala.collection.immutable.Map[String,scala.collection.mutable.ListBuffer[uk.bl.wa.shine.GraphData]]], pageName: String)
+@(title: String, user: User, q: String, labelX: String, labelY: String, year_start: String, year_end: String, pageName: String)
 
 @styles = {
 }
@@ -75,7 +75,7 @@
 
       // Log axis toggler      
       myChart.svg.on("click", function (e) {
-                    console.log("Toggling y-axis log scale...);
+                    console.log("Toggling y-axis log scale...");
                     if( y.useLog == false ) {
 	                    y.useLog = true;
 	                } else {
