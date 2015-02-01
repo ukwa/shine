@@ -285,7 +285,7 @@ public class Shine extends Solr {
 		Date end = cal.getTime();
 		Logger.debug("start date: " + start);
 		Logger.debug("end date: " + end);
-		solrParameters.addDateRangeFacet("crawl_date", start, end, "+1YEAR");
+		solrParameters.addDateRangeFacet("crawl_dates", start, end, "+1YEAR");
 		solrParameters.setFacetSort(FacetParams.FACET_SORT_INDEX);
 		return doSearch(query, solrParameters);
 	}
