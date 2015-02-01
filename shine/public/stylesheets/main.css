@@ -137,7 +137,7 @@ span.glyphicon.glyphicon-remove-sign.removeExcluded {
 #samplesTable .fragment-match {
 	text-align: center;
 	width: 2%;
-	font-weight: bold;
+	font-weight: normal;
 }
 #samplesTable .fragment-right {
 	text-align: left;

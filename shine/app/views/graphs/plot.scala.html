@@ -50,7 +50,7 @@
       myChart.setMargins("100px", "30px", "60px", "60px");
       var x = myChart.addCategoryAxis("x", "Date");
       x.addOrderRule("Date");
-      myChart.addMeasureAxis("y", "Percentage");
+      var y = myChart.addMeasureAxis("y", "Percentage");
       var s = myChart.addSeries("Query", dimple.plot.line);
       s.getTooltipText = function (e) {
           // Load the sample results:
@@ -68,10 +68,22 @@
               e.yValue.toPrecision(4) + "% of resources", "crawled in " + e.x
           ];
       };
-      s.interpolation = "step";
+      //s.interpolation = "step";
       //s.lineWeight = 1;
       myChart.addLegend(100, 10, "100%", 100, "left");
       myChart.draw();
+
+      // Log axis toggler      
+      myChart.svg.on("click", function (e) {
+                    console.log("Toggling y-axis log scale...);
+                    if( y.useLog == false ) {
+	                    y.useLog = true;
+	                } else {
+	                    y.useLog = false;
+	                }
+			        myChart.draw();
+      });
+      
       
     // Add a method to draw the chart on resize of the window
 	window.onresize = function () {
