@@ -63,8 +63,10 @@
       var s = myChart.addSeries("Query", dimple.plot.line);
       s.getTooltipText = function (e) {
           // Load the sample results:
+          $("#samplesTitle").text("Searching for a random sample from "+e.x+"...");
           $.getJSON('@{routes.Shiner.sampleFromRange()}' + '?query=' + e.aggField[0] + '&year=' + e.x, function(data) {
         	 $("#samplesTable tr.sample-row").remove();
+           	 $("#samplesTitle").text("Found "+Object.keys(data).length+" samples from "+e.x+"...");
         	 $.each(data, function( index, value ) {
         	     if( value.matches.length > 0 ) {
         	         mid = Math.floor((value.matches.length-1)/2);
@@ -157,7 +159,12 @@
 			</div>
 		    	
 			</div>
-			<table id="samplesTable" class="table table-striped">
+			<table class="table table-striped">
+			<thead>
+			<th colspan="3" id="samplesTitle">Hover to show a random sample of records...</th>
+			</thead>
+			<tbody id="samplesTable">
+			</tbody>
 			</table>
 		</div>
   	</div>

@@ -168,7 +168,7 @@ public class Shiner extends Controller {
 		params.put("facet.in.crawl_years", Arrays.asList(new String[] { year } ));
 		Query sample = new Query(query,params);
 		// Do the search:
-		sample = solr.search(sample,20);
+		sample = solr.search(sample,100);
 		
 		// Set up a Json output:
 		ObjectNode result = Json.newObject();
@@ -181,7 +181,12 @@ public class Shiner extends Controller {
 			ArrayNode matches = item.putArray("matches");
 			for( String field : hls.keySet() ) {
 				for( String match: hls.get(field)) {
+					Logger.info("Splitting: "+match);
 					ArrayNode m = matches.addArray();
+					// Merge contiguous matches:
+					// c.f. better approaches in http://stackoverflow.com/questions/19266432/highlighting-exact-phrases-with-solr
+					match = match.replace("</em> <em>"," ");
+					// And split:
 					String[] parts = match.split("<em>");
 					m.add(parts[0]);
 					String[] tail = parts[1].split("</em>");

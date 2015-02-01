@@ -192,8 +192,10 @@ public class Shine extends Solr {
 	    solrParameters.setHighlightSimplePost("</em>");
 	    
 	    solrParameters.addHighlightField("content,title,url");
-//	    solrParameters.setParam("hl.fl", "*");
-//	    solrParameters.setHighlightRequireFieldMatch(Boolean.TRUE);
+	    solrParameters.setParam("hl.mergeContiguous", "true");
+	    solrParameters.setParam("hl.maxAnalyzedChars", "100000");
+	    solrParameters.setParam("hl.usePhraseHighlighter", "true");
+	    //solrParameters.setHighlightRequireFieldMatch(Boolean.TRUE);
 
 		solrParameters.setRows(rows);
 		
