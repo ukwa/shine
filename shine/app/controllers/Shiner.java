@@ -138,7 +138,7 @@ public class Shiner extends Controller {
 		TrendData td = new TrendData(start, end, 1);
 		for( @SuppressWarnings("rawtypes") RangeFacet fr : q.res.getFacetRanges()) {
 			Logger.info("FR: "+fr.getName()+ " "+fr.getCounts());
-			if( "crawl_date".equals(fr.getName()) ) {
+			if( "crawl_dates".equals(fr.getName()) ) {
 				RangeFacet.Date frd = (RangeFacet.Date) fr;
 				for(  RangeFacet.Count c: frd.getCounts()) {
 					Calendar cDate = javax.xml.bind.DatatypeConverter.parseDateTime(c.getValue());
