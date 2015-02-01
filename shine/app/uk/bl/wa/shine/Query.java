@@ -198,7 +198,7 @@ public class Query {
 			yearStart = parameters.get("year_start").get(0);
 		}
 		if (parameters.get("year_end") != null) {
-			yearEnd = parameters.get("year_end").get(0) + 1;
+			yearEnd = Integer.toString(Integer.parseInt(parameters.get("year_end").get(0)) + 1);
 		}
 		Logger.info("Dates: " + yearStart + " " + yearEnd);
 		
