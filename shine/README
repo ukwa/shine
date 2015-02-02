@@ -7,6 +7,22 @@ This is a front-end for Solr indicies created using the warc-discovery package.
 
 Ideas
 -----
+
+* Ensure DROID is up to date in the indexer.
+
+* Randoms sample to say the term, and to grey out/remove the old sample when query begins, ON CLICK.
+* Pull total value out of data as well, so that can be displayed.
+* Get the log-axis range/domain better
+
+* Remember dismissal of warning banner. 'remember selected option'
+
+Good Trends:
+
+* Politicians:
+* Social Media: myspace,facebook,twitter
+* Outbreaks: "Foot and mouth","Bird flu"
+* News: Terrorist, Iraq, Iraq war, Jubilee,
+* Science: Genome, Exome
     
 ### Trend Analysis ###
 * Basic idea is to have some parameterisable queries and axes, so that we can plot features 

@@ -6,6 +6,7 @@ package uk.bl.wa.shine.model;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -50,15 +51,23 @@ public class TrendData {
 	 * @return a map for generating plots
 	 */
 	public Map<Date,Long> getHits() {
-		Map<Date,Long> hitmap = new HashMap<Date,Long>();
+		Map<Date,Long> hitmap = new LinkedHashMap<Date,Long>();
+		boolean dataBegun = false;
 		for( int i = 0; i < size; i++ ) {
 			// Set up the date:
 			Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(0);
 			cal.set(Calendar.YEAR, start + i/steps);
 			cal.set(Calendar.MONTH, (int)(12.0*i%steps));
+			// Skip adding data until hit count goes > 0:
+			if( hits[i] > 0 )
+				dataBegun = true;
 			// Add it to the map:
-			hitmap.put( cal.getTime(), hits[i]);
+			if( !dataBegun ) {
+				hitmap.put( cal.getTime(), null);
+			} else {
+				hitmap.put( cal.getTime(), hits[i]);
+			}
 		}
 		return hitmap;
 	}

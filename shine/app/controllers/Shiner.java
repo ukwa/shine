@@ -95,10 +95,15 @@ public class Shiner extends Controller {
 				cal.setTime(date);
 				line[0] = term;
 				line[1] = Integer.toString(cal.get(Calendar.YEAR));
-				line[2] = hits.get(date).toString();
-				if( baseHits.get(date) > 0 ) {
-					line[3] = Double.toString(100.0*(double)hits.get(date)/(double)baseHits.get(date));
+				if( hits.get(date) != null ) {
+					line[2] = hits.get(date).toString();
+					if( baseHits.get(date) > 0 ) {
+						line[3] = Double.toString(100.0*(double)hits.get(date)/(double)baseHits.get(date));
+					} else {
+						line[3] = "0.0";
+					}
 				} else {
+					line[2] = "0.0";
 					line[3] = "0.0";
 				}
 				writer.writeNext(line);
