@@ -22,8 +22,21 @@
 		@styles
 		@scripts
 		
+		<script>
+	    function runOnLoad(){
+	        if($.cookie('alert-beta-service-warning') == null) {
+	            $.cookie('alert-beta-service-warning', 'open', { expires: 7 });
+	        } else if($.cookie('alert-beta-service-warning') == 'close') {
+	            $("#alert-beta-service-warning").hide();
+	        }
+	    }
+	    function hideMe(){
+	        $.cookie('alert-beta-service-warning', 'close', {expires:7 });
+	        $("#alert-beta-service-warning").hide();
+	    }
+	    </script>
 	</head>
-	<body>
+	<body onload="runOnLoad()">
 		<nav class="navbar navbar-default" role="navigation">
   			<div class="navbar-header">		
     			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -63,8 +76,8 @@
 			</div>
 		</nav>
 		<div class="container">
-	        <div class="alert alert-warning alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <div id="alert-beta-service-warning" class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="hideMe()"><span aria-hidden="true">&times;</span></button>
 	            <strong>Warning!</strong> This is a research prototype for a web archive search service, and may be taken down at any time.
 	        </div>
 			

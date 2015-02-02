@@ -1,19 +1,20 @@
 Shine - Visualising Web Archive via Solr
 ========================================
 
-This is a front-end for Solr indicies created using the warc-discovery package.
+This is a front-end for Solr indicies created using the warc-discovery package. 
+
+Running, e.g. to keep different configs separate,
 
     % play -Dconfig.file=conf/application-localhost-solr.conf run
 
 Ideas
 -----
 
+Indexer
 * Ensure DROID is up to date in the indexer.
 
-* Pull total value out of data as well, so that can be displayed.
-* Remember dismissal of warning banner. 'remember selected option'
 
-Good Trends:
+Good Trends?
 
 * Politicians:
 * Social Media: myspace,facebook,twitter
