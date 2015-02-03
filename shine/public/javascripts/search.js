@@ -16,6 +16,15 @@ $(function () {
 		//clearFacets();
 	});
 	
+	$('.paging').click(function() {
+		if ($('#search-form').valid()) {
+		    $('#modalLoader').modal({
+		        backdrop: true,
+		        keyboard: true
+		    });
+		}
+	});
+	
 	$('#sort').change(function(event) {
 		console.log('sort');
 		event.preventDefault();
@@ -939,7 +948,7 @@ function facetOptions() {
 		$(this).find('a.facet.exclude').each(function(index) {
 			//console.log(facet_name + " " + facet_value);
 			var span = $(this).find('span.glyphicon');
-			console.log(url);
+			//console.log(url);
 			var facet = facet_name_exc + "=" + facet_value_exc;
 			if (!span.hasClass('facet-selected')) {
 				// SELECTED
