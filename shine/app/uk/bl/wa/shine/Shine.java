@@ -453,6 +453,8 @@ public class Shine extends Solr {
 						solrParameters.add(key, params.get(key).get(0));
 						query.menu.put(key, params.get(key).get(0));
 					}
+				} else {
+					
 				}
 			}
 			

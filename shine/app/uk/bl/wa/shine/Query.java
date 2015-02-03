@@ -321,6 +321,38 @@ public class Query {
 		// this is for filtering exclusions from checkboxes
 		this.responseParameters += processExclusionsParameters();
 		
+		
+		List<String> facetFields = this.parameters.get("facet.fields");
+		StringBuilder parameters = new StringBuilder("");
+		if (facetFields != null) {
+			for (String ff : facetFields) {
+				if (StringUtils.isNotEmpty(ff)) {
+					parameters.append("&facet.fields=").append(ff);
+				}
+			}
+		}
+		
+		List<String> invert = this.parameters.get("invert");
+		if (invert != null) {
+			for (String inv : invert) {
+				if (StringUtils.isNotEmpty(inv)) {
+					parameters.append("&invert=").append(inv);
+				}
+			}
+		}
+		
+		List<String> order = this.parameters.get("order");
+		if (order != null) {
+			for (String o : order) {
+				if (StringUtils.isNotEmpty(o)) {
+					parameters.append("&order=").append(o);
+				}
+			}
+		}
+		
+		this.responseParameters += parameters.toString();
+		
+		Logger.info("updated responseParameters: " + this.responseParameters);
 		// 1980-01-01T12:00:00Z
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd'T'hh:mm:ss'Z'");
 		Calendar cal = Calendar.getInstance();
@@ -426,7 +458,9 @@ public class Query {
 			String sortValue = getFacetSortValue(facetSort);
 			parameters.append("&").append(facetSort).append("=").append(sortValue);
 		}
-		Logger.info("processFacetsAsParamValues: " + parameters.toString());
+		
+		// inverting stuff?
+		Logger.debug("processFacetsAsParamValues: " + parameters.toString());
 		
 		return parameters.toString();
 	}
