@@ -55,13 +55,26 @@
       var x = myChart.addCategoryAxis("x", "Date");
       x.addOrderRule("Date");
       var y = myChart.addMeasureAxis("y", "Percentage");
+      var yMin = 100.0;
+      for( var index = 0; index < data.length; index++) {
+        var value = data[index];
+        var pc = value["Percentage"];
+        if( parseFloat(pc) != 0.0 && parseFloat(pc) < parseFloat(yMin) ) {
+          yMin = pc;
+        }
+      }
+      if( yMin < 0.1 ) {
+        y.overrideMin = yMin;
+      }
+      y.tickFormat = ",3.1g";
       var s = myChart.addSeries("Query", dimple.plot.line);
-      s.getTooltipText = function (e) {
+      s.addEventHandler("click", function (e) {
+        console.log("Hey, you clicked " + e.seriesValue + ". Woooooo!" + e.xValue +" " + e.yValue +" " + Object.keys(e));
           // Load the sample results:
-          $("#samplesTitle").text("Searching for a random sample from "+e.x+"...");
-          $.getJSON('@{routes.Shiner.sampleFromRange()}' + '?query=' + e.aggField[0] + '&year=' + e.x, function(data) {
-        	 $("#samplesTable tr.sample-row").remove();
-           	 $("#samplesTitle").text("Found "+Object.keys(data).length+" samples from "+e.x+"...");
+          $("#samplesTitle").text("Searching for a random sample matching '"+e.seriesValue+"' from "+e.xValue+"...");
+      	 $("#samplesTable tr.sample-row").remove();
+          $.getJSON('@{routes.Shiner.sampleFromRange()}' + '?query=' + e.seriesValue + '&year=' + e.xValue, function(data) {
+           	 $("#samplesTitle").text("Found "+Object.keys(data).length+" samples matching '"+e.seriesValue+"' from "+e.xValue+"...");
         	 $.each(data, function( index, value ) {
         	     if( value.matches.length > 0 ) {
         	         line = "<tr class='sample-row'><td class='fragment-left'><span class='fragment-left-inner'>";
@@ -81,27 +94,35 @@
 		         }
 	         });
   		  });
+      });
+      s.getTooltipText = function (e) {
+          var index = e.x - @{year_start};
+          var format = d3.format("0,000");
+                    
           // And return the tool-tip
           return [
               "\"" + e.aggField[0] + "\"",
-              e.yValue.toPrecision(4) + "% of resources", "crawled in " + e.x
+              e.yValue.toPrecision(4) + "% of resources ", "(" + format(data[index]["Hits"]) + " of " + format(data[index]["Total Crawled"])+ ")" , "crawled in " + e.x
           ];
       };
-      //s.interpolation = "step";
-      //s.lineWeight = 1;
+      
       myChart.addLegend(100, 10, "100%", 100, "left");
       myChart.draw();
 
-      // Log axis toggler      
-      myChart.svg.on("click", function (e) {
-                    console.log("Toggling y-axis log scale...");
+      // Defined a function for toggling the Y axis:      
+      togglerFunction = function (e) {
                     if( y.useLog == false ) {
 	                    y.useLog = true;
 	                } else {
 	                    y.useLog = false;
 	                }
 			        myChart.draw();
-      });
+     				// Re-attach toggler:
+       				y.titleShape.on("click", togglerFunction);
+      };
+
+      // Log axis toggler      
+      y.titleShape.on("click", togglerFunction);
       
       
     // Add a method to draw the chart on resize of the window
@@ -161,7 +182,7 @@
 			</div>
 			<table class="table table-striped">
 			<thead>
-			<th colspan="3" id="samplesTitle">Hover over a point on the graph to show a random sample of the matching records from that year...</th>
+			<th colspan="3" id="samplesTitle">Click on a point on the graph to show a random sample of the matching records from that year...</th>
 			</thead>
 			<tbody id="samplesTable">
 			</tbody>

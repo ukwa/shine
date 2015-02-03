@@ -73,13 +73,13 @@ public class Shiner extends Controller {
 		StringWriter s = new StringWriter();
 	    CSVWriter writer = new CSVWriter(s, '\t');
 	    // feed in your array (or convert your data to an array)
-	    String[] entries = new String[] { "Query", "Date", "Hits", "Percentage" };
+	    String[] entries = new String[] { "Query", "Date", "Hits", "Percentage", "Total Crawled" };
 	    writer.writeNext(entries);
 
 		
 		// Loop through the query terms to grab the results:
 		String[] terms = query.split(",");
-		String[] line = new String[4];
+		String[] line = new String[5];
 		for( String term : terms ) {
 			Query q = new Query(term, params);
 		
@@ -95,12 +95,18 @@ public class Shiner extends Controller {
 				cal.setTime(date);
 				line[0] = term;
 				line[1] = Integer.toString(cal.get(Calendar.YEAR));
-				line[2] = hits.get(date).toString();
-				if( baseHits.get(date) > 0 ) {
-					line[3] = Double.toString(100.0*(double)hits.get(date)/(double)baseHits.get(date));
+				if( hits.get(date) != null ) {
+					line[2] = hits.get(date).toString();
+					if( baseHits.get(date) > 0 ) {
+						line[3] = Double.toString(100.0*(double)hits.get(date)/(double)baseHits.get(date));
+					} else {
+						line[3] = "0.0";
+					}
 				} else {
+					line[2] = "0.0";
 					line[3] = "0.0";
 				}
+				line[4] = ""+baseHits.get(date);
 				writer.writeNext(line);
 			}
 		}
