@@ -90,7 +90,7 @@
 							}
 								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
 								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-								<a class="facet-name">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(f.getCount())</span>
+								<a class="facet-name">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(uk.bl.wa.shine.model.FacetValue.integerDecimalFormat.format(f.getCount()))</span>
 								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 							</li>

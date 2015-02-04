@@ -6,7 +6,6 @@ package controllers;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,22 +14,22 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.FacetField;
-import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.RangeFacet;
 import org.apache.solr.common.SolrDocument;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import au.com.bytecode.opencsv.CSVWriter;
-import play.*;
-import play.mvc.*;
+import play.Configuration;
+import play.Logger;
 import play.libs.Json;
+import play.mvc.Controller;
+import play.mvc.Result;
 import uk.bl.wa.shine.Query;
 import uk.bl.wa.shine.Shine;
 import uk.bl.wa.shine.model.TrendData;
 import uk.bl.wa.shine.vis.Rescued;
+import au.com.bytecode.opencsv.CSVWriter;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * @author Andrew Jackson <Andrew.Jackson@bl.uk>
@@ -106,7 +105,11 @@ public class Shiner extends Controller {
 					line[2] = "0.0";
 					line[3] = "0.0";
 				}
-				line[4] = ""+baseHits.get(date);
+				if( baseHits.get(date) != null ) {
+					line[4] = ""+baseHits.get(date);
+				} else {
+					line[4] = "0.0";
+				}
 				writer.writeNext(line);
 			}
 		}

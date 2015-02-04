@@ -1,5 +1,6 @@
 package uk.bl.wa.shine;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,8 @@ public class Pagination {
     private int maxViewablePages; // i.e 50 pages max
 
     private int totalPages = 0;
+    
+    DecimalFormat idf = new DecimalFormat("##,###");
 
     // The paging must limit the depth to which we allow the user to descend, as otherwise Solr starts to fall over. 
     // The Pager should only show ten page numbers at once, and should only allow 50 pages to be viewed. 
@@ -128,7 +131,7 @@ public class Pagination {
         int last = this.getEndIndex();
         int total = this.getTotalItems();
 
-        String displayText = first+to+last+of+total;
+        String displayText = idf.format(first)+to+idf.format(last)+of+idf.format(total);
         if (first > total) {
         	displayText = " not found";
         }
