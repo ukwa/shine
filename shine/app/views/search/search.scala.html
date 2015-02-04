@@ -165,12 +165,15 @@
 					var facetValue = facet_main.find('input[type=hidden]:first').val();
 					var invert = facet_main.find('input[type=hidden]:last').val();
 					
+					console.log(facetValue + "/" + facetValue.length + " - " + invert + "/" + invert.length);
+					
 					// +/-
 					facet_options.each(function(index) {
 						if (name.length == 0) {
 							name = facet_main.find('a strong').html();
+							//console.log(name);
 							// inverted
-							if (facetValue == invert) {
+							if (facetValue != '' && invert != '' && facetValue == invert) {
 								line = name + ": (Exclude) ";
 							} else {
 								line = name + ": (Include) ";

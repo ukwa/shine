@@ -16,6 +16,15 @@ $(function () {
 		//clearFacets();
 	});
 	
+	$('.paging').click(function() {
+		if ($('#search-form').valid()) {
+		    $('#modalLoader').modal({
+		        backdrop: true,
+		        keyboard: true
+		    });
+		}
+	});
+	
 	$('#sort').change(function(event) {
 		console.log('sort');
 		event.preventDefault();
@@ -872,6 +881,7 @@ function facetOptions() {
 		}
 
 		var inverts = getURLParameters('invert');
+		
 		for (var i=0; i < inverts.length; i++) {
 			var facet = inverts[i];
 			var idfacet = '#invert_' + facet;
@@ -911,7 +921,7 @@ function facetOptions() {
 //				console.log(url);
 //				console.log("remove facet: " + facet);
 			}
-//			url = url.replace('&invert=&', '&');
+			url = url.replace('&invert=&', '&');
 			$(this).attr('href', url);
 			
 			$(this).click(function(event) {
@@ -937,9 +947,8 @@ function facetOptions() {
 		// for clicking on facet options (excludes)
 		$(this).find('a.facet.exclude').each(function(index) {
 			//console.log(facet_name + " " + facet_value);
-			var url = decodeURIComponent("search?" + $('#search-form').serialize());
 			var span = $(this).find('span.glyphicon');
-			
+			//console.log(url);
 			var facet = facet_name_exc + "=" + facet_value_exc;
 			if (!span.hasClass('facet-selected')) {
 				// SELECTED
@@ -948,11 +957,12 @@ function facetOptions() {
 				// i.e remove facet.in.crawl_year=%222007%22
 				var regexExc = new RegExp("&"+ facet);
 				url = url.replace(regexExc,'');
-//						console.log(url);
+//						console.log("1) " + url);
 //						console.log("remove facet: " + facet);
 			}
 			
-			url = url.replace('&invert=', '&invert='+facetClass);
+			url = url.replace('&invert=&', '&');
+//			console.log("2) " + url);
 			$(this).attr('href', url);
 			
 			$(this).click(function(event) {
@@ -984,6 +994,7 @@ function applyInverts() {
 		var input = $('#invert_' + facet);
 		var menu = $('#invertmenu_' + facet);
 		input.val(facet);
+		input.addClass('inverted');
 		menu.addClass(facet);
 		innerHtml += " <span class='glyphicon glyphicon-ok'></span>";
 		menu.html(innerHtml);
@@ -1114,10 +1125,16 @@ function processSelectedResources(selected) {
 	var resources = getURLParameters('selectedResource');
 	var currentExcludes = getURLParameters('exclude');
 	var currentExcludeHosts = getURLParameters('excludeHost');
-
+	var facetFields = getURLParameters('facet.fields');
+	var invert = getURLParameters('invert');
+	var order = getURLParameters('order');
+	
 	console.log(resources);
 	console.log(currentExcludes);
 	console.log(currentExcludeHosts);
+	console.log(facetFields);
+	console.log(invert);
+	console.log(order);
 	
 	// with these resources create some hidden inputs
 	
