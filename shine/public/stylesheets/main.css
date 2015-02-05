@@ -125,6 +125,9 @@ span.glyphicon.glyphicon-remove-sign.removeExcluded {
 	padding: 4px 2px;
 	white-space: nowrap;
 }
+#samplesTable .sample-host-link, #samplesTableHeader th {
+	text-align: center;
+}
 #samplesTable .fragment-left {
 	text-align: right;
 	width: 49%;
@@ -138,6 +141,7 @@ span.glyphicon.glyphicon-remove-sign.removeExcluded {
 	text-align: center;
 	width: 2%;
 	font-weight: normal;
+	color:red;
 }
 #samplesTable .fragment-right {
 	text-align: left;
