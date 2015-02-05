@@ -32,9 +32,8 @@ object ApplicationBuild extends Build {
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     // Add your own project settings here
-      // copy test resources
-      //unmanagedClasspath in Test <+= (baseDirectory) map { bd => Attributed.blank(bd / "test")},
-      javaOptions in Test += "-Dconfig.file=conf/application-test.conf"
+    // set test options
+    javaOptions in Test += "-Dconfig.file=conf/application-test.conf"
   )
 
 }

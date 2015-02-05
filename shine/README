@@ -10,8 +10,13 @@ Running, e.g. to keep different configs separate,
 Ideas
 -----
 
-Indexer
+Indexer:
+
 * Ensure DROID is up to date in the indexer.
+
+Improvements:
+
+* Show snippets/fragments instead of highlights when there are no text matches?
 
 Good Trends?
 
