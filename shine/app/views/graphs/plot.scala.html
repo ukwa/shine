@@ -16,7 +16,6 @@
 			
 			$('#update').on('click', function() {
 				$('form').submit();
-				//processChart();
 			});
 		
 			$('#ajax-loader').hide();
@@ -29,6 +28,7 @@
 				$('#year-end').attr('disabled', 'disabled');
 				$('#update').attr('disabled', 'disabled');
 				$('#reset').attr('disabled', 'disabled');
+				$('#download-graph-data').attr('disabled', 'disabled');
 			}
 			
 			function enableForm() {
@@ -38,6 +38,7 @@
 				$('#year-end').removeAttr('disabled');
 				$('#update').removeAttr('disabled');
 				$('#reset').removeAttr('disabled');
+				$('#download-graph-data').removeAttr('disabled');
 			}
 			
 			function escapeHtml(unsafe) {
@@ -179,6 +180,9 @@
 								</div>
 								<button type="submit" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
 								<button type="reset" class="btn btn-primary button-reset" id="reset" name="action" value="reset">Reset All</button>
+								<a class="btn btn-default" href="@routes.Shiner.trendsTsv(q,year_start,year_end)" role="button" id="download-graph-data" title="Download graph data" download="trend-@{year_start}-@{year_end}-@{q}.tsv"> 
+								  <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+								</a>
 							</div>
 						</div>
 						<div id="ajax-loader" class="row text-center">
