@@ -106,9 +106,15 @@
   		  });
       });
       s.getTooltipText = function (e) {
-          var index = e.x - @{year_start};
           var format = d3.format("0,000");
-                    
+          
+          var index = e.x - @{year_start};
+          for( var i = 0; i < data.length; i++) {
+            if( data[i]["Query"] == e.aggField[0] && data[i]["Date"].startsWith(e.x) ) {
+              index = i;
+            }
+          }
+          
           // And return the tool-tip
           return [
               "\"" + e.aggField[0] + "\"",
