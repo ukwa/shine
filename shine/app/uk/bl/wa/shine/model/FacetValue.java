@@ -1,5 +1,7 @@
 package uk.bl.wa.shine.model;
 
+import java.text.DecimalFormat;
+
 /**
  * @author kli
  * FacetValue belongs to a facet
@@ -55,5 +57,7 @@ public class FacetValue {
 	public void setMaxLimit(Integer maxLimit) {
 		this.maxLimit = maxLimit;
 	}
+	
+	public static DecimalFormat integerDecimalFormat = new DecimalFormat("#,###");
 	
 }

@@ -5,7 +5,6 @@ package uk.bl.wa.shine.model;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ public class TrendData {
 		this.start = start;
 		this.end = end;
 		this.steps = steps;
-		this.size = steps*((end - start) + 1);
+		this.size = steps*((this.end - this.start) + 1);
 		this.hits = new long[size];
 	}
 	

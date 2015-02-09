@@ -16,10 +16,10 @@
 			
 			$('#update').on('click', function() {
 				$('form').submit();
-				//processChart();
 			});
 		
 			$('#ajax-loader').hide();
+			$('#ajax-sample-loader').hide();
 
 			function disableForm() {
 				$('#ajax-loader').show();
@@ -28,6 +28,7 @@
 				$('#year-end').attr('disabled', 'disabled');
 				$('#update').attr('disabled', 'disabled');
 				$('#reset').attr('disabled', 'disabled');
+				$('#download-graph-data').attr('disabled', 'disabled');
 			}
 			
 			function enableForm() {
@@ -37,6 +38,7 @@
 				$('#year-end').removeAttr('disabled');
 				$('#update').removeAttr('disabled');
 				$('#reset').removeAttr('disabled');
+				$('#download-graph-data').removeAttr('disabled');
 			}
 			
 			function escapeHtml(unsafe) {
@@ -69,36 +71,50 @@
       y.tickFormat = ",3.1g";
       var s = myChart.addSeries("Query", dimple.plot.line);
       s.addEventHandler("click", function (e) {
-        console.log("Hey, you clicked " + e.seriesValue + ". Woooooo!" + e.xValue +" " + e.yValue +" " + Object.keys(e));
           // Load the sample results:
-          $("#samplesTitle").text("Searching for a random sample matching '"+e.seriesValue+"' from "+e.xValue+"...");
-      	 $("#samplesTable tr.sample-row").remove();
+       	  $("#samplesTitle").empty();
+       	  var searchUrl = "@{routes.Search.search()}?query="+e.seriesValue+"&facet.in.crawl_years=\""+e.xValue+"\"";
+          $("#samplesTitle").append("Searching for a random sample matching <a href='"+searchUrl+"'>'"+e.seriesValue+"' from "+e.xValue+"</a>...");
+		  $('#ajax-sample-loader').show();
+      	  $("#samplesTable tr.sample-row").remove();
           $.getJSON('@{routes.Shiner.sampleFromRange()}' + '?query=' + e.seriesValue + '&year=' + e.xValue, function(data) {
-           	 $("#samplesTitle").text("Found "+Object.keys(data).length+" samples matching '"+e.seriesValue+"' from "+e.xValue+"...");
+           	 $("#samplesTitle").empty();
+           	 $("#samplesTitle").append("Found "+Object.keys(data).length+" samples matching <a href='"+searchUrl+"'>'"+e.seriesValue+"' from "+e.xValue+"</a>.");
+ 	 		 $('#ajax-sample-loader').hide();
+ 	 		 $('#samplesTableHeader').show();
         	 $.each(data, function( index, value ) {
         	     if( value.matches.length > 0 ) {
-        	         line = "<tr class='sample-row'><td class='fragment-left'><span class='fragment-left-inner'>";
+        	         line = "<tr class='sample-row'>";
+        	         line +="<td class='fragment-left'><span class='fragment-left-inner'>";
         	         for( i=0; i< value.matches.length; i++ ) {
 	        	         line = line + escapeHtml(value.matches[i][0])+"<br/>";
 	        	     }
-	        	     line = line +"</span></td><td class='fragment-match'><a href='http://web.archive.org/web/"+value.wayback_date+"/"+value.url+"'>";
+	        	     line = line +"</span></td><td class='fragment-match'>";
         	         for( i=0; i< value.matches.length; i++ ) {
 	        	         line = line + escapeHtml(value.matches[i][1])+"<br/>";
 	        	     }
-	        	     line = line + "</a></td><td class='fragment-right'>";
+	        	     line = line + "</td><td class='fragment-right'>";
         	         for( i=0; i< value.matches.length; i++ ) {
 	        	         line = line + escapeHtml(value.matches[i][2])+"<br/>";
 	        	     }
-		        	 line = line + "</td></tr>";
+		        	 line += "</td>";
+        	         line +="<td class='sample-host-link'><a href='http://web.archive.org/web/"+value.wayback_date+"/"+value.url+"'>"+value.domain+"</a></td>";
+		        	 line += "</tr>";
 		        	 $("#samplesTable").append(line);
 		         }
 	         });
   		  });
       });
       s.getTooltipText = function (e) {
-          var index = e.x - @{year_start};
           var format = d3.format("0,000");
-                    
+          
+          var index = e.x - @{year_start};
+          for( var i = 0; i < data.length; i++) {
+            if( data[i]["Query"] == e.aggField[0] && data[i]["Date"].startsWith(e.x) ) {
+              index = i;
+            }
+          }
+          
           // And return the tool-tip
           return [
               "\"" + e.aggField[0] + "\"",
@@ -170,8 +186,16 @@
 								</div>
 								<button type="submit" class="btn btn-primary" id="update" name="action" value="update">Update Graph</button>
 								<button type="reset" class="btn btn-primary button-reset" id="reset" name="action" value="reset">Reset All</button>
-								<img id="ajax-loader" src="assets/images/ajax-loader.gif">
+								<a class="btn btn-default" href="@routes.Shiner.trendsTsv(q,year_start,year_end)" role="button" id="download-graph-data" title="Download graph data" download="trend-@{year_start}-@{year_end}-@{q}.tsv"> 
+								  <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+								</a>
 							</div>
+						</div>
+						<div id="ajax-loader" class="row text-center">
+ 						  <div class="col-md-12">
+						    <img src="@routes.Assets.at("images/ajax-loader.gif")" style="margin-top: 1em;">
+						  </div>
+						</div>
 						</div>
 					</div>
 			    }
@@ -181,11 +205,15 @@
 		    	
 			</div>
 			<table class="table table-striped">
-			<thead>
-			<th colspan="3" id="samplesTitle">Click on a point on the graph to show a random sample of the matching records from that year...</th>
-			</thead>
-			<tbody id="samplesTable">
-			</tbody>
+			  <thead>
+			    <tr><th colspan="4" id="samplesTitle">Click on a point on the graph to show a random sample of the matching records from that year...</th></tr>
+			    <tr id="samplesTableHeader" style="display:none;"><th colspan="3">Matching Text</th><th>Link</th></tr>
+			  </thead>
+			  <tbody id="samplesTable">
+			  </tbody>
+			  <tfoot id="ajax-sample-loader">
+			    <tr><td colspan="42" style="text-align:center;"><img id="ajax-loader" src="@routes.Assets.at("images/ajax-loader.gif")"></td></tr>
+			  </tfoot>
 			</table>
 		</div>
   	</div>
