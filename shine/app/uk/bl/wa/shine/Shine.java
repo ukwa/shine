@@ -98,6 +98,7 @@ public class Shine extends Solr {
 	}
 
 	public Query search(Query query) throws SolrServerException {
+		Logger.debug("search: " + query.responseParameters);
 		return this.search(query, perPage);
 	}
 	
@@ -293,6 +294,8 @@ public class Shine extends Solr {
 	// for advanced search using own facets
 	private Query doSearch(Query query, SolrQuery solrParameters) throws SolrServerException {
 
+		Logger.debug("pre query.responseParameters: " + query.responseParameters);
+		
 		try {
 			// add everything to parameters for solr
 			if (solrParameters == null) {
@@ -301,7 +304,9 @@ public class Shine extends Solr {
 			
 			// The query:
 			String q = query.query;
+			
 
+			
 		    query.facetValues = facetService.getSelected();
 		    
 			Map<String, List<String>> parameters = query.getParameters();
@@ -479,6 +484,7 @@ public class Shine extends Solr {
 			}
 			// Post-process:
 			query.res = res;
+			Logger.debug("query.responseParameters: " + query.responseParameters);
 			query.processQueryResponse();
 			
 		} catch(ParseException e) {
