@@ -130,6 +130,7 @@ public class Query {
 		this.parameters = parameters;
 		this.mode = mode;
 		this.init();
+		Logger.debug("Query: " + this.responseParameters);
 	}
 
 	private void init() {
@@ -145,6 +146,8 @@ public class Query {
 	private void parseParameters() {
 		Logger.info("parseParams: " + this.parameters);
 		filters = new HashMap<String, List<String>>();
+		StringBuilder responseParameters = new StringBuilder("");
+
 		for( String param : parameters.keySet() ) {
 			List<String> values = parameters.get(param);
 			if (!values.isEmpty()) {
@@ -160,6 +163,9 @@ public class Query {
 				} else if (param.equals("facet.fields")) {
 					for (String value : values) {
 						facets.add(value);
+						if (StringUtils.isNotBlank(value)) {
+							responseParameters.append("&facet.fields=").append(value);
+						}
 					}
 				}
 			}
@@ -171,6 +177,9 @@ public class Query {
 				String selectedResource = iterator.next();
 				Logger.info("selectedResource >>>" + selectedResource);
 				selectedResources.add(selectedResource);
+				if (StringUtils.isNotBlank(selectedResource)) {
+					responseParameters.append("&selectedResource=").append(selectedResource);
+				}
 			}
 		}
 		
@@ -180,6 +189,9 @@ public class Query {
 				String exclude = iterator.next();
 				Logger.info("exclude >>>" + exclude);
 				excludes.add(exclude);
+				if (StringUtils.isNotBlank(exclude)) {
+					responseParameters.append("&exclude=").append(exclude);
+				}
 			}
 		}
 
@@ -189,8 +201,12 @@ public class Query {
 				String excludeHost = iterator.next();
 				Logger.info("excludeHost >>>" + excludeHost);
 				excludeHosts.add(excludeHost);
+				if (StringUtils.isNotBlank(excludeHost)) {
+					responseParameters.append("&excludeHost=").append(excludeHost);
+				}
 			}
 		}
+		
 		
 		// non facets
 
@@ -209,9 +225,16 @@ public class Query {
 		}
 		if (parameters.get("sort") != null) {
 			sort = parameters.get("sort").get(0);
+			if (StringUtils.isNotBlank(sort)) {
+				Logger.debug("sort: " + sort);
+				responseParameters.append("&sort=").append(sort);
+			}
 		}
 		if (parameters.get("order") != null) {
 			order = parameters.get("order").get(0);
+			if (StringUtils.isNotBlank(order)) {
+				responseParameters.append("&order=").append(order);
+			}
 		}
 
 		Logger.info("datestart >>>> " + parameters.get("dateStart"));
@@ -222,7 +245,19 @@ public class Query {
 		if (parameters.get("dateEnd") != null) {
 			dateEnd = parameters.get("dateEnd").get(0).replace("\"", "");
 		}
-		Logger.info("filters: " + filters);
+		
+		List<String> invert = this.parameters.get("invert");
+		if (invert != null) {
+			for (String inv : invert) {
+				if (StringUtils.isNotEmpty(inv)) {
+					responseParameters.append("&invert=").append(inv);
+				}
+			}
+		}
+		Logger.info("responseParameters: " + responseParameters);
+		
+		this.responseParameters += responseParameters.toString();
+		Logger.info("parseParameters: " + responseParameters);
 	}
 	
 	public String getCheckedInString(String facet_name, String value ) {
@@ -313,42 +348,14 @@ public class Query {
 	@SuppressWarnings("unchecked")
 	public void processQueryResponse() throws ParseException {
 		
+		Logger.info("pre responseParameters: " + this.responseParameters);
 
-		this.responseParameters = this.responseFacetParameters();
+		this.responseParameters += this.responseFacetParameters();
 		
 		// should only be for advanced search
 		this.responseParameters += processAdvancedSearchParameters();
-		// this is for filtering exclusions from checkboxes
-		this.responseParameters += processExclusionsParameters();
-		
-		
-		List<String> facetFields = this.parameters.get("facet.fields");
+
 		StringBuilder parameters = new StringBuilder("");
-		if (facetFields != null) {
-			for (String ff : facetFields) {
-				if (StringUtils.isNotEmpty(ff)) {
-					parameters.append("&facet.fields=").append(ff);
-				}
-			}
-		}
-		
-		List<String> invert = this.parameters.get("invert");
-		if (invert != null) {
-			for (String inv : invert) {
-				if (StringUtils.isNotEmpty(inv)) {
-					parameters.append("&invert=").append(inv);
-				}
-			}
-		}
-		
-		List<String> order = this.parameters.get("order");
-		if (order != null) {
-			for (String o : order) {
-				if (StringUtils.isNotEmpty(o)) {
-					parameters.append("&order=").append(o);
-				}
-			}
-		}
 		
 		this.responseParameters += parameters.toString();
 		
@@ -495,14 +502,6 @@ public class Query {
 			parameters.append("&hostDomainPublicSuffix=").append(hostDomainPublicSuffix);
 		//parameters.append("urlHostDomainPublicSuffix=").append(urlHostDomainPublicSuffix);
 
-		return parameters.toString();
-	}
-	
-	private String processExclusionsParameters() {
-		StringBuilder parameters = new StringBuilder("");
-		for (String selectedResource : this.selectedResources) {
-			parameters.append("&selectedResource=").append(selectedResource);
-		}
 		return parameters.toString();
 	}
 	
