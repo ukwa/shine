@@ -129,6 +129,7 @@ public class Query {
 		this.collection = collection;
 		this.parameters = parameters;
 		this.mode = mode;
+		Logger.debug("Pre Init: " + this.responseParameters);
 		this.init();
 		Logger.debug("Query: " + this.responseParameters);
 	}
@@ -256,7 +257,7 @@ public class Query {
 		}
 		Logger.info("responseParameters: " + responseParameters);
 		
-		this.responseParameters += responseParameters.toString();
+		this.responseParameters = responseParameters.toString();
 		Logger.info("parseParameters: " + responseParameters);
 	}
 	
