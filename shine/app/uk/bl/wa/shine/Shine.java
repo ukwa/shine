@@ -4,6 +4,7 @@
 package uk.bl.wa.shine;
 
 import static java.lang.Math.abs;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -379,7 +381,7 @@ public class Shine extends Solr {
 					Logger.debug("excludeHost: " + selected.toString().trim());
 					
 					if (StringUtils.isNotEmpty(selected.toString())) {
-						q = q + " " + selected.toString().trim();
+						q = q + " " + selected.toString().replaceFirst(Pattern.quote("AND"), "").trim();
 					}
 				}
 		    }
