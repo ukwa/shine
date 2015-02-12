@@ -24,6 +24,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import uk.bl.wa.shine.Query;
 import uk.bl.wa.shine.Shine;
+import uk.bl.wa.shine.exception.ShineException;
 import uk.bl.wa.shine.model.TrendData;
 import uk.bl.wa.shine.vis.Rescued;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -56,7 +57,7 @@ public class Shiner extends Controller {
 		return ok( views.html.vis.rescued.render("Half-life...", "halflife") );
 	}
 	
-	public static Result trendsTsv(String query, String year_start, String year_end) throws SolrServerException {
+	public static Result trendsTsv(String query, String year_start, String year_end) throws SolrServerException, ShineException {
 		Logger.info("Q: "+query+" "+year_start+" "+year_end);
 		
 		// Set up the query parameters:
@@ -168,7 +169,7 @@ public class Shiner extends Controller {
 	 * @return
 	 * @throws SolrServerException
 	 */
-	public static Result sampleFromRange(String query, String year) throws SolrServerException {
+	public static Result sampleFromRange(String query, String year) throws SolrServerException, ShineException {
 		// Set up the query parameters:
 		Map<String, List<String>> params = getQueryParams(year,Integer.toString(Integer.parseInt(year)+1));
 		

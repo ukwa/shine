@@ -4,6 +4,7 @@
 package uk.bl.wa.shine;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -26,6 +27,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.RangeFacet;
 
 import play.Logger;
+import uk.bl.wa.shine.exception.ShineException;
 import uk.bl.wa.shine.model.FacetValue;
 
 /**
@@ -98,12 +100,12 @@ public class Query {
 	
 	public Query() {}
 	
-	public Query(String query) {
+	public Query(String query) throws ShineException {
 		this.query = query;
 		this.init();
 	}
 	
-	public Query(String query, Map<String,List<String>> parameters) {
+	public Query(String query, Map<String,List<String>> parameters) throws ShineException {
 		this.query = query;
 		this.parameters = parameters;
 		this.init();
@@ -111,7 +113,7 @@ public class Query {
 	
 	public Query(String query, String proximityPhrase1, String proximityPhrase2, String proximity, 
 			String exclude, String dateStart, String dateEnd, String url, String hostDomainPublicSuffix, 
-		    String fileFormat, String websiteTitle, String pageTitle, String author, String collection, Map<String,List<String>> parameters, String mode) {
+		    String fileFormat, String websiteTitle, String pageTitle, String author, String collection, Map<String,List<String>> parameters, String mode) throws ShineException {
 		this.query = query;
 		this.proximity = new Proximity();
 		this.proximity.setPhrase1(proximityPhrase1);
@@ -134,7 +136,7 @@ public class Query {
 		Logger.debug("Query: " + this.responseParameters);
 	}
 
-	private void init() {
+	private void init() throws ShineException {
 		this.facets = new ArrayList<String>();
 		this.facetValues = new HashMap<String, FacetValue>();
 		this.selectedResources = new ArrayList<String>();
@@ -144,7 +146,16 @@ public class Query {
 		this.parseParameters();
 	}
 	
-	private void parseParameters() {
+	private String encodeParameter(String parameter) throws ShineException {
+		try {
+			parameter = URLEncoder.encode(parameter, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new ShineException(e);
+		}
+		return parameter;
+	}
+	
+	private void parseParameters() throws ShineException {
 		Logger.info("parseParams: " + this.parameters);
 		filters = new HashMap<String, List<String>>();
 		StringBuilder responseParameters = new StringBuilder("");
@@ -175,7 +186,7 @@ public class Query {
 		if (parameters.get("selectedResource") != null) {
 			Iterator<String> iterator = parameters.get("selectedResource").iterator();
 			while (iterator.hasNext()) {
-				String selectedResource = iterator.next();
+				String selectedResource = encodeParameter(iterator.next().trim());
 				Logger.info("selectedResource >>>" + selectedResource);
 				selectedResources.add(selectedResource);
 				if (StringUtils.isNotBlank(selectedResource)) {
@@ -187,7 +198,7 @@ public class Query {
 		if (parameters.get("exclude") != null) {
 			Iterator<String> iterator = parameters.get("exclude").iterator();
 			while (iterator.hasNext()) {
-				String exclude = iterator.next();
+				String exclude = encodeParameter(iterator.next().trim());
 				Logger.info("exclude >>>" + exclude);
 				excludes.add(exclude);
 				if (StringUtils.isNotBlank(exclude)) {
@@ -199,7 +210,7 @@ public class Query {
 		if (parameters.get("excludeHost") != null) {
 			Iterator<String> iterator = parameters.get("excludeHost").iterator();
 			while (iterator.hasNext()) {
-				String excludeHost = iterator.next();
+				String excludeHost = encodeParameter(iterator.next().trim());
 				Logger.info("excludeHost >>>" + excludeHost);
 				excludeHosts.add(excludeHost);
 				if (StringUtils.isNotBlank(excludeHost)) {
@@ -208,9 +219,7 @@ public class Query {
 			}
 		}
 		
-		
 		// non facets
-
 		if (parameters.get("year_start") != null) {
 			yearStart = parameters.get("year_start").get(0);
 		}
@@ -255,9 +264,7 @@ public class Query {
 				}
 			}
 		}
-		Logger.info("responseParameters: " + responseParameters);
-		
-		this.responseParameters = responseParameters.toString();
+		this.responseParameters =  responseParameters.toString();
 		Logger.info("parseParameters: " + responseParameters);
 	}
 	
