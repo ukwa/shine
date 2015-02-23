@@ -123,10 +123,13 @@ public class Shiner extends Controller {
 		}
 		String tsv = s.toString();
 		
-		// Serve the result
+		// Serve the result, normalising the query as this can cause 
+		// problems interpreting the filename in the disposition field.
+		String normQuery = query.replace('"', '_');
+		normQuery = normQuery.replace('\'', '_');
 		response().setContentType("text/tab-separated-values; charset=utf-8");
-		response().setHeader("Content-disposition","attachment; filename=trend-" + 
-				year_start + "-" + year_end + "-" + query.replace(" ","_") + ".tsv");
+		response().setHeader("Content-disposition","attachment; filename=\"trend-" + 
+				year_start + "-" + year_end + "-" + normQuery + "\".tsv");
 		return ok(tsv);
 	}
 	
