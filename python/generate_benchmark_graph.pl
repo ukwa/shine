@@ -50,6 +50,7 @@ sub getargs {
 sub read_data {
 	open IN, "< $s_inf" or die "Failed to read-open [$s_inf]: $!\n";
 	while (my $s_line = <IN>) {
+		next if ($s_line =~ m@^(#|\s*$)@);
 		chomp $s_line;
 		my @a = eval $s_line;
 		push @a_data, @a;
@@ -65,7 +66,7 @@ sub generate_graph {
 	my $graph = GD::Graph::candlesticks->new(800, 400);
 	$graph->set( 
 		x_labels_vertical => 1,
-		x_label           => 'NumFound per magnitude',
+		x_label           => 'Magnitude',
 		y_label           => 'QTime',
 		title             => "Solr QTimes",
 		transparent       => 0,
