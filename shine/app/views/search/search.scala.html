@@ -148,7 +148,7 @@
 			
 			function createSummary() {
 				
-				var query = $('<li>').html("Search Term(s): " + $("#query").val());
+				var query = $('<li class="summary-li">').html("Search Term(s): " + $("#query").val());
 				var line = "";
 				$('#search-summary').append(query);
 				
@@ -194,7 +194,7 @@
 						}
 					    if (index === total - 1 && values.length > 0) {
 					    	line += values;
-							summary = $('<li>').html(line);
+							summary = $('<li class="summary-li">').html(line);
 							$('#search-summary').append(summary);
 					    }
 
@@ -296,7 +296,9 @@
 							</div>
 						</div>
 
+						<input type="hidden" name="totalCount" value="totalCount" id="totalCount" />
 						@resultsTabs("results")
+						
 									
 						<div class="padding-20">
 							<div id="results">@resultsPage(user, q, currentPage, currentSortBy, currentOrder)</div>

@@ -841,16 +841,28 @@ function csvLink() {
 	
 	$('#briefCSV').on('click', function(event) {
 		event.preventDefault();
+		var summary = "";
+		$('.summary-li').each(function() {
+			summary += $(this).html().trim().replace('<li>','').replace('</li>','') + ", ";
+		});
+		summary = summary.substring(0, summary.length-2);
+		console.log(summary);
 		exportMessage();
-		var url = $('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=brief";
+		var url = $('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=brief&summary="+summary;
 		console.log(url);
 		window.location.href=url;
 	});
 
 	$('#fullCSV').on('click', function(event) {
 		event.preventDefault();
+		var summary = "";
+		$('.summary-li').each(function() {
+			summary += $(this).html().trim().replace('<li>','').replace('</li>','') + ", ";
+		});
+		summary = summary.substring(0, summary.length-2);
+		console.log(summary);
 		exportMessage();
-		var url = $('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=full";
+		var url = $('#export_url').val() + $('#current-url').text() + "&exportType=csv&version=full&summary="+summary;
 		console.log(url);
 		window.location.href=url;
 	});

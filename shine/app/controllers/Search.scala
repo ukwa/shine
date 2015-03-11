@@ -11,6 +11,7 @@ import play.api.http.HeaderNames
 import anorm._
 import views._
 import models._
+import utils.Formatter
 import scala.collection.JavaConverters._
 import uk.bl.wa.shine.Shine
 import uk.bl.wa.shine.Query
@@ -164,7 +165,7 @@ object Search extends Controller {
     }
   }
 
-  def export(exportType: String, version: String) = Action { implicit request =>
+  def export(exportType: String, version: String, summary: String) = Action { implicit request =>
     println(exportType + " - " + version)
     exportType match {
       case "csv" => {
@@ -177,16 +178,20 @@ object Search extends Controller {
         println("query: " + query)
         val exportList = doExport(query, parameters).asScala.toList
         //			val totalRecords = q.res.getResults().getNumFound().intValue()
+        var now = new Date()
+        var formattedDate = Formatter.formatDateToDDMMYY(now)
+        var heading1 = "Results from the British Library's Shine interface, (webarchive.org.uk/shine), on " + formattedDate + "."
+        var heading2 = "Search Summary: " + summary
         version match {
           case "brief" => {
             //				println("exporting to BRIEF CSV #: " + totalRecords)
             // retrieve based on total records
-            Ok(views.csv.brief("Search", user, exportList, webArchiveUrl)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+            Ok(views.csv.brief("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
           }
           case "full" => {
             //				println("exporting to FULL CSV #: " + totalRecords)
             // retrieve based on total records
-            Ok(views.csv.full("Search", user, exportList, webArchiveUrl)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+            Ok(views.csv.full("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
           }
         }
       }
