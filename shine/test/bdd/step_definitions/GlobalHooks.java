@@ -1,3 +1,4 @@
+package bdd.step_definitions;
 import cucumber.api.java.Before;
 import play.test.TestBrowser;
 import play.test.TestServer;
@@ -9,7 +10,7 @@ import static play.test.Helpers.*;
  * Initialise a Test Server for Steps
  */
 public class GlobalHooks {
-    public static int PORT = 8888;
+    public static int PORT = 9999;
     public static TestBrowser TEST_BROWSER;
     private static TestServer TEST_SERVER;
     private static boolean initialised = false;

@@ -1,11 +1,11 @@
+package bdd.step_definitions;
+
 import static org.fest.assertions.Assertions.assertThat;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import play.Logger;
 import play.test.TestBrowser;
-import static org.fluentlenium.core.filter.FilterConstructor.*;
 
 public class HomePageSteps {
 	

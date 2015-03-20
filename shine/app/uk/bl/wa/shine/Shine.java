@@ -29,6 +29,7 @@ import org.apache.solr.common.params.ModifiableSolrParams;
 import play.Logger;
 import play.libs.Json;
 import play.cache.Cache;
+import uk.bl.wa.shine.exception.ShineException;
 import uk.bl.wa.shine.model.FacetValue;
 import uk.bl.wa.shine.model.SearchData;
 import uk.bl.wa.shine.service.FacetService;
@@ -99,24 +100,24 @@ public class Shine extends Solr {
 		return solrParameters;
 	}
 
-	public Query search(Query query) throws SolrServerException {
+	public Query search(Query query) throws ShineException {
 		Logger.debug("search: " + query.responseParameters);
 		return this.search(query, perPage);
 	}
 	
-	public Query search(Query query, int rows) throws SolrServerException {
+	public Query search(Query query, int rows) throws ShineException {
 		return this.search(query, rows, null);
 	}
 	
-	public Query search(Query query, int rows, Integer start) throws SolrServerException {
+	public Query search(Query query, int rows, Integer start) throws ShineException {
 		return this.search(query, buildInitialParameters(query), rows, start);
 	}
 	
-	public Query browse(Query query) throws SolrServerException {
+	public Query browse(Query query) throws ShineException {
 		return this.browse(query, buildInitialParameters(query));
 	}
 
-	public Query graph(Query query) throws SolrServerException {
+	public Query graph(Query query) throws ShineException {
 		return this.graph(query, buildInitialParameters(query));
 	}
 	
@@ -125,7 +126,7 @@ public class Shine extends Solr {
 	    return sign * (abs(num) + abs(divisor) - 1) / abs(divisor);
 	}
 	
-	public List<SearchData> export(Query query) throws SolrServerException {
+	public List<SearchData> export(Query query) throws ShineException {
 		Query q = this.search(query, 0);
 		int total = (int)q.res.getResults().getNumFound();
 		
@@ -187,7 +188,7 @@ public class Shine extends Solr {
 		return exportDataList;
 	}
 	
-	private Query search(Query query, SolrQuery solrParameters, int rows, Integer start) throws SolrServerException {
+	private Query search(Query query, SolrQuery solrParameters, int rows, Integer start) throws ShineException {
 		
 	    solrParameters.setHighlight(true).setHighlightSnippets(10); //set other params as needed
 	    
@@ -229,7 +230,7 @@ public class Shine extends Solr {
 		return doSearch(query, solrParameters);
 	}
 
-	private Query browse(Query query, SolrQuery parameters) throws SolrServerException {
+	private Query browse(Query query, SolrQuery parameters) throws ShineException {
 		// facets available on the advanced search fields
 		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
 		FacetValue collectionFacetValue = new FacetValue("collection", "Collection");
@@ -243,7 +244,7 @@ public class Shine extends Solr {
 		return doSearch(query, parameters);
 	}
 
-	private Query graph(Query query, SolrQuery solrParameters) throws SolrServerException {
+	private Query graph(Query query, SolrQuery solrParameters) throws ShineException {
 
 		Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
 		FacetValue crawlDateFacetValue = new FacetValue("crawl_year", "Crawl Year");
@@ -294,7 +295,7 @@ public class Shine extends Solr {
 	}
 
 	// for advanced search using own facets
-	private Query doSearch(Query query, SolrQuery solrParameters) throws SolrServerException {
+	private Query doSearch(Query query, SolrQuery solrParameters) throws ShineException {
 
 		Logger.debug("pre query.responseParameters: " + query.responseParameters);
 		
@@ -387,6 +388,7 @@ public class Shine extends Solr {
 		    }
 
 			solrParameters.add("q", q);
+			solrParameters.add("text", q);
 			
 			Map<String, FacetValue> facetValues = query.facetValues;
 			
@@ -445,7 +447,7 @@ public class Shine extends Solr {
 //				processHostDomainPublicSuffix(solrParameters, query.hostDomainPublicSuffix);
 //				processUrlHostDomainPublicSuffix(parameters, query.urlHostDomainPublicSuffix);
 			} catch (ParseException e) {
-				throw new SolrServerException(e);
+				throw new ShineException(e);
 			}
 	
 			Map<String, List<String>> params = query.parameters;
@@ -489,8 +491,8 @@ public class Shine extends Solr {
 			Logger.debug("query.responseParameters: " + query.responseParameters);
 			query.processQueryResponse();
 			
-		} catch(ParseException e) {
-			throw new SolrServerException(e);
+		} catch(ParseException | SolrServerException e) {
+			throw new ShineException(e);
 		}
 
 //	    Iterator<SolrDocument> iter = query.res.getResults().iterator();
