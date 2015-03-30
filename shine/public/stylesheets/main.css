@@ -151,3 +151,7 @@ span.glyphicon.glyphicon-remove-sign.removeExcluded {
     overflow: hidden; 
     text-overflow: ellipsis;
 }
+
+.search-dropdown {
+	width: 120px;
+}

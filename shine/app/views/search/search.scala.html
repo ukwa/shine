@@ -57,54 +57,31 @@
 				return "/search?facet.sort=index&query=" + $("#query").val();
 			}
 
+			$("#search-menu li").on("click", function(event){
+				event.preventDefault();
+				var dropdown = $('#search-dropdown');
+				dropdown.html($(this).text() + " <span class='caret'></span>");
+				var mode = $(this).attr('id');
+				$('#modeValue').val(mode);
+			});
+			
 			var sample = 'Sample Mode';
 			var full = 'Full Mode';
 			
-			function switchModes(modeName) {
-				if (modeName == sample) {
-					$(this).html(full);
-					$(this).removeClass('btn-primary');
-					$(this).addClass('btn-success');
-					$('#modeValue').val('full');
-				} else {
-					$(this).html(sample);
-					$(this).addClass('btn-primary');
-					$(this).removeClass('btn-success');
-					$('#modeValue').val('sample');
-				}
-			}
-			
 			//read back in the search mode
 			var mode = getURLParameter('mode');
+			var dropdown = $('#search-dropdown');
 			if (mode) {
 				$('#modeValue').val(mode);
-				if (mode == 'full') {
-					$('#mode').html(full);
-					$('#mode').removeClass('btn-primary');
-					$('#mode').addClass('btn-success');
+				if (mode == 'sample') {
+					dropdown.html(sample + " <span class='caret'></span>");
+				} else {
+					dropdown.html(full + " <span class='caret'></span>");
 				}
 			} else {
-				// default mode
 				$('#modeValue').val('');
-				$('#mode').html(sample);
-				$('#mode').addClass('btn-primary');
-				$('#mode').removeClass('btn-success');
+				dropdown.html(sample + " <span class='caret'></span>");
 			}
-			
-			$('#mode').on('click', function(event) {
-				var modeName = $(this).html();
-				if (modeName == sample) {
-					$(this).html(full);
-					$(this).removeClass('btn-primary');
-					$(this).addClass('btn-success');
-					$('#modeValue').val('full');
-				} else {
-					$(this).html(sample);
-					$(this).addClass('btn-primary');
-					$(this).removeClass('btn-success');
-					$('#modeValue').val('');
-				}
-			});
 			
 			$('#search').on('click', function() {
 				doSearch();
@@ -261,9 +238,13 @@
 						<div class="panel panel-default">
 							<div class="panel-body">
 					   			<div class="input-group">
-									<span class="input-group-btn">
-										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Sample Mode</button>
-									</span>
+					   				<div class="input-group-btn">
+								        <button type="button" class="btn btn-primary dropdown-toggle search-dropdown" data-toggle="dropdown" aria-expanded="false" id="search-dropdown">Sample Mode <span class="caret"></span></button>
+								        <ul class="dropdown-menu" role="menu" id="search-menu">
+											<li id="sample"><a href="#">Sample Mode</a></li>
+											<li id="full"><a href="#">Full Mode</a></li>
+										</ul>
+							      	</div><!-- /btn-group -->			
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
 					   				<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
@@ -310,10 +291,16 @@
 						<div class="panel panel-default">
 							<div class="panel-body">
 					   			<div class="input-group">
-									<span class="input-group-btn">
+					   				<div class="input-group-btn">
+								        <button type="button" class="btn btn-primary dropdown-toggle search-dropdown" data-toggle="dropdown" aria-expanded="false" id="search-dropdown">Sample Mode <span class="caret"></span></button>
+								        <ul class="dropdown-menu" role="menu" id="search-menu">
+											<li id="sample"><a href="#">Sample Mode</a></li>
+											<li id="full"><a href="#">Full Mode</a></li>
+										</ul>
+							      	</div><!-- /btn-group -->			
+<!--  									<span class="input-group-btn">
 										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
-										<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
-									</span>
+									</span>-->
 					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
 					   				<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
@@ -329,7 +316,7 @@
 					</div>
 				}
 			</div>
-			<input type="hidden" name="mode" value="normal" id="modeValue" />
+			<input type="hidden" name="mode" value="sample" id="modeValue" />
 		}
 	</div>
 	<input type="hidden" id="export_url" value="@routes.Search.export()">
