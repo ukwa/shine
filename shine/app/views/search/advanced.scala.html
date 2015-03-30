@@ -296,62 +296,110 @@
 					$('#search-form').submit();					
 				}
 			}
-
 			function createSummary() {
 				
 				if($('#query').val() != '') {
-					var $value = $('<li>').html("Search Term(s): " + $("#query").val());
+					var $value = $('<li class="summary-li">').html("Search Term(s): " + $("#query").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#website-title-field').val() != '') {
-					var $value = $('<li>').html("Website Title: " + $("#website-title-field").val());
+					var $value = $('<li class="summary-li">').html("Website Title: " + $("#website-title-field").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#page-title-field').val() != '') {
-					var $value = $('<li>').html("Page Title: " + $("#page-title-field").val());
+					var $value = $('<li class="summary-li">').html("Page Title: " + $("#page-title-field").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#author-field').val() != '') {
-					var $value = $('<li>').html("Author: " + $("#author-field").val());
+					var $value = $('<li class="summary-li">').html("Author: " + $("#author-field").val());
 					$('#search-summary').append($value);
 				}				
 				/*if($('#url-field').val() != '') {
-					var $value = $('<li>').html("URL: " + $("#url-field").val());
+					var $value = $('<li class="summary-li>').html("URL: " + $("#url-field").val());
 					$('#search-summary').append($value);
 				}*/				
 				if($('#file-format-field').val() != '') {
-					var $value = $('<li>').html("File Format: " + $("#file-format-field").val());
+					var $value = $('<li class="summary-li>').html("File Format: " + $("#file-format-field").val());
 					$('#search-summary').append($value);
 				}
 				@if(showOption("show_collections_field")) {
 					if($('#collection-field').val() != '') {
-						var $value = $('<li>').html("Collection: " + $("#collection-field").val());
+						var $value = $('<li class="summary-li>').html("Collection: " + $("#collection-field").val());
 						$('#search-summary').append($value);
 					}
 				}
 				if($('#proximityPhrase1').val() != '' || $('#proximityPhrase2').val() != '' || $('#proximity').val() != '') {
-					var $value = $('<li>').html("Proximity: " + $("#proximityPhrase1").val() + " " + $("#proximityPhrase2").val() + " " + $("#proximity").val());
+					var $value = $('<li class="summary-li>').html("Proximity: " + $("#proximityPhrase1").val() + " " + $("#proximityPhrase2").val() + " " + $("#proximity").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#date-from').val() != '' || $('#date-to').val() != '') {
-					var $value = $('<li>').html("Date Range: " + $("#date-from").val() + " - " + $("#date-to").val());
+					var $value = $('<li class="summary-li>').html("Date Range: " + $("#date-from").val() + " - " + $("#date-to").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#exclude-field').val() != '') {
-					var $value = $('<li>').html("None of these words: " + $("#exclude-field").val());
+					var $value = $('<li class="summary-li>').html("None of these words: " + $("#exclude-field").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#host-domain-public-field').val() != '') {
-					var $value = $('<li>').html("Host, Domain or Public Suffix: " + $("#host-domain-public-field").val());
+					var $value = $('<li class="summary-li>').html("Host, Domain or Public Suffix: " + $("#host-domain-public-field").val());
 					$('#search-summary').append($value);
 				}				
 				/*if($('#url-host-domain-public-field').val() != '') {
-					var $value = $('<li>').html("URL, Host, Domain or Public Suffix: " + $("#url-host-domain-public-field").val());
+					var $value = $('<li class="summary-li>').html("URL, Host, Domain or Public Suffix: " + $("#url-host-domain-public-field").val());
 					$('#search-summary').append($value);
 				}*/
 				if ($('#search-summary').html().trim().length > 0) {
 					$('#summary').removeClass('hide');
 				}
+				
+				$('ul.facet-heading').each(function(index) {
+					
+					// check form fields
+					var facet_options = $(this).find('li.facet-options');
+					
+					var total = facet_options.length;
+
+					var facet_main = $(this).parent().parent().find('div.facet-main');
+					var name = "";
+					var values = "";
+					var facetValue = facet_main.find('input[type=hidden]:first').val();
+					var invert = facet_main.find('input[type=hidden]:last').val();
+					
+					console.log(facetValue + "/" + facetValue.length + " - " + invert + "/" + invert.length);
+					
+					// +/-
+					facet_options.each(function(index) {
+						if (name.length == 0) {
+							name = facet_main.find('a strong').html();
+							//console.log(name);
+							// inverted
+							if (facetValue != '' && invert != '' && facetValue == invert) {
+								line = name + ": (Exclude) ";
+							} else {
+								line = name + ": (Include) ";
+							}
+						}
+						var facet_option = $(this);
+						
+						var include = facet_option.find('input.include');
+						var exclude = facet_option.find('input.exclude');
+
+						if (include.attr('checked')) {
+							var value = include.val();
+							values += value + " ";
+						}
+						if (exclude.attr('checked')) {
+							var value = exclude.val();
+							values += value + " ";
+						}
+					    if (index === total - 1 && values.length > 0) {
+					    	line += values;
+							summary = $('<li class="summary-li">').html(line);
+							$('#search-summary').append(summary);
+					    }
+
+					});
+				});
 				
 				createSummaryExclusions();
 
