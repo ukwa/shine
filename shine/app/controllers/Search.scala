@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils
 import scala.collection.mutable.ListBuffer
 import scala.collection.immutable.Map
 import scala.collection.mutable.MutableList
-import org.apache.solr.client.solrj.response.QueryResponse
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.RangeFacet
 import org.apache.solr.common.SolrDocument
 import models.User

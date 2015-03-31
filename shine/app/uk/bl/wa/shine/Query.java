@@ -4,6 +4,7 @@
 package uk.bl.wa.shine;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -200,9 +201,16 @@ public class Query {
 			while (iterator.hasNext()) {
 				String exclude = encodeParameter(iterator.next().trim());
 				Logger.info("exclude >>>" + exclude);
-				excludes.add(exclude);
-				if (StringUtils.isNotBlank(exclude)) {
-					responseParameters.append("&exclude=").append(exclude);
+				try {
+					exclude = URLDecoder.decode(exclude,"UTF-8");
+					String[] values = exclude.split(";;;");
+					String id = values[0].trim();
+					excludes.add(id);
+					if (StringUtils.isNotBlank(id)) {
+						responseParameters.append("&exclude=").append(exclude);
+					}
+				} catch (UnsupportedEncodingException e) {
+					throw new ShineException(e);
 				}
 			}
 		}
@@ -363,9 +371,9 @@ public class Query {
 		// should only be for advanced search
 		this.responseParameters += processAdvancedSearchParameters();
 
-		StringBuilder parameters = new StringBuilder("");
-		
-		this.responseParameters += parameters.toString();
+//		StringBuilder parameters = new StringBuilder("");
+//		
+//		this.responseParameters += parameters.toString();
 		
 		Logger.info("updated responseParameters: " + this.responseParameters);
 		// 1980-01-01T12:00:00Z

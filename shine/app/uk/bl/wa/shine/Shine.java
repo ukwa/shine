@@ -18,11 +18,13 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.params.CursorMarkParams;
 import org.apache.solr.common.params.FacetParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
@@ -202,10 +204,11 @@ public class Shine extends Solr {
 	    //solrParameters.setHighlightRequireFieldMatch(Boolean.TRUE);
 
 		solrParameters.setRows(rows);
+
+//		if (start != null) {
+//			solrParameters.setStart(start);
+//		}
 		
-		if (start != null) {
-			solrParameters.setStart(start);
-		}
 //		&hl=true
 //		&hl.fl=*
 //		&hl.simple.pre=%3Cem%3E
@@ -226,8 +229,24 @@ public class Shine extends Solr {
 //		}
 		
 		Logger.debug("solrParameters: " + solrParameters);
+		
+//		boolean done = false;
+//		String cursorMark = CursorMarkParams.CURSOR_MARK_START;
+//		solrParameters.setSort(SortClause.asc("id"));
 
-		return doSearch(query, solrParameters);
+		Query q = null;
+//		while (!done) {
+//			solrParameters.set(CursorMarkParams.CURSOR_MARK_PARAM, cursorMark);
+			q = doSearch(query, solrParameters);
+//			String nextCursorMark = q.res.getNextCursorMark();
+//			// process
+//			if (cursorMark.equals(nextCursorMark)) {
+//				done = true;
+//			}
+//			cursorMark = nextCursorMark;
+//		}
+		
+		return q;
 	}
 
 	private Query browse(Query query, SolrQuery parameters) throws ShineException {
@@ -367,10 +386,9 @@ public class Shine extends Solr {
 					}
 					// &q=wikipedia AND -id:"20080514125602/6B+cyN12vEfEOYgIzZDdw==" AND -id:"20100601200405/wTwHWZVx%2BiTLVo3g9ULPnA=="
 					StringBuilder selected = new StringBuilder();
+					Logger.debug("excludes: " + query.getExcludes());
 					for (String value : query.getExcludes()) {
-						String[] values = value.split(";;;");
-						String id = values[0].trim();
-						selected.append("AND -id:").append("\"").append(id).append("\"").append(" ");
+						selected.append("AND -id:").append("\"").append(value).append("\"").append(" ");
 					}
 					Logger.debug("excluded: " + selected.toString().trim());
 					
@@ -477,7 +495,7 @@ public class Shine extends Solr {
 			QueryResponse res = (QueryResponse) Cache.get(qkey);
 			// Perform the query if not cached:
 			if( res == null ) {
-				Logger.info("Cache miss, so running query... "+solrParameters.toString());
+				Logger.info("Cache miss, so running query... " + solr.getBaseURL() + "/select?" + solrParameters.toString());
 				res = solr.query(solrParameters);
 				// Cache for an hour:
 				Cache.set(qkey, res, 60 * 60);
