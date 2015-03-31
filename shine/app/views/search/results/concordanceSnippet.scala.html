@@ -6,14 +6,35 @@
 	</td>
 	<td>@d.getFirstValue("domain")</td>
 	<td>
+
+		
 		@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("title") != null) {
-						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("title").get(0)))</p>
+			<p class="list-group-item-text">
+				@for(title <- q.res.getHighlighting().get(d.getFirstValue("id")).get("title")) {
+					@Html(title)
+				}
+			</p>
 		}
 		@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("url") != null) {
-						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("url").get(0)))</p>
+			<p class="list-group-item-text">
+				@for(url <- q.res.getHighlighting().get(d.getFirstValue("id")).get("url")) {
+					@Html(url)
+				}				
+			</p>
 		}
 		@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text") != null) {
-			<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text").get(0)))</p>
+			<p class="list-group-item-text">
+				@for(content_text <- q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text")) {
+					@Html(content_text)
+				}
+			</p>
+		}
+		@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content") != null) {
+			<p class="list-group-item-text">
+				@for(content <- q.res.getHighlighting().get(d.getFirstValue("id")).get("content")) {
+					@Html(content)
+				}
+			</p>
 		}
 	</td>
 </tr>
