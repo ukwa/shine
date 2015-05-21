@@ -1,9 +1,9 @@
 ~Instructions
 =============
-Update solr-test-suite-ukwa.py to reference the Solr to test
+Update wad-benchmark.py to reference the Solr to test
 
-# python2.7 solr-test-suite-ukwa.py > test-logs/(solr name/describer)-(datestamp)
+\# python2.7 wad-benchmark.py > test-logs/(solr name/describer)-(datestamp)
 
-# cp solr_machine_proforma.template test-logs/(solr name/describer)-proforma
+\# cp solr_machine_proforma.template test-logs/(solr name/describer)-proforma
 
 Update proforma with details describing Solr setup, configuration etc.

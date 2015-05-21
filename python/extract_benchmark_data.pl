@@ -52,27 +52,16 @@ sub read_data {
 	open IN, $s_inf or die "Failed to read-open [$s_inf]: $!\n";
 	while (defined (my $s_line = <IN>)) {
 		# Skip non-results lines
-		next unless $s_line =~ m@QTime@;
+		next unless $s_line =~ m@wallclock\.\[ms\]@;
 
-		# Format of results:
-		# NO-FACETS-illegal.QTime 16
-		# NO-FACETS-illegal.numFound 100980
-		unless ($s_line =~ m@QTime\s+(\d+)@) {
-			die "ERROR: s_line QTime extract failed\ns_line [$s_line]\QTime [$1]\n";
-		}
-		my $i_qt = $1;
-		print "i_qt [$i_qt]\n" if $B_VERBOSE;
-
-		$s_line = <IN>;
-		print "s_line [$s_line]\n" if $B_VERBOSE;
-		unless ($s_line =~ m@numFound\s+(\d+)@) {
-			die "ERROR: s_line numFound extract failed\ns_line [$s_line]\numFound [$1]\n";
-		}
-		my $i_nf = $2;
+		# Format of results: ALL-FACETS-chervil.QTime.[ms] 8806 numFound 45997 wallclock.[ms] 8811.698
+		$s_line =~ m@numFound (\d+) wallclock\.\[ms\] (\d+)@;
+		my $i_nf = $1;
+		my $i_wc = $2;
 
 		# Determine magnitude of nf; store magnitude > QTime
 		my $i_mag = length $i_nf;
-		$h_raw{$i_mag}{$i_qt}++;
+		$h_raw{$i_mag}{$i_wc}++;
 	}
 	close IN or die "Failed to read-close [$s_inf]: $!\n";
 }

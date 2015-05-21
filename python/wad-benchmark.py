@@ -145,7 +145,8 @@ def runQueries(endpoint):
 
 # Automatic distributed mode:
 #runQueries("http://192.168.1.182:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
-runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true")
+#runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true")
+runQueries("http://192.168.1.54:8983/solr/ldukwadev/select?wt=json&indent=true")
 
 # non-distributed mode:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
