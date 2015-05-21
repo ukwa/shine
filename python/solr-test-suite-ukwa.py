@@ -115,7 +115,7 @@ def runQueries(endpoint):
 	print("TIMING %s (s) for %s " %(elapsed.seconds, endpoint))
 
 # Automatid distributed mode:
-runQueries("http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true")
+runQueries("http://192.168.1.54:8983/solr/ldukwadev/select?wt=json&indent=true")
 
 # Attempt to control allocation of distrib mode across all four servers:
 #runQueries("http://192.168.1.181:8983/solr/ukwa/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/ukwa,192.168.1.181:8984/solr/ukwa,192.168.1.181:8985/solr/ukwa,192.168.1.181:8986/solr/ukwa,192.168.1.181:8987/solr/ukwa,192.168.1.181:8988/solr/ukwa,192.168.1.182:8983/solr/ukwa,192.168.1.182:8984/solr/ukwa,192.168.1.182:8985/solr/ukwa,192.168.1.182:8986/solr/ukwa,192.168.1.182:8987/solr/ukwa,192.168.1.182:8988/solr/ukwa,192.168.1.203:8983/solr/ukwa,192.168.1.203:8984/solr/ukwa,192.168.1.203:8985/solr/ukwa,192.168.1.203:8986/solr/ukwa,192.168.1.203:8987/solr/ukwa,192.168.1.203:8988/solr/ukwa,192.168.1.215:8983/solr/ukwa,192.168.1.215:8984/solr/ukwa,192.168.1.215:8985/solr/ukwa,192.168.1.215:8986/solr/ukwa,192.168.1.215:8987/solr/ukwa,192.168.1.215:8988/solr/ukwa")
@@ -124,14 +124,14 @@ runQueries("http://192.168.45.30:8983/solr/ukwa/select?wt=json&indent=true")
 #runQueries("http://192.168.1.181:8983/solr/ukwa/select?wt=json&indent=true&shards=192.168.1.181:8983/solr/ukwa,192.168.1.181:8984/solr/ukwa,192.168.1.181:8985/solr/ukwa,192.168.1.181:8986/solr/ukwa,192.168.1.181:8987/solr/ukwa,192.168.1.181:8988/solr/ukwa,192.168.1.181:8989/solr/ukwa,192.168.1.181:8990/solr/ukwa,192.168.1.181:8991/solr/ukwa,192.168.1.181:8992/solr/ukwa,192.168.1.181:8993/solr/ukwa,192.168.1.181:8994/solr/ukwa,192.168.1.182:8983/solr/ukwa,192.168.1.182:8984/solr/ukwa,192.168.1.182:8985/solr/ukwa,192.168.1.182:8986/solr/ukwa,192.168.1.182:8987/solr/ukwa,192.168.1.182:8988/solr/ukwa,192.168.1.182:8989/solr/ukwa,192.168.1.182:8990/solr/ukwa,192.168.1.182:8991/solr/ukwa,192.168.1.182:8992/solr/ukwa,192.168.1.182:8993/solr/ukwa,192.168.1.182:8994/solr/ukwa")
 
 # Loop over endpoints:
-endpoint_template = "http://%s:%s/solr/ukwa/select?distrib=false&wt=json&indent=true"
-hosts = [ "192.168.45.30" ]
-ports = ["8983", "8984", "8985"]
+endpoint_template = "http://%s:%s/solr/ldukwadev/select?distrib=false&wt=json&indent=true"
+hosts = [ "192.168.1.54" ]
+ports = ["8983", "8984", "8985", "8986", "8987", "8988", "8989", "8990", "8991", "8992", "8993", "8994", "8995", "8996", "8997", "8998", "8999", "9000", "9001", "9002", "9003", "9004", "9005", "9006", "9007", "9008", "9009", "9010", "9011", "9012" ]
 endpoints = []
 for host in hosts:
     for port in ports:
     	pass
-    	endpoints.append("%s:%s/solr/ukwa" % (host, port) )
+    	endpoints.append("%s:%s/solr/ldukwadev" % (host, port) )
         #runQueries(endpoint_template % (host, port))
 
 print("&shards=" + ",".join(endpoints))
