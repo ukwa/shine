@@ -1,0 +1,4 @@
+~Instructions
+=============
+Update solr-test-suite-ukwa.py to reference the Solr to test
+python2.7 solr-test-suite-ukwa.py > test-logs/(solr name/describer)-(datestamp)
