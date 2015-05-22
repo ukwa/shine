@@ -251,3 +251,5 @@ for host in hosts:
         #runQueries(endpoint_template % (host, port))
 
 #print("&shards=" + ",".join(endpoints))
+
+print("Finished =======================================\n")

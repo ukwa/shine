@@ -2,7 +2,7 @@ Solr Benchmark Proforma
 =======================
 
 Date: 2015 May 20
-Description of benchmark: Performed after 10,500 LD WARCs submitted, commited but not optimised
+Description of benchmark: Performed after 10,500 LD WARCs submitted, commited and optimised
 Operator: Gil
 
 Hardware
@@ -18,7 +18,7 @@ Version: 4.10.4
 NumShards: 30
 Shard Xmx: 10GB
 DirectoryFactory: MMap
-numFound: 246,729,296
+numFound: 316,968,187
 Commited: Yes
-Optimized: No
-numSegments: 30
+Optimized: Yes
+numSegments: 1
