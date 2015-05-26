@@ -6,4 +6,4 @@ Update wad-benchmark.py to reference the Solr to test
 
 \# cp solr_machine_proforma.template test-logs/(solr name/describer)-proforma
 
-Update proforma with details describing Solr setup, configuration etc.
+Update proforma with details describing Solr setup, configuration etc. (Solr index size calculated by OS du (disk usage) summation of Solr data directories.)
