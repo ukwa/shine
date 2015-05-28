@@ -1,0 +1,31 @@
+Solr Benchmark Proforma
+=======================
+
+Date: 2015 May 28
+Description of benchmark: Performed after 10,500 LD WARCs submitted, commited but not optimised
+Operator: Gil
+
+Hardware
+--------
+Machine: ldukwa03-dev
+CPU: Xeon E5-2630 v3 2.40GHz
+RAM: 512GB
+Storage: 22 x 1TB SSD RAID-5 (I think) into 1 mounted volume
+
+Solr
+----
+Version: 4.10.4
+NumShards: 30
+Shard Xmx: 10GB
+DirectoryFactory: MMap
+numFound: 1,018,800,204
+
+Commited: Yes
+Commit duration: ~35 seconds
+
+Optimized: No
+OptimizeTime: -
+numSegments: 41
+
+IndexSizeRange: 121-122GB 
+IndexTotalSize: 3.6TB
