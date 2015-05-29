@@ -1371,6 +1371,3 @@ ALL-FACETS-stagnate.QTime.[ms] 200 numFound 68075 wallclock.[ms] 341.572
 ALL-FACETS-stagnate.facetValues[0] co.uk
 TIMING 544932.061 [ms] for http://192.168.1.54:8983/solr/ldukwadev/select?wt=json&indent=true 
 Finished =======================================
-
-two =======================================
-

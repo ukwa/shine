@@ -152,7 +152,6 @@ runQueries("http://192.168.1.54:8983/solr/ldukwadev/select?wt=json&indent=true")
 
 print("Finished =======================================\n")
 sys.exit
-print("two =======================================\n")
 
 # non-distributed mode:
 #runQueries("http://192.168.1.181:8983/solr/jisc5/select?wt=json&indent=true&distrib=false")
