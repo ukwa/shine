@@ -33,5 +33,5 @@ Optimized: Yes
 OptimizeTime: 51,078,455 milliseconds, ~14 hours
 numSegments: 1
 
-IndexSizeRange: GB 
-IndexTotalSize: TB
+IndexSizeRange: 44GB 
+IndexTotalSize: 1.3TB
