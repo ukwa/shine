@@ -2,7 +2,7 @@ Solr Benchmark Proforma
 =======================
 
 Date: 2015 June 10
-Description of benchmark: Performed after 30,000 LD WARCs submitted, commited but not optimised
+Description of benchmark: Performed after 60,000 LD WARCs submitted, commited but not optimised
 Operator: Gil
 
 Hardware
