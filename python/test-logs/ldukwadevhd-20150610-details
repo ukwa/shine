@@ -24,14 +24,14 @@ Schema: https://github.com/ukwa/webarchive-discovery/blob/d2f695529295c674ed98b8
 NumShards: 30
 Shard Xmx: 10GB
 DirectoryFactory: MMap
-numFound: 
+numFound: 1,186,600,153
 
 Commited: Yes
 Commit duration: 171,957 milliseconds
 
 Optimized: No
 OptimizeTime: -
-numSegments: 
+numSegments: 41
 
-IndexSizeRange: GB
-IndexTotalSize: TB
+IndexSizeRange: 142-143GB
+IndexTotalSize: 4.2TB
