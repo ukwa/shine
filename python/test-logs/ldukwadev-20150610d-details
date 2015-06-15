@@ -3,6 +3,7 @@ Solr Benchmark Proforma
 
 Date: 2015 June 15
 Description of benchmark: Performed after 120,000 LD WARCs submitted, commited and optimised to 2 segments
+			Same as test 20150610c, just a repeat for more test results
 Operator: Gil
 
 Hardware
