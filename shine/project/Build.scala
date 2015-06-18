@@ -34,6 +34,7 @@ object ApplicationBuild extends Build {
   val main = play.Project(appName, appVersion, appDependencies)
     .settings(Play2WarPlugin.play2WarSettings: _*)
     .settings(Play2WarKeys.servletVersion := "3.0")
+    .settings(Play2WarKeys.targetName := Some(appName + "-" + appVersion))
     .settings(
     // Add your own project settings here
     // set test options
