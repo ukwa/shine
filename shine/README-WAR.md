@@ -14,7 +14,12 @@ For example `cp -v target/shine-1.0.0-SNAPSHOT.war ~/apache-tomcat-7.0.62/webapp
 Shine will be available on [http://localhost:8080/shine/search](http://localhost:8080/shine/search)
 
 ## Runtime configuration
-To override the `application.conf` bundled with the WAR file do the following when starting the Tomcat: `startup.sh -Dconfig.file=/full/path/to/shine.conf`
+To override the `application.conf` bundled with the WAR file set the following option in the `CATALINA_OPTS` environment variable before starting the Tomcat:
+
+```
+export CATALINA_OPTS=-Dconfig.file=/full/path/to/shine.conf
+startup.sh
+```
 
 ### Example minimal configuration
 ```
