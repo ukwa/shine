@@ -9,7 +9,7 @@ Run the command `play war` and it will assemble a war file in the `target` direc
 ## Deploying the WAR file
 Copy the WAR file to the Tomcat's `webapp` directory and call it `shine.war`.
 
-For example `cp -v target/shine-1.0.0-SNAPSHOT.war ~/apache-tomcat-7.0.62/webapps`
+For example `cp -v target/shine-1.0.0-SNAPSHOT.war ~/apache-tomcat-7.0.62/webapps/shine.war`
 
 Shine will be available on [http://localhost:8080/shine/search](http://localhost:8080/shine/search)
 
@@ -84,3 +84,4 @@ shine {
 - https://github.com/play2war/play2-war-plugin/wiki/Configuration
 - https://github.com/play2war/play2-war-plugin/wiki/Deployment
 - https://github.com/play2war/play2-war-plugin/wiki/FAQ
+
