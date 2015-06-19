@@ -466,7 +466,7 @@ object Search extends Controller {
     for (i <- 0 to (results.size() - 1)) {
       val result = results.get(i)
 
-      val url = JsString("http://web.archive.org/web/" + notBlank(result.getFirstValue("wayback_date")) + "/" + notBlank(result.getFirstValue("url")))
+      val url = JsString(current.configuration.getString("shine.web_archive_url") + notBlank(result.getFirstValue("wayback_date")) + "/" + notBlank(result.getFirstValue("url")))
       val jsonObject = Json.obj("title" -> JsString(notBlank(result.getFirstValue("title"))), "url" -> url, "crawl_date" -> JsString(notBlank(result.getFirstValue("crawl_date"))),
         "content_type_norm" -> JsString(notBlank(result.getFirstValue("content_type_norm"))),
         "domain" -> JsString(notBlank(result.getFirstValue("domain"))),
