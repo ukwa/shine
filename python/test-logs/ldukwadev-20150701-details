@@ -1,0 +1,37 @@
+Solr Benchmark Proforma
+=======================
+
+Date: 2015 July 1
+Description of benchmark: Performed after all 124,083 LD WARCs submitted, commited and ~optimized. Significant change is reduction of RAM to 448GB - test of effect of reduced memory
+Operator: Gil
+
+Hardware
+--------
+Machine: ldukwa03-dev
+CPU: Xeon E5-2630 v3 2.40GHz
+RAM: 448GB
+Storage: 22 x 1TB SSD RAID-6 into 1 mounted volume
+
+Webarchive-discovery
+--------------------
+Submit config: https://github.com/ukwa/webarchive-discovery/blob/4cf1ff074c305a2a2d36f182cb71b494cd29efed/configs/baseline-ldukwadev.conf
+
+Solr
+----
+Version: 4.10.4
+Schema: https://github.com/ukwa/webarchive-discovery/blob/d2f695529295c674ed98b8bc3cfe8e60d900b933/warc-indexer/src/main/solr/solr/discovery/conf/schema.xml
+
+NumShards: 30
+Shard Xmx: 10GB
+DirectoryFactory: MMap
+numFound: 3,006,049,106 documents
+
+Commited: Yes
+Commit duration: 51,071 milliseconds
+
+Optimized: No
+OptimizeTime: 14,735,947 milliseconds, 2 segments, ~4 hours 9 mins
+numSegments: 2 segments
+
+IndexSizeRange: 408-409GB
+IndexTotalSize: 12.2TB
