@@ -35,3 +35,8 @@ numSegments: 2 segments
 
 IndexSizeRange: 408-409GB
 IndexTotalSize: 12.2TB
+
+----------------------
+Notes
+The benchmark test took 13.42 minutes.
+
