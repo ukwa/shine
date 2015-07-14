@@ -1,0 +1,41 @@
+Solr Benchmark Proforma
+=======================
+
+Date: 2015 July 14
+Description of benchmark: Performed after 100,000 LD WARCs submitted, commited and optimised
+Operator: Gil
+
+Hardware
+--------
+Machine: ldukwa03-devhd
+CPU: Xeon E5-2630 v3 2.40GHz
+RAM: 512GB
+Storage: 12 x 4TB spinning HD RAID-6 into 1 mounted volume
+
+Webarchive-discovery
+--------------------
+Submit config: https://github.com/ukwa/webarchive-discovery/blob/b66ed3052f9cc15e8972ea5158d9382e31e92014/configs/baseline-ldukwadevhd.conf
+
+Solr
+----
+Version: 4.10.4
+Schema: https://github.com/ukwa/webarchive-discovery/blob/d2f695529295c674ed98b8bc3cfe8e60d900b933/warc-indexer/src/main/solr/solr/discovery/conf/schema.xml
+
+NumShards: 30
+Shard Xmx: 10GB
+DirectoryFactory: MMap
+numFound: 2,224,613,952
+
+Commited: Yes
+Commit duration: 231,203 milliseconds
+
+Optimized: Yes
+OptimizeTime: ~4 days, 13 hours
+numSegments: 1
+
+IndexSizeRange: 285GB
+IndexTotalSize: 8.5TB
+
+Notes
+-----
+Duration of test: 15.34 minutes
