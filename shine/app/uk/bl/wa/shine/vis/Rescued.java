@@ -94,14 +94,14 @@ SolrQuery.addFilterQuery("yourStringField:Cameras\\ \\&\\ Photos")
 		q.set("q", "*:*");
 		q.setFilterQueries(fq);
 		q.setSort("random_"+rng.nextInt(Integer.MAX_VALUE),ORDER.desc);
-		QueryResponse res = solr.query(q);
+		QueryResponse res = getSolrServer().query(q);
 		Logger.info("FQ: "+fq);
 		Logger.info("Results: "+res.getResults().getNumFound());
 		long target = (long) (rng.nextDouble()*res.getResults().getNumFound());
 		Logger.info("Target:"+target);
 		q.setRows(1);
 		q.setStart((int) target); // FIXME Integer, not Long! Should be ok?
-		res = solr.query(q);
+		res = getSolrServer().query(q);
 		String url = res.getResults().get(0).getFirstValue("url").toString();
 		String domain = res.getResults().get(0).getFirstValue("domain").toString();
 		Logger.info("GOT: "+domain+ " > "+ url);
@@ -126,7 +126,7 @@ SolrQuery.addFilterQuery("yourStringField:Cameras\\ \\&\\ Photos")
 		SolrQuery q = new SolrQuery();
 		q.set("q", "*:*");
 		q.addFacetField("crawl_year");
-		QueryResponse res = solr.query(q);
+		QueryResponse res = getSolrServer().query(q);
 		FacetField axis = res.getFacetField("crawl_year");
 		Logger.info("BASELINE"+axis.getValues());
 		List<String> years = new ArrayList<String>();

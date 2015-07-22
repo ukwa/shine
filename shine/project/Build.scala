@@ -10,7 +10,7 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     // Add your project dependencies here,
-	javaCore,
+    javaCore,
     javaJdbc,
     javaEbean,
     cache,

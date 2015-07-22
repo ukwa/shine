@@ -493,8 +493,8 @@ public class Shine extends Solr {
 			QueryResponse res = (QueryResponse) Cache.get(qkey);
 			// Perform the query if not cached:
 			if( res == null ) {
-				Logger.info("Cache miss, so running query... " + solr.getBaseURL() + "/select?" + solrParameters.toString());
-				res = solr.query(solrParameters);
+				Logger.info("Cache miss, so running query... /select?" + solrParameters.toString());
+				res = getSolrServer().query(solrParameters);
 				// Cache for an hour:
 				Cache.set(qkey, res, 60 * 60);
 				Logger.debug("QTime: " + res.getQTime());
@@ -752,7 +752,7 @@ public class Shine extends Solr {
 			params.set("qt", suggestPath);
 			params.set("q", name);
 			params.set("wt", "json");
-			QueryResponse response = solr.query(params);
+			QueryResponse response = getSolrServer().query(params);
 			SpellCheckResponse spellCheckResponse = response
 					.getSpellCheckResponse();
 
