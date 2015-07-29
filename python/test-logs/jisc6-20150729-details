@@ -2,7 +2,7 @@ Solr Benchmark Proforma
 =======================
 
 Date: 2015 July 29
-Description of benchmark: RESTART. Performed after 120,000 JISC WARCs submitted, commited but not optimized. Original Solr war.
+Description of benchmark: RESTART. Performed after 140,000 JISC WARCs submitted, commited but not optimized. Original Solr war.
 Operator: Gil
 
 Hardware
