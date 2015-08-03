@@ -1,8 +1,8 @@
 Solr Benchmark Proforma
 =======================
 
-Date: 2015 July 22
-Description of benchmark: Performed after 120,000 LD WARCs submitted, commited but not optimised
+Date: 2015 July 29
+Description of benchmark: Performed after 120,000 LD WARCs submitted, commited and optimised
 Operator: Gil
 
 Hardware
@@ -29,13 +29,13 @@ numFound: 2,712,472,511
 Commited: Yes
 Commit duration: 239,026 milliseconds
 
-Optimized: No
-OptimizeTime: -
-numSegments: 32-47
+Optimized: Yes
+OptimizeTime: ~7 days minus 2 hours
+numSegments: 1
 
-IndexSizeRange: 365-366GB
-IndexTotalSize: 10,958GB
+IndexSizeRange: 360-362GB
+IndexTotalSize: 10,809GB
 
 Notes
 -----
-Duration of test: 26 minutes
+Duration of test: 17.34 minutes

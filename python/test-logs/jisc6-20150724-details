@@ -1,8 +1,8 @@
 Solr Benchmark Proforma
 =======================
 
-Date: 2015 July 22
-Description of benchmark: RESTART. Performed after 40,000 JISC WARCs submitted, commited but not optimized. Original Solr war.
+Date: 2015 July 24
+Description of benchmark: RESTART. Performed after 80,000 JISC WARCs submitted, commited but not optimized. Original Solr war.
 Operator: Gil
 
 Hardware
@@ -24,18 +24,18 @@ Schema: https://github.com/ukwa/webarchive-discovery/blob/2.2.x-dev-branch/warc-
 NumShards: 30
 Shard Xmx: 10GB
 DirectoryFactory: MMap
-numFound: 257,274,891 documents
+numFound: 493,344,324 documents
 
 Commited: Yes
-Commit duration: 13,191 + 15,603 milliseconds
+Commit duration: ? milliseconds
 
 Optimized: No
 OptimizeTime: -
-numSegments: 2-36 segments
+numSegments:  21-36 segments
 
-IndexSizeRange: 43-44GB
-IndexTotalSize: 1,308GB
+IndexSizeRange: 80-81GB
+IndexTotalSize: 2,405GB
 
 ----------------------
 Notes
-The benchmark test took 2 mins 4 seconds.
+The benchmark test took 2.26 minutes.
