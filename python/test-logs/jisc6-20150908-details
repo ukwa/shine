@@ -31,7 +31,7 @@ Commit duration: ~260,000 milliseconds IIRC
 
 Optimized: No
 OptimizeTime: - 
-numSegments:  segments
+numSegments: 41-76 segments
 
 IndexSizeRange: 612-618GB
 IndexTotalSize: 18,398GB
