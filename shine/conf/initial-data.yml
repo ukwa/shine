@@ -5,8 +5,8 @@ users:
 
     - !!models.User
         id:         1
-        email:      kinman.li@bl.uk
-        password:   secret
+        email:      wa-sysadm@bl.uk
+        password:   ADMPASSD
     
 # Roles
 
