@@ -1,0 +1,41 @@
+Solr Benchmark Proforma
+=======================
+
+Date: 2015 August 21
+Description of benchmark: RESTART. Performed after 400,000 JISC WARCs submitted, commited but not optimized (to 2 segments. Original Solr war).
+Operator: Gil
+
+Hardware
+--------
+Machine: jisc03
+CPU: Xeon E5-2630 v3 2.40GHz
+RAM: 512GB
+Storage: 22 x 1TB SSD RAID-6 into 1 mounted volume
+
+Webarchive-discovery
+--------------------
+Submit config: https://github.com/ukwa/webarchive-discovery/blob/2.2.x-dev-branch/configs/jisc6.conf
+
+Solr
+----
+Version: 4.10.4
+Schema: https://github.com/ukwa/webarchive-discovery/blob/2.2.x-dev-branch/warc-indexer/src/main/solr/solr/discovery/conf/schema.xml
+
+NumShards: 30
+Shard Xmx: 10GB
+DirectoryFactory: MMap
+numFound: 2,358,846,001 documents
+
+Commited: Yes
+Commit duration: 91,169 milliseconds
+
+Optimized: No
+OptimizeTime: -
+numSegments: 22-37 segments
+
+IndexSizeRange: 381-382GB
+IndexTotalSize: 11,453GB
+
+----------------------
+Notes
+The benchmark test took 5.49 minutes.

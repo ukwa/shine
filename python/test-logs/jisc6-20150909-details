@@ -1,0 +1,41 @@
+Solr Benchmark Proforma
+=======================
+
+Date: 2015 Sept 9
+Description of benchmark: RESTART. Performed after ~506,000 JISC WARCs submitted, commited. Was trying to ingest more data but the server SSD disks became full and ingest stopped (actually put on hold whilst waiting for more diskspace but that wasn't going to happen.) Addressed by reducing the reserved blocks to 1% (from default of 5%). Now trying to optimize.
+Operator: Gil
+
+Hardware
+--------
+Machine: jisc03
+CPU: Xeon E5-2630 v3 2.40GHz
+RAM: 512GB
+Storage: 22 x 1TB SSD RAID-6 into 1 mounted volume
+
+Webarchive-discovery
+--------------------
+Submit config: https://github.com/ukwa/webarchive-discovery/blob/2.2.x-dev-branch/configs/jisc6.conf
+
+Solr
+----
+Version: 4.10.4
+Schema: https://github.com/ukwa/webarchive-discovery/blob/2.2.x-dev-branch/warc-indexer/src/main/solr/solr/discovery/conf/schema.xml
+
+NumShards: 30
+Shard Xmx: 10GB
+DirectoryFactory: MMap
+numFound: 3,520,628,647 documents
+
+Commited: Yes
+Commit duration: ~260,000 milliseconds IIRC
+
+Optimized: ~Yes
+OptimizeTime: 30 segments: 198,956ms, 20: 295,054ms, 10: 1,329,290ms, 7: 2,305,383ms, 5: 2,139,348ms FAILED, 6: 2,852,508ms FAILED
+numSegments: 6-7 segments
+
+IndexSizeRange: 610-611GB
+IndexTotalSize: 18,313GB
+
+----------------------
+Notes
+The benchmark test took 10.21 minutes.
