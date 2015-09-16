@@ -151,7 +151,7 @@ public class Shiner extends Controller {
 		TrendData td = new TrendData(start, end, 1);
 		for( @SuppressWarnings("rawtypes") RangeFacet fr : q.res.getFacetRanges()) {
 			Logger.info("FR: "+fr.getName()+ " "+fr.getCounts());
-			if( "crawl_dates".equals(fr.getName()) ) {
+			if( "crawl_date".equals(fr.getName()) ) {
 				RangeFacet.Date frd = (RangeFacet.Date) fr;
 				for(  RangeFacet.Count c: frd.getCounts()) {
 					Calendar cDate = javax.xml.bind.DatatypeConverter.parseDateTime(c.getValue());
@@ -178,7 +178,7 @@ public class Shiner extends Controller {
 		
 		// Grab the baseline data:
 		params.put("sort",Arrays.asList(new String[] { "random_12" } ));
-		params.put("facet.in.crawl_years", Arrays.asList(new String[] { year } ));
+		params.put("facet.in.crawl_year", Arrays.asList(new String[] { year } ));
 		Query sample = new Query(query,params);
 		// Do the search:
 		sample = solr.search(sample,100);
