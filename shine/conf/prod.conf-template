@@ -34,7 +34,7 @@ shine {
   },
   facets {
     basic {
-      crawl_years { name="Crawl Years", limit=5, maxLimit=10 },
+      crawl_year { name="Crawl Years", limit=5, maxLimit=10 },
       public_suffix { name="Public Suffix", limit=5, maxLimit=10 },
       domain { name="Domain", limit=10, maxLimit=10 },
       content_type_norm { name="General Content Type", limit=3, maxLimit=10 }
