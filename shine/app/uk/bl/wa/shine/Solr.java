@@ -32,9 +32,9 @@ public abstract class Solr {
 		}
 		// Set up Solr client:
 		solr = new HttpSolrServer(host);
-		// Timeouts:
-		solr.setConnectionTimeout(5000);
-		solr.setSoTimeout(1000);
+		// Timeouts - 5 seconds to establish connection, but minutes for the read:
+		solr.setConnectionTimeout(5*1000);
+		solr.setSoTimeout(2*60*1000);
 		// Max connections:
 		solr.setDefaultMaxConnectionsPerHost(100);
 		solr.setMaxTotalConnections(100);
