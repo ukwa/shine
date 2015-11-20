@@ -18,7 +18,8 @@
     
   case "search" => {
   	<li class="active"><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
-	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
+    <li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
+    <li><a href="@routes.Application.searchTips()">Search Tips</a></li>
 	@if(showOption("show_browse")) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
 	}
@@ -30,12 +31,25 @@
   case "advanced_search" => {
   	<li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li class="active"><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
+    <li><a href="@routes.Application.searchTips()">Search Tips</a></li>
 	@if(showOption("show_browse")) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
 	}
 	@if(showOption("show_concordance")) {
 		<li><a href="@routes.Search.concordance()">Concordance View</a></li>
 	}
+  }
+  
+  case "search_tips" => {
+    <li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
+    <li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
+    <li class="active"><a href="@routes.Application.searchTips()">Search Tips</a></li>
+    @if(showOption("show_browse")) {
+        <li><a href="@routes.Search.browse()">Browse Collections</a></li>
+    }
+    @if(showOption("show_concordance")) {
+        <li><a href="@routes.Search.concordance()">Concordance View</a></li>
+    }
   }
 
   case "browse" => {

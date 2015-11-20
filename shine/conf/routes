@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET     /                           		controllers.Application.index
+GET     /                                   controllers.Application.index
 
 # Authentication
 GET     /login                              controllers.Application.login
@@ -22,6 +22,8 @@ GET     /search/concordance                 controllers.Search.concordance(query
 GET     /search/export						controllers.Search.export(exportType ?= "csv", version ?= "brief", summary ?= "")
 
 POST    /search/reset/facets				controllers.Search.resetFacets(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+
+GET     /search/tips                        controllers.Application.searchTips
 
 # TBD: The main hook for the explore/trend analysis/delve UI.
 

@@ -13,7 +13,64 @@
 	}
 	<h1>@title</h1>
 	@if(user != null) {
-		<p>Welcome @user.email</p>
+		<p>Welcome, @{user.email}!</p>
+	} else {
+	    <p>Welcome to SHINE, our prototype historical search engine.</p>
 	}
+	
+<h2>About SHINE</h2>
+<p>
+This tool has been developed as part of the <a href="http://buddah.projects.history.ac.uk/">Big UK Data Arts and Humanities project</a> 
+funded by the AHRC. Read more about the project on our <a href="http://britishlibrary.typepad.co.uk/webarchive/2015/07/big-uk-domain-data-for-the-arts-and-humanities.html">blog</a>.
+</p>
+<p>
+The data was acquired by JISC from the <a href="http://archive.org/">Internet Archive</a> (IA) and 
+includes all .uk websites in the IA web collection crawled between around 1996 until April 2013 
+(<a href="http://data.webarchive.org.uk/opendata/ukwa.ds.2/#issues">you can read more details about this dataset here</a>). 
+The collection comprises over 3.5 billion items (urls, images and other documents) and has been 
+full-text indexed by the UK Web Archive. <i>Every word of every website in the collection can be 
+searched for and analysed.</i>
+</p>
+	
+<h2>What can I do?</h2>
+
+<h3>Trend analysis</h3>
+<p>
+Use <a href="https://www.webarchive.org.uk/shine/graph">‘trends’</a> to analyse the number of pages a word or 
+phrase appears in the collection over a given period (within 1996-2013). 
+Comparisons can be drawn by adding several words or phrases separated by a comma. E.g. <a href="https://www.webarchive.org.uk/shine/graph?query=cat%2C+dog%2C+goldfish&year_start=1996&year_end=2013&action=update">cat, dog, goldfish</a>
+</p>
+<p class="text-center">
+<img class="img-responsive img-thumbnail" src="@routes.Assets.at("images/cat-dog-goldfish-sample.png")"/>
+</p>
+<p>
+Clicking on a graph point gives a sample of websites that use that word or phrase and give the context it was used.
+</p>
+
+<h3>Search</h3>
+<p>
+On the <a href="http://localhost:9000/shine/search?facet.sort=index&tab=results">Search page</a>, you 
+can enter search terms and get the results back as a list of pages, presenting more detailed information per page. 
+The result set may be a VERY large number of webpages (possibly millions) and 
+they are NOT ordered by relevance which you may expect with a search engine such as Google. 
+</p>
+<p class="text-center">
+<img class="img-responsive img-thumbnail" src="@routes.Assets.at("images/shine-search.png")"/>
+</p>
+<p>
+You can, however, narrow down the search with faceting on such things 
+as ‘content type’, ‘year of capture’, domain and even Post Code amongst others.
+</p>
+<p>
+See <a href="@routes.Application.searchTips">Search Tips</a> for help with search terms and query syntax.
+</p>
+
+<h2>Feedback</h2>
+<p>
+This is a prototype service and we need YOUR feedback so that we can improve it and extend it to our other web archive collections.
+Please get in touch with your experiences (good and bad), issues and questions through 
+<a href="http://www.webarchive.org.uk/ukwa/info/contact">our contact page</a> or <a href="https://twitter.com/UKWebArchive">on Twitter</a>.
+</p>
+	
 }
 

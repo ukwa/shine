@@ -1,0 +1,90 @@
+@(title: String, user: User)
+
+@styles = {}
+
+@scripts = {}
+
+@main(title, styles, scripts, user) {
+
+    @searchTabs("search_tips")
+   
+<h2>Search Tips</h2>
+
+<p>
+If you are looking for a single website that you believe may be in the
+UK Web Archive, you can search for it via the Search tab. Use a phrase or name
+that you think is most likely to be in the website and in that website alone. This
+will search across all the archived websites.</p>
+
+<p>
+There are several options for narrowing your search. For example, a phrase search
+uses more than one term (i.e. more than a single word). If two (or more) terms are submitted
+without the use of quotes, only one of those terms need appear in the documents to produce a result.
+If the terms are quoted, then only that precise string will be returned. See the <a href="#query-syntax">Query Syntax
+section below</a> for full details.</p>
+
+<p>Having submitted your query you can further refine your search using the facets on the
+left-hand side of the full text search results page. This allows the matching results to be 
+filtered by various properties, such as content type, collection and crawl year. For example, 
+you can use the 'Refine by domain suffix' facet to limit the results set to those resources 
+hosted on domains with names that share the same common suffix, such as 'co.uk', 'ac.uk' or 'com'.</p>
+
+<p>
+Note that all queries are case-insensitive.
+</p>
+
+<h3 id="query-syntax">Query Syntax</h3>
+
+<table class="table table-bordered table-striped">
+<thead>
+<tr>
+<th>Query type</th>
+<th>Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tr>
+<td>Logical AND</td>
+<td><a href="https://www.webarchive.org.uk/shine/graph?query=economics+finance&year_start=1996&year_end=2013&action=update">economics finance</a>, <a href="https://www.webarchive.org.uk/shine/graph?query=economics+AND+finance&year_start=1996&year_end=2013&action=update">economics AND finance</a></td>
+<td>Returns resources containing the words 'economics' and 'finance', but not necessarily together.</td>
+</tr>
+<tr>
+<td>Logical OR</td>
+<td><a href="https://www.webarchive.org.uk/shine/graph?query=breakfast+OR+marmalade&year_start=1996&year_end=2013&action=update">breakfast OR marmalade</a></td>
+<td>Returns resources containing either the word 'breakfast' or the work 'marmalade'</td>
+</tr>
+<tr>
+<td>Logical NOT</td>
+<td><a href="https://www.webarchive.org.uk/shine/graph?query=coffee+NOT+java&year_start=1996&year_end=2013&action=update">coffee NOT java</a></td>
+<td>Returns resources containing the word 'coffee', but excluding all resources that contain the work 'java'.</td>
+</tr>
+<tr>
+<td>Phrase search</td>
+<td><a href="https://www.webarchive.org.uk/shine/graph?query=%22Tony+Blair%22&year_start=1996&year_end=2013&action=update">"Tony Blair"</a></td>
+<td>Returns resources containing the exact phrase "tony blair".</td>
+</tr>
+<tr>
+<td>Proximity search</td>
+<td><a href="https://www.webarchive.org.uk/shine/graph?query=%22coffee+java%22~25&year_start=1996&year_end=2013&action=update">"coffee java"~25</a></td>
+<td>Returns resources where the words 'coffee' and 'java' appear within 25 words of each other.</td>
+</tr>
+<tr>
+<td>Proximity phrase search</td>
+<td><a href="https://www.webarchive.org.uk/shine/graph?query=%22%28\%22Tony+Blair\%22%29+%28\%22Rupert+Murdoch\%22%29%22~10&year_start=1996&year_end=2013&action=update">"(\"Tony Blair\") (\"Rupert Murdoch\")"~10</a></td>
+<td>Returns resources where the exact phrases "Tony Blair" and "Rupert Murdoch") appear within 10 words of each other.</td>
+</tr>
+<tr>
+<td>Single character wildcard</td>
+<td><a href="https://www.webarchive.org.uk/shine/graph?query=mart%3Fn&year_start=1996&year_end=2013&action=update">mart?n</a></td>
+<td>A 'wildcard' search where a single character in the term might vary &emdash; the question mark symbol (i.e., '?') can be used in its place. In this example, 'mart?n' can find 'martin', 'martan', 'marten' and so on.</td>
+</tr>
+<tr>
+<td>Multiple character wildcard</td>
+<td><a href="https://www.webarchive.org.uk/shine/graph?query=buil*&year_start=1996&year_end=2013&action=update">buil*</a></td>
+<td>A 'wildcard' search where multiple character in the term might vary &emdash; the asterisk symbol (i.e., '*') can be used in its place.  In this example, 'buil*' can find 'build', 'built' and 'building'.</td>
+</tr>
+</table>
+
+
+}
+

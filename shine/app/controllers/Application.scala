@@ -17,8 +17,18 @@ object Application extends Controller {
 	request.session.get("username").map { username =>
 	  	user = User.findByEmail(username.toLowerCase())
     }
-	Ok(views.html.index("Shine Application", user))
+	Ok(views.html.index("Welcome", user))
   }
+  
+  def searchTips = Action { implicit request =>
+    var user : User = null
+	request.session.get("username").map { username =>
+	  	user = User.findByEmail(username.toLowerCase())
+    }
+	Ok(views.html.search.searchTips("Search Tips", user))
+  }
+  
+  
 
   // -- Authentication
 
