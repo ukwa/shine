@@ -23,7 +23,7 @@ class SearchPageSpec extends Specification {
 
 			browser.url must equalTo("/login")
 
-        	browser.$("title").first.getText must equalTo("Shine Application")
+        	browser.$("title").first.getText must contain("Welcome")
 
         	browser.$("a").first.getText must equalTo("UK Web Archive")
         	

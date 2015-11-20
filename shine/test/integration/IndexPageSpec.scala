@@ -21,7 +21,7 @@ class IndexPageSpec extends Specification {
 		"run in a browser" in new WithBrowser {
 			browser.goTo("/")
 
-        	browser.$("title").first.getText must equalTo("Shine Application")
+        	browser.$("title").first.getText must contain("Welcome")
 
         	browser.$("a").first.getText must equalTo("UK Web Archive")
 
