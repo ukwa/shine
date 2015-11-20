@@ -69,5 +69,5 @@ shine {
   resource_limit = 10
   csv_max_limit = 20000
   csv_interval_limit = 1000
-  web_archive_url = "http://web.archive.org/web"
+  web_archive_url = "http://web.archive.org/web/"
 }
