@@ -67,7 +67,7 @@ object Application extends Controller {
    * Login page.
    */
   def login = Action { implicit request =>
-    Ok(html.login(loginForm, "Shine Application"))
+    Ok(html.login(loginForm, "Login"))
   }
 
   /**
@@ -76,7 +76,7 @@ object Application extends Controller {
   def authenticate = Action { implicit request =>
     println("authenticate")
     loginForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(html.login(formWithErrors, "Shine Application")),
+      formWithErrors => BadRequest(html.login(formWithErrors, "Login")),
       account => Redirect(routes.Application.index).withSession("username" -> account._1)
     )
   }

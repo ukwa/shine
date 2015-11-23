@@ -18,7 +18,7 @@ class AdvancedSearchPageSpec extends Specification {
 
 			browser.url must equalTo("/login")
 
-        	browser.$("title").first.getText must contain("Welcome")
+        	browser.$("title").first.getText must contain("Advanced Search")
 
         	browser.$("a").first.getText must equalTo("UK Web Archive")
 

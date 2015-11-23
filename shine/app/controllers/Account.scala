@@ -32,7 +32,7 @@ object Account extends Controller {
 	request.session.get("username").map { username =>
 	  	user = User.findByEmail(username.toLowerCase())
     }
-    Ok(views.html.index("Shine Application", user))
+    Ok(views.html.index("Welcome", user))
   }
 
   def validatePassword(email: String, currentPassword: String, newPassword1: String, newPassword2: String) = {
@@ -49,7 +49,7 @@ object Account extends Controller {
   def changePassword = Action { implicit request =>
   	  request.session.get("username").map { username =>
 		val user = User.findByEmail(username.toLowerCase())
-		Ok(html.account.changePassword(passwordForm, "Shine Application", user))
+		Ok(html.account.changePassword(passwordForm, "Change password", user))
 	  }.getOrElse {
 		Unauthorized("Oops, you are not authorized")
 	  }
@@ -61,7 +61,7 @@ object Account extends Controller {
 		var user = User.findByEmail(username.toLowerCase())
 		passwordForm.bindFromRequest.fold(
 	      formWithErrors => {
-	        BadRequest(html.account.changePassword(formWithErrors, "Shine Application", user))
+	        BadRequest(html.account.changePassword(formWithErrors, "Change password", user))
 	      },
 	      passwordData => {
 	        val password = passwordData.currentPassword
@@ -76,10 +76,10 @@ object Account extends Controller {
 		    		Redirect(routes.Application.index).flashing("success" -> "Your password has been updated successfully")
 		    	} else {
 		    		//passwordForm.fill(passwordData).withGlobalError("Your error message")
-	                BadRequest(html.account.changePassword(passwordForm.fill(passwordData).withGlobalError("New Passwords do not match"), "Shine Application", user))	    	
+	                BadRequest(html.account.changePassword(passwordForm.fill(passwordData).withGlobalError("New Passwords do not match"), "Change password", user))	    	
 	            }
 		    } else {
-	            BadRequest(html.account.changePassword(passwordForm.fill(passwordData).withGlobalError("Current Password is incorrect"), "Shine Application", user))	    	
+	            BadRequest(html.account.changePassword(passwordForm.fill(passwordData).withGlobalError("Current Password is incorrect"), "Change password", user))	    	
 		    }
 	      })
   	  }.getOrElse {
