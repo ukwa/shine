@@ -6,6 +6,6 @@ Feature: View Home Page
 Scenario: Home Page
   Given I am on the Home Page
   When the home page loads
-  Then I should see home page title "Shine Application"
+  Then I should see home page title "Welcome :: SHINE"
   And first menu option is "Search"
   And second menu option is "Trends"
