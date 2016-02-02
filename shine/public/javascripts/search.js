@@ -393,6 +393,7 @@ $(function () {
 		var facetName = "f." + value + ".facet.sort";
 		url = url.replace("&"+facetName+'=count', '').replace("&"+facetName+'=index', '');
 		url = url + "&" + facetName + "=index";
+		url = url.replace(/page=[0-9]+/, 'page=1');
 		$(this).attr('href', url);
 		
 		$(this).click(function(event) {
@@ -426,6 +427,7 @@ $(function () {
 		var facetName = "f." + value + ".facet.sort";
 		url = url.replace("&"+facetName+'=count', '').replace("&"+facetName+'=index', '');
 		url = url + "&" + facetName + "=count";
+		url = url.replace(/page=[0-9]+/, 'page=1');
 		$(this).attr('href', url);
 		
 		$(this).click(function(event) {
@@ -934,6 +936,7 @@ function facetOptions() {
 //				console.log("remove facet: " + facet);
 			}
 			url = url.replace('&invert=&', '&');
+			url = url.replace(/page=[0-9]+/, 'page=1');
 			$(this).attr('href', url);
 			
 			$(this).click(function(event) {
@@ -975,6 +978,7 @@ function facetOptions() {
 			
 			url = url.replace('&invert=&', '&');
 //			console.log("2) " + url);
+			url = url.replace(/page=[0-9]+/, 'page=1');
 			$(this).attr('href', url);
 			
 			$(this).click(function(event) {
