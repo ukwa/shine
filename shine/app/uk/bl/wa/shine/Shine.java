@@ -484,7 +484,7 @@ public class Shine extends Solr {
 			}
 			
 			if (fq.size() > 0) {
-				solrParameters.setFilterQueries(fq.toArray(new String[fq.size()]));
+				solrParameters.addFilterQuery(fq.toArray(new String[fq.size()]));
 			}
 			
 			// Check the cache:
