@@ -883,6 +883,7 @@ function facetOptions() {
 		var $link_span_exclude = $facet_option.find('a.facet.exclude span');
 
 		var url = decodeURIComponent(window.location.search);
+		var url2 = url;
 
 		// rework this bit
 		// if invert is selected
@@ -958,6 +959,9 @@ function facetOptions() {
 			});
 
 		});
+		
+		//reset url before handling exclude
+		url = url2;
 		
 		// for clicking on facet options (excludes)
 		$(this).find('a.facet.exclude').each(function(index) {
