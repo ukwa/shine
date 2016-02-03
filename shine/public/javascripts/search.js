@@ -450,6 +450,17 @@ $(function () {
 //			$('#search-form').submit();
 		});
 	});
+	
+	$('button#reset-facets').click(function(event){
+		var url = window.location.href;
+		//removing all facet parameters
+		url = url.replace(/\&facet\.([^=]+)\=([^&]+)/g, '');
+		url = url.replace(/\&invert\=([^&]*)/g, '');
+		url = url.replace(/\&addFacet\=([^&]*)/g, '');
+		url = url.replace(/\&action\=remove-facet/g, '');
+		url = url.replace(/\&removeFacet\=([^&]+)/g, '');
+		document.location.href = url;
+	});
 
 });
 
@@ -1276,7 +1287,8 @@ function resetFacets() {
 //			console.log("not removing: " + facet.val());
 		} else {
 //			console.log("removing: " + facet.val());
-			facet.remove();
+//			facet.remove();
 		}
 	});
 }
+
