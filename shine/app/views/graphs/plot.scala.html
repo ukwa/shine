@@ -99,7 +99,7 @@
 	        	         line = line + escapeHtml(value.matches[i][2])+"<br/>";
 	        	     }
 		        	 line += "</td>";
-        	         line +="<td class='sample-host-link'><a href='"+wayBackUrl+value.wayback_date+"/"+value.url+"'>"+value.domain+"</a></td>";
+        	         line +="<td class='sample-host-link'><a href='"+wayBackUrl+"/"+value.wayback_date+"/"+value.url+"'>"+value.domain+"</a></td>";
 		        	 line += "</tr>";
 		        	 $("#samplesTable").append(line);
 		         }
