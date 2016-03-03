@@ -3,6 +3,7 @@ sudo: false
 language: scala
 
 scala:
+  - 2.10.6
   - 2.11.7
 
 jdk:
@@ -11,8 +12,6 @@ jdk:
 
 before_script:
   - cd shine
-
-sbt_args: -XX:+CMSClassUnloadingEnabled
 
 script:
 - sbt -Dconfig.file=conf/travis-ci.conf test
