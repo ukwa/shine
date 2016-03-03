@@ -15,5 +15,5 @@ before_script:
 sbt_args: -XX:+CMSClassUnloadingEnabled
 
 script:
-- sbt -Dconfig.file=conf/travis.conf test
+- sbt -Dconfig.file=conf/travis-ci.conf test
 
