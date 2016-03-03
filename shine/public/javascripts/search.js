@@ -393,6 +393,7 @@ $(function () {
 		var facetName = "f." + value + ".facet.sort";
 		url = url.replace("&"+facetName+'=count', '').replace("&"+facetName+'=index', '');
 		url = url + "&" + facetName + "=index";
+		url = url.replace(/page=[0-9]+/, 'page=1');
 		$(this).attr('href', url);
 		
 		$(this).click(function(event) {
@@ -426,6 +427,7 @@ $(function () {
 		var facetName = "f." + value + ".facet.sort";
 		url = url.replace("&"+facetName+'=count', '').replace("&"+facetName+'=index', '');
 		url = url + "&" + facetName + "=count";
+		url = url.replace(/page=[0-9]+/, 'page=1');
 		$(this).attr('href', url);
 		
 		$(this).click(function(event) {
@@ -447,6 +449,17 @@ $(function () {
 //			$('#search-form').append($(input));
 //			$('#search-form').submit();
 		});
+	});
+	
+	$('button#reset-facets').click(function(event){
+		var url = window.location.href;
+		//removing all facet parameters
+		url = url.replace(/\&facet\.([^=]+)\=([^&]+)/g, '');
+		url = url.replace(/\&invert\=([^&]*)/g, '');
+		url = url.replace(/\&addFacet\=([^&]*)/g, '');
+		url = url.replace(/\&action\=remove-facet/g, '');
+		url = url.replace(/\&removeFacet\=([^&]+)/g, '');
+		document.location.href = url;
 	});
 
 });
@@ -881,6 +894,7 @@ function facetOptions() {
 		var $link_span_exclude = $facet_option.find('a.facet.exclude span');
 
 		var url = decodeURIComponent(window.location.search);
+		var url2 = url;
 
 		// rework this bit
 		// if invert is selected
@@ -934,6 +948,7 @@ function facetOptions() {
 //				console.log("remove facet: " + facet);
 			}
 			url = url.replace('&invert=&', '&');
+			url = url.replace(/page=[0-9]+/, 'page=1');
 			$(this).attr('href', url);
 			
 			$(this).click(function(event) {
@@ -956,6 +971,9 @@ function facetOptions() {
 
 		});
 		
+		//reset url before handling exclude
+		url = url2;
+		
 		// for clicking on facet options (excludes)
 		$(this).find('a.facet.exclude').each(function(index) {
 			//console.log(facet_name + " " + facet_value);
@@ -975,6 +993,7 @@ function facetOptions() {
 			
 			url = url.replace('&invert=&', '&');
 //			console.log("2) " + url);
+			url = url.replace(/page=[0-9]+/, 'page=1');
 			$(this).attr('href', url);
 			
 			$(this).click(function(event) {
@@ -1268,7 +1287,8 @@ function resetFacets() {
 //			console.log("not removing: " + facet.val());
 		} else {
 //			console.log("removing: " + facet.val());
-			facet.remove();
+//			facet.remove();
 		}
 	});
 }
+

@@ -26,8 +26,12 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$('#sort').val('@(currentSortBy)')
-	  		$('#order').val('@(currentOrder)')
+			@if(currentSortBy == null || currentSortBy.isEmpty) {
+				$('#sort').val('crawl_date');
+			} else {
+				$('#sort').val('@(currentSortBy)');
+			}
+	  		$('#order').val('@(currentOrder)');
 			$("#date-from").datepicker({ dateFormat: "dd/mm/yy" });
 			$("#date-to").datepicker({ dateFormat: "dd/mm/yy" });
 			
@@ -315,37 +319,37 @@
 					$('#search-summary').append($value);
 				}				
 				/*if($('#url-field').val() != '') {
-					var $value = $('<li class="summary-li>').html("URL: " + $("#url-field").val());
+					var $value = $('<li class="summary-li">').html("URL: " + $("#url-field").val());
 					$('#search-summary').append($value);
 				}*/				
 				if($('#file-format-field').val() != '') {
-					var $value = $('<li class="summary-li>').html("File Format: " + $("#file-format-field").val());
+					var $value = $('<li class="summary-li">').html("File Format: " + $("#file-format-field").val());
 					$('#search-summary').append($value);
 				}
 				@if(showOption("show_collections_field")) {
 					if($('#collection-field').val() != '') {
-						var $value = $('<li class="summary-li>').html("Collection: " + $("#collection-field").val());
+						var $value = $('<li class="summary-li">').html("Collection: " + $("#collection-field").val());
 						$('#search-summary').append($value);
 					}
 				}
 				if($('#proximityPhrase1').val() != '' || $('#proximityPhrase2').val() != '' || $('#proximity').val() != '') {
-					var $value = $('<li class="summary-li>').html("Proximity: " + $("#proximityPhrase1").val() + " " + $("#proximityPhrase2").val() + " " + $("#proximity").val());
+					var $value = $('<li class="summary-li">').html("Proximity: " + $("#proximityPhrase1").val() + " " + $("#proximityPhrase2").val() + " " + $("#proximity").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#date-from').val() != '' || $('#date-to').val() != '') {
-					var $value = $('<li class="summary-li>').html("Date Range: " + $("#date-from").val() + " - " + $("#date-to").val());
+					var $value = $('<li class="summary-li">').html("Date Range: " + $("#date-from").val() + " - " + $("#date-to").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#exclude-field').val() != '') {
-					var $value = $('<li class="summary-li>').html("None of these words: " + $("#exclude-field").val());
+					var $value = $('<li class="summary-li">').html("None of these words: " + $("#exclude-field").val());
 					$('#search-summary').append($value);
 				}				
 				if($('#host-domain-public-field').val() != '') {
-					var $value = $('<li class="summary-li>').html("Host, Domain or Public Suffix: " + $("#host-domain-public-field").val());
+					var $value = $('<li class="summary-li">').html("Host, Domain or Public Suffix: " + $("#host-domain-public-field").val());
 					$('#search-summary').append($value);
 				}				
 				/*if($('#url-host-domain-public-field').val() != '') {
-					var $value = $('<li class="summary-li>').html("URL, Host, Domain or Public Suffix: " + $("#url-host-domain-public-field").val());
+					var $value = $('<li class="summary-li">').html("URL, Host, Domain or Public Suffix: " + $("#url-host-domain-public-field").val());
 					$('#search-summary').append($value);
 				}*/
 				if ($('#search-summary').html().trim().length > 0) {

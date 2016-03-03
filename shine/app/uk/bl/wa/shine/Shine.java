@@ -437,13 +437,13 @@ public class Shine extends Solr {
 					solrParameters.addFilterQuery("title:" + query.pageTitle);
 				}
 				if (StringUtils.isNotEmpty(query.author)) {
-					solrParameters.add("author", query.author);
+					solrParameters.addFilterQuery("author:" + query.author);
 				}
 				if (StringUtils.isNotEmpty(query.url)) {
-					solrParameters.add("url", query.url);
+					solrParameters.addFilterQuery("url:" + query.url);
 				}
 				if (StringUtils.isNotEmpty(query.fileFormat)) {
-					solrParameters.add("content_type", query.fileFormat);
+					solrParameters.addFilterQuery("content_type_norm:" + query.fileFormat);
 				}
 				processDateRange(solrParameters, query.dateStart, query.dateEnd);
 				processProximity(solrParameters, query.proximity);
@@ -484,7 +484,7 @@ public class Shine extends Solr {
 			}
 			
 			if (fq.size() > 0) {
-				solrParameters.setFilterQueries(fq.toArray(new String[fq.size()]));
+				solrParameters.addFilterQuery(fq.toArray(new String[fq.size()]));
 			}
 			
 			// Check the cache:
