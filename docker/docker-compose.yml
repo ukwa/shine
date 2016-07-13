@@ -1,0 +1,9 @@
+
+# Solr instance for running tests against
+solr:
+  image: ukwa/webarchive-discovery-solr
+  ports:
+    - "8983:8983"
+
+
+
