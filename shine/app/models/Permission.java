@@ -18,9 +18,7 @@ import javax.persistence.Version;
 
 @Entity
 public class Permission extends Model {
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -2250099575468302989L;
 
 	@Id

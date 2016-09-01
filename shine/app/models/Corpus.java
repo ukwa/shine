@@ -20,9 +20,6 @@ import play.db.ebean.Model;
 @Table(name="corpus")
 public class Corpus extends Model {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id

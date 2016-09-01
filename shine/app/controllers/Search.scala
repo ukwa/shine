@@ -1,36 +1,25 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.libs.json._
-import play.api.Play.current
-import play.api.cache.Cache
-import play.api.http.HeaderNames
-import anorm._
-import views._
-import models._
-import utils.Formatter
-import scala.collection.JavaConverters._
-import uk.bl.wa.shine.Shine
-import uk.bl.wa.shine.Query
-import uk.bl.wa.shine.Pagination
-import uk.bl.wa.shine.GraphData
-import uk.bl.wa.shine.model.FacetValue
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import org.apache.commons.lang3.StringUtils
-import scala.collection.mutable.ListBuffer
-import scala.collection.immutable.Map
-import scala.collection.mutable.MutableList
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.response.RangeFacet
-import org.apache.solr.common.SolrDocument
-import models.User
-import views.Csv
 import java.util.Date
-import play.api.mvc.Result
+
+import models.{User, _}
+import org.apache.commons.lang3.StringUtils
+import play.api.Play.current
+import play.api._
+import play.api.cache.Cache
+import play.api.data.Forms._
+import play.api.data._
+import play.api.http.HeaderNames
+import play.api.libs.json._
+import play.api.mvc._
+import uk.bl.wa.shine.model.FacetValue
+import uk.bl.wa.shine.{GraphData, Pagination, Query, Shine}
+import utils.Formatter
+import views.{Csv, _}
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable.Map
+import scala.collection.mutable.ListBuffer
 
 object Search extends Controller {
 
@@ -49,7 +38,8 @@ object Search extends Controller {
     pageTitle: Option[String],
     author: Option[String],
     collection: Option[String],
-    mode: String)
+    mode: String
+  )
 
   val searchForm = Form(
     mapping(
@@ -67,7 +57,8 @@ object Search extends Controller {
       "pageTitle" -> optional(text),
       "author" -> optional(text),
       "collection" -> optional(text),
-      "mode" -> text)(SearchData.apply)(SearchData.unapply))
+      "mode" -> text)(SearchData.apply)(SearchData.unapply)
+  )
 
   val config = play.Play.application().configuration().getConfig("shine")
 
@@ -302,7 +293,7 @@ object Search extends Controller {
       user = User.findByEmail(username.toLowerCase())
     }
 
-    Ok(views.html.graphs.plot("Trend results "+yearStart+"-"+yearEnd+" for "+query, user, query, "Years", "Count", yearStart, yearEnd, "graph"))
+    Ok(views.html.graphs.plot("Trend results " + yearStart + "-" + yearEnd + " for " + query, user, query, "Years", "Count", yearStart, yearEnd, "graph"))
   }
 
   def processChart = Action { implicit request =>

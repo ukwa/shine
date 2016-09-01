@@ -18,9 +18,6 @@ import play.data.format.Formats;
 @Table(name="saved_search")
 public class Search extends Model {
     
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id 

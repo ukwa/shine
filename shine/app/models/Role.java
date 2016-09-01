@@ -20,9 +20,7 @@ import uk.bl.wa.shine.Const;
 
 @Entity
 public class Role extends Model {
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 5670206529564297517L;
 
 	@Id

@@ -18,9 +18,6 @@ import play.db.ebean.Model;
 @Table(name="resource")
 public class Resource extends Model {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id

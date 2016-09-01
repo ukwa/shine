@@ -32,9 +32,6 @@ import uk.bl.wa.shine.PasswordHash;
 @Table(name="account")
 public class User extends Model {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
     @Id
