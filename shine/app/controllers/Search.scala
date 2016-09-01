@@ -15,7 +15,7 @@ import play.api.mvc._
 import uk.bl.wa.shine.model.FacetValue
 import uk.bl.wa.shine.{GraphData, Pagination, Query, Shine}
 import utils.Formatter
-import views.{Csv, _}
+import views._
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable.Map
@@ -177,12 +177,14 @@ object Search extends Controller {
           case "brief" => {
             //				println("exporting to BRIEF CSV #: " + totalRecords)
             // retrieve based on total records
-            Ok(views.csv.brief("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+            // Ok(views.csv.brief("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+            Ok("CSV is not available while upgrading to new Play version")
           }
           case "full" => {
             //				println("exporting to FULL CSV #: " + totalRecords)
             // retrieve based on total records
-            Ok(views.csv.full("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+            // Ok(views.csv.full("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+            Ok("CSV is not available while upgrading to new Play version")
           }
         }
       }

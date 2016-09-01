@@ -1,20 +1,31 @@
-import play.Project._
-
 name := "shine"
 
-version := "1.0"
+version := "1.0-SNAPSHOT"
+
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
+
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
-  jdbc,
+  javaCore,
+  javaJdbc,
+  javaEbean,
+  cache,
   anorm,
+  "org.xerial" % "sqlite-jdbc" % "3.7.2",
+  "org.apache.solr" % "solr-solrj" % "4.4.0",
+  "org.fluentlenium" % "fluentlenium-core" % "0.10.2",
+  "org.jbehave" % "jbehave-core" % "3.9.1",
+  "org.codehaus.plexus" % "plexus-archiver" % "1.2",
+  "org.apache.maven.wagon" % "wagon-provider-api" % "2.6",
+  "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
+  "org.jbehave" % "jbehave-maven-plugin" % "3.9.1",
+  "org.apache.commons" % "commons-email" % "1.3.2",
+  "commons-io" % "commons-io" % "2.3",
+  "org.avaje" % "ebean" % "2.7.1",
+  "net.sf.opencsv" % "opencsv" % "2.3",
   "info.cukes" % "cucumber-java" % "1.2.2",
   "info.cukes" % "cucumber-junit" % "1.2.2",
   "net.sourceforge.htmlunit" % "htmlunit" % "2.15",
   "org.skyscreamer" % "jsonassert" % "1.2.3"
-)     
-
-
-
-play.Project.playScalaSettings
-
-templatesTypes += ("csv" -> "views.CsvFormat")
+)
