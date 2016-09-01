@@ -7,6 +7,10 @@ Running, e.g. to keep different configs separate,
 
     % play -Dconfig.file=conf/application-localhost-solr.conf run
 
+Start by copying the example configuration conf/application.example.conf to conf/application.conf and insert the
+suitable passwords. The default configuration (conf/application.conf) will not be added to git.
+
+
 Ideas
 -----
 
