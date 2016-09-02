@@ -1,4 +1,4 @@
-@(user: User, q: uk.bl.wa.shine.Query, searchForm: Form[controllers.Search.SearchData])(implicit flash: Flash, lang: play.api.i18n.Lang)
+@(user: User, q: uk.bl.wa.shine.Query, searchForm: Form[controllers.Search.SearchData])(implicit flash: Flash, messages: Messages)
 
 @import helper._
 @import bootstrap.advanced._
@@ -22,7 +22,7 @@
 				    'class -> "form-control",
 				    'placeholder -> "<TEXT FIELD>, <MATCH TYPE>",
 				    '_error -> searchForm("query").error.map(_.withMessage("Enter Query"))
-				)(FieldConstructor(fullSearchInput.f), lang)
+				)(FieldConstructor(fullSearchInput.f), messages)
 			
 				<div class="form-group">
 					<label for="" class="col-sm-2 control-label">
@@ -33,21 +33,21 @@
 					    'class -> "form-control search-field",
 					    'placeholder -> "phrase",
 					    '_error -> searchForm("proximityPhrase1").error.map(_.withMessage("Enter Proximity Values"))
-					)(FieldConstructor(proximityInput.f), lang)
+					)(FieldConstructor(proximityInput.f), messages)
 
 					@helper.inputText(searchForm("proximityPhrase2"),
 					    'id -> "proximityPhrase2",
 					    'class -> "form-control search-field",
 					    'placeholder -> "phrase",
 					    '_error -> searchForm("proximityPhrase2").error.map(_.withMessage("Enter Proximity Values"))
-					)(FieldConstructor(proximityInput.f), lang)
+					)(FieldConstructor(proximityInput.f), messages)
 
 					@helper.inputText(searchForm("proximity"),
 					    'id -> "proximity",
 					    'class -> "form-control search-field",
 					    'placeholder -> "25",
 					    '_error -> searchForm("proximityPhrase1").error.map(_.withMessage("Enter Proximity Values"))
-					)(FieldConstructor(proximityInput.f), lang)
+					)(FieldConstructor(proximityInput.f), messages)
 					<div class="col-sm-4">
 						<p class="text-success">If you wish to search for word that appear together, try a proximity search. For example, the following finds resources where the words 'coffee' and 'java' occur within 25 words of each other.</p>
 					</div>
@@ -81,14 +81,14 @@
 					    'class -> "form-control search-field",
 					    'placeholder -> "dd/mm/yyyy",
 					    '_error -> searchForm("dateStart").error.map(_.withMessage("Enter Date Ranges"))
-					)(FieldConstructor(dateInput.f), lang)
+					)(FieldConstructor(dateInput.f), messages)
 					@helper.inputDate(searchForm("dateEnd"),
 					    'id -> "date-to",
 					    'class -> "form-control search-field",
 					    'placeholder -> "dd/mm/yyyy",
 					    'type -> "text",
 					    '_error -> searchForm("dateEnd").error.map(_.withMessage("Enter Date Ranges"))
-					)(FieldConstructor(dateInput.f), lang)
+					)(FieldConstructor(dateInput.f), messages)
 					<div class="col-sm-4">
 						<p class="text-success">Restrict by date (Format: dd/mm/yyyy)</p>
 					</div>

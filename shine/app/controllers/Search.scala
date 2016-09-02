@@ -5,6 +5,7 @@ import java.util.Date
 import models.{User, _}
 import org.apache.commons.lang3.StringUtils
 import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api._
 import play.api.cache.Cache
 import play.api.data.Forms._

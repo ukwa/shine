@@ -1,4 +1,4 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[controllers.Search.SearchData], corpora: List[Corpus], facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: List[Object])(implicit flash: Flash, lang: play.api.i18n.Lang)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[controllers.Search.SearchData], corpora: List[Corpus], facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: List[Object])(implicit flash: Flash, messages: Messages)
 
 @import results._
 @import utils.ConfigHelper.showOption

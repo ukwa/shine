@@ -3,6 +3,8 @@ package controllers
 import models._
 import play.api.data.Forms._
 import play.api.data._
+import play.api.Play.current
+import play.api.i18n.Messages.Implicits._
 import play.api.libs.json.{JsNumber, JsString, Json}
 import play.api.mvc._
 import uk.bl.wa.shine._
