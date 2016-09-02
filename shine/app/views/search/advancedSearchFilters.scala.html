@@ -2,20 +2,10 @@
 
 @import helper._
 @import bootstrap.advanced._
+@import utils.ConfigHelper.showOption
+
 
 @implicitFieldConstructor = @{ FieldConstructor(genericInput.f) }
-
-@showOption(tab: String) = @{
-	play.api.Play.current.configuration.getConfig("shine") match {
-	      case Some(config) => { 
-	      	config.getBoolean(tab) match {
-				case Some(option) => { option.asInstanceOf[Boolean] }
-				case None => { false } 
-			}
-	      }
-	      case None => { false } 
-	}
-}
 
 <div class="panel panel-default">
 	<div class="panel-heading filter-heading">

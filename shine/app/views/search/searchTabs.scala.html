@@ -1,16 +1,6 @@
 @(level: String = "search")
 
-@showOption(tab: String) = @{
-	play.api.Play.current.configuration.getConfig("shine") match {
-	      case Some(config) => { 
-	      	config.getBoolean(tab) match {
-				case Some(option) => { option.asInstanceOf[Boolean] }
-				case None => { false } 
-			}
-	      }
-	      case None => { false } 
-	}
-}
+@import utils.ConfigHelper.showOption
 
 <ul class="nav nav-tabs">
  
