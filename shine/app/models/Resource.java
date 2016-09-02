@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.persistence.Column;
 
-import play.db.ebean.Model;
+import com.avaje.ebean.Model;
 
 @Entity 
 @Table(name="resource")

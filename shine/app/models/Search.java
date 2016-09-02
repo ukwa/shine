@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import play.db.ebean.Model;
+import com.avaje.ebean.Model;
 import play.data.validation.Constraints;
 import play.data.format.Formats;
 

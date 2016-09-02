@@ -15,7 +15,7 @@ import javax.persistence.Version;
 import com.avaje.ebean.ExpressionList;
 
 import play.data.validation.Constraints.Required;
-import play.db.ebean.Model;
+import com.avaje.ebean.Model;
 import uk.bl.wa.shine.Const;
 
 @Entity
