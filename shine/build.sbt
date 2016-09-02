@@ -17,7 +17,7 @@ libraryDependencies ++= Seq(
   "org.jbehave" % "jbehave-core" % "3.9.1",
   "org.codehaus.plexus" % "plexus-archiver" % "1.2",
   "org.apache.maven.wagon" % "wagon-provider-api" % "2.6",
-  "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
+  "org.postgresql" % "postgresql" % "9.4.1209",
   "org.jbehave" % "jbehave-maven-plugin" % "3.9.1",
   "org.apache.commons" % "commons-email" % "1.3.2",
   "commons-io" % "commons-io" % "2.3",
