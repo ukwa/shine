@@ -7,6 +7,7 @@ import play.api.data._
 import play.api.mvc._
 import uk.bl.wa.shine._
 import views._
+import play.api.routing.JavaScriptReverseRouter
 
 object Application extends Controller {
 
@@ -90,9 +91,8 @@ object Application extends Controller {
   // -- Javascript routing
 
   def javascriptRoutes = Action { implicit request =>
-    import routes.javascript._
     Ok(
-      Routes.javascriptRouter("jsRoutes")(
+      JavaScriptReverseRouter("jsRoutes")(
         routes.javascript.Search.suggestTitle,
         routes.javascript.Search.suggestUrl,
         routes.javascript.Search.suggestFileFormat,
