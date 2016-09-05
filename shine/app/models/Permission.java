@@ -29,11 +29,8 @@ public class Permission extends Model {
     @Version
     public Timestamp lastUpdate;
 
-    @ManyToMany
-    @JoinTable(
-        name="role_permissions",
-        joinColumns={@JoinColumn(name="permission_id", referencedColumnName="id")},
-        inverseJoinColumns={@JoinColumn(name="role_id", referencedColumnName="id")})
+    // Mapped by permissions in Role.java
+    @ManyToMany(mappedBy="permissions")
     public List<Role> roles = new ArrayList<Role>(); 
     
     public static final Model.Finder<Long, Permission> find = new Model.Finder<Long, Permission>(Long.class, Permission.class);

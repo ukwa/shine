@@ -31,19 +31,11 @@ public class Role extends Model {
     @Version
     public Timestamp lastUpdate;
 
-//    @OneToMany(cascade=CascadeType.ALL)
-//    @JoinTable(name = "user_roles",
-//              joinColumns = @JoinColumn(name = "role_id"),
-//              inverseJoinColumns = @JoinColumn(name = "user_id"))
-
-    @ManyToMany
-    @JoinTable(
-        name="user_roles",
-        joinColumns={@JoinColumn(name="role_id", referencedColumnName="id")},
-        inverseJoinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})
+    // Mapped by roles in User.java
+    @ManyToMany(mappedBy = "roles")
+    @JoinTable()
     public List<User> users = new ArrayList<User>();
-    
-    
+
     @ManyToMany
     @JoinTable(
         name="role_permissions",
