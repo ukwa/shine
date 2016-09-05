@@ -27,5 +27,9 @@ libraryDependencies ++= Seq(
   "net.sourceforge.htmlunit" % "htmlunit" % "2.15",
   "org.skyscreamer" % "jsonassert" % "1.2.3",
   "com.typesafe.play" %% "anorm" % "2.4.0",
+  "org.easytesting" % "fest-assert" % "1.4" % Test,
   specs2 % Test
 )
+
+// Specify the configuration to be used during testing.
+javaOptions in Test += "-Dconfig.resource=application-test.conf"
