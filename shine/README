@@ -10,6 +10,8 @@ Running, e.g. to keep different configs separate,
 Start by copying the example configuration conf/application.example.conf to conf/application.conf and insert the
 suitable passwords. The default configuration (conf/application.conf) will not be added to git.
 
+Note that application.conf is the main configuration file and the other files will inherit and override specific
+values. See application-test.conf for an example.
 
 Ideas
 -----
