@@ -12,8 +12,11 @@
     The logger name is typically the Java/Scala package name.
     This configures the log level to log at for a package and its children packages.
   -->
-  <logger name="play" level="INFO" />
+  <logger name="play" level="ALERT" />
   <logger name="application" level="DEBUG" />
+
+  <!-- This logger was added because the package messes up the test result output, because it thinks there is an error i jQuery.js -->
+  <logger name="com.gargoylesoftware.htmlunit.javascript.StrictErrorReporter" level="OFF"/>
 
   <root level="ERROR">
     <appender-ref ref="STDOUT" />
