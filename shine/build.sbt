@@ -2,16 +2,15 @@ name := "shine"
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, PlayEbean)
 
 scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
   javaCore,
   javaJdbc,
-  javaEbean,
   cache,
-  anorm,
+  evolutions,
   "org.xerial" % "sqlite-jdbc" % "3.7.2",
   "org.apache.solr" % "solr-solrj" % "4.4.0",
   "org.fluentlenium" % "fluentlenium-core" % "0.10.2",
@@ -22,10 +21,11 @@ libraryDependencies ++= Seq(
   "org.jbehave" % "jbehave-maven-plugin" % "3.9.1",
   "org.apache.commons" % "commons-email" % "1.3.2",
   "commons-io" % "commons-io" % "2.3",
-  "org.avaje" % "ebean" % "2.7.1",
   "net.sf.opencsv" % "opencsv" % "2.3",
   "info.cukes" % "cucumber-java" % "1.2.2",
   "info.cukes" % "cucumber-junit" % "1.2.2",
   "net.sourceforge.htmlunit" % "htmlunit" % "2.15",
-  "org.skyscreamer" % "jsonassert" % "1.2.3"
+  "org.skyscreamer" % "jsonassert" % "1.2.3",
+  "com.typesafe.play" %% "anorm" % "2.4.0",
+  specs2 % Test
 )
