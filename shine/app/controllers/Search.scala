@@ -132,7 +132,7 @@ object Search extends Controller {
     }
   }
 
-  def getResults(form: Form[controllers.Search.SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, sortableFacets: List[Object], corpora: List[Corpus]) = {
+  def getResults(form: Form[SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, sortableFacets: List[Object], corpora: List[Corpus]) = {
     val q = doSearchForm(form, queryString)
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -545,7 +545,7 @@ object Search extends Controller {
     solr.export(q)
   }
 
-  def doSearchForm(form: Form[controllers.Search.SearchData], parameters: Map[String, Seq[String]]) = {
+  def doSearchForm(form: Form[SearchData], parameters: Map[String, Seq[String]]) = {
     val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
     val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("excludeWords")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava, getData(form.data.get("mode")))
     println("form: " + form.data.get("action") + " " + query.responseParameters);
