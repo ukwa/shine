@@ -3,11 +3,7 @@ package models;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 import com.avaje.ebean.Model;
 import play.data.validation.Constraints;
@@ -20,7 +16,8 @@ public class Search extends Model {
     
 	private static final long serialVersionUID = 1L;
 
-	@Id 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long id;
     
     @Constraints.Required

@@ -8,13 +8,7 @@ import play.data.validation.Constraints.Required;
 import com.avaje.ebean.Model;
 import uk.bl.wa.shine.Const;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 @Entity
 public class Permission extends Model {
@@ -22,6 +16,7 @@ public class Permission extends Model {
 	private static final long serialVersionUID = -2250099575468302989L;
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long id;
     
 	@Required

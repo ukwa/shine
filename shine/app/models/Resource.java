@@ -4,13 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Version;
-import javax.persistence.Column;
+import javax.persistence.*;
 
 import com.avaje.ebean.Model;
 
@@ -21,6 +15,7 @@ public class Resource extends Model {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long id;
     
 	public String resource_id;

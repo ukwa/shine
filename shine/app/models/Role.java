@@ -4,13 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 import com.avaje.ebean.ExpressionList;
 
@@ -24,6 +18,7 @@ public class Role extends Model {
 	private static final long serialVersionUID = 5670206529564297517L;
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long id;
     
 	@Required
