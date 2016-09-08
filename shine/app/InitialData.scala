@@ -3,9 +3,7 @@ import models.{Permission, Role, User}
 object InitialData {
 
   def insert() = {
-
     if(User.findAll.isEmpty) {
-
       val create = new Permission("Create", "Create")
       create.save()
       val read = new Permission("Read", "Read")
@@ -28,12 +26,12 @@ object InitialData {
       user.roles.add(role)
       user.save()
     }
-    getExternalUsers()
 
+    getExternalUsers()
   }
 
   def getExternalUsers() {
-
+    /*
     createUser("alison.kay@northumbria.ac.uk")
     createUser("r.cran@alumni.ucl.ac.uk")
     createUser("fryerc@parliament.uk")
@@ -51,6 +49,7 @@ object InitialData {
     createUser("ralph.schroeder@oii.ox.ac.uk")
     createUser("josh.cowls@oii.ox.ac.uk")
     createUser("nb@dac.au.dk")
+    */
   }
 
   def createUser(email: String) {
