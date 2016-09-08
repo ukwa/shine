@@ -33,10 +33,10 @@ object Account extends Controller {
 
   def validatePassword(email: String, currentPassword: String, newPassword1: String, newPassword2: String) = {
     println("validatePassword")
-    val storedPassword = User.findByEmail(email.toLowerCase()).password;
-    val authenticate = PasswordHash.validatePassword(currentPassword, storedPassword);
+    val storedPassword = User.findByEmail(email.toLowerCase()).password
+    val authenticate = PasswordHash.validatePassword(currentPassword, storedPassword)
     if (authenticate) {
-      (newPassword1.equals(newPassword2))
+      newPassword1.equals(newPassword2)
     } else {
       false
     }
@@ -51,7 +51,7 @@ object Account extends Controller {
     }
   }
 
-  def updatePassword = Action { implicit request =>
+  def updatePassword() = Action { implicit request =>
     println("updatePassword")
     request.session.get("username").map { username =>
       var user = User.findByEmail(username.toLowerCase())
@@ -69,7 +69,7 @@ object Account extends Controller {
             if (newPassword1.equals(newPassword2)) {
               // save password
               user = User.updatePassword(username, newPassword1)
-              Redirect(routes.Application.index).flashing("success" -> "Your password has been updated successfully")
+              Redirect(routes.Application.index()).flashing("success" -> "Your password has been updated successfully")
             } else {
               //passwordForm.fill(passwordData).withGlobalError("Your error message")
               BadRequest(html.account.changePassword(passwordForm.fill(passwordData).withGlobalError("New Passwords do not match"), "Change password", user))
@@ -113,7 +113,7 @@ object Account extends Controller {
   }
 
   def deleteSearch(id: Long) = Action { implicit request =>
-    models.Search.find(id).delete
+    models.Search.find(id).delete()
     Redirect(routes.Account.mySearches()).flashing("success" -> "Your search has been deleted")
   }
 
@@ -131,9 +131,8 @@ object Account extends Controller {
   def saveCorpus(name: String, description: String) = Action { implicit request =>
     request.session.get("username").map { username =>
       val user = User.findByEmail(username.toLowerCase())
-      val corpus = models.Corpus.create(name, description, user.id)
-
-      var myCorpora = models.Corpus.findByUser(user)
+      models.Corpus.create(name, description, user.id)
+      val myCorpora = models.Corpus.findByUser(user)
 
       var results = Json.arr()
 
@@ -151,13 +150,12 @@ object Account extends Controller {
   }
 
   def deleteCorpus(id: Long) = Action { implicit request =>
-    models.Corpus.find(id).delete
+    models.Corpus.find(id).delete()
     Redirect(routes.Account.myCorpora()).flashing("success" -> "Your corpus has been deleted")
   }
 
   def saveResources(id: String, resources: String) = Action { implicit request =>
     request.session.get("username").map { username =>
-      val user = User.findByEmail(username.toLowerCase())
       val corpus = models.Corpus.find(id.toLong)
       println("Corpus found: " + corpus)
       val res = resources.split(",,,,,")
@@ -167,7 +165,7 @@ object Account extends Controller {
         val id = r(0)
         val title = r(2)
         val url = r(4)
-        val wayback = r(5).toString()
+        val wayback = r(5)
         val waybackDate = Formatter.getDate(wayback)
         println("id: " + id + " " + title + " " + waybackDate)
         val res = new models.Resource(title, url, id, waybackDate)
@@ -183,7 +181,7 @@ object Account extends Controller {
   }
 
   def deleteResource(id: Long) = Action { implicit request =>
-    models.Resource.find(id).delete
+    models.Resource.find(id).delete()
     Redirect(routes.Account.myCorpora()).flashing("success" -> "Your resource has been deleted")
   }
 }
