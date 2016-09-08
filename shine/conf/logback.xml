@@ -1,6 +1,6 @@
 <configuration>
     
-  <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
+  <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
@@ -15,7 +15,7 @@
   <logger name="play" level="ALERT" />
   <logger name="application" level="DEBUG" />
 
-  <!-- This logger was added because the package messes up the test result output, because it thinks there is an error i jQuery.js -->
+  <!-- This logger was added because the package messes up the test result output, because it thinks there is an error in jQuery.js -->
   <logger name="com.gargoylesoftware.htmlunit.javascript.StrictErrorReporter" level="OFF"/>
 
   <root level="ERROR">
