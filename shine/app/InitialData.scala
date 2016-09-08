@@ -1,34 +1,34 @@
 import models.{Permission, Role, User}
+import play.api.Logger
 
-object InitialData {
+class InitialData {
+  Logger.logger.info("Initialised InitialData")
 
-  def insert() = {
-    if(User.findAll.isEmpty) {
-      val create = new Permission("Create", "Create")
-      create.save()
-      val read = new Permission("Read", "Read")
-      read.save()
-      val update = new Permission("Update", "Update")
-      update.save()
-      val delete = new Permission("Delete", "Delete")
-      delete.save()
+  if(User.findAll.isEmpty) {
+    val create = new Permission("Create", "Create")
+    create.save()
+    val read = new Permission("Read", "Read")
+    read.save()
+    val update = new Permission("Update", "Update")
+    update.save()
+    val delete = new Permission("Delete", "Delete")
+    delete.save()
 
-      val role = new Role("Admin", "Admin")
+    val role = new Role("Admin", "Admin")
 
-      role.permissions.add(create)
-      role.permissions.add(read)
-      role.permissions.add(update)
-      role.permissions.add(delete)
+    role.permissions.add(create)
+    role.permissions.add(read)
+    role.permissions.add(update)
+    role.permissions.add(delete)
 
-      role.save()
+    role.save()
 
-      val user = User.create("kinman.li@bl.uk", "secret")
-      user.roles.add(role)
-      user.save()
-    }
-
-    getExternalUsers()
+    val user = User.create("kinman.li@bl.uk", "secret")
+    user.roles.add(role)
+    user.save()
   }
+
+  getExternalUsers()
 
   def getExternalUsers() {
     /*
