@@ -11,16 +11,16 @@ POST    /login                                  @controllers.Application.authent
 GET     /logout                                 @controllers.Application.logout
 
 # Main facets search interface. The query parameter is optional, defaulting to /search?query=*:*
-GET     /search                     		    controllers.Search.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
-GET     /search/advanced            		    controllers.Search.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
-GET     /search/browse            			    controllers.Search.browse(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
-GET     /search/concordance                     controllers.Search.concordance(query ?= "*:*")
-GET     /search/export						    controllers.Search.export(exportType ?= "csv", version ?= "brief", summary ?= "")
-POST    /search/reset/facets				    controllers.Search.resetFacets(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /search                     		    @controllers.Search.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /search/advanced            		    @controllers.Search.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /search/browse            			    @controllers.Search.browse(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+GET     /search/concordance                     @controllers.Search.concordance(query ?= "*:*")
+GET     /search/export						    @controllers.Search.export(exportType ?= "csv", version ?= "brief", summary ?= "")
+POST    /search/reset/facets				    @controllers.Search.resetFacets(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
 GET     /search/tips                            @controllers.Application.searchTips
 
 # TBD: The main hook for the explore/trend analysis/delve UI.
-GET     /graph								    controllers.Search.plot_graph(query ?= "\"big data\"", year_start ?= "1996", year_end ?= "2013")
+GET     /graph								    @controllers.Search.plot_graph(query ?= "\"big data\"", year_start ?= "1996", year_end ?= "2013")
 GET     /trends/tsv                             controllers.Shiner.trendsTsv(query, year_start, year_end)
 GET     /trends/sampleFromYear                  controllers.Shiner.sampleFromRange(query ?= "test", year ?= "2000")
 
@@ -44,17 +44,17 @@ POST    /search/mycorpora/resource/:id/delete	@controllers.Account.deleteResourc
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)
-GET    	/suggestTitle/:name					controllers.Search.suggestTitle(name)
-GET    	/suggestUrl/:name					controllers.Search.suggestUrl(name)
-GET    	/suggestFileFormat/:name			controllers.Search.suggestFileFormat(name)
-GET    	/suggestHost/:name					controllers.Search.suggestHost(name)
-GET    	/suggestDomain/:name				controllers.Search.suggestDomain(name)
-GET    	/suggestPublicSuffix/:name			controllers.Search.suggestPublicSuffix(name)
-GET    	/suggestLinksHosts/:name			controllers.Search.suggestLinksHosts(name)
-GET    	/suggestLinksDomains/:name			controllers.Search.suggestLinksDomains(name)
-GET    	/suggestLinksPublicSuffixes/:name	controllers.Search.suggestLinksPublicSuffixes(name)
-GET    	/suggestAuthor/:name				controllers.Search.suggestAuthor(name)
-GET    	/suggestCollection/:name			controllers.Search.suggestCollection(name)
-GET    	/suggestCollections/:name			controllers.Search.suggestCollections(name)
-GET    	/getFacets							controllers.Search.getFacets
-GET		/ajaxSearch							controllers.Search.ajaxSearch
+GET    	/suggestTitle/:name					@controllers.Search.suggestTitle(name)
+GET    	/suggestUrl/:name					@controllers.Search.suggestUrl(name)
+GET    	/suggestFileFormat/:name			@controllers.Search.suggestFileFormat(name)
+GET    	/suggestHost/:name					@controllers.Search.suggestHost(name)
+GET    	/suggestDomain/:name				@controllers.Search.suggestDomain(name)
+GET    	/suggestPublicSuffix/:name			@controllers.Search.suggestPublicSuffix(name)
+GET    	/suggestLinksHosts/:name			@controllers.Search.suggestLinksHosts(name)
+GET    	/suggestLinksDomains/:name			@controllers.Search.suggestLinksDomains(name)
+GET    	/suggestLinksPublicSuffixes/:name	@controllers.Search.suggestLinksPublicSuffixes(name)
+GET    	/suggestAuthor/:name				@controllers.Search.suggestAuthor(name)
+GET    	/suggestCollection/:name			@controllers.Search.suggestCollection(name)
+GET    	/suggestCollections/:name			@controllers.Search.suggestCollections(name)
+GET    	/getFacets							@controllers.Search.getFacets
+GET		/ajaxSearch							@controllers.Search.ajaxSearch

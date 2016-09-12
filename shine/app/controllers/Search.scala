@@ -1,6 +1,7 @@
 package controllers
 
 import java.util.Date
+import javax.inject.{Inject, Singleton}
 
 import models.{User, _}
 import org.apache.commons.lang3.StringUtils
@@ -22,25 +23,27 @@ import scala.collection.JavaConverters._
 import scala.collection.immutable.Map
 import scala.collection.mutable.ListBuffer
 
-object Search extends Controller {
 
-  case class SearchData(
-    query: String,
-    proximityPhrase1: Option[String],
-    proximityPhrase2: Option[String],
-    proximity: Option[String],
-    excludeWords: Option[String],
-    dateStart: Option[Date],
-    dateEnd: Option[Date],
-    url: Option[String],
-    hostDomainPublicSuffix: Option[String],
-    fileFormat: Option[String],
-    websiteTitle: Option[String],
-    pageTitle: Option[String],
-    author: Option[String],
-    collection: Option[String],
-    mode: String
-  )
+case class SearchData(
+  query: String,
+  proximityPhrase1: Option[String],
+  proximityPhrase2: Option[String],
+  proximity: Option[String],
+  excludeWords: Option[String],
+  dateStart: Option[Date],
+  dateEnd: Option[Date],
+  url: Option[String],
+  hostDomainPublicSuffix: Option[String],
+  fileFormat: Option[String],
+  websiteTitle: Option[String],
+  pageTitle: Option[String],
+  author: Option[String],
+  collection: Option[String],
+  mode: String
+)
+
+@Singleton
+class Search @Inject() extends Controller {
 
   val searchForm = Form(
     mapping(
