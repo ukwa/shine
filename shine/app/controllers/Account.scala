@@ -7,15 +7,17 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.libs.json.{JsNumber, JsString, Json}
 import play.api.mvc._
+import javax.inject._
 import uk.bl.wa.shine._
 import utils.Formatter
 import views._
 
 import scala.collection.JavaConverters._
 
-object Account extends Controller {
+case class PasswordData(currentPassword: String, newPassword1: String, newPassword2: String)
 
-  case class PasswordData(currentPassword: String, newPassword1: String, newPassword2: String)
+@Singleton
+class Account @Inject() extends Controller {
 
   val passwordForm = Form(
     mapping(

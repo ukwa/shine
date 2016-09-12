@@ -29,18 +29,18 @@ GET     /halflife                   		    controllers.Shiner.halflife
 GET     /assets/javascripts/routes              controllers.Application.javascriptRoutes()
 
 # user account
-GET     /account/password                       controllers.Account.changePassword
-POST    /account/changepassword                 controllers.Account.updatePassword
+GET     /account/password                       @controllers.Account.changePassword
+POST    /account/changepassword                 @controllers.Account.updatePassword
 
-GET     /search/mysearches                      controllers.Account.mySearches
-GET     /search/mysearches/save                 controllers.Account.saveSearch(name, description, summary, url)
-POST    /search/mysearches/:id/delete           controllers.Account.deleteSearch(id:Long)
+GET     /search/mysearches                      @controllers.Account.mySearches
+GET     /search/mysearches/save                 @controllers.Account.saveSearch(name, description, summary, url)
+POST    /search/mysearches/:id/delete           @controllers.Account.deleteSearch(id:Long)
 
-GET     /search/mycorpora                  		controllers.Account.myCorpora
-GET     /search/mycorpora/save             		controllers.Account.saveCorpus(name, description)
-POST    /search/mycorpora/:id/delete       		controllers.Account.deleteCorpus(id:Long)
-GET     /search/mycorpora/resources/save    	controllers.Account.saveResources(corpusId, resources)
-POST    /search/mycorpora/resource/:id/delete	controllers.Account.deleteResource(id:Long)
+GET     /search/mycorpora                  		@controllers.Account.myCorpora
+GET     /search/mycorpora/save             		@controllers.Account.saveCorpus(name, description)
+POST    /search/mycorpora/:id/delete       		@controllers.Account.deleteCorpus(id:Long)
+GET     /search/mycorpora/resources/save    	@controllers.Account.saveResources(corpusId, resources)
+POST    /search/mycorpora/resource/:id/delete	@controllers.Account.deleteResource(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)
