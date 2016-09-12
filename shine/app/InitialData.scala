@@ -1,6 +1,10 @@
 import models.{Permission, Role, User}
 import play.api.Logger
 
+/**
+  * InitialData class. Inserts data into the database on application startup.
+  * Defined in Module.scala as Eager Singleton, which makes it run on application start.
+  */
 class InitialData {
   Logger.logger.info("Initialised InitialData")
 
