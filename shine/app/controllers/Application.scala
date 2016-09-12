@@ -1,5 +1,7 @@
 package controllers
 
+import javax.inject.{Inject, Singleton}
+
 import models._
 import play.api.data.Forms._
 import play.api.data._
@@ -8,7 +10,8 @@ import uk.bl.wa.shine._
 import views._
 import play.api.routing.JavaScriptReverseRouter
 
-object Application extends Controller {
+@Singleton
+class Application @Inject() extends Controller {
 
   def index = Action { implicit request =>
     var user: User = null
