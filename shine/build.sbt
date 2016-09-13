@@ -34,4 +34,7 @@ libraryDependencies ++= Seq(
 // Specify the configuration to be used during testing.
 javaOptions in Test += "-Dconfig.resource=application-test.conf"
 
+// Include LESS-files from app/assets
+includeFilter in (Assets, LessKeys.less) := "styles.less"
+
 fork in run := true
