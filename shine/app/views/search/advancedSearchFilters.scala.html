@@ -1,8 +1,7 @@
-@(user: User, q: uk.bl.wa.shine.Query, searchForm: Form[SearchData])(implicit flash: Flash, messages: Messages)
+@(user: User, q: uk.bl.wa.shine.Query, searchForm: Form[SearchData])(implicit flash: Flash, messages: Messages, configHelper: utils.ConfigHelper)
 
 @import helper._
 @import bootstrap.advanced._
-@import utils.ConfigHelper.showOption
 
 
 @implicitFieldConstructor = @{ FieldConstructor(genericInput.f) }
@@ -124,7 +123,7 @@
 					</div>
 				</div>
 
-				@if(showOption("show_collections_field")) {
+				@if(configHelper.showOption("show_collections_field")) {
 					<div class="form-group">
 						@inputText(searchForm("collection"), '_label -> "Collection:", 'class -> "typeahead form-control search-field", 'placeholder -> "Collection", 'id -> "collection-field")
 						<div class="col-sm-4">

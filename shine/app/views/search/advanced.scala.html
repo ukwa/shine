@@ -1,8 +1,6 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[SearchData], corpora: List[Corpus], facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: List[Object])(implicit flash: Flash, messages: Messages, configuration: play.Configuration)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[SearchData], corpora: List[Corpus], facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: List[Object])(implicit flash: Flash, messages: Messages, configuration: play.Configuration, configHelper: utils.ConfigHelper)
 
 @import results._
-@import utils.ConfigHelper.showOption
-
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
@@ -328,7 +326,7 @@
 					var $value = $('<li class="summary-li">').html("File Format: " + $("#file-format-field").val());
 					$('#search-summary').append($value);
 				}
-				@if(showOption("show_collections_field")) {
+				@if(configHelper.showOption("show_collections_field")) {
 					if($('#collection-field').val() != '') {
 						var $value = $('<li class="summary-li">').html("Collection: " + $("#collection-field").val());
 						$('#search-summary').append($value);

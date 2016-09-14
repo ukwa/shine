@@ -1,6 +1,4 @@
-@(level: String = "search")
-
-@import utils.ConfigHelper.showOption
+@(level: String = "search")(implicit configHelper: utils.ConfigHelper)
 
 <ul class="nav nav-tabs">
  
@@ -10,10 +8,10 @@
   	<li class="active"><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
     <li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
     <li><a href="@routes.Application.searchTips()">Search Tips</a></li>
-	@if(showOption("show_browse")) {
+	@if(configHelper.showOption("show_browse")) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
 	}
-	@if(showOption("show_concordance")) {
+	@if(configHelper.showOption("show_concordance")) {
 		<li><a href="@routes.Search.concordance()">Concordance View</a></li>
 	}
   }
@@ -22,10 +20,10 @@
   	<li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li class="active"><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
     <li><a href="@routes.Application.searchTips()">Search Tips</a></li>
-	@if(showOption("show_browse")) {
+	@if(configHelper.showOption("show_browse")) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
 	}
-	@if(showOption("show_concordance")) {
+	@if(configHelper.showOption("show_concordance")) {
 		<li><a href="@routes.Search.concordance()">Concordance View</a></li>
 	}
   }
@@ -34,10 +32,10 @@
     <li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
     <li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
     <li class="active"><a href="@routes.Application.searchTips()">Search Tips</a></li>
-    @if(showOption("show_browse")) {
+    @if(configHelper.showOption("show_browse")) {
         <li><a href="@routes.Search.browse()">Browse Collections</a></li>
     }
-    @if(showOption("show_concordance")) {
+    @if(configHelper.showOption("show_concordance")) {
         <li><a href="@routes.Search.concordance()">Concordance View</a></li>
     }
   }
@@ -45,10 +43,10 @@
   case "browse" => {
   	<li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
-	@if(showOption("show_browse")) {
+	@if(configHelper.showOption("show_browse")) {
 		<li class="active"><a href="@routes.Search.browse()">Browse Collections</a></li>
 	}
-	@if(showOption("show_concordance")) {
+	@if(configHelper.showOption("show_concordance")) {
 		<li><a href="@routes.Search.concordance()">Concordance View</a></li>
   	}
   }
@@ -56,10 +54,10 @@
   case "concordance" => {
   	<li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
-	@if(showOption("show_browse")) {
+	@if(configHelper.showOption("show_browse")) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
 	}
-	@if(showOption("show_concordance")) {
+	@if(configHelper.showOption("show_concordance")) {
 		<li class="active"><a href="@routes.Search.concordance()">Concordance View</a></li>
 	}
   }

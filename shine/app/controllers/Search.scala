@@ -14,7 +14,7 @@ import play.Configuration
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.bl.wa.shine.model.FacetValue
 import uk.bl.wa.shine.{GraphData, Pagination, Query, Shine}
-import utils.Formatter
+import utils.{ConfigHelper, Formatter}
 import views._
 
 import scala.collection.JavaConverters._
@@ -41,7 +41,7 @@ case class SearchData(
 )
 
 @Singleton
-class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(implicit val messagesApi: MessagesApi, configuration: play.Configuration) extends Controller with I18nSupport {
+class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(implicit val messagesApi: MessagesApi, configuration: play.Configuration, configHelper: ConfigHelper) extends Controller with I18nSupport {
 
   val searchForm = Form(
     mapping(
