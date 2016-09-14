@@ -41,7 +41,7 @@ case class SearchData(
 )
 
 @Singleton
-class Search @Inject()(configuration: Configuration, cache: CacheApi, solr: Shine, pagination: Pagination)(implicit val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(implicit val messagesApi: MessagesApi, configuration: play.Configuration) extends Controller with I18nSupport {
 
   val searchForm = Form(
     mapping(

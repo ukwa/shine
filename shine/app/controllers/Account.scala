@@ -17,7 +17,7 @@ import scala.collection.JavaConverters._
 case class PasswordData(currentPassword: String, newPassword1: String, newPassword2: String)
 
 @Singleton
-class Account @Inject() (implicit val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Account @Inject() (implicit val messagesApi: MessagesApi, configuration: play.Configuration) extends Controller with I18nSupport {
 
   val passwordForm = Form(
     mapping(
