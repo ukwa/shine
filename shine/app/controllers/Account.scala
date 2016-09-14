@@ -3,11 +3,11 @@ package controllers
 import models._
 import play.api.data.Forms._
 import play.api.data._
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 import play.api.libs.json.{JsNumber, JsString, Json}
 import play.api.mvc._
 import javax.inject._
+
+import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.bl.wa.shine._
 import utils.Formatter
 import views._
@@ -17,7 +17,7 @@ import scala.collection.JavaConverters._
 case class PasswordData(currentPassword: String, newPassword1: String, newPassword2: String)
 
 @Singleton
-class Account @Inject() extends Controller {
+class Account @Inject() (implicit val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val passwordForm = Form(
     mapping(

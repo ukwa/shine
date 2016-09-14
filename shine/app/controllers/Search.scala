@@ -5,15 +5,13 @@ import javax.inject.{Inject, Singleton}
 
 import models.{User, _}
 import org.apache.commons.lang3.StringUtils
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
-import play.api._
-import play.api.cache.Cache
+import play.api.cache.CacheApi
 import play.api.data.Forms._
 import play.api.data._
-import play.api.http.HeaderNames
 import play.api.libs.json._
 import play.api.mvc._
+import play.Configuration
+import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.bl.wa.shine.model.FacetValue
 import uk.bl.wa.shine.{GraphData, Pagination, Query, Shine}
 import utils.Formatter
@@ -43,7 +41,7 @@ case class SearchData(
 )
 
 @Singleton
-class Search @Inject() extends Controller {
+class Search @Inject()(configuration: Configuration, cache: CacheApi)(implicit val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val searchForm = Form(
     mapping(
@@ -64,7 +62,7 @@ class Search @Inject() extends Controller {
       "mode" -> text)(SearchData.apply)(SearchData.unapply)
   )
 
-  val config = play.Play.application().configuration().getConfig("shine")
+  val config = configuration.getConfig("shine")
 
   val solr = new Shine(config)
 
@@ -79,7 +77,7 @@ class Search @Inject() extends Controller {
 
   var pagination = new Pagination(recordsPerPage, maxNumberOfLinksOnPage, maxViewablePages);
 
-  var facetValues: Map[String, FacetValue] = Cache.getOrElse[Map[String, FacetValue]]("facet.values") {
+  var facetValues: Map[String, FacetValue] = cache.getOrElse[Map[String, FacetValue]]("facet.values") {
     solr.getFacetValues.asScala.toMap
   }
 
@@ -147,7 +145,7 @@ class Search @Inject() extends Controller {
 
     //	var highlights = q.res.getHighlighting()
 
-    Cache.getAs[Map[String, FacetValue]]("facet.values") match {
+    cache.get[Map[String, FacetValue]]("facet.values") match {
       case Some(value) => {
         play.api.Logger.debug("getting value from cache ...")
         Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search", form, sortableFacets, corpora))
@@ -226,7 +224,7 @@ class Search @Inject() extends Controller {
 
     pagination.update(totalRecords, pageNo)
 
-    Cache.getAs[Map[String, FacetValue]]("facet.values") match {
+    cache.get[Map[String, FacetValue]]("facet.values") match {
       case Some(value) => {
         play.api.Logger.debug("getting value from cache ...")
         Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora, facetLimit, solr.getOptionalFacets().asScala.toMap, value, sortableFacets))
@@ -299,7 +297,8 @@ class Search @Inject() extends Controller {
       user = User.findByEmail(username.toLowerCase())
     }
 
-    Ok(views.html.graphs.plot("Trend results " + yearStart + "-" + yearEnd + " for " + query, user, query, "Years", "Count", yearStart, yearEnd, "graph"))
+    Ok("Temporarily removed during upgrade")
+    // Ok(views.html.graphs.plot("Trend results " + yearStart + "-" + yearEnd + " for " + query, user, query, "Years", "Count", yearStart, yearEnd, "graph"))
   }
 
   def processChart = Action { implicit request =>
@@ -463,7 +462,7 @@ class Search @Inject() extends Controller {
     for (i <- 0 to (results.size() - 1)) {
       val result = results.get(i)
 
-      val url = JsString(current.configuration.getString("shine.web_archive_url") + notBlank(result.getFirstValue("wayback_date")) + "/" + notBlank(result.getFirstValue("url")))
+      val url = JsString(configuration.getString("shine.web_archive_url") + notBlank(result.getFirstValue("wayback_date")) + "/" + notBlank(result.getFirstValue("url")))
       val jsonObject = Json.obj("title" -> JsString(notBlank(result.getFirstValue("title"))), "url" -> url, "crawl_date" -> JsString(notBlank(result.getFirstValue("crawl_date"))),
         "content_type_norm" -> JsString(notBlank(result.getFirstValue("content_type_norm"))),
         "domain" -> JsString(notBlank(result.getFirstValue("domain"))),
@@ -773,5 +772,4 @@ class Search @Inject() extends Controller {
     println("corpora size: " + corpora.size())
     corpora.asScala.toList
   }
-
 }

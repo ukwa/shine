@@ -35,6 +35,6 @@ libraryDependencies ++= Seq(
 javaOptions in Test += "-Dconfig.resource=application-test.conf"
 
 // We are using the static routes (see: https://www.playframework.com/documentation/2.5.x/Migration25#routes-generated-with-injectedroutesgenerator)
-routesGenerator := StaticRoutesGenerator
+// routesGenerator := StaticRoutesGenerator
 
 fork in run := true
