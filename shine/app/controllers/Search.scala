@@ -41,7 +41,7 @@ case class SearchData(
 )
 
 @Singleton
-class Search @Inject()(configuration: Configuration, cache: CacheApi, solr: Shine)(implicit val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Search @Inject()(configuration: Configuration, cache: CacheApi, solr: Shine, pagination: Pagination)(implicit val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val searchForm = Form(
     mapping(
@@ -64,23 +64,19 @@ class Search @Inject()(configuration: Configuration, cache: CacheApi, solr: Shin
 
   val config = configuration.getConfig("shine")
 
-  val recordsPerPage = solr.getPerPage
-  val maxNumberOfLinksOnPage = config.getInt("max_number_of_links_on_page")
-  val maxViewablePages = config.getInt("max_viewable_pages")
-  val facetLimit = config.getInt("facet_limit")
-  val webArchiveUrl = config.getString("web_archive_url")
-
   val sortableFacets = config.getConfig("sorts").asMap().keySet().toArray().toList
   println("sortableFacets" + sortableFacets)
 
-  var pagination = new Pagination(recordsPerPage, maxNumberOfLinksOnPage, maxViewablePages);
+  val webArchiveUrl = config.getString("web_archive_url")
+  val facetLimit = config.getInt("facet_limit")
 
-  var facetValues: Map[String, FacetValue] = cache.getOrElse[Map[String, FacetValue]]("facet.values") {
+  // Get facet.values from cache or set it it if missing, see: https://www.playframework.com/documentation/2.5.x/ScalaCache
+  cache.getOrElse[Map[String, FacetValue]]("facet.values") {
     solr.getFacetValues.asScala.toMap
   }
 
-  def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
 
+  def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     var user: User = null
     var corpora = List[Corpus]()
 

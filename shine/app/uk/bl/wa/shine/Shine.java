@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.google.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
@@ -26,9 +27,10 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.FacetParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 
+import play.Configuration;
 import play.Logger;
+import play.cache.CacheApi;
 import play.libs.Json;
-import play.cache.Cache;
 import uk.bl.wa.shine.exception.ShineException;
 import uk.bl.wa.shine.model.FacetValue;
 import uk.bl.wa.shine.model.SearchData;
@@ -45,15 +47,17 @@ public class Shine extends Solr {
 	private int csvMaxLimit;
 	private int csvIntervalLimit;
 	private String shards;
+	private CacheApi cache;
 	private FacetService facetService = null;
 
-	public Shine(play.Configuration config) {
+	public Shine(Configuration config, CacheApi cache) {
 		super(config);
 		this.facetService = new FacetServiceImpl(config);
 		this.perPage = config.getInt("per_page");
 		this.csvMaxLimit = config.getInt("csv_max_limit");
 		this.csvIntervalLimit = config.getInt("csv_interval_limit");
 		this.shards = config.getString("shards");
+		this.cache = cache;
 	}
 
 	private SolrQuery buildInitialParameters(Query query) {
@@ -486,13 +490,13 @@ public class Shine extends Solr {
 			// Check the cache:
 			String qkey = "solr-query/"+solrParameters.toString();
 			Logger.info("Checking cache under key: "+qkey);
-			QueryResponse res = (QueryResponse) Cache.get(qkey);
+			QueryResponse res = (QueryResponse) cache.get(qkey);
 			// Perform the query if not cached:
 			if( res == null ) {
 				Logger.info("Cache miss, so running query... /select?" + solrParameters.toString());
 				res = getSolrServer().query(solrParameters);
 				// Cache for an hour:
-				Cache.set(qkey, res, 60 * 60);
+				cache.set(qkey, res, 60 * 60);
 				Logger.debug("QTime: " + res.getQTime());
 				Logger.debug("Response Header: " + res.getResponseHeader());
 			} else {

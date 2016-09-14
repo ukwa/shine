@@ -1,6 +1,7 @@
 import com.google.inject.{AbstractModule, Inject, Provides}
 import play.Configuration
-import uk.bl.wa.shine.{Shine, Solr}
+import play.cache.CacheApi
+import uk.bl.wa.shine.{Pagination, Shine, Solr}
 
 class Module extends AbstractModule {
 
@@ -16,11 +17,19 @@ class Module extends AbstractModule {
     * @return
     */
   @Provides
-  def provideShine(configuration: Configuration) : Shine = {
+  def provideShine(configuration: Configuration, cacheApi: CacheApi) : Shine = {
     val config = configuration.getConfig("shine")
-    new Shine(config)
+    new Shine(config, cacheApi)
   }
 
+  @Provides
+  def providePagination(configuration: Configuration) : Pagination = {
+    val config = configuration.getConfig("shine")
+    val recordsPerPage = config.getInt("per_page")
+    val maxNumberOfLinksOnPage = config.getInt("max_number_of_links_on_page")
+    val maxViewablePages = config.getInt("max_viewable_pages")
 
+    new Pagination(recordsPerPage, maxNumberOfLinksOnPage, maxViewablePages)
+  }
 
 }
