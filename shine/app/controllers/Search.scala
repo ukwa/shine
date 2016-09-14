@@ -41,7 +41,7 @@ case class SearchData(
 )
 
 @Singleton
-class Search @Inject()(configuration: Configuration, cache: CacheApi)(implicit val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Search @Inject()(configuration: Configuration, cache: CacheApi, solr: Shine)(implicit val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val searchForm = Form(
     mapping(
@@ -64,9 +64,7 @@ class Search @Inject()(configuration: Configuration, cache: CacheApi)(implicit v
 
   val config = configuration.getConfig("shine")
 
-  val solr = new Shine(config)
-
-  val recordsPerPage = solr.getPerPage()
+  val recordsPerPage = solr.getPerPage
   val maxNumberOfLinksOnPage = config.getInt("max_number_of_links_on_page")
   val maxViewablePages = config.getInt("max_viewable_pages")
   val facetLimit = config.getInt("facet_limit")
