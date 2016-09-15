@@ -7,6 +7,7 @@ import play.api.libs.json.{JsNumber, JsString, Json}
 import play.api.mvc._
 import javax.inject._
 
+import controllers.Requests.AuthenticatedAction
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.bl.wa.shine._
 import utils.Formatter
@@ -46,13 +47,8 @@ class Account @Inject() (implicit val messagesApi: MessagesApi, configuration: p
     }
   }
 
-  def changePassword = Action { implicit request =>
-    request.session.get("username").map { username =>
-      val user = User.findByEmail(username.toLowerCase())
-      Ok(html.account.changePassword(passwordForm, "Change password", user))
-    }.getOrElse {
-      Unauthorized("Oops, you are not authorized")
-    }
+  def changePassword = AuthenticatedAction { implicit request =>
+    Ok(html.account.changePassword(passwordForm, "Change password", request.user))
   }
 
   def updatePassword() = Action { implicit request =>

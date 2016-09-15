@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import controllers.Requests.{AuthenticatedAction, UserAction}
 import models._
 import play.api.data.Forms._
 import play.api.data._
@@ -14,12 +15,8 @@ import utils.ConfigHelper
 @Singleton
 class Application @Inject() (implicit configHelper: ConfigHelper) extends Controller {
 
-  def index = Action { implicit request =>
-    var user: User = null
-    request.session.get("username").map { username =>
-      user = User.findByEmail(username.toLowerCase())
-    }
-    Ok(views.html.index("Welcome", user))
+  def index = UserAction { implicit request =>
+    Ok(views.html.index("Welcome", request.user))
   }
 
   def searchTips = Action { implicit request =>
