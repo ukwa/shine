@@ -9,9 +9,10 @@ import play.api.mvc._
 import uk.bl.wa.shine._
 import views._
 import play.api.routing.JavaScriptReverseRouter
+import utils.ConfigHelper
 
 @Singleton
-class Application @Inject() extends Controller {
+class Application @Inject() (implicit configHelper: ConfigHelper) extends Controller {
 
   def index = Action { implicit request =>
     var user: User = null
