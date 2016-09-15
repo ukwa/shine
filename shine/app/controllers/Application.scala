@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import controllers.Requests.{AuthenticatedAction, UserAction}
+import controllers.Requests.{Actions, AddUserToRequest, AuthenticatedOnly}
 import models._
 import play.api.data.Forms._
 import play.api.data._
@@ -15,21 +15,15 @@ import utils.ConfigHelper
 @Singleton
 class Application @Inject() (implicit configHelper: ConfigHelper) extends Controller {
 
-  def index = UserAction { implicit request =>
+  def index = Actions.UserAction { implicit request =>
     Ok(views.html.index("Welcome", request.user))
   }
 
-  def searchTips = Action { implicit request =>
-    var user: User = null
-    request.session.get("username").map { username =>
-      user = User.findByEmail(username.toLowerCase())
-    }
-    Ok(views.html.search.searchTips("Search Tips", user))
+  def searchTips = Actions.UserAction { implicit request =>
+    Ok(views.html.search.searchTips("Search Tips", request.user))
   }
 
-
   // -- Authentication
-
   val loginForm = Form(
     tuple(
       "email" -> text,
@@ -49,16 +43,11 @@ class Application @Inject() (implicit configHelper: ConfigHelper) extends Contro
     if (user != null) {
       val storedPassword = user.password
       val authenticate = PasswordHash.validatePassword(password, storedPassword)
-      //val authenticate = testUser(email, password) == true
       println("validating: " + authenticate)
       authenticate
     } else {
       false
     }
-  }
-
-  def testUser(username: String, password: String) = {
-    (username == "admin@test.com" && password == "secret")
   }
 
   /**
