@@ -21,11 +21,11 @@ GET     /search/tips                            controllers.Application.searchTi
 
 # TBD: The main hook for the explore/trend analysis/delve UI.
 GET     /graph								    controllers.Search.plot_graph(query ?= "\"big data\"", year_start ?= "1996", year_end ?= "2013")
-# GET     /trends/tsv                           controllers.Shiner.trendsTsv(query, year_start, year_end)
-# GET     /trends/sampleFromYear                  controllers.Shiner.sampleFromRange(query ?= "test", year ?= "2000")
+GET     /trends/tsv                           controllers.Shiner.trendsTsv(query, year_start, year_end)
+GET     /trends/sampleFromYear                  controllers.Shiner.sampleFromRange(query ?= "test", year ?= "2000")
 
 # The web half-life/rescued visualisation:
-# GET     /halflife                   		    controllers.Shiner.halflife
+GET     /halflife                   		    controllers.Shiner.halflife
 GET     /assets/javascripts/routes            controllers.Application.javascriptRoutes()
 
 # user account

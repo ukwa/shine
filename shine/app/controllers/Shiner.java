@@ -1,13 +1,13 @@
-/*
 package controllers;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.RangeFacet;
 import org.apache.solr.common.SolrDocument;
-import play.Configuration;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -23,15 +23,19 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.util.*;
 
+@Singleton
 public class Shiner extends Controller {
 
-    static Configuration config = play.Play.application().configuration().getConfig("shine");
+    private Rescued rescued;
+    private Shine solr;
 
-    static Rescued rescued = new Rescued(config);
+    @Inject()
+    Shiner(Rescued rescued, Shine solr) {
+        this.rescued = rescued;
+        this.solr = solr;
+    }
 
-    static Shine solr = new Shine(config);
-
-    public static Result halflife() {
+    public Result halflife() {
         try {
             rescued.halflife();
         } catch (MalformedURLException e) {
@@ -44,7 +48,7 @@ public class Shiner extends Controller {
         return ok(views.html.vis.rescued.render("Half-life...", "halflife"));
     }
 
-    public static Result trendsTsv(String query, String year_start, String year_end) throws SolrServerException, ShineException {
+    public Result trendsTsv(String query, String year_start, String year_end) throws SolrServerException, ShineException {
         Logger.info("Q: " + query + " " + year_start + " " + year_end);
 
         // Set up the query parameters:
@@ -120,14 +124,14 @@ public class Shiner extends Controller {
         return ok(tsv);
     }
 
-    private static Map<String, List<String>> getQueryParams(String year_start, String year_end) {
+    private Map<String, List<String>> getQueryParams(String year_start, String year_end) {
         Map<String, List<String>> params = new HashMap<String, List<String>>();
         params.put("year_start", Arrays.asList(year_start));
         params.put("year_end", Arrays.asList(year_end));
         return params;
     }
 
-    private static TrendData extractTrendData(Query q) {
+    private TrendData extractTrendData(Query q) {
         int start = Integer.parseInt(q.getParameters().get("year_start").get(0));
         int end = Integer.parseInt(q.getParameters().get("year_end").get(0));
         TrendData td = new TrendData(start, end, 1);
@@ -145,7 +149,7 @@ public class Shiner extends Controller {
         return td;
     }
 
-    public static Result sampleFromRange(String query, String year) throws SolrServerException, ShineException {
+    public Result sampleFromRange(String query, String year) throws SolrServerException, ShineException {
         // Set up the query parameters:
         Map<String, List<String>> params = getQueryParams(year, Integer.toString(Integer.parseInt(year) + 1));
 
@@ -199,5 +203,3 @@ public class Shiner extends Controller {
         return ok(result);
     }
 }
-
-*/

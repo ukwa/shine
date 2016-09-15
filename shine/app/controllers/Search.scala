@@ -291,8 +291,7 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
       user = User.findByEmail(username.toLowerCase())
     }
 
-    Ok("Temporarily removed during upgrade")
-    // Ok(views.html.graphs.plot("Trend results " + yearStart + "-" + yearEnd + " for " + query, user, query, "Years", "Count", yearStart, yearEnd, "graph"))
+    Ok(views.html.graphs.plot("Trend results " + yearStart + "-" + yearEnd + " for " + query, user, query, "Years", "Count", yearStart, yearEnd, "graph"))
   }
 
   def processChart = Action { implicit request =>
