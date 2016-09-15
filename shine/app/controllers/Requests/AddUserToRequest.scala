@@ -6,8 +6,10 @@ import play.api.mvc.{Request, _}
 import scala.concurrent.Future
 
 /**
-  * An action that will include the current user. The user will be null if not set.
-  * Use this if you need the user in the view, but don't care if the user is authenticated.
+  * An action that will add the current user to the Request object. The user will be null if not set.
+  * The User can then be accessed as request.User.
+  *
+  * Note: Does not in any way authenticate the user.
   */
 object AddUserToRequest extends ActionBuilder[UserRequest] {
   def invokeBlock[A](request: Request[A], block: UserRequest[A] => Future[Result]): Future[Result] = {
