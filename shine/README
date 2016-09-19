@@ -13,6 +13,17 @@ suitable passwords. The default configuration (conf/application.conf) will not b
 Note that application.conf is the main configuration file and the other files will inherit and override specific
 values. See application-test.conf for an example.
 
+
+Testing the application
+-----
+
+Running all tests:
+activator test
+
+Integration tests only:
+activator "test-only integration.*"
+
+
 Ideas
 -----
 
