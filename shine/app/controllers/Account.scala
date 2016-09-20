@@ -1,13 +1,14 @@
 package controllers
 
+import com.google.inject.Inject
+import com.google.inject.name.Named
+import com.google.inject.Singleton
 import models._
 import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.json.{JsNumber, JsString, Json}
 import play.api.mvc._
-import javax.inject._
-
-import controllers.Requests.{Actions}
+import controllers.Requests.Actions
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.bl.wa.shine._
 import utils.Formatter

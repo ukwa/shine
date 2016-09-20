@@ -1,9 +1,9 @@
 package controllers
 
-import javax.inject.{Inject, Singleton}
-
 import controllers.Requests.Actions
+import com.google.inject.Inject
 import com.google.inject.name.Named
+import com.google.inject.Singleton
 import models._
 import play.api.data.Forms._
 import play.api.data._

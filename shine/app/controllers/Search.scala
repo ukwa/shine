@@ -1,9 +1,11 @@
 package controllers
 
 import java.util.Date
-import javax.inject.{Inject, Named, Singleton}
 
 import controllers.Requests.Actions
+import com.google.inject.Inject
+import com.google.inject.name.Named
+import com.google.inject.Singleton
 import models.{User, _}
 import org.apache.commons.lang3.StringUtils
 import play.api.cache.CacheApi
