@@ -1,31 +1,51 @@
-Shine - Visualising Web Archive via Solr
-========================================
+# Shine - Visualising Web Archive via Solr
 
 This is a front-end for Solr indicies created using the warc-discovery package. 
 
-Running, e.g. to keep different configs separate,
+## Setting up the application
 
-    % play -Dconfig.file=conf/application-localhost-solr.conf run
+### Installing the repository
 
-Start by copying the example configuration conf/application.example.conf to conf/application.conf and insert the
-suitable passwords. The default configuration (conf/application.conf) will not be added to git.
+1. Install Typesafe Activator [from the website](https://www.lightbend.com/activator/download) or using Homebrew if on a Mac.
+2. Clone the Shine repository to your local machine including submodules with ```git clone --recursive```
 
-Note that application.conf is the main configuration file and the other files will inherit and override specific
-values. See application-test.conf for an example.
+### Configuration
+
+Copy ```conf/application.example.conf``` to ```conf/application.conf```. 
+
+This file will not be commit to git. Paste in the missing fields for Solr and Postgres servers here.
 
 
-Testing the application
------
+## Running the application in development
+
+Run the application in development from the console:
+
+    activator run
+
+This will run Shine on localhost:9000. If another port is desired use:
+
+    activator "run 8080" 
+
+To run the application using another configuration file use:
+
+    activator run -Dconfig.file=conf/application-localhost-solr.conf
+
+Note that ```application.conf``` is the main configuration file and ```application-test.conf``` will inherit the main config and override specific
+values. See ```application-test.conf``` for an example.
+
+
+## Testing the application
 
 Running all tests:
-activator test
+
+    activator test
 
 Integration tests only:
-activator "test-only integration.*"
+
+    activator "test-only integration.*"
 
 
-Ideas
------
+## Ideas
 
 Indexer:
 
@@ -220,6 +240,3 @@ object Statix { //Noder must extend this
         params.foldLeft( request){
             (wsReq, tuple) => wsReq.withQueryString( tuple)}}
 }
-
-    
-    
