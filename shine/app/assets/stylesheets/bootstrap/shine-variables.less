@@ -1,0 +1,18 @@
+// Import the base bootstrap variables from the WebJar.
+@import "@{bootstrapDirectory}variables.less";
+
+// Custom Shine variables that override the Twitter Bootstrap variables:
+@link-color:                              #146BCC;
+@link-hover-color:                        darken(@link-color, 15%);
+@grid-float-breakpoint:                   @screen-md-min;                // Point at which the navbar becomes uncollapsed.
+
+@navbar-height:                           40px;
+@navbar-default-bg:                       #009090;
+@navbar-default-border:                   darken(@navbar-default-bg, 12%);
+@navbar-default-color:                    #ffffff;
+@navbar-default-link-color:               #ffffff;
+@navbar-default-link-hover-color:         #eee;
+@navbar-default-link-active-color:        #ffffff;
+@navbar-default-link-hover-bg:            transparent;
+@navbar-default-link-active-bg:           darken(@navbar-default-bg, 5%);
+@navbar-default-toggle-icon-bar-bg:       #fff;

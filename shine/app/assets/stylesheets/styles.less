@@ -1,3 +1,7 @@
-@import "lib/bootstrap/less/bootstrap.less";
+// Include Twitter bootstrap, including overriding some variables (in shine-variables.less)
+@bootstrapDirectory: "lib/bootstrap/less/";       // The directory of the WebJar distribution of Bootstrap. The webjar is imported in build.sbt
+@import "bootstrap/shine-variables.less";
+@import "bootstrap/bootstrap-recipe.less";
 
-// Write custom overriding code for Shine here....
+// Below here is custom styles used in Shine.
+@import "navbar.less";
