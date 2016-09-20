@@ -33,6 +33,14 @@ To run the application using another configuration file use:
 Note that ```application.conf``` is the main configuration file and ```application-test.conf``` will inherit the main config and override specific
 values. See ```application-test.conf``` for an example.
 
+To run the application in the Scala REPL, use:
+
+    activator console
+
+To do a clean compilation and then running the app, use:
+
+    activator clean run
+
 
 ## Testing the application
 
