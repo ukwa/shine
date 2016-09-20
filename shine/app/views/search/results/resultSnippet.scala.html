@@ -1,4 +1,4 @@
-@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, d: org.apache.solr.common.SolrDocument, index: Int)(implicit configuration: play.Configuration)
+@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, d: org.apache.solr.common.SolrDocument, index: Int)(implicit shineConfig: play.api.Configuration)
 
 @checkBoxValue(document: org.apache.solr.common.SolrDocument) = {
 	@checkValue(document.getFirstValue("id"));;;@checkValue(document.getFirstValue("crawl_date"));;;@checkValue(document.getFirstValue("title"));;;@checkValue(d.getFirstValue("domain"));;;@checkValue(d.getFirstValue("url"));;;@checkValue(d.getFirstValue("wayback_date"))
@@ -17,7 +17,7 @@
 		<div class="row">
 			<div class="col-md-8 col-sm-8">
 				<h4 class="list-group-item-heading">
-					@(currentPage.getNextIndex(index)) <a href="@configuration.getString("shine.web_archive_url")/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
+					@(currentPage.getNextIndex(index)) <a href="@shineConfig.getString("shine.web_archive_url").get/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
 				</h4>
 				<p class="list-group-item-text">
 						@utils.Formatter.formatDateTime(d.getFirstValue("crawl_date"))<br />

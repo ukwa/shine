@@ -1,4 +1,4 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String, searchForm: Form[SearchData], sortableFacets: List[Object], corpora: List[Corpus])(implicit messages: Messages, configuration: play.Configuration, configHelper: utils.ConfigHelper)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String, searchForm: Form[SearchData], sortableFacets: List[Object], corpora: List[Corpus])(implicit messages: Messages, shineConfig: play.api.Configuration)
 
 @import helper._
 @import bootstrap.search._

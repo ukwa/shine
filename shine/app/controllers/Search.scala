@@ -1,7 +1,7 @@
 package controllers
 
 import java.util.Date
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 
 import controllers.Requests.Actions
 import models.{User, _}
@@ -14,7 +14,7 @@ import play.api.mvc._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.bl.wa.shine.model.FacetValue
 import uk.bl.wa.shine.{GraphData, Pagination, Query, Shine}
-import utils.{ConfigHelper, Formatter}
+import utils.Formatter
 import views._
 
 import scala.collection.JavaConverters._
@@ -41,7 +41,7 @@ case class SearchData(
 )
 
 @Singleton
-class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(implicit val messagesApi: MessagesApi, configuration: play.Configuration, configHelper: ConfigHelper) extends Controller with I18nSupport {
+class Search @Inject()(cache: CacheApi, playConfig: play.Configuration, solr: Shine, pagination: Pagination)(implicit val messagesApi: MessagesApi, @Named("ShineConfiguration") shineConfig: play.api.Configuration) extends Controller with I18nSupport {
 
   val searchForm = Form(
     mapping(
@@ -62,13 +62,12 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
       "mode" -> text)(SearchData.apply)(SearchData.unapply)
   )
 
-  val config = configuration.getConfig("shine")
-
-  val sortableFacets = config.getConfig("sorts").asMap().keySet().toArray().toList
+  // TODO: Get rid of this weird structure to get rid of the play.Configuration object entirely and use play.api.Configuration instead.
+  val sortableFacets = playConfig.getConfig("shine").getConfig("sorts").asMap().keySet().toArray().toList
   println("sortableFacets" + sortableFacets)
 
-  val webArchiveUrl = config.getString("web_archive_url")
-  val facetLimit = config.getInt("facet_limit")
+  val webArchiveUrl = shineConfig.getString("web_archive_url").get
+  val facetLimit = shineConfig.getInt("facet_limit").get
 
   // Get facet.values from cache or set it it if missing, see: https://www.playframework.com/documentation/2.5.x/ScalaCache
   cache.getOrElse[Map[String, FacetValue]]("facet.values") {
@@ -253,10 +252,10 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     var yearEnd = year_end
 
     if (StringUtils.isBlank(yearStart)) {
-      yearStart = config.getString("default_from_year")
+      yearStart = shineConfig.getString("default_from_year").get
     }
     if (StringUtils.isBlank(yearEnd)) {
-      yearEnd = config.getString("default_end_year")
+      yearEnd = shineConfig.getString("default_end_year").get
     }
     println("yearEnd: " + yearEnd)
 
@@ -426,7 +425,7 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     for (i <- 0 to (results.size() - 1)) {
       val result = results.get(i)
 
-      val url = JsString(configuration.getString("shine.web_archive_url") + notBlank(result.getFirstValue("wayback_date")) + "/" + notBlank(result.getFirstValue("url")))
+      val url = JsString(shineConfig.getString("shine.web_archive_url").get + notBlank(result.getFirstValue("wayback_date")) + "/" + notBlank(result.getFirstValue("url")))
       val jsonObject = Json.obj("title" -> JsString(notBlank(result.getFirstValue("title"))), "url" -> url, "crawl_date" -> JsString(notBlank(result.getFirstValue("crawl_date"))),
         "content_type_norm" -> JsString(notBlank(result.getFirstValue("content_type_norm"))),
         "domain" -> JsString(notBlank(result.getFirstValue("domain"))),

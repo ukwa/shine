@@ -2,7 +2,8 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import controllers.Requests.{Actions, AddUserToRequest, AuthenticatedOnly}
+import controllers.Requests.Actions
+import com.google.inject.name.Named
 import models._
 import play.api.data.Forms._
 import play.api.data._
@@ -10,10 +11,9 @@ import play.api.mvc._
 import uk.bl.wa.shine._
 import views._
 import play.api.routing.JavaScriptReverseRouter
-import utils.ConfigHelper
 
 @Singleton
-class Application @Inject() (implicit configHelper: ConfigHelper) extends Controller {
+class Application @Inject() (implicit @Named("ShineConfiguration") shineConfig: play.api.Configuration) extends Controller {
 
   def index = Actions.UserAction { implicit request =>
     Ok(views.html.index("Welcome", request.user))
