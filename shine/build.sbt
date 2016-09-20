@@ -27,7 +27,7 @@ libraryDependencies ++= Seq(
   "net.sourceforge.htmlunit" % "htmlunit" % "2.15",
   "org.skyscreamer" % "jsonassert" % "1.2.3",
   "com.typesafe.play" %% "anorm" % "2.4.0",
-  "org.webjars" % "bootstrap" % "3.3.4",
+  "org.webjars" % "bootstrap" % "3.3.7-1",
   "org.easytesting" % "fest-assert" % "1.4" % Test,
   specs2 % Test
 )
