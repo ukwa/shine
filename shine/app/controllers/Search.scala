@@ -43,7 +43,7 @@ case class SearchData(
 )
 
 @Singleton
-class Search @Inject()(cache: CacheApi, playConfig: play.Configuration, solr: Shine, pagination: Pagination)(implicit val messagesApi: MessagesApi, @Named("ShineConfiguration") shineConfig: play.api.Configuration) extends Controller with I18nSupport {
+class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(implicit val messagesApi: MessagesApi, @Named("ShineConfiguration") shineConfig: play.api.Configuration) extends Controller with I18nSupport {
 
   val searchForm = Form(
     mapping(
@@ -64,8 +64,7 @@ class Search @Inject()(cache: CacheApi, playConfig: play.Configuration, solr: Sh
       "mode" -> text)(SearchData.apply)(SearchData.unapply)
   )
 
-  // TODO: Get rid of this weird structure to get rid of the play.Configuration object entirely and use play.api.Configuration instead.
-  val sortableFacets = playConfig.getConfig("shine").getConfig("sorts").asMap().keySet().toArray().toList
+  val sortableFacets = shineConfig.getStringSeq("sortable_facets").get
   println("sortableFacets" + sortableFacets)
 
   val webArchiveUrl = shineConfig.getString("web_archive_url").get
@@ -123,7 +122,7 @@ class Search @Inject()(cache: CacheApi, playConfig: play.Configuration, solr: Sh
     }
   }
 
-  private def getResults(form: Form[SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, sortableFacets: List[Object], corpora: List[Corpus]) = {
+  private def getResults(form: Form[SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, sortableFacets: Seq[Object], corpora: List[Corpus]) = {
     val q = doSearchForm(form, queryString)
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
