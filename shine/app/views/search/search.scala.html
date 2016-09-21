@@ -1,4 +1,4 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String, searchForm: Form[SearchData], sortableFacets: Seq[Object], corpora: List[Corpus])(implicit messages: Messages, shineConfig: play.api.Configuration)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String, searchForm: Form[SearchData], corpora: List[Corpus])(implicit messages: Messages, shineConfig: play.api.Configuration)
 
 @import helper._
 @import bootstrap.search._
@@ -235,7 +235,7 @@
 			<div class="row">
 				@if(q != null) {
 					<div class="col-md-4 col-sm-4">
-						@facets(user, q, currentPage, facetLimit, optionalFacets, cachedFacets, sortableFacets, corpora)
+						@facets(user, q, currentPage, facetLimit, optionalFacets, cachedFacets, corpora)
 					</div>
 			
 					<div class="col-md-8 col-sm-8">

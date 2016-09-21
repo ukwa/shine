@@ -64,9 +64,6 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
       "mode" -> text)(SearchData.apply)(SearchData.unapply)
   )
 
-  val sortableFacets = shineConfig.getStringSeq("sortable_facets").get
-  println("sortableFacets" + sortableFacets)
-
   val webArchiveUrl = shineConfig.getString("web_archive_url").get
   val facetLimit = shineConfig.getInt("facet_limit").get
 
@@ -96,33 +93,33 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
             var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
             resetParameters(parameters)
             println("resetted parameters: " + parameters)
-            getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
+            getResults(form, request.queryString, pageNo, sort, order, user, corpora)
           case "add-facet" =>
             println("add-facet")
-            getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
+            getResults(form, request.queryString, pageNo, sort, order, user, corpora)
           case "search" =>
             println("searching")
             if (StringUtils.isNotBlank(query)) {
-              getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
+              getResults(form, request.queryString, pageNo, sort, order, user, corpora)
             } else {
               play.api.Logger.debug("blank query: " + query)
-              Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
+              Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, corpora))
             }
         }
       }
       case None => {
         println("no action do search")
         if (StringUtils.isNotBlank(query)) {
-          getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
+          getResults(form, request.queryString, pageNo, sort, order, user, corpora)
         } else {
           play.api.Logger.debug("blank query: " + query)
-          Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
+          Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, corpora))
         }
       }
     }
   }
 
-  private def getResults(form: Form[SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, sortableFacets: Seq[Object], corpora: List[Corpus]) = {
+  private def getResults(form: Form[SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, corpora: List[Corpus]) = {
     val q = doSearchForm(form, queryString)
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -137,7 +134,7 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     cache.get[Map[String, FacetValue]]("facet.values") match {
       case Some(value) => {
         play.api.Logger.debug("getting value from cache ...")
-        Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search", form, sortableFacets, corpora))
+        Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search", form, corpora))
       }
       case None => {
         println("None")
@@ -209,7 +206,7 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     cache.get[Map[String, FacetValue]]("facet.values") match {
       case Some(value) => {
         play.api.Logger.debug("getting value from cache ...")
-        Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora, facetLimit, solr.getOptionalFacets().asScala.toMap, value, sortableFacets))
+        Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora, facetLimit, solr.getOptionalFacets().asScala.toMap, value))
       }
       case None => {
         println("None")
@@ -709,7 +706,7 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     val form = searchForm.bindFromRequest(request.queryString)
     val q = doSearchForm(form, request.queryString)
 
-    Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null, "search", form, null, corpora))
+    Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null, "search", form, corpora))
   }
 
   def resetParameters(parameters: collection.immutable.Map[String, Seq[String]]) = {

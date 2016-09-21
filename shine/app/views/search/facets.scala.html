@@ -1,4 +1,4 @@
-@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: Seq[Object], corpora: List[Corpus])(implicit shineConfig: play.api.Configuration)
+@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], corpora: List[Corpus])(implicit shineConfig: play.api.Configuration)
 
 @getFacetName(facetName: String) = @{
     if (cachedFacets != null) {
