@@ -2,7 +2,7 @@
 
 <tr>
 	<td>
-		<a href="@shineConfig.getString("shine.web_archive_url").get/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">@utils.Formatter.formatDate(d.getFirstValue("crawl_date"))</a>
+		<a href="@shineConfig.getString("web_archive_url").get/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">@utils.Formatter.formatDate(d.getFirstValue("crawl_date"))</a>
 	</td>
 	<td>@d.getFirstValue("domain")</td>
 	<td>

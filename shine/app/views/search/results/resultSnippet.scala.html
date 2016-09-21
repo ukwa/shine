@@ -17,7 +17,7 @@
 		<div class="row">
 			<div class="col-md-8 col-sm-8">
 				<h4 class="list-group-item-heading">
-					@(currentPage.getNextIndex(index)) <a href="@shineConfig.getString("shine.web_archive_url").get/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
+					@(currentPage.getNextIndex(index)) <a href="@shineConfig.getString("web_archive_url").get/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
 				</h4>
 				<p class="list-group-item-text">
 						@utils.Formatter.formatDateTime(d.getFirstValue("crawl_date"))<br />

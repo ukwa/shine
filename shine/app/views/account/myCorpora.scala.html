@@ -73,7 +73,7 @@
              					<tr>
              						<td>@(resource.id)</td>
 									<td>@(resource.lastUpdate)</td>
-             						<td><a href="@shineConfig.getString("shine.web_archive_url").get/@(convertDate(resource.waybackDate))/@(resource.url)">@(convertTitle(resource.title))</a></td>
+             						<td><a href="@shineConfig.getString("web_archive_url").get/@(convertDate(resource.waybackDate))/@(resource.url)">@(convertTitle(resource.title))</a></td>
              						<td class="pull-right">
              							@helper.form(routes.Account.deleteResource(resource.id)) {
              		    					<button type="button" data-dismiss="modal-resource" class="btn btn-danger" name="delete_resource">
