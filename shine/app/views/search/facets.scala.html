@@ -1,4 +1,4 @@
-@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: Seq[Object], corpora: List[Corpus])
+@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: Seq[Object], corpora: List[Corpus])(implicit shineConfig: play.api.Configuration)
 
 @getFacetName(facetName: String) = @{
     if (cachedFacets != null) {
@@ -13,18 +13,10 @@
     utils.FacetFormatter.getFacetLimit(facetName, cachedFacets)
 }
 
-@getSortableFacet(facetName: String) = @{
-    if (sortableFacets != null) {
-		sortableFacets match {
-	      case List(value) => { 
-	      	if (value.equals(facetName)) {
-	      		value
-	      	} else {
-	      		null
-	      	}
-	      }
-	      case _ => { null }
-		}
+@facetIsSortable(facetName: String) = @{
+	shineConfig.getStringList("sortable_facets") match {
+		case Some(facetList) => facetList.contains(facetName)
+		case None => false
 	}
 }
 
@@ -70,7 +62,7 @@
 							<span class="glyphicon glyphicon-cog"></span>
 						</button>
 						<ul class="dropdown-menu" role="menu">
-							@if(getSortableFacet(fc.getName) != null) {
+							@if(facetIsSortable(fc.getName)) {
 								<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+fc.getName()+".facet.sort", "index")</a></li>
 								<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+fc.getName()+".facet.sort", "count")</a></li>
 							}
@@ -139,7 +131,7 @@
 								<span class="glyphicon glyphicon-cog"></span>
 							</button>
 							<ul class="dropdown-menu" role="menu">
-								@if(getSortableFacet(corpus.name) != null) {
+								@if(facetIsSortable(corpus.name)) {
 									<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+ corpus.name +".facet.sort", "index")</a></li>
 									<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+ corpus.name +".facet.sort", "count")</a></li>
 								}
