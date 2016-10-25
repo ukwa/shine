@@ -1,55 +1,47 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-import play.api.libs.json._
-import play.api.Play.current
-import play.api.cache.Cache
-import play.api.http.HeaderNames
-import anorm._
-import views._
-import models._
-import utils.Formatter
-import scala.collection.JavaConverters._
-import uk.bl.wa.shine.Shine
-import uk.bl.wa.shine.Query
-import uk.bl.wa.shine.Pagination
-import uk.bl.wa.shine.GraphData
-import uk.bl.wa.shine.model.FacetValue
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import org.apache.commons.lang3.StringUtils
-import scala.collection.mutable.ListBuffer
-import scala.collection.immutable.Map
-import scala.collection.mutable.MutableList
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.response.RangeFacet
-import org.apache.solr.common.SolrDocument
-import models.User
-import views.Csv
 import java.util.Date
-import play.api.mvc.Result
+import javax.inject.{Inject, Singleton}
 
-object Search extends Controller {
+import models.{User, _}
+import org.apache.commons.lang3.StringUtils
+import play.api.cache.CacheApi
+import play.api.data.Forms._
+import play.api.data._
+import play.api.libs.json._
+import play.api.mvc._
+import play.Configuration
+import play.api.i18n.{I18nSupport, MessagesApi}
+import uk.bl.wa.shine.model.FacetValue
+import uk.bl.wa.shine.{GraphData, Pagination, Query, Shine}
+import utils.{ConfigHelper, Formatter}
+import views._
 
-  case class SearchData(
-    query: String,
-    proximityPhrase1: Option[String],
-    proximityPhrase2: Option[String],
-    proximity: Option[String],
-    excludeWords: Option[String],
-    dateStart: Option[Date],
-    dateEnd: Option[Date],
-    url: Option[String],
-    hostDomainPublicSuffix: Option[String],
-    fileFormat: Option[String],
-    websiteTitle: Option[String],
-    pageTitle: Option[String],
-    author: Option[String],
-    collection: Option[String],
-    mode: String)
+import scala.collection.JavaConverters._
+import scala.collection.immutable.Map
+import scala.collection.mutable.ListBuffer
+
+
+case class SearchData(
+  query: String,
+  proximityPhrase1: Option[String],
+  proximityPhrase2: Option[String],
+  proximity: Option[String],
+  excludeWords: Option[String],
+  dateStart: Option[Date],
+  dateEnd: Option[Date],
+  url: Option[String],
+  hostDomainPublicSuffix: Option[String],
+  fileFormat: Option[String],
+  websiteTitle: Option[String],
+  pageTitle: Option[String],
+  author: Option[String],
+  collection: Option[String],
+  mode: String
+)
+
+@Singleton
+class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(implicit val messagesApi: MessagesApi, configuration: play.Configuration, configHelper: ConfigHelper) extends Controller with I18nSupport {
 
   val searchForm = Form(
     mapping(
@@ -67,29 +59,24 @@ object Search extends Controller {
       "pageTitle" -> optional(text),
       "author" -> optional(text),
       "collection" -> optional(text),
-      "mode" -> text)(SearchData.apply)(SearchData.unapply))
+      "mode" -> text)(SearchData.apply)(SearchData.unapply)
+  )
 
-  val config = play.Play.application().configuration().getConfig("shine")
-
-  val solr = new Shine(config)
-
-  val recordsPerPage = solr.getPerPage()
-  val maxNumberOfLinksOnPage = config.getInt("max_number_of_links_on_page")
-  val maxViewablePages = config.getInt("max_viewable_pages")
-  val facetLimit = config.getInt("facet_limit")
-  val webArchiveUrl = config.getString("web_archive_url")
+  val config = configuration.getConfig("shine")
 
   val sortableFacets = config.getConfig("sorts").asMap().keySet().toArray().toList
   println("sortableFacets" + sortableFacets)
 
-  var pagination = new Pagination(recordsPerPage, maxNumberOfLinksOnPage, maxViewablePages);
+  val webArchiveUrl = config.getString("web_archive_url")
+  val facetLimit = config.getInt("facet_limit")
 
-  var facetValues: Map[String, FacetValue] = Cache.getOrElse[Map[String, FacetValue]]("facet.values") {
+  // Get facet.values from cache or set it it if missing, see: https://www.playframework.com/documentation/2.5.x/ScalaCache
+  cache.getOrElse[Map[String, FacetValue]]("facet.values") {
     solr.getFacetValues.asScala.toMap
   }
 
-  def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
 
+  def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
     var user: User = null
     var corpora = List[Corpus]()
 
@@ -140,7 +127,7 @@ object Search extends Controller {
     }
   }
 
-  def getResults(form: Form[controllers.Search.SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, sortableFacets: List[Object], corpora: List[Corpus]) = {
+  def getResults(form: Form[SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, sortableFacets: List[Object], corpora: List[Corpus]) = {
     val q = doSearchForm(form, queryString)
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -152,7 +139,7 @@ object Search extends Controller {
 
     //	var highlights = q.res.getHighlighting()
 
-    Cache.getAs[Map[String, FacetValue]]("facet.values") match {
+    cache.get[Map[String, FacetValue]]("facet.values") match {
       case Some(value) => {
         play.api.Logger.debug("getting value from cache ...")
         Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, value, "search", form, sortableFacets, corpora))
@@ -186,12 +173,14 @@ object Search extends Controller {
           case "brief" => {
             //				println("exporting to BRIEF CSV #: " + totalRecords)
             // retrieve based on total records
-            Ok(views.csv.brief("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+            // Ok(views.csv.brief("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+            Ok("CSV is not available while upgrading to new Play version")
           }
           case "full" => {
             //				println("exporting to FULL CSV #: " + totalRecords)
             // retrieve based on total records
-            Ok(views.csv.full("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+            // Ok(views.csv.full("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
+            Ok("CSV is not available while upgrading to new Play version")
           }
         }
       }
@@ -229,7 +218,7 @@ object Search extends Controller {
 
     pagination.update(totalRecords, pageNo)
 
-    Cache.getAs[Map[String, FacetValue]]("facet.values") match {
+    cache.get[Map[String, FacetValue]]("facet.values") match {
       case Some(value) => {
         play.api.Logger.debug("getting value from cache ...")
         Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora, facetLimit, solr.getOptionalFacets().asScala.toMap, value, sortableFacets))
@@ -302,7 +291,7 @@ object Search extends Controller {
       user = User.findByEmail(username.toLowerCase())
     }
 
-    Ok(views.html.graphs.plot("Trend results "+yearStart+"-"+yearEnd+" for "+query, user, query, "Years", "Count", yearStart, yearEnd, "graph"))
+    Ok(views.html.graphs.plot("Trend results " + yearStart + "-" + yearEnd + " for " + query, user, query, "Years", "Count", yearStart, yearEnd, "graph"))
   }
 
   def processChart = Action { implicit request =>
@@ -466,7 +455,7 @@ object Search extends Controller {
     for (i <- 0 to (results.size() - 1)) {
       val result = results.get(i)
 
-      val url = JsString(current.configuration.getString("shine.web_archive_url") + notBlank(result.getFirstValue("wayback_date")) + "/" + notBlank(result.getFirstValue("url")))
+      val url = JsString(configuration.getString("shine.web_archive_url") + notBlank(result.getFirstValue("wayback_date")) + "/" + notBlank(result.getFirstValue("url")))
       val jsonObject = Json.obj("title" -> JsString(notBlank(result.getFirstValue("title"))), "url" -> url, "crawl_date" -> JsString(notBlank(result.getFirstValue("crawl_date"))),
         "content_type_norm" -> JsString(notBlank(result.getFirstValue("content_type_norm"))),
         "domain" -> JsString(notBlank(result.getFirstValue("domain"))),
@@ -551,7 +540,7 @@ object Search extends Controller {
     solr.export(q)
   }
 
-  def doSearchForm(form: Form[controllers.Search.SearchData], parameters: Map[String, Seq[String]]) = {
+  def doSearchForm(form: Form[SearchData], parameters: Map[String, Seq[String]]) = {
     val parametersAsJava = parameters.map { case (k, v) => (k, v.asJava) }.asJava;
     val query = new Query(getData(form.data.get("query")), getData(form.data.get("proximityPhrase1")), getData(form.data.get("proximityPhrase2")), getData(form.data.get("proximity")), getData(form.data.get("excludeWords")), getData(form.data.get("dateStart")), getData(form.data.get("dateEnd")), getData(form.data.get("url")), getData(form.data.get("hostDomainPublicSuffix")), getData(form.data.get("fileFormat")), getData(form.data.get("websiteTitle")), getData(form.data.get("pageTitle")), getData(form.data.get("author")), getData(form.data.get("collection")), parametersAsJava, getData(form.data.get("mode")))
     println("form: " + form.data.get("action") + " " + query.responseParameters);
@@ -776,5 +765,4 @@ object Search extends Controller {
     println("corpora size: " + corpora.size())
     corpora.asScala.toList
   }
-
 }

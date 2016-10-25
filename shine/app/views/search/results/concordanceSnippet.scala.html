@@ -1,8 +1,8 @@
-@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, d: org.apache.solr.common.SolrDocument, index: Int)
+@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, d: org.apache.solr.common.SolrDocument, index: Int)(implicit configuration: play.Configuration)
 
 <tr>
 	<td>
-		<a href="@play.Play.application().configuration().getString("shine.web_archive_url")/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">@utils.Formatter.formatDate(d.getFirstValue("crawl_date"))</a>
+		<a href="@configuration.getString("shine.web_archive_url")/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">@utils.Formatter.formatDate(d.getFirstValue("crawl_date"))</a>
 	</td>
 	<td>@d.getFirstValue("domain")</td>
 	<td>
