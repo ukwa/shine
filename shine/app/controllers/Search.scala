@@ -11,7 +11,6 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.json._
 import play.api.mvc._
-import play.Configuration
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.bl.wa.shine.model.FacetValue
 import uk.bl.wa.shine.{GraphData, Pagination, Query, Shine}
