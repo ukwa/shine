@@ -1,4 +1,4 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[SearchData], corpora: List[Corpus], facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: List[Object])(implicit flash: Flash, messages: Messages, configuration: play.Configuration, configHelper: utils.ConfigHelper)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[SearchData], corpora: List[Corpus], facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue])(implicit flash: Flash, messages: Messages, shineConfig: play.api.Configuration)
 
 @import results._
 
@@ -326,7 +326,7 @@
 					var $value = $('<li class="summary-li">').html("File Format: " + $("#file-format-field").val());
 					$('#search-summary').append($value);
 				}
-				@if(configHelper.showOption("show_collections_field")) {
+				@if(shineConfig.getBoolean("show_collections_field").getOrElse(false)) {
 					if($('#collection-field').val() != '') {
 						var $value = $('<li class="summary-li">').html("Collection: " + $("#collection-field").val());
 						$('#search-summary').append($value);
@@ -512,7 +512,7 @@
 						<div class="row">
 	          				@if(!q.res.getResults().isEmpty()) {
 								<div class="col-md-4 col-sm-4">
-									@facets(user, q, currentPage, facetLimit, optionalFacets, cachedFacets, sortableFacets, corpora)
+									@facets(user, q, currentPage, facetLimit, optionalFacets, cachedFacets, corpora)
 								</div>
 								<div class="col-md-8 col-sm-8">			
 									@advancedSearchFilters(user, q, searchForm)

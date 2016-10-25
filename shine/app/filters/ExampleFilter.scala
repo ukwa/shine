@@ -1,8 +1,8 @@
 package filters
 
-import javax.inject._
-
 import akka.stream.Materializer
+import com.google.inject.Inject
+import com.google.inject.Singleton
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}

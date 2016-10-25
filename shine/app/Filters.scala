@@ -1,5 +1,5 @@
-import javax.inject._
-
+import com.google.inject.Inject
+import com.google.inject.Singleton
 import filters.ExampleFilter
 import play.api._
 import play.api.http.HttpFilters

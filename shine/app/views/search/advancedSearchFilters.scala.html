@@ -1,4 +1,4 @@
-@(user: User, q: uk.bl.wa.shine.Query, searchForm: Form[SearchData])(implicit flash: Flash, messages: Messages, configHelper: utils.ConfigHelper)
+@(user: User, q: uk.bl.wa.shine.Query, searchForm: Form[SearchData])(implicit flash: Flash, messages: Messages, shineConfig: play.api.Configuration)
 
 @import helper._
 @import bootstrap.advanced._
@@ -123,7 +123,7 @@
 					</div>
 				</div>
 
-				@if(configHelper.showOption("show_collections_field")) {
+				@if(shineConfig.getBoolean("show_collections_field").getOrElse(false)) {
 					<div class="form-group">
 						@inputText(searchForm("collection"), '_label -> "Collection:", 'class -> "typeahead form-control search-field", 'placeholder -> "Collection", 'id -> "collection-field")
 						<div class="col-sm-4">

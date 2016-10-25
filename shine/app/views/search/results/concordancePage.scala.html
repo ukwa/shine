@@ -1,4 +1,4 @@
-@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)(implicit configuration: play.Configuration)
+@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)(implicit shineConfig: play.api.Configuration)
 
 @pagination = {
 	@paginator(user, q, currentPage, currentSortBy, currentOrder, "search", "concordance")
