@@ -20,7 +20,7 @@ import javax.persistence.JoinColumn;
 
 import play.Logger;
 import play.data.validation.Constraints;
-import play.db.ebean.Model;
+import com.avaje.ebean.Model;
 import uk.bl.wa.shine.Const;
 import uk.bl.wa.shine.PasswordHash;
 
@@ -32,9 +32,6 @@ import uk.bl.wa.shine.PasswordHash;
 @Table(name="account")
 public class User extends Model {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
     @Id
