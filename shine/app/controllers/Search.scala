@@ -3,6 +3,7 @@ package controllers
 import java.util.Date
 import javax.inject.{Inject, Singleton}
 
+import controllers.Requests.Actions
 import models.{User, _}
 import org.apache.commons.lang3.StringUtils
 import play.api.cache.CacheApi
@@ -10,7 +11,6 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.json._
 import play.api.mvc._
-import play.Configuration
 import play.api.i18n.{I18nSupport, MessagesApi}
 import uk.bl.wa.shine.model.FacetValue
 import uk.bl.wa.shine.{GraphData, Pagination, Query, Shine}
@@ -76,15 +76,7 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
   }
 
 
-  def search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
-    var user: User = null
-    var corpora = List[Corpus]()
-
-    request.session.get("username").map { username =>
-      user = User.findByEmail(username.toLowerCase())
-      corpora = myCorpora(user)
-    }
-
+  def search(query: String, pageNo: Int, sort: String, order: String) = Actions.UserWithCorporaAction { implicit request =>
     val action = request.getQueryString("action")
     val form = searchForm.bindFromRequest(request.queryString)
 
@@ -101,33 +93,33 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
             var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
             resetParameters(parameters)
             println("resetted parameters: " + parameters)
-            getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
+            getResults(form, request.queryString, pageNo, sort, order, request.user, sortableFacets, request.corpora)
           case "add-facet" =>
             println("add-facet")
-            getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
+            getResults(form, request.queryString, pageNo, sort, order, request.user, sortableFacets, request.corpora)
           case "search" =>
             println("searching")
             if (StringUtils.isNotBlank(query)) {
-              getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
+              getResults(form, request.queryString, pageNo, sort, order, request.user, sortableFacets, request.corpora)
             } else {
               play.api.Logger.debug("blank query: " + query)
-              Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
+              Ok(views.html.search.search("Search", request.user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, request.corpora))
             }
         }
       }
       case None => {
         println("no action do search")
         if (StringUtils.isNotBlank(query)) {
-          getResults(form, request.queryString, pageNo, sort, order, user, sortableFacets, corpora)
+          getResults(form, request.queryString, pageNo, sort, order, request.user, sortableFacets, request.corpora)
         } else {
           play.api.Logger.debug("blank query: " + query)
-          Ok(views.html.search.search("Search", user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, corpora))
+          Ok(views.html.search.search("Search", request.user, null, null, "", "asc", facetLimit, null, null, "search", form, sortableFacets, request.corpora))
         }
       }
     }
   }
 
-  def getResults(form: Form[SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, sortableFacets: List[Object], corpora: List[Corpus]) = {
+  private def getResults(form: Form[SearchData], queryString: collection.immutable.Map[String, Seq[String]], pageNo: Int, sort: String, order: String, user: User, sortableFacets: List[Object], corpora: List[Corpus]) = {
     val q = doSearchForm(form, queryString)
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
@@ -152,14 +144,12 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     }
   }
 
-  def export(exportType: String, version: String, summary: String) = Action { implicit request =>
+  def export(exportType: String, version: String, summary: String) = Actions.UserAction { implicit request =>
     println(exportType + " - " + version)
+    val user = request.user
+
     exportType match {
       case "csv" => {
-        var user: User = null
-        request.session.get("username").map { username =>
-          user = User.findByEmail(username.toLowerCase())
-        }
         var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
         val query = request.getQueryString("query").get
         println("query: " + query)
@@ -196,15 +186,7 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     case None => ""
   }
 
-  def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
-
-    var user: User = null
-    var corpora = List[Corpus]()
-
-    request.session.get("username").map { username =>
-      user = User.findByEmail(username.toLowerCase())
-      corpora = myCorpora(user)
-    }
+  def advanced_search(query: String, pageNo: Int, sort: String, order: String) = Actions.UserWithCorporaAction { implicit request =>
 
     val form = searchForm.bindFromRequest(request.queryString)
     val q = doSearchForm(form, request.queryString)
@@ -221,7 +203,7 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     cache.get[Map[String, FacetValue]]("facet.values") match {
       case Some(value) => {
         play.api.Logger.debug("getting value from cache ...")
-        Ok(html.search.advanced("Advanced Search", user, q, pagination, sort, order, "search", form, corpora, facetLimit, solr.getOptionalFacets().asScala.toMap, value, sortableFacets))
+        Ok(html.search.advanced("Advanced Search", request.user, q, pagination, sort, order, "search", form, request.corpora, facetLimit, solr.getOptionalFacets().asScala.toMap, value, sortableFacets))
       }
       case None => {
         println("None")
@@ -231,7 +213,7 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     }
   }
 
-  def browse(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
+  def browse(query: String, pageNo: Int, sort: String, order: String) = Actions.UserAction { implicit request =>
     println("browse")
     val q = doBrowse(query, request.queryString)
 
@@ -243,16 +225,10 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     println("order #: " + order)
 
     pagination.update(totalRecords, pageNo)
-
-    var user: User = null
-    request.session.get("username").map { username =>
-      user = User.findByEmail(username.toLowerCase())
-    }
-
-    Ok(views.html.search.browse("Browse", user, q, pagination, sort, order, "search"))
+    Ok(views.html.search.browse("Browse", request.user, q, pagination, sort, order, "search"))
   }
 
-  def concordance(query: String) = Action { implicit request =>
+  def concordance(query: String) = Actions.UserAction { implicit request =>
     println("advanced_search")
 
     val form = searchForm.bindFromRequest(request.queryString)
@@ -261,16 +237,10 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     val totalRecords = q.res.getResults().getNumFound().intValue()
 
     println("totalRecords #: " + totalRecords)
-
-    var user: User = null
-    request.session.get("username").map { username =>
-      user = User.findByEmail(username.toLowerCase())
-    }
-
-    Ok(views.html.search.concordance("Concordance", user, q, "concordance"))
+    Ok(views.html.search.concordance("Concordance", request.user, q, "concordance"))
   }
 
-  def plot_graph(query: String, year_start: String, year_end: String) = Action { implicit request =>
+  def plot_graph(query: String, year_start: String, year_end: String) = Actions.UserAction { implicit request =>
     // public suffixes and domains too?
 
     var yearStart = year_start
@@ -286,12 +256,7 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
 
     var values = query.split(",")
 
-    var user: User = null
-    request.session.get("username").map { username =>
-      user = User.findByEmail(username.toLowerCase())
-    }
-
-    Ok(views.html.graphs.plot("Trend results " + yearStart + "-" + yearEnd + " for " + query, user, query, "Years", "Count", yearStart, yearEnd, "graph"))
+    Ok(views.html.graphs.plot("Trend results " + yearStart + "-" + yearEnd + " for " + query, request.user, query, "Years", "Count", yearStart, yearEnd, "graph"))
   }
 
   def processChart = Action { implicit request =>
@@ -726,24 +691,17 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     Ok(collectionJson)
   }
 
-  def resetFacets(query: String, pageNo: Int, sort: String, order: String) = Action { implicit request =>
+  def resetFacets(query: String, pageNo: Int, sort: String, order: String) = Actions.UserWithCorporaAction { implicit request =>
     println("resetting facets")
     solr.resetFacets()
-    var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
-    resetParameters(parameters)
-
-    var user: User = null
-    var corpora = List[Corpus]()
-
-    request.session.get("username").map { username =>
-      user = User.findByEmail(username.toLowerCase())
-      corpora = myCorpora(user)
-    }
+    resetParameters(
+      collection.immutable.Map(request.queryString.toSeq: _*)
+    )
 
     val form = searchForm.bindFromRequest(request.queryString)
     val q = doSearchForm(form, request.queryString)
 
-    Ok(views.html.search.search("Search", user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null, "search", form, null, corpora))
+    Ok(views.html.search.search("Search", request.user, q, pagination, sort, order, facetLimit, solr.getOptionalFacets().asScala.toMap, null, "search", form, null, request.corpora))
   }
 
   def resetParameters(parameters: collection.immutable.Map[String, Seq[String]]) = {
@@ -758,11 +716,5 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     }
     println("post: " + map)
     map
-  }
-
-  def myCorpora(user: User) = {
-    val corpora = models.Corpus.findByUser(user)
-    println("corpora size: " + corpora.size())
-    corpora.asScala.toList
   }
 }
