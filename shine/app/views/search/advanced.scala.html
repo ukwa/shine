@@ -26,11 +26,7 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function() {
-			@if(currentSortBy == null || currentSortBy.isEmpty) {
-				$('#sort').val('crawl_date');
-			} else {
-				$('#sort').val('@(currentSortBy)');
-			}
+			setSortOption('@currentSortBy','@currentOrder');
 	  		$('#order').val('@(currentOrder)');
 			$("#date-from").datepicker({ dateFormat: "dd/mm/yy" });
 			$("#date-to").datepicker({ dateFormat: "dd/mm/yy" });
