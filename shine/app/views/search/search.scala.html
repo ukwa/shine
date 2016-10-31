@@ -230,40 +230,43 @@
 
 	<div class="padding-20">
 
-		@helper.form(action=routes.Search.search(), 'id -> "search-form") {
-	
 			<div class="row">
 				@if(q != null) {
 					<div class="col-md-4 col-sm-4">
 						@facets(user, q, currentPage, facetLimit, optionalFacets, cachedFacets, corpora)
 					</div>
-			
+
 					<div class="col-md-8 col-sm-8">
 						<div class="panel panel-default">
 							<div class="panel-body">
-					   			<div class="input-group">
-					   				<div class="input-group-btn">
-								        <button type="button" class="btn btn-primary dropdown-toggle search-dropdown" data-toggle="dropdown" aria-expanded="false" id="search-dropdown">Sample Mode <span class="caret"></span></button>
-								        <ul class="dropdown-menu" role="menu" id="search-menu">
+							@helper.form(action=routes.Search.search(), 'id -> "search-form") {
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button type="button" class="btn btn-primary dropdown-toggle search-dropdown" data-toggle="dropdown" aria-expanded="false" id="search-dropdown">Sample Mode <span class="caret"></span></button>
+										<ul class="dropdown-menu" role="menu" id="search-menu">
 											<li id="sample"><a href="#">Sample Mode</a></li>
 											<li id="full"><a href="#">Full Mode</a></li>
 										</ul>
-							      	</div><!-- /btn-group -->			
-					   				@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
-					   				<input type="hidden" name="tab" value="results" id="tab" />
+									</div><!-- /btn-group -->
+									@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
+									<input type="hidden" name="tab" value="results" id="tab" />
 									<span class="input-group-btn">
-										<button type="button" class="btn btn-primary" id="search" name="action" value="search">Search</button>
-										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
+										<button type="button" class="btn btn-primary" id="search" name="action" value="search">
+											Search</button>
+										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">
+											Reset</button>
 										@if(user != null && q != null) {
-											<button type="button" class="btn btn-primary" id="save-search" name="action" value="save">Save Search</button>
+											<button type="button" class="btn btn-primary" id="save-search" name="action" value="save">
+												Save Search</button>
 										}
-										<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
+											<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
 									</span>
 								</div>
 								<div id="errorBox"></div>
+							}
 							</div>
 						</div>
-	
+
 						<div class="padding-20" id="summary">
 							<div class="alert alert-info">
 								<ul id="search-summary">
@@ -321,7 +324,6 @@
 				}
 			</div>
 			<input type="hidden" name="mode" value="sample" id="modeValue" />
-		}
 	</div>
 	<input type="hidden" id="export_url" value="@routes.Search.export()">
 	

@@ -37,6 +37,8 @@
 }
 
 <div class="panel panel-default">
+	@helper.form(action=routes.Search.search(), 'id -> "search-form") {
+	<input type="hidden" name="query" value="@q.query" />
 	<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
 	@if(currentPage != null) {
 		<input type="hidden" name="page" value="@(currentPage.getCurrentPage)" />
@@ -214,4 +216,5 @@
 			</div>
 		</div>
 	</div>
+	}
 </div>
