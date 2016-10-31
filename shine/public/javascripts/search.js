@@ -1290,6 +1290,7 @@ function resetFacets() {
 		}
 	});
 }
+
 // Called when user changes sort selector
 function setSort(el) {
 	var index = el.options.selectedIndex;
@@ -1299,6 +1300,12 @@ function setSort(el) {
 
 //Set sort selctor to current order value after page reload
 function setSortOption(currentSort, currentOrder) {
-	$("#sort").find("option[data-order='" + currentOrder + "'][value='" + currentSort + "']").attr("selected", true);
+	//console.log('currentSort ', currentSort);
+	//console.log('currentOrder ', currentOrder);
+	if(currentOrder !== '')  {
+		$("#sort").find("option[data-order='" + currentOrder + "'][value='" + currentSort + "']").attr("selected", true);
+	}else {
+		$("#sort").find("option[value='" + currentSort + "']").attr("selected", true);
+	}
 }
 

@@ -4,6 +4,7 @@
 @import bootstrap.search._
 @import results._
 
+
 @implicitFieldConstructor = @{FieldConstructor(searchInput.f)}
 
 @styles = {
@@ -17,7 +18,12 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function() {
-			setSortOption('@currentSortBy','@currentOrder');
+			var sortBy = '@currentSortBy';
+			@println("CURRENT SORT " + currentSortBy);
+			@if(currentSortBy == null || currentSortBy.isEmpty) {
+			}
+			setSortOption(sortBy,'@currentOrder');
+
 	  		$('#order').val('@(currentOrder)');
 
 	  		$('#current-url').text(window.location.search);

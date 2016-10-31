@@ -11,8 +11,9 @@ POST    /login                                  controllers.Application.authenti
 GET     /logout                                 controllers.Application.logout
 
 # Main facets search interface. The query parameter is optional, defaulting to /search?query=*:*
-GET     /search                     		    controllers.Search.search(query ?= "", page: Int ?= 1, sort ?= "", order ?= "asc")
-GET     /search/advanced            		    controllers.Search.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
+# TODO How to get route params from application.conf file?
+GET     /search                     		    controllers.Search.search(query ?= "", page: Int ?= 1, sort ?= "score", order ?= "")
+GET     /search/advanced            		    controllers.Search.advanced_search(query ?= "*:*", page: Int ?= 1, sort ?= "score", order ?= "")
 GET     /search/browse            			    controllers.Search.browse(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
 GET     /search/concordance                     controllers.Search.concordance(query ?= "*:*")
 GET     /search/export						    controllers.Search.export(exportType ?= "csv", version ?= "brief", summary ?= "")
