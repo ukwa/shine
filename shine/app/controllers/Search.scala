@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils
 import play.api.cache.CacheApi
 import play.api.data.Forms._
 import play.api.data._
+import play.api.http.HeaderNames
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -153,26 +154,15 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
         var parameters = collection.immutable.Map(request.queryString.toSeq: _*)
         val query = request.getQueryString("query").get
         println("query: " + query)
-        val exportList = doExport(query, parameters).asScala.toList
+        println("summary: " + summary)
+        println("version: " + version)
+        val exportList = doExport(query, parameters)
         //			val totalRecords = q.res.getResults().getNumFound().intValue()
         var now = new Date()
         var formattedDate = Formatter.formatDateToDDMMYY(now)
         var heading1 = "Results from the British Library's Shine interface, (webarchive.org.uk/shine), on " + formattedDate + "."
         var heading2 = "Search Summary: " + summary
-        version match {
-          case "brief" => {
-            //				println("exporting to BRIEF CSV #: " + totalRecords)
-            // retrieve based on total records
-            // Ok(views.csv.brief("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
-            Ok("CSV is not available while upgrading to new Play version")
-          }
-          case "full" => {
-            //				println("exporting to FULL CSV #: " + totalRecords)
-            // retrieve based on total records
-            // Ok(views.csv.full("Search", user, exportList, webArchiveUrl, heading1, heading2)).withHeaders(HeaderNames.CONTENT_TYPE -> Csv.contentType, HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
-            Ok("CSV is not available while upgrading to new Play version")
-          }
-        }
+        Ok(GenerateCSV.getText(exportList,  webArchiveUrl,heading1.toString,heading2.toString, user.id.toString,"full".equals(version.toString))).withHeaders(HeaderNames.CONTENT_TYPE -> "text/csv", HeaderNames.CONTENT_DISPOSITION -> "attachment;filename=export.csv")
       }
       case _ => {
         Ok("")
