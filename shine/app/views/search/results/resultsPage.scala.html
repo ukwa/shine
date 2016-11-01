@@ -8,6 +8,10 @@
 	@resultSnippet(q, currentPage, d, index)
 }
 
+@sorter = {
+    @sort()
+}
+
 <div class="panel panel-default">
 	<div class="panel-heading filter-heading">
 		<h4 class="panel-title pull-left filter-heading-title">
@@ -30,29 +34,13 @@
 					</div>			 		
 			 	</div>
 			}
-			<div class="form-group">
-				<select class="form-control" name="sort" id="sort">
-					<!-- get from some where -->
-					<option value="title">Title</option>
-					<option value="crawl_date">Crawl Date</option>
-					<option value="content_type_norm">Content</option>
-					<option value="domain">Domain</option>
-					<option value="sentiment_score">Score</option>
-				</select>
-			</div>
-			<div class="form-group">
-				<select class="form-control" name="order" id="order">
-					<option value="asc">Asc</option>
-					<option value="desc">Desc</option>
-				</select>
-			</div>
+            Sort by: @sorter
 		</div>
 	</div>
 
 	<div class="panel-body">
 		@pagination
-
-		<div id="result-set">
+        <div id="result-set">
 			@if(q != null) {
 				@for((d, index) <- q.res.getResults().zipWithIndex) {
 					@(resultSnippets(d, index))
