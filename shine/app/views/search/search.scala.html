@@ -298,27 +298,32 @@
 				<div class="col-md-12 col-sm12">
 					<div class="panel panel-default">
 						<div class="panel-body">
-							<div class="input-group">
-								<div class="input-group-btn">
-									<button type="button" class="btn btn-primary dropdown-toggle search-dropdown" data-toggle="dropdown" aria-expanded="false" id="search-dropdown">Sample Mode <span class="caret"></span></button>
-									<ul class="dropdown-menu" role="menu" id="search-menu">
-										<li id="sample"><a href="#">Sample Mode</a></li>
-										<li id="full"><a href="#">Full Mode</a></li>
-									</ul>
-								</div><!-- /btn-group -->
-<!--  									<span class="input-group-btn">
-									<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
-								</span>-->
-								@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
-								<input type="hidden" name="tab" value="results" id="tab" />
-								<span class="input-group-btn">
-									<button id="search" type="button" class="btn btn-primary" name="action" value="search">Search</button>
-									<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">Reset</button>
-									<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
-								</span>
-							</div>
-							<input type="hidden" name="action" value="" id="action" />
-							<div id="errorBox"></div>
+							@helper.form(action=routes.Search.search(), 'id -> "search-form") {
+								<div class="input-group">
+									<div class="input-group-btn">
+										<button type="button" class="btn btn-primary dropdown-toggle search-dropdown" data-toggle="dropdown" aria-expanded="false" id="search-dropdown">
+											Sample Mode <span class="caret"></span></button>
+										<ul class="dropdown-menu" role="menu" id="search-menu">
+											<li id="sample"><a href="#">Sample Mode</a></li>
+											<li id="full"><a href="#">Full Mode</a></li>
+										</ul>
+									</div><!-- /btn-group -->
+									<!--  									<span class="input-group-btn">
+										<button type="button" class="btn btn-primary" id="mode" name="action" value="mode">Normal Mode</button>
+									</span>-->
+									@inputText(searchForm("query"), 'id -> "query", 'placeholder -> "Enter search term", 'class -> "form-control search-field")
+									<input type="hidden" name="tab" value="results" id="tab" />
+									<span class="input-group-btn">
+										<button id="search" type="button" class="btn btn-primary" name="action" value="search">
+											Search</button>
+										<button type="reset" class="btn btn-primary" id="reset" name="action" value="reset">
+											Reset</button>
+											<!-- <img id="ajax-loader" src="assets/images/ajax-loader.gif">  -->
+									</span>
+								</div>
+								<input type="hidden" name="action" value="" id="action" />
+								<div id="errorBox"></div>
+							}
 						</div>
 					</div>
 				</div>
