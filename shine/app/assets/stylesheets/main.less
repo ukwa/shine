@@ -4,11 +4,18 @@
 // Import the base bootstrap variables from the WebJar.
 @import "@{bootstrapDirectory}variables.less";
 
-// Override some variables to make the Shine layout.
-@import "bootstrap/shine-variables.less";
+// Optional.
+// Import custom bootstrap variables to override the default bootstrap variables.
+@import (optional) "custom-styles/shine-bootstrap-variables.less";
+
+// Optional.
+// Import the custom styles which are not integrated into this repository.
+// In this file you can override the default bootstrap variables and provide custom styles
+@import (optional) "custom-styles/shine.less";
+
+// Statsbiblioteket-specific overrides
+// Delete this import to return to the original Shine-styles.
+@import (optional) "custom-styles/sb/netarchive.less";
 
 // Import the rest of Twitter Bootstrap, which then uses the variables above.
 @import "bootstrap/bootstrap-recipe.less";
-
-// Below here is custom styles used in Shine.
-@import "shine.less";
