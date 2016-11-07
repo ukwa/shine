@@ -1,3 +1,4 @@
+/* Header */
 .navbar-default {
   background-color: #337ab7;
   border-color: #225179;
@@ -34,10 +35,71 @@ a.navbar-brand::after{
   background-color:#225179;
 }
 
+/* Generic styles */
+.padding-20 {
+  padding: 20px 0;
+}
+
+.panel {
+  box-shadow: 0 0;
+}
+
 .alert-info {
   background-color: #f6f6f6;
   border-color: #ddd;
   color: #222;
+}
+/* Searchbox */
+.searchBox > .panel-default{
+  border: 0;
+}
+
+.searchBox .panel-body{
+  padding: 0
+}
+
+#summary{
+  padding-top: 0;
+}
+
+/* Results */
+#results .panel-heading{
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+}
+
+#results .panel{
+  border: 0;
+}
+
+#results .panel-body {
+  padding: 0 0 15px;
+}
+
+#results .list-group{
+  margin-bottom: 0;
+}
+
+#results .list-group-item{
+  border: 0;
+  border-radius: 0;
+  border-top: 1px solid #ddd;
+  padding: 15px 0 10px;
+}
+
+#results .list-group:last-child .list-group-item{
+  border-bottom: 1px solid #ddd;
+}
+
+#results hr {
+  display: none;
+}
+
+
+#results .text-center{
+  text-align: left;
 }
 
 /* Facets */
