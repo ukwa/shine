@@ -1,6 +1,7 @@
 package controllers;
 
 
+import models.NetarchiveDoc;
 import org.apache.solr.client.solrj.*;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -18,7 +19,7 @@ import java.util.List;
 public class SolrJavaClient {
 
 
-    public static  NetarchiveDoc getById(String solrServerUrl, String id) throws Exception{
+    public static NetarchiveDoc getById(String solrServerUrl, String id) throws Exception{
 
         HttpSolrServer solrServer = new HttpSolrServer(solrServerUrl);
 
