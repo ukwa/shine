@@ -32,8 +32,8 @@
 							@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("url") != null) {
 	     						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("url").get(0)))</p>
 							}
-		 					@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text") != null) {
-		 						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text").get(0)))</p>
+		 					@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content") != null) {
+		 						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content").get(0)))</p>
 		 					}
 						}
 				</p>
