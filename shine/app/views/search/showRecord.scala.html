@@ -7,6 +7,22 @@
 				<h1>@netarchiveDoc.getTitle</h1>
 				<table class="table">
 					<tr>
+						<td>Arc full</td>
+						<td>@netarchiveDoc.getArc_full</td>
+					</tr>
+					<tr>
+						<td>Arc harvest</td>
+						<td>@netarchiveDoc.getArc_harvest</td>
+					</tr>
+					<tr>
+					<td>Arc harvest time</td>
+					<td>@netarchiveDoc.getArc_harvesttime</td>
+					</tr>
+					<tr>
+						<td>Arc job</td>
+						<td>@netarchiveDoc.getArc_job</td>
+					</tr>
+					<tr>
 						<td>Author</td>
 						<td>@netarchiveDoc.getAuthor</td>
 					</tr>
@@ -14,13 +30,34 @@
 						<td>Content Language</td>
 						<td>@netarchiveDoc.getContentLanguage</td>
 					</tr>
-					<tr>
-						<td>Content Text Length</td>
-						<td>@netarchiveDoc.getContentTextLength</td>
-					</tr>
+						<!-- Field content_length always 0. Will be fixed in future version after next reindex. (late 2017 maybe...)-->
 					<tr>
 						<td>Content Type</td>
 						<td>@netarchiveDoc.getContentType</td>
+					</tr>
+					<tr>
+						<td>Content Type Ext</td>
+						<td>@netarchiveDoc.getContent_type_ext</td>
+					</tr>
+					<tr>
+						<td>Content Type Served</td>
+						<td>@netarchiveDoc.getContent_type_served</td>
+					</tr>
+					<tr>
+						<td>Content Type Droid</td>
+						<td>@netarchiveDoc.getContent_type_droid</td>
+					</tr>
+					<tr>
+						<td>Content Type Tika</td>
+						<td>@netarchiveDoc.getContent_type_tika</td>
+					</tr>
+					<tr>
+						<td>Content Type Full</td>
+						<td>@netarchiveDoc.getContent_type_full</td>
+					</tr>
+					<tr>
+						<td>Content Type Version</td>
+						<td>@netarchiveDoc.getContent_type_version</td>
 					</tr>
 					<tr>
 						<td>Crawl Date</td>
@@ -35,8 +72,12 @@
 						<td>@netarchiveDoc.getDomain</td>
 					</tr>
 					<tr>
-						<td>Elements Used</td>
-						<td>@netarchiveDoc.getElementsUsed</td>
+						<td>Generator</td>
+						<td>@netarchiveDoc.getGenerator</td>
+					</tr>
+					<tr>
+						<td>Hash</td>
+						<td>@netarchiveDoc.getHash</td>
 					</tr>
 					<tr>
 						<td>Host</td>
@@ -51,16 +92,20 @@
 						<td>@netarchiveDoc.getKeywords</td>
 					</tr>
 					<tr>
-						<td>Links Domains</td>
-						<td>@netarchiveDoc.getLinksDomains</td>
+						<td>Last Modified</td>
+						<td>@netarchiveDoc.getLast_modified</td>
 					</tr>
 					<tr>
-						<td>Links Host</td>
-						<td>@netarchiveDoc.getLinksHost</td>
+						<td>Last Modified Year</td>
+						<td>@netarchiveDoc.getLast_modified_year</td>
 					</tr>
 					<tr>
-						<td>Links Public Suffixes</td>
-						<td>@netarchiveDoc.getLinksPublicSuffixes</td>
+						<td>License Url</td>
+						<td>@netarchiveDoc.getLicenseUrl</td>
+					</tr>
+					<tr>
+						<td>Parse error</td>
+						<td>@netarchiveDoc.getParseError</td>
 					</tr>
 					<tr>
 						<td>Public Suffixes</td>
