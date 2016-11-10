@@ -145,6 +145,13 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
     }
   }
 
+
+  // View a single item
+  def viewSingleRecord(id: String) = Actions.UserAction { implicit request =>
+    Ok("Viewing record with id: " + id)
+  }
+
+
   def export(exportType: String, version: String, summary: String) = Actions.UserAction { implicit request =>
     println(exportType + " - " + version)
     val user = request.user
