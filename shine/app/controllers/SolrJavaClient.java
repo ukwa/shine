@@ -40,7 +40,7 @@ public class SolrJavaClient {
     }
 
 
-    public static List<NetarchiveDoc> solrDoc2NetarchiveDoc(SolrDocumentList results){
+    private static List<NetarchiveDoc> solrDoc2NetarchiveDoc(SolrDocumentList results){
 
         List<NetarchiveDoc> docs = new ArrayList<NetarchiveDoc>();
 
