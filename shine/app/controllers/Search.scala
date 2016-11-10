@@ -75,12 +75,11 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
   }
 
   def showRecord(id : String) = Actions.UserAction { implicit request =>
-    val host= ConfigFactory.load().getString("shine.host");
-    System.out.println("host:"+host);
-    val docJava = SolrJavaClient.getById(host, id);
-    Ok("url:"+docJava.toString());
-  }
+    val host = shineConfig.getString("host").get
+    val docJava = SolrJavaClient.getById(host, id)
 
+    Ok(views.html.search.showRecord(docJava, request.user))
+  }
 
   def search(query: String, pageNo: Int, sort: String, order: String) = Actions.UserAction { implicit request =>
     val user = request.user
@@ -152,13 +151,6 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
       }
     }
   }
-
-
-  // View a single item
-  def viewSingleRecord(id: String) = Actions.UserAction { implicit request =>
-    Ok("Viewing record with id: " + id)
-  }
-
 
   def export(exportType: String, version: String, summary: String) = Actions.UserAction { implicit request =>
     println(exportType + " - " + version)
