@@ -6,6 +6,7 @@ import controllers.Requests.Actions
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import com.google.inject.Singleton
+import com.typesafe.config.ConfigFactory
 import models.{User, _}
 import org.apache.commons.lang3.StringUtils
 import play.api.cache.CacheApi
@@ -71,6 +72,13 @@ class Search @Inject()(cache: CacheApi, solr: Shine, pagination: Pagination)(imp
   // Get facet.values from cache or set it it if missing, see: https://www.playframework.com/documentation/2.5.x/ScalaCache
   cache.getOrElse[Map[String, FacetValue]]("facet.values") {
     solr.getFacetValues.asScala.toMap
+  }
+
+  def showRecord(id : String) = Actions.UserAction { implicit request =>
+    val host= ConfigFactory.load().getString("shine.host");
+    System.out.println("host:"+host);
+    val docJava = SolrJavaClient.getById(host, id);
+    Ok("url:"+docJava.toString());
   }
 
 

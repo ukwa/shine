@@ -19,7 +19,7 @@ GET     /search/concordance                     controllers.Search.concordance(q
 GET     /search/export						    controllers.Search.export(exportType ?= "csv", version ?= "brief", summary ?= "")
 POST    /search/reset/facets				    controllers.Search.resetFacets(query ?= "*:*", page: Int ?= 1, sort ?= "", order ?= "asc")
 GET     /search/tips                            controllers.Application.searchTips
-GET     /show                     		        controllers.Search.viewSingleRecord(id: String)
+GET     /search/show/:id                        controllers.Search.showRecord(id: String)
 
 # TBD: The main hook for the explore/trend analysis/delve UI.
 GET     /graph								    controllers.Search.plot_graph(query ?= "\"big data\"", year_start ?= "1996", year_end ?= "2013")
