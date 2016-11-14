@@ -23,39 +23,41 @@
 	</head>
 	<body>
 		<nav class="navbar navbar-default" role="navigation">
-  			<div class="navbar-header">		
-    			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-      				<span class="sr-only">Toggle navigation</span>
-      				<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="@routes.Application.index">
-					<image src="@routes.Assets.at("images/ukwa-icon-nobg-16.png")" class="navbar-logo" />UK Web Archive
-				</a>
-			</div>
-  			<div class="collapse navbar-collapse">
-  				<ul class="nav navbar-nav">
-					<li class="@("active".when(pageName == "search"))"><a class="white-text" id="nav-search" href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
-	           		<li class="@("active".when(pageName == "graph"))"><a class="white-text"  href="@routes.Search.plot_graph()">Trends</a></li>
-				</ul>
-				<div class="navbar-right">
-					@if(user != null) {
-						<span class="navbar-text white-text">@user.email&nbsp;&nbsp;</span>
-						<ul class="nav navbar-nav">
-							<li class="dropdown">
-								<a class="white-text href="#" class="dropdown-toggle" data-toggle="dropdown">My Account<b class="caret"></b></a>
-								<ul class="dropdown-menu">
-									<li><a href="@routes.Account.mySearches">My Searches</a></li>
-									<li><a href="@routes.Account.myCorpora">My Corpora</a></li>
-									<li><a href="@routes.Account.changePassword">Change Password</a></li>
-								</ul>
-							</li>
-						</ul>
-						<a class="btn btn-success navbar-btn" href="@routes.Application.logout()">Logout</a>
-					} else {
-		           		<a class="btn btn-success navbar-btn" href="@routes.Application.login()">Login</a>
-		           	}
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="@routes.Application.index">
+						<image src="@routes.Assets.at("images/ukwa-icon-nobg-16.png")" class="navbar-logo" />Netarchive
+					</a>
+				</div>
+				<div class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li class="@("active".when(pageName == "search"))"><a class="white-text" id="nav-search" href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
+						<li class="@("active".when(pageName == "graph"))"><a class="white-text"  href="@routes.Search.plot_graph()">Trends</a></li>
+					</ul>
+					<div class="navbar-right">
+						@if(user != null) {
+							<span class="navbar-text white-text">@user.email&nbsp;&nbsp;</span>
+							<ul class="nav navbar-nav">
+								<li class="dropdown">
+									<a class="white-text href="#" class="dropdown-toggle" data-toggle="dropdown">My Account<b class="caret"></b></a>
+									<ul class="dropdown-menu">
+										<li><a href="@routes.Account.mySearches">My Searches</a></li>
+										<li><a href="@routes.Account.myCorpora">My Corpora</a></li>
+										<li><a href="@routes.Account.changePassword">Change Password</a></li>
+									</ul>
+								</li>
+							</ul>
+							<a class="btn btn-success navbar-btn" href="@routes.Application.logout()">Logout</a>
+						} else {
+							<a class="btn btn-success navbar-btn" href="@routes.Application.login()">Login</a>
+						}
+					</div>
 				</div>
 			</div>
 		</nav>
