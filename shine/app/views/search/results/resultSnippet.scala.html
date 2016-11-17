@@ -1,4 +1,4 @@
-@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, d: org.apache.solr.common.SolrDocument, index: Int)
+@(q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, d: org.apache.solr.common.SolrDocument, index: Int)(implicit shineConfig: play.api.Configuration)
 
 @checkBoxValue(document: org.apache.solr.common.SolrDocument) = {
 	@checkValue(document.getFirstValue("id"));;;@checkValue(document.getFirstValue("crawl_date"));;;@checkValue(document.getFirstValue("title"));;;@checkValue(d.getFirstValue("domain"));;;@checkValue(d.getFirstValue("url"));;;@checkValue(d.getFirstValue("wayback_date"))
@@ -17,12 +17,13 @@
 		<div class="row">
 			<div class="col-md-8 col-sm-8">
 				<h4 class="list-group-item-heading">
-					@(currentPage.getNextIndex(index)) <a href="@play.Play.application().configuration().getString("shine.web_archive_url")/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
+					@(currentPage.getNextIndex(index)) <a href="@shineConfig.getString("web_archive_url").get/@(d.getFirstValue("wayback_date"))/@(d.getFirstValue("url"))">"@d.getFirstValue("title")"</a>
 				</h4>
 				<p class="list-group-item-text">
 						@utils.Formatter.formatDateTime(d.getFirstValue("crawl_date"))<br />
 						@d.getFirstValue("content_type_norm")<br />
 						<span class="result-host">@d.getFirstValue("host")</span><br />
+						<a href="@routes.Search.showRecord(d.getFirstValue("id").toString)">Vis fuldpost</a><br />
 						@d.getFirstValue("sentiment_score")
 						@if(q.res.getHighlighting().get(d.getFirstValue("id")) != null) {
 						<hr />
@@ -32,8 +33,8 @@
 							@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("url") != null) {
 	     						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("url").get(0)))</p>
 							}
-		 					@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text") != null) {
-		 						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content_text").get(0)))</p>
+		 					@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("content") != null) {
+		 						<p class="list-group-item-text">@(Html(q.res.getHighlighting().get(d.getFirstValue("id")).get("content").get(0)))</p>
 		 					}
 						}
 				</p>

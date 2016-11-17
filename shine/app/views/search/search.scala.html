@@ -1,13 +1,14 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String, searchForm: Form[controllers.Search.SearchData], sortableFacets: List[Object], corpora: List[Corpus])
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], pageName: String, searchForm: Form[SearchData], corpora: List[Corpus])(implicit messages: Messages, shineConfig: play.api.Configuration)
 
 @import helper._
 @import bootstrap.search._
 @import results._
 
+
 @implicitFieldConstructor = @{FieldConstructor(searchInput.f)}
 
 @styles = {
-	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/typeahead.css")">
 }
 
 @scripts = {
@@ -17,12 +18,12 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function() {
-			
+			var sortBy = '@currentSortBy';
+			@println("CURRENT SORT " + currentSortBy);
 			@if(currentSortBy == null || currentSortBy.isEmpty) {
-				$('#sort').val('crawl_date');
-			} else {
-				$('#sort').val('@(currentSortBy)');
 			}
+			setSortOption(sortBy,'@currentOrder');
+
 	  		$('#order').val('@(currentOrder)');
 
 	  		$('#current-url').text(window.location.search);
@@ -234,11 +235,11 @@
 	
 			<div class="row">
 				@if(q != null) {
-					<div class="col-md-4 col-sm-4">
-						@facets(user, q, currentPage, facetLimit, optionalFacets, cachedFacets, sortableFacets, corpora)
+					<div class="col-md-4 col-sm-4 facets">
+						@facets(user, q, currentPage, facetLimit, optionalFacets, cachedFacets, corpora)
 					</div>
 			
-					<div class="col-md-8 col-sm-8">
+					<div class="col-md-8 col-sm-8 searchBox">
 						<div class="panel panel-default">
 							<div class="panel-body">
 					   			<div class="input-group">

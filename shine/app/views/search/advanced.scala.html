@@ -1,10 +1,10 @@
-@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[controllers.Search.SearchData], corpora: List[Corpus], facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: List[Object])(implicit flash: Flash, lang: play.api.i18n.Lang)
+@(title: String, user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String, pageName: String, searchForm: Form[SearchData], corpora: List[Corpus], facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue])(implicit flash: Flash, messages: Messages, shineConfig: play.api.Configuration)
 
 @import results._
 
 @styles = {
 	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/jquery-ui/jquery-ui-1.10.4.custom.min.css")">
-	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("bootstrap/typeahead/css/typeahead.css")">
+	<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/typeahead.css")">
 	
 	<style>
 		.tt-suggestion.tt-cursor {
@@ -26,11 +26,7 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function() {
-			@if(currentSortBy == null || currentSortBy.isEmpty) {
-				$('#sort').val('crawl_date');
-			} else {
-				$('#sort').val('@(currentSortBy)');
-			}
+			setSortOption('@currentSortBy','@currentOrder');
 	  		$('#order').val('@(currentOrder)');
 			$("#date-from").datepicker({ dateFormat: "dd/mm/yy" });
 			$("#date-to").datepicker({ dateFormat: "dd/mm/yy" });
@@ -326,7 +322,7 @@
 					var $value = $('<li class="summary-li">').html("File Format: " + $("#file-format-field").val());
 					$('#search-summary').append($value);
 				}
-				@if(showOption("show_collections_field")) {
+				@if(shineConfig.getBoolean("show_collections_field").getOrElse(false)) {
 					if($('#collection-field').val() != '') {
 						var $value = $('<li class="summary-li">').html("Collection: " + $("#collection-field").val());
 						$('#search-summary').append($value);
@@ -481,18 +477,6 @@
 	</script>
 }
 
-@showOption(tab: String) = @{
-	play.api.Play.current.configuration.getConfig("shine") match {
-	      case Some(config) => { 
-	      	config.getBoolean(tab) match {
-				case Some(option) => { option.asInstanceOf[Boolean] }
-				case None => { false } 
-			}
-	      }
-	      case None => { false } 
-	}
-}
-
 @main(title, styles, scripts, user, pageName) {
 
 	@searchTabs("advanced_search")
@@ -524,7 +508,7 @@
 						<div class="row">
 	          				@if(!q.res.getResults().isEmpty()) {
 								<div class="col-md-4 col-sm-4">
-									@facets(user, q, currentPage, facetLimit, optionalFacets, cachedFacets, sortableFacets, corpora)
+									@facets(user, q, currentPage, facetLimit, optionalFacets, cachedFacets, corpora)
 								</div>
 								<div class="col-md-8 col-sm-8">			
 									@advancedSearchFilters(user, q, searchForm)

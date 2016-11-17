@@ -1,4 +1,4 @@
-@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)
+@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, currentSortBy: String, currentOrder: String)(implicit shineConfig: play.api.Configuration)
 
 @pagination = {
 	@paginator(user, q, currentPage, currentSortBy, currentOrder, "advanced", "results")
@@ -6,6 +6,10 @@
 
 @resultSnippets(d: org.apache.solr.common.SolrDocument, index: Int) = {
 	@resultSnippet(q, currentPage, d, index)
+}
+
+@sorter = {
+	@sort()
 }
 
 <div class="panel panel-default">
@@ -31,9 +35,9 @@
 					</div>			 		
 			 	</div>
 			}
-			<div class="form-group" style="margin-right:15px">
+			Sort by; @sorter
+			<!--<div class="form-group" style="margin-right:15px">
 				<select class="form-control" name="sort" id="sort">
-					<!-- get from some where -->
 					<option value="title">Title</option>
 					<option value="crawl_date">Crawl Date</option>
 					<option value="content_type_norm">Content</option>
@@ -46,7 +50,7 @@
 					<option value="asc">Asc</option>
 					<option value="desc">Desc</option>
 				</select>
-			</div>
+			</div>-->
 		</div>
 	</div>
 

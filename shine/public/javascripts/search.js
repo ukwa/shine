@@ -26,7 +26,6 @@ $(function () {
 	});
 	
 	$('#sort').change(function(event) {
-		console.log('sort');
 		event.preventDefault();
 		if ($('#search-form').valid()) {
 		    $('#modalLoader').modal({
@@ -1290,5 +1289,23 @@ function resetFacets() {
 //			facet.remove();
 		}
 	});
+}
+
+// Called when user changes sort selector
+function setSort(el) {
+	var index = el.options.selectedIndex;
+	var order = el.options[index].getAttribute('data-order');
+	$("#order").val(order);
+}
+
+//Set sort selctor to current order value after page reload
+function setSortOption(currentSort, currentOrder) {
+	//console.log('currentSort ', currentSort);
+	//console.log('currentOrder ', currentOrder);
+	if(currentOrder !== '')  {
+		$("#sort").find("option[data-order='" + currentOrder + "'][value='" + currentSort + "']").attr("selected", true);
+	}else {
+		$("#sort").find("option[value='" + currentSort + "']").attr("selected", true);
+	}
 }
 

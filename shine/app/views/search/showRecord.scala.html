@@ -1,0 +1,152 @@
+@(netarchiveDoc: NetarchiveDoc, user: User)
+
+@main(netarchiveDoc.getTitle, null, null, user) {
+	<div class="padding-20">
+		<div class="row">
+			<div class="col-md-12 col-sm12">
+				<h1>@netarchiveDoc.getTitle</h1>
+				<table class="table">
+					<tr>
+						<td>Arc full</td>
+						<td><a href="@routes.Search.search("arc_full:\"" + netarchiveDoc.getArc_full +"\"")">@netarchiveDoc.getArc_full</a></td>
+					</tr>
+					<tr>
+						<td>Arc harvest</td>
+						<td><a href="@routes.Search.search("arc_harvest:\"" + netarchiveDoc.getArc_harvest+"\"")">@netarchiveDoc.getArc_harvest</a></td>
+					</tr>
+					<tr>
+						<td>Arc harvest time</td>
+						<td><a href="@routes.Search.search("arc_harvesttime:\"" + netarchiveDoc.getArc_harvesttime+"\"")">@netarchiveDoc.getArc_harvesttime</a></td>
+					</tr>
+					<tr>
+						<td>Arc job</td>
+						<td><a href="@routes.Search.search("arc_job:\"" + netarchiveDoc.getArc_job+"\"")">@netarchiveDoc.getArc_job</a></td>
+					</tr>
+					<tr>
+						<td>Author</td>
+						<td><a href="@routes.Search.search("author:\"" + netarchiveDoc.getAuthor+"\"")">@netarchiveDoc.getAuthor</a></td>
+					</tr>
+					<tr>
+						<td>Content Language</td>
+						<td><a href="@routes.Search.search("content_language:\"" + netarchiveDoc.getContentLanguage+"\"")">@netarchiveDoc.getContentLanguage</a></td>
+					</tr>
+						<!-- Field content_length always 0. Will be fixed in future version after next reindex. (late 2017 maybe...)-->
+					<tr>
+						<td>Content Type</td>
+						<td>@netarchiveDoc.getContentType</td>
+					</tr>
+					<tr>
+						<td>Content Type Ext</td>
+						<td><a href="@routes.Search.search("content_type_ext:\"" + netarchiveDoc.getContent_type_ext+"\"")">@netarchiveDoc.getContent_type_ext</a></td>
+					</tr>
+					<tr>
+						<td>Content Type Served</td>
+						<td><a href="@routes.Search.search("content_type_served:\"" + netarchiveDoc.getContent_type_served+"\"")">@netarchiveDoc.getContent_type_served</a></td>
+					</tr>
+					<tr>
+						<td>Content Type Droid</td>
+						<td><a href="@routes.Search.search("content_type_droid:\"" + netarchiveDoc.getContent_type_droid+"\"")">@netarchiveDoc.getContent_type_droid</a></td>
+					</tr>
+					<tr>
+						<td>Content Type Tika</td>
+						<td><a href="@routes.Search.search("content_type_tika:\"" + netarchiveDoc.getContent_type_tika+"\"")">@netarchiveDoc.getContent_type_tika</a></td>
+					</tr>
+					<tr>
+						<td>Content Type Full</td>
+						<td><a href="@routes.Search.search("content_type_full:\"" + netarchiveDoc.getContent_type_full+"\"")">@netarchiveDoc.getContent_type_full</a></td>
+					</tr>
+					<tr>
+						<td>Content Type Version</td>
+						<td><a href="@routes.Search.search("content_type_version:\"" + netarchiveDoc.getContent_type_version+"\"")">@netarchiveDoc.getContent_type_version</a></td>
+					</tr>
+					<tr>
+						<td>Crawl Date</td>
+						<td>@netarchiveDoc.getCrawlDate</td>
+					</tr>
+					<tr>
+						<td>Description</td>
+						<td><a href="@routes.Search.search("description:" + netarchiveDoc.getDescription)">@netarchiveDoc.getDescription</a></td>
+					</tr>
+					<tr>
+						<td>Domain</td>
+						<td><a href="@routes.Search.search("domain:\"" + netarchiveDoc.getDomain+"\"")">@netarchiveDoc.getDomain</a></td>
+					</tr>
+					<tr>
+						<td>Generator</td>
+						<td>@netarchiveDoc.getGenerator</td>
+					</tr>
+					<tr>
+						<td>Hash</td>
+						<td><a href="@routes.Search.search("hash:\"" + netarchiveDoc.getHash+"\"")">@netarchiveDoc.getHash</a></td>
+					</tr>
+					<tr>
+						<td>Host</td>
+						<td><a href="@routes.Search.search("host:\"" + netarchiveDoc.getHost+"\"")">@netarchiveDoc.getHost</a></td>
+					</tr>
+					<tr>
+						<td>Id</td>
+						<td><a href="@routes.Search.search("id:\"" + netarchiveDoc.getId+"\"")">@netarchiveDoc.getId</a></td>
+					</tr>
+					<tr>
+						<td>Keywords</td>
+						<td>@netarchiveDoc.getKeywords</td>
+					</tr>
+					<tr>
+						<td>Last Modified</td>
+						<td>@netarchiveDoc.getLast_modified</td>
+					</tr>
+					<tr>
+						<td>Last Modified Year</td>
+						<td><a href="@routes.Search.search("last_modified_year:" + netarchiveDoc.getLast_modified_year)">@netarchiveDoc.getLast_modified_year</a></td>
+					</tr>
+					<tr>
+						<td>License Url</td>
+						<td>@netarchiveDoc.getLicenseUrl</td>
+					</tr>
+					<tr>
+						<td>Parse error</td>
+					    <td>@netarchiveDoc.getParseError</td>
+					</tr>
+					<tr>
+						<td>Public Suffixes</td>
+						<td><a href="@routes.Search.search("public_suffix:\"" + netarchiveDoc.getPublicSuffix+"\"")">@netarchiveDoc.getPublicSuffix</a></td>
+					</tr>
+					<tr>
+						<td>Server</td>
+						<td><a href="@routes.Search.search("server:\"" + netarchiveDoc.getServer+"\"")">@netarchiveDoc.getServer</a></td>
+					</tr>
+					<tr>
+						<td>Source Files</td>
+						<td><a href="@routes.Search.search("source_file_s:\"" + netarchiveDoc.getSource_file_s+"\"")">@netarchiveDoc.getSource_file_s</a></td>
+					</tr>
+					<tr>
+						<td>Title</td>
+						<td><a href="@routes.Search.search("title:\"" + netarchiveDoc.getTitle+"\"")">@netarchiveDoc.getTitle</a></td>
+					</tr>
+					<tr>
+						<td>Url</td>
+						<td><a href="@routes.Search.search("url:\"" + netarchiveDoc.getUrl+"\"")">@netarchiveDoc.getUrl</a></td>
+					</tr>
+					<tr>
+						<td>Url Norm</td>
+						<td><a href="@routes.Search.search("url_norm:\"" + netarchiveDoc.getUrl_norm+"\"")">@netarchiveDoc.getUrl_norm</a></td>
+					</tr>
+					<tr>
+						<td>Wayback Date</td>
+						<td><a href="@routes.Search.search("wayback_date:\"" + netarchiveDoc.getWaybackDate+"\"")">@netarchiveDoc.getWaybackDate</a></td>
+					</tr>
+					<tr>
+						<td>Year</td>
+						<td><a href="@routes.Search.search("year:\"" + netarchiveDoc.getYear+"\"")">@netarchiveDoc.getYear</a></td>
+					</tr>
+					<tr>
+						<td>Content</td>
+						<td>@netarchiveDoc.getContent</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<input type="hidden" name="mode" value="sample" id="modeValue" />
+	</div>
+	<input type="hidden" id="export_url" value="@routes.Search.export()">
+}

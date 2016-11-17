@@ -5,25 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import play.data.validation.Constraints.Required;
-import play.db.ebean.Model;
+import com.avaje.ebean.Model;
 import uk.bl.wa.shine.Const;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 @Entity
 public class Permission extends Model {
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -2250099575468302989L;
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long id;
     
 	@Required
@@ -36,11 +29,8 @@ public class Permission extends Model {
     @Version
     public Timestamp lastUpdate;
 
-    @ManyToMany
-    @JoinTable(
-        name="role_permissions",
-        joinColumns={@JoinColumn(name="permission_id", referencedColumnName="id")},
-        inverseJoinColumns={@JoinColumn(name="role_id", referencedColumnName="id")})
+    // Mapped by permissions in Role.java
+    @ManyToMany(mappedBy="permissions")
     public List<Role> roles = new ArrayList<Role>(); 
     
     public static final Model.Finder<Long, Permission> find = new Model.Finder<Long, Permission>(Long.class, Permission.class);

@@ -1,4 +1,4 @@
-@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], sortableFacets: List[Object], corpora: List[Corpus])
+@(user: User, q: uk.bl.wa.shine.Query, currentPage: uk.bl.wa.shine.Pagination, facetLimit: Int, optionalFacets: Map[String, uk.bl.wa.shine.model.FacetValue], cachedFacets: Map[String, uk.bl.wa.shine.model.FacetValue], corpora: List[Corpus])(implicit shineConfig: play.api.Configuration)
 
 @getFacetName(facetName: String) = @{
     if (cachedFacets != null) {
@@ -13,18 +13,10 @@
     utils.FacetFormatter.getFacetLimit(facetName, cachedFacets)
 }
 
-@getSortableFacet(facetName: String) = @{
-    if (sortableFacets != null) {
-		sortableFacets match {
-	      case List(value) => { 
-	      	if (value.equals(facetName)) {
-	      		value
-	      	} else {
-	      		null
-	      	}
-	      }
-	      case _ => { null }
-		}
+@facetIsSortable(facetName: String) = @{
+	shineConfig.getStringList("sortable_facets") match {
+		case Some(facetList) => facetList.contains(facetName)
+		case None => false
 	}
 }
 
@@ -45,135 +37,65 @@
 }
 
 <div class="panel panel-default">
-	<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
-	@if(currentPage != null) {
-		<input type="hidden" name="page" value="@(currentPage.getCurrentPage)" />
-	}
-	<div class="padding-5 pull-right">
-		<button class="facet-sort btn btn-primary btn-xs" type="button" value="value" id="facet-sort-value" data-toggle="tooltip" data-placement="top" title="Sort by Index">
-			<span class="glyphicon glyphicon-sort-by-alphabet"></span>
-		</button>
-		<button class="facet-sort btn btn-primary btn-xs" type="button" value="count" id="facet-sort-count" data-toggle="tooltip" data-placement="top" title="Sort by Count">
-			<span class="glyphicon glyphicon-sort-by-order-alt"></span>
-		</button>
-	</div>
-	
-	@if(q.res.getFacetFields() != null) {
-		@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
-			<div class="panel-body @(fc.getName())">
-   				<div class="facet-main">
-					<a class="facet-heading"><strong>@getFacetName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
-					<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
-					<input type="hidden" name="invert" value="" id="invert_@(fc.getName())">
-					<div class="btn-group">
-						<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-							<span class="glyphicon glyphicon-cog"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							@if(getSortableFacet(fc.getName) != null) {
-								<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+fc.getName()+".facet.sort", "index")</a></li>
-								<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+fc.getName()+".facet.sort", "count")</a></li>
-							}
-							<li><a href="#" class="facet-invert" id="invertmenu_@(fc.getName())">(+-) Exclude selected values</a></li>
-							<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(fc.getName(), "facet-remove")</a></li>
-							<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(fc.getName(), "facet-search")</a></li>
-						</ul>
-					</div>
-   				</div>
-   				<div class="facet-index">
-					<ul class="list-unstyled facet-heading">
-						@for((f, i) <- fc.getValues().zipWithIndex) {
-							@if(i >= getFacetLimit(fc.getName())) {
-   								<li class="facet-options hide">
-							} else {
-   								<li class="facet-options show" data-attr="default">
-							}
-								<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
-								<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-								<a class="facet-name">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(uk.bl.wa.shine.model.FacetValue.integerDecimalFormat.format(f.getCount()))</span>
-								<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-								<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
-							</li>
-					        <!-- dynamically add checked="true"? -->
-					        <!-- OR use some kind of link constructor? -->
-						}
-						@if((fc.getValues().size - getFacetLimit(fc.getName())) > 0) {
-							<li> 
-    							<a id="@(fc.getName())" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
-     						</li>
-    					}
-					</ul>
-					<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
-						<span class="input-group-btn">
-							<button class="add-facet-button btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
-						</span>
-						<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
-						<span class="input-group-sm input-group-addon">
-							<a href="#" title="Include" class="add-facet-value">
-								<span class="glyphicon glyphicon-plus-sign"></span>
-							</a>
-							<a href="#" title="Exclude" class="remove-facet-value">
-								<span class="glyphicon glyphicon-minus-sign"></span>
-							</a>
-							<a href="#" title="Close" class="close-facet-value" id="close-search-@(index)">
-								<span class="glyphicon glyphicon-remove-sign"></span>
-							</a>
-							
-						</span>
-						<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
-						</span>
-					</div>
-   				</div>
-			</div>
+	@helper.form(action=routes.Search.search(), 'id -> "search-form") {
+		<input type="hidden" name="query" value="@q.query" />
+		<input id="facet-sort" class="hide" type="checkbox" name="facet.sort" value="@(q.getFacetSortValue("facet.sort"))" @(q.getCheckedFacet("facet.sort")) />
+		@if(currentPage != null) {
+			<input type="hidden" name="page" value="@(currentPage.getCurrentPage)" />
 		}
-		
-		@for(corpus <- corpora) {
-			@if(corpus.name != "") {
-				<div class="panel-body @(corpus.name)">
-	   				<div class="facet-main">
-	   					<a class="facet-heading"><strong>@(corpus.name)</strong></a> <span class="badge">0</span>
-	   					<input type="hidden" name="facet.fields" value="@(corpus.name)" id="@(corpus.name)">
-	   					<input type="hidden" name="invert" value="" id="invert_@(corpus.name)">
+		<div class="padding-5 pull-right">
+			<button class="facet-sort btn btn-primary btn-xs" type="button" value="value" id="facet-sort-value" data-toggle="tooltip" data-placement="top" title="Sort by Index">
+				<span class="glyphicon glyphicon-sort-by-alphabet"></span>
+			</button>
+			<button class="facet-sort btn btn-primary btn-xs" type="button" value="count" id="facet-sort-count" data-toggle="tooltip" data-placement="top" title="Sort by Count">
+				<span class="glyphicon glyphicon-sort-by-order-alt"></span>
+			</button>
+		</div>
+
+		@if(q.res.getFacetFields() != null) {
+			@for((fc, index) <- q.res.getFacetFields().zipWithIndex) {
+				<div class="panel-body @(fc.getName())">
+					<div class="facet-main">
+						<a class="facet-heading"><strong>@getFacetName(fc.getName())</strong></a> <span class="badge">@(fc.getValueCount())</span>
+						<input type="hidden" name="facet.fields" value="@(fc.getName())" id="@(fc.getName())">
+						<input type="hidden" name="invert" value="" id="invert_@(fc.getName())">
 						<div class="btn-group">
 							<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
 								<span class="glyphicon glyphicon-cog"></span>
 							</button>
 							<ul class="dropdown-menu" role="menu">
-								@if(getSortableFacet(corpus.name) != null) {
-									<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+ corpus.name +".facet.sort", "index")</a></li>
-									<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+ corpus.name +".facet.sort", "count")</a></li>
+								@if(facetIsSortable(fc.getName)) {
+									<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+fc.getName()+".facet.sort", "index")</a></li>
+									<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+fc.getName()+".facet.sort", "count")</a></li>
 								}
-								<li><a href="#" class="facet-invert" id="invertmenu_@(corpus.name)">(+-) Exclude selected values</a></li>
-								<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(corpus.name, "facet-remove")</a></li>
-								<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(corpus.name, "facet-search")</a></li>
+								<li><a href="#" class="facet-invert" id="invertmenu_@(fc.getName())">(+-) Exclude selected values</a></li>
+								<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(fc.getName(), "facet-remove")</a></li>
+								<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(fc.getName(), "facet-search")</a></li>
 							</ul>
 						</div>
-	   				</div>
-	   				<div class="facet-index">
+					</div>
+					<div class="facet-index">
 						<ul class="list-unstyled facet-heading">
-							@for((resource, index) <- corpus.resources.zipWithIndex) {
-								@if(index >=  getFacetLimit(corpus.name)) {
-	   								<li class="facet-options hide">
+							@for((f, i) <- fc.getValues().zipWithIndex) {
+								@if(i >= getFacetLimit(fc.getName())) {
+									<li class="facet-options hide">
 								} else {
-	   								<li class="facet-options show" data-attr="default">
+									<li class="facet-options show" data-attr="default">
 								}
 									<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
 									<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
-									<a class="facet-name">@(Html(resource.resource_id))</a> <span class="badge">99</span>
-									<input class="include hide" type="checkbox" name="facet.in.@(corpus.name)" value='"@(resource.title)"' @(q.getCheckedInString(corpus.name, resource.title)) onclick="this.form.submit();"/>
-									<input class="exclude hide" type="checkbox" name="facet.out.@(corpus.name)" value='"@(resource.title)"' @(q.getCheckedOutString(corpus.name, resource.title)) onclick="this.form.submit();"/>
+									<a class="facet-name">@(Html(q.formatFacet(fc,f)))</a> <span class="badge">@(uk.bl.wa.shine.model.FacetValue.integerDecimalFormat.format(f.getCount()))</span>
+									<input class="include hide" type="checkbox" name="facet.in.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedInString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
+									<input class="exclude hide" type="checkbox" name="facet.out.@(fc.getName())" value='"@(f.getName())"' @(q.getCheckedOutString(fc.getName(),f.getName())) onclick="this.form.submit();"/>
 								</li>
-						        <!-- dynamically add checked="true"? -->
-						        <!-- OR use some kind of link constructor? -->
+								<!-- dynamically add checked="true"? -->
+								<!-- OR use some kind of link constructor? -->
 							}
-							@if((corpus.resources.size - getFacetLimit(corpus.name)) > 0) {
-								<li> 
-									<a id="@(corpus.name)" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
+							@if((fc.getValues().size - getFacetLimit(fc.getName())) > 0) {
+								<li>
+									<a id="@(fc.getName())" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
 								</li>
 							}
-							<li>
-								<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
-							</li>
 						</ul>
 						<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
 							<span class="input-group-btn">
@@ -183,43 +105,116 @@
 							<span class="input-group-sm input-group-addon">
 								<a href="#" title="Include" class="add-facet-value">
 									<span class="glyphicon glyphicon-plus-sign"></span>
-								</a>&nbsp;
+								</a>
 								<a href="#" title="Exclude" class="remove-facet-value">
 									<span class="glyphicon glyphicon-minus-sign"></span>
 								</a>
+								<a href="#" title="Close" class="close-facet-value" id="close-search-@(index)">
+									<span class="glyphicon glyphicon-remove-sign"></span>
+								</a>
+
 							</span>
 							<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
 							</span>
 						</div>
-	   				</div>
-				</div>		
-			}							
-		}		
+					</div>
+				</div>
+			}
+
+			@for(corpus <- corpora) {
+				@if(corpus.name != "") {
+					<div class="panel-body @(corpus.name)">
+						<div class="facet-main">
+							<a class="facet-heading"><strong>@(corpus.name)</strong></a> <span class="badge">0</span>
+							<input type="hidden" name="facet.fields" value="@(corpus.name)" id="@(corpus.name)">
+							<input type="hidden" name="invert" value="" id="invert_@(corpus.name)">
+							<div class="btn-group">
+								<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+									<span class="glyphicon glyphicon-cog"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									@if(facetIsSortable(corpus.name)) {
+										<li><a href="#" class="facet-sort-alpha">(az) sort values alphabetically @getSelected("f."+ corpus.name +".facet.sort", "index")</a></li>
+										<li><a href="#" class="facet-sort-freq">(01) sort values by frequency @getSelected("f."+ corpus.name +".facet.sort", "count")</a></li>
+									}
+									<li><a href="#" class="facet-invert" id="invertmenu_@(corpus.name)">(+-) Exclude selected values</a></li>
+									<li><a href="#" class="facet-remove">(x) remove this facet @getSelected(corpus.name, "facet-remove")</a></li>
+									<li><a href="#" class="facet-search">(+) search for another facet value  @getSelected(corpus.name, "facet-search")</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="facet-index">
+							<ul class="list-unstyled facet-heading">
+								@for((resource, index) <- corpus.resources.zipWithIndex) {
+									@if(index >=  getFacetLimit(corpus.name)) {
+										<li class="facet-options hide">
+									} else {
+										<li class="facet-options show" data-attr="default">
+									}
+										<a class="facet include" href="" title="Include"><span class="glyphicon glyphicon-plus-sign facet-deselected"></span></a>
+										<a class="facet exclude" href="" title="Exclude"><span class="glyphicon glyphicon-minus-sign facet-deselected"></span></a>
+										<a class="facet-name">@(Html(resource.resource_id))</a> <span class="badge">99</span>
+										<input class="include hide" type="checkbox" name="facet.in.@(corpus.name)" value='"@(resource.title)"' @(q.getCheckedInString(corpus.name, resource.title)) onclick="this.form.submit();"/>
+										<input class="exclude hide" type="checkbox" name="facet.out.@(corpus.name)" value='"@(resource.title)"' @(q.getCheckedOutString(corpus.name, resource.title)) onclick="this.form.submit();"/>
+									</li>
+									<!-- dynamically add checked="true"? -->
+									<!-- OR use some kind of link constructor? -->
+								}
+								@if((corpus.resources.size - getFacetLimit(corpus.name)) > 0) {
+									<li>
+										<a id="@(corpus.name)" class="show-more" href="#"><span class="glyphicon glyphicon-plus-sign"></span> <span>Show more...</span></a>
+									</li>
+								}
+								<li>
+									<button class="btn btn-primary btn-xs add-more-button" type="button"><span id="add-more-button-text-@(index)">Add</span> <span class="glyphicon glyphicon-plus"></span></button>
+								</li>
+							</ul>
+							<div id="add-more-option-@(index)" class="input-group input-group-sm hide">
+								<span class="input-group-btn">
+									<button class="add-facet-button btn btn-default" type="button"><span class="glyphicon glyphicon-search"></span></button>
+								</span>
+								<input type="text" class="form-control add-facet-field" placeholder="Facet Search" value="" >
+								<span class="input-group-sm input-group-addon">
+									<a href="#" title="Include" class="add-facet-value">
+										<span class="glyphicon glyphicon-plus-sign"></span>
+									</a>&nbsp;
+									<a href="#" title="Exclude" class="remove-facet-value">
+										<span class="glyphicon glyphicon-minus-sign"></span>
+									</a>
+								</span>
+								<span class="tt-dropdown-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none; right: auto;">
+								</span>
+							</div>
+						</div>
+					</div>
+				}							
+			}
+		}
+
+		<div class="panel-body">
+			<div class="row pull-right">
+				<div class="col-md-12 col-sm-12">
+					@if(optionalFacets.size >= 1) {
+						<div class="input-group">
+							<select class="form-control" name="addFacet" id="addFacet">
+								<option value="" selected="selected">&#060;Please Select&#062;</option>
+								@for((key, value) <- optionalFacets) {
+									<option value="@key">@value.getValue()</option>
+								}
+							</select>
+							<span class="input-group-btn">
+								<button id="add-facet" class="btn btn-primary" type="button" name="action" value="add-facet" data-toggle="tooltip" data-placement="top" title="Add Facet to the above list"><span>Add Facet</span> <span class="glyphicon glyphicon-plus"></span></button>
+							</span>
+						</div><!-- /input-group -->
+						<input type="hidden" name="action" value="search" id="action" />
+					}
+				</div>
+			</div>
+			<div class="row pull-right reset-facets">
+				<div class="col-md-12 col-sm-12">
+					<button id="reset-facets" class="btn btn-primary" type="button" name="action" value="reset-facets" data-toggle="tooltip" data-placement="left" title="Resets Optional Facets"><span>Reset All Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
+				</div>
+			</div>
+		</div>
 	}
-	
-	<div class="panel-body">
-		<div class="row pull-right">
-			<div class="col-md-12 col-sm-12">
-				@if(optionalFacets.size >= 1) {
-					<div class="input-group">
-						<select class="form-control" name="addFacet" id="addFacet">
-							<option value="" selected="selected">&#060;Please Select&#062;</option>
-							@for((key, value) <- optionalFacets) {
-								<option value="@key">@value.getValue()</option>
-							}
-						</select>
-						<span class="input-group-btn">
-							<button id="add-facet" class="btn btn-primary" type="button" name="action" value="add-facet" data-toggle="tooltip" data-placement="top" title="Add Facet to the above list"><span>Add Facet</span> <span class="glyphicon glyphicon-plus"></span></button>
-						</span>
-					</div><!-- /input-group -->
-					<input type="hidden" name="action" value="search" id="action" />
-				}
-			</div>
-		</div>
-		<div class="row pull-right reset-facets">
-			<div class="col-md-12 col-sm-12">
-				<button id="reset-facets" class="btn btn-primary" type="button" name="action" value="reset-facets" data-toggle="tooltip" data-placement="left" title="Resets Optional Facets"><span>Reset All Facets</span> <span class="glyphicon glyphicon-remove-circle"></span></button>
-			</div>
-		</div>
-	</div>
 </div>

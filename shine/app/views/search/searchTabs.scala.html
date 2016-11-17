@@ -1,29 +1,17 @@
-@(level: String = "search")
-
-@showOption(tab: String) = @{
-	play.api.Play.current.configuration.getConfig("shine") match {
-	      case Some(config) => { 
-	      	config.getBoolean(tab) match {
-				case Some(option) => { option.asInstanceOf[Boolean] }
-				case None => { false } 
-			}
-	      }
-	      case None => { false } 
-	}
-}
+@(level: String = "search")(implicit shineConfig: play.api.Configuration)
 
 <ul class="nav nav-tabs">
- 
+
 @level match {
     
   case "search" => {
   	<li class="active"><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
     <li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
     <li><a href="@routes.Application.searchTips()">Search Tips</a></li>
-	@if(showOption("show_browse")) {
+	@if(shineConfig.getBoolean("show_browse").getOrElse(false)) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
 	}
-	@if(showOption("show_concordance")) {
+	@if(shineConfig.getBoolean("show_concordance").getOrElse(false)) {
 		<li><a href="@routes.Search.concordance()">Concordance View</a></li>
 	}
   }
@@ -32,10 +20,10 @@
   	<li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li class="active"><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
     <li><a href="@routes.Application.searchTips()">Search Tips</a></li>
-	@if(showOption("show_browse")) {
+	@if(shineConfig.getBoolean("show_browse").getOrElse(false)) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
 	}
-	@if(showOption("show_concordance")) {
+	@if(shineConfig.getBoolean("show_concordance").getOrElse(false)) {
 		<li><a href="@routes.Search.concordance()">Concordance View</a></li>
 	}
   }
@@ -44,10 +32,10 @@
     <li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
     <li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
     <li class="active"><a href="@routes.Application.searchTips()">Search Tips</a></li>
-    @if(showOption("show_browse")) {
+    @if(shineConfig.getBoolean("show_browse").getOrElse(false)) {
         <li><a href="@routes.Search.browse()">Browse Collections</a></li>
     }
-    @if(showOption("show_concordance")) {
+    @if(shineConfig.getBoolean("show_concordance").getOrElse(false)) {
         <li><a href="@routes.Search.concordance()">Concordance View</a></li>
     }
   }
@@ -55,10 +43,10 @@
   case "browse" => {
   	<li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
-	@if(showOption("show_browse")) {
+	@if(shineConfig.getBoolean("show_browse").getOrElse(false)) {
 		<li class="active"><a href="@routes.Search.browse()">Browse Collections</a></li>
 	}
-	@if(showOption("show_concordance")) {
+	@if(shineConfig.getBoolean("show_concordance").getOrElse(false)) {
 		<li><a href="@routes.Search.concordance()">Concordance View</a></li>
   	}
   }
@@ -66,10 +54,10 @@
   case "concordance" => {
   	<li><a href="@routes.Search.search()?facet.sort=index&tab=results">Search</a></li>
 	<li><a href="@routes.Search.advanced_search()">Advanced Search</a></li>
-	@if(showOption("show_browse")) {
+	@if(shineConfig.getBoolean("show_browse").getOrElse(false)) {
 		<li><a href="@routes.Search.browse()">Browse Collections</a></li>
 	}
-	@if(showOption("show_concordance")) {
+	@if(shineConfig.getBoolean("show_concordance").getOrElse(false)) {
 		<li class="active"><a href="@routes.Search.concordance()">Concordance View</a></li>
 	}
   }
