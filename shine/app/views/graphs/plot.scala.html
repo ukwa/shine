@@ -1,4 +1,4 @@
-@(title: String, user: User, q: String, labelX: String, labelY: String, year_start: String, year_end: String, pageName: String)
+@(title: String, user: User, q: String, labelX: String, labelY: String, year_start: String, year_end: String, pageName: String)(implicit configuration: play.Configuration)
 
 @styles = {
 }
@@ -70,7 +70,7 @@
       }
       y.tickFormat = ",3.1g";
       var s = myChart.addSeries("Query", dimple.plot.line);
-      var wayBackUrl = '@play.Play.application().configuration().getString("shine.web_archive_url")';
+      var wayBackUrl = '@configuration.getString("shine.web_archive_url")';
       s.addEventHandler("click", function (e) {
           // Load the sample results:
        	  $("#samplesTitle").empty();

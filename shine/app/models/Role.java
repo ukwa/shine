@@ -4,28 +4,21 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 import com.avaje.ebean.ExpressionList;
 
 import play.data.validation.Constraints.Required;
-import play.db.ebean.Model;
+import com.avaje.ebean.Model;
 import uk.bl.wa.shine.Const;
 
 @Entity
 public class Role extends Model {
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 5670206529564297517L;
 
 	@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long id;
     
 	@Required
@@ -38,19 +31,11 @@ public class Role extends Model {
     @Version
     public Timestamp lastUpdate;
 
-//    @OneToMany(cascade=CascadeType.ALL)
-//    @JoinTable(name = "user_roles",
-//              joinColumns = @JoinColumn(name = "role_id"),
-//              inverseJoinColumns = @JoinColumn(name = "user_id"))
-
-    @ManyToMany
-    @JoinTable(
-        name="user_roles",
-        joinColumns={@JoinColumn(name="role_id", referencedColumnName="id")},
-        inverseJoinColumns={@JoinColumn(name="user_id", referencedColumnName="id")})
+    // Mapped by roles in User.java
+    @ManyToMany(mappedBy = "roles")
+    @JoinTable()
     public List<User> users = new ArrayList<User>();
-    
-    
+
     @ManyToMany
     @JoinTable(
         name="role_permissions",
