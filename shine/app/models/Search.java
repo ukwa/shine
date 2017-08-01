@@ -3,13 +3,9 @@ package models;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.*;
 
-import play.db.ebean.Model;
+import com.avaje.ebean.Model;
 import play.data.validation.Constraints;
 import play.data.format.Formats;
 
@@ -18,12 +14,10 @@ import play.data.format.Formats;
 @Table(name="saved_search")
 public class Search extends Model {
     
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long id;
     
     @Constraints.Required

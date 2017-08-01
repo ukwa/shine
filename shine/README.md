@@ -1,14 +1,59 @@
-Shine - Visualising Web Archive via Solr
-========================================
+# Shine - Visualising Web Archive via Solr
 
 This is a front-end for Solr indicies created using the warc-discovery package. 
 
-Running, e.g. to keep different configs separate,
+## Setting up the application
 
-    % play -Dconfig.file=conf/application-localhost-solr.conf run
+### Installing the repository
 
-Ideas
------
+1. Install Typesafe Activator [from the website](https://www.lightbend.com/activator/download) or using Homebrew if on a Mac.
+2. Clone the Shine repository to your local machine including submodules with ```git clone --recursive```
+
+### Configuration
+
+Copy ```conf/application.example.conf``` to ```conf/application.conf```. 
+
+This file will not be commit to git. Paste in the missing fields for Solr and Postgres servers here.
+
+
+## Running the application in development
+
+Run the application in development from the console:
+
+    activator run
+
+This will run Shine on localhost:9000. If another port is desired use:
+
+    activator "run 8080" 
+
+To run the application using another configuration file use:
+
+    activator run -Dconfig.file=conf/application-localhost-solr.conf
+
+Note that ```application.conf``` is the main configuration file and ```application-test.conf``` will inherit the main config and override specific
+values. See ```application-test.conf``` for an example.
+
+To run the application in the Scala REPL, use:
+
+    activator console
+
+To do a clean compilation and then running the app, use:
+
+    activator clean run
+
+
+## Testing the application
+
+Running all tests:
+
+    activator test
+
+Integration tests only:
+
+    activator "test-only integration.*"
+
+
+## Ideas
 
 Indexer:
 
@@ -203,6 +248,3 @@ object Statix { //Noder must extend this
         params.foldLeft( request){
             (wsReq, tuple) => wsReq.withQueryString( tuple)}}
 }
-
-    
-    
