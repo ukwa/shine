@@ -7,6 +7,9 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.1.0")
 // java ebean
 addSbtPlugin("com.typesafe.sbt" % "sbt-play-ebean" % "3.0.0")
 
+// Eclipse support
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "5.1.0")
+
 // Comment to get more information during initialization
 logLevel := Level.Warn
 
