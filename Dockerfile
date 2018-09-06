@@ -22,17 +22,11 @@ WORKDIR /shine/shine
 # Patch in the version tag:
 RUN git fetch -t && export VERSION=`git describe --tags --always` && sed -i -r 's|version := ".*"|version := "'${VERSION}'"|' build.sbt || exit 0
 
-# Run without failing to try to download all dependencies:
-RUN /usr/local/activator/bin/activator stage || exit 0
-RUN /usr/local/activator/bin/activator stage || exit 0
-
 # Perform a full clean build:
 RUN rm -fr target
 RUN /usr/local/activator/bin/activator clean stage
 
 EXPOSE 9000
-
-#VOLUME "$USER_HOME_DIR/.ivy2"
 
 FROM openjdk:8-jre
 
