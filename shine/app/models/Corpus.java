@@ -53,9 +53,13 @@ public class Corpus extends Model {
 	}
 
     public static List<Corpus> findByUser(User user) {
-        return find.where()
-                .eq("user_id", user.id)
-                .findList();
+    	if( user != null){
+	        return find.where()
+	                .eq("user_id", user.id)
+	                .findList();
+    	} else {
+    		return new ArrayList<Corpus>();
+    	}
     }
     
     public static List<Corpus> findAll() {
