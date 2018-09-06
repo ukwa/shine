@@ -7,7 +7,7 @@
 	<td>@d.getFirstValue("domain")</td>
 	<td>
 
-		
+	@if( q.res.getHighlighting().get(d.getFirstValue("id")) != null ) {		
 		@if(q.res.getHighlighting().get(d.getFirstValue("id")).get("title") != null) {
 			<p class="list-group-item-text">
 				@for(title <- q.res.getHighlighting().get(d.getFirstValue("id")).get("title")) {
@@ -36,6 +36,9 @@
 				}
 			</p>
 		}
+        } else {
+               <i>no matching text found!</i>
+        }
 	</td>
 </tr>
 

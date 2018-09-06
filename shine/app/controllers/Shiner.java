@@ -163,39 +163,41 @@ public class Shiner extends Controller {
 
         // Set up a Json output:
         ObjectNode result = Json.newObject();
-
+        
         // Pull out the highlights:
         for (String id : sample.res.getHighlighting().keySet()) {
-            ObjectNode item = result.putObject(id);
-            // Pick up highlights
-            Map<String, List<String>> hls = sample.res.getHighlighting().get(id);
-            ArrayNode matches = item.putArray("matches");
-            for (String field : hls.keySet()) {
-                for (String match : hls.get(field)) {
-                    ArrayNode m = matches.addArray();
-                    // Merge contiguous matches:
-                    // c.f. better approaches in http://stackoverflow.com/questions/19266432/highlighting-exact-phrases-with-solr
-                    match = match.replace("</em> <em>", " ");
-                    // And split:
-                    String[] parts = match.split("<em>");
-                    m.add(parts[0]);
-                    String[] tail = parts[1].split("</em>");
-                    m.add(tail[0]);
-                    if (tail.length > 1) {
-                        m.add(tail[1]);
-                    } else {
-                        m.add("");
-                    }
-                }
-            }
-
-            // And look for other info:
-            for (SolrDocument doc : sample.res.getResults()) {
-                if (id.equals(doc.get("id"))) {
-                    item.put("domain", (String) doc.get("domain"));
-                    item.put("url", (String) doc.get("url"));
-                    item.put("wayback_date", (String) doc.get("wayback_date"));
-                }
+            if( id != null) {
+	            ObjectNode item = result.putObject(id);
+	            // Pick up highlights
+	            Map<String, List<String>> hls = sample.res.getHighlighting().get(id);
+	            ArrayNode matches = item.putArray("matches");
+	            for (String field : hls.keySet()) {
+	                for (String match : hls.get(field)) {
+	                    ArrayNode m = matches.addArray();
+	                    // Merge contiguous matches:
+	                    // c.f. better approaches in http://stackoverflow.com/questions/19266432/highlighting-exact-phrases-with-solr
+	                    match = match.replace("</em> <em>", " ");
+	                    // And split:
+	                    String[] parts = match.split("<em>");
+	                    m.add(parts[0]);
+	                    String[] tail = parts[1].split("</em>");
+	                    m.add(tail[0]);
+	                    if (tail.length > 1) {
+	                        m.add(tail[1]);
+	                    } else {
+	                        m.add("");
+	                    }
+	                }
+	            }
+	
+	            // And look for other info:
+	            for (SolrDocument doc : sample.res.getResults()) {
+	                if (id.equals(doc.get("id"))) {
+	                    item.put("domain", (String) doc.get("domain"));
+	                    item.put("url", (String) doc.get("url"));
+	                    item.put("wayback_date", Long.toString((Long)doc.get("wayback_date")));
+	                }
+	            }
             }
         }
 

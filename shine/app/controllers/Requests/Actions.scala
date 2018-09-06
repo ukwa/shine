@@ -11,5 +11,5 @@ object Actions {
   val AuthenticatedUserAction = AuthenticatedAction andThen UserAction
 
   // UserWithCorporaAction
-  val UserWithCorporaAction = AuthenticatedUserAction andThen AddCorporaToUserRequest
+  val UserWithCorporaAction = AddUserToRequest andThen AddCorporaToUserRequest
 }
