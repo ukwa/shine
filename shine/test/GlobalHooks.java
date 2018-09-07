@@ -1,4 +1,6 @@
+import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import net.sf.ehcache.CacheManager;
 import play.test.TestBrowser;
 import play.test.TestServer;
 import static play.test.Helpers.*;
@@ -24,13 +26,13 @@ public class GlobalHooks {
             TEST_BROWSER = testBrowser(HTMLUNIT, PORT);
             start(TEST_SERVER);
             initialised = true;
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    TEST_BROWSER.quit();
-                    TEST_SERVER.stop();
-                }
-            });
         }
+    }
+    
+    @After
+    public void after() {
+        TEST_BROWSER.quit();
+    	stop(TEST_SERVER);
+    	CacheManager.getInstance().shutdown();
     }
 }

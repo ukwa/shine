@@ -32,6 +32,6 @@ libraryDependencies ++= Seq(
 )
 
 // Specify the configuration to be used during testing.
-javaOptions in Test += "-Dconfig.resource=application-test.conf"
+javaOptions in Test += "-Dconfig.file=conf/application-docker.conf"
 
 fork in run := true
