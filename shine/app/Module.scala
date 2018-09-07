@@ -19,12 +19,14 @@ class Module extends AbstractModule {
     */
   @Provides
   def provideShine(configuration: Configuration, cacheApi: CacheApi) : Shine = {
-    new Shine(configuration, cacheApi)
+    val config = configuration.getConfig("shine")
+    new Shine(config, cacheApi)
   }
 
   @Provides
   def provideRescued(configuration: Configuration) : Rescued = {
-    new Rescued(configuration)
+    val config = configuration.getConfig("shine")
+    new Rescued(config)
   }
 
   @Provides

@@ -11,7 +11,8 @@ jdk:
 
 before_script:
   - cd shine
+  - cp conf/application-docker.conf conf/application.conf
 
 script:
-- sbt -Dconfig.file=conf/application-localhost-solr.conf compile
+- sbt compile
 
