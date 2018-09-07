@@ -13,5 +13,5 @@ before_script:
   - cd shine
 
 script:
-- sbt -Dconfig.file=conf/application-localhost-solr.conf test
+- sbt -Dconfig.file=conf/application-localhost-solr.conf compile
 

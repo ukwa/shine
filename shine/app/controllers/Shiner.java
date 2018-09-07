@@ -45,7 +45,7 @@ public class Shiner extends Controller {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return ok(views.html.vis.rescued.render("Half-life...", "halflife"));
+        return ok();//ok(views .html. vis.rescued.render("Half-life...", "halflife"));
     }
 
     public Result trendsTsv(String query, String year_start, String year_end) throws SolrServerException, ShineException {

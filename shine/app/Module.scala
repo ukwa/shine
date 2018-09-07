@@ -8,7 +8,7 @@ class Module extends AbstractModule {
 
   override def configure() = {
     // Initialise InitialData on application startup
-    bind(classOf[InitialData]).asEagerSingleton()
+    //bind(classOf[InitialData]).asEagerSingleton()
   }
 
   /**
@@ -19,14 +19,12 @@ class Module extends AbstractModule {
     */
   @Provides
   def provideShine(configuration: Configuration, cacheApi: CacheApi) : Shine = {
-    val config = configuration.getConfig("shine")
-    new Shine(config, cacheApi)
+    new Shine(configuration, cacheApi)
   }
 
   @Provides
   def provideRescued(configuration: Configuration) : Rescued = {
-    val config = configuration.getConfig("shine")
-    new Rescued(config)
+    new Rescued(configuration)
   }
 
   @Provides
