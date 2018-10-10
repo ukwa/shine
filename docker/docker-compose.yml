@@ -8,6 +8,14 @@ services:
     ports:
       - 8983:8983
 
+  # Shine React
+  shine-react:
+    build: ../shine-react
+    environment:
+     - "SOLR_URL=http://solr:8983/solr/discovery"
+    ports:
+     - 81:80
+
   # Shine
   shine:
     build: ..
