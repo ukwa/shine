@@ -6,6 +6,15 @@ import {
 	SolrClient
 } from "solr-faceted-search-react";
 
+/* TODO?
+ *  - Actually understand React etc. properly?
+ *  - use react-router and https://www.npmjs.com/package/query-string etc. to set up separate pages and record them in the URL properly.
+ *  - use redux to manage state cleanly?
+ *  - improve the UI, to somewhere between Shine, Blacklight and UKWA-UI?
+ *
+ */
+
+
 // The search fields and filterable facets you want
 const fields = [
 	{label: "All text fields", field: "*", type: "text"},
