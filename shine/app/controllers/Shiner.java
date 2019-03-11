@@ -195,7 +195,12 @@ public class Shiner extends Controller {
 	                if (id.equals(doc.get("id"))) {
 	                    item.put("domain", (String) doc.get("domain"));
 	                    item.put("url", (String) doc.get("url"));
-	                    item.put("wayback_date", Long.toString((Long)doc.get("wayback_date")));
+                            Object wbd = doc.get("wayback_date");
+                            if( wbd instanceof Long ) {
+	                      item.put("wayback_date", Long.toString((Long)doc.get("wayback_date")));
+                            } else {
+	                      item.put("wayback_date", (String)doc.get("wayback_date"));
+                            }
 	                }
 	            }
             }
