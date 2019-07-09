@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// The client class
 	new SolrClient({
 		// The solr index url to be queried by the client
-		url: "http://localhost:81/solr/discovery/select",
+		url: "/solr/discovery/select",
 		searchFields: fields,
 		sortFields: sortFields,
 
