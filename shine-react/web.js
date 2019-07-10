@@ -16,6 +16,14 @@ var _solrFacetedSearchReact = require("solr-faceted-search-react");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/* TODO?
+ *  - Actually understand React etc. properly?
+ *  - use react-router and https://www.npmjs.com/package/query-string etc. to set up separate pages and record them in the URL properly.
+ *  - use redux to manage state cleanly?
+ *  - improve the UI, to somewhere between Shine, Blacklight and UKWA-UI?
+ *
+ */
+
 // The search fields and filterable facets you want
 var fields = [{ label: "All text fields", field: "*", type: "text" }, { label: "Title", field: "title", type: "text" }, { label: "Host", field: "host", type: "list-facet" }, { label: "Year of capture", field: "crawl_year", type: "range-facet" }, { label: "Content type", field: "content_type_norm", type: "list-facet" }];
 
@@ -26,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	// The client class
 	new _solrFacetedSearchReact.SolrClient({
 		// The solr index url to be queried by the client
-		url: "http://localhost:81/solr/discovery/select",
+		url: "/solr/discovery/select",
 		searchFields: fields,
 		sortFields: sortFields,
 
