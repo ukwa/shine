@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		searchFields: fields,
 		sortFields: sortFields,
                 facetLimit: 10,
+                facetSort: "count",
 
 		// The change handler passes the current query- and result state for render
 		// as well as the default handlers for interaction with the search component
