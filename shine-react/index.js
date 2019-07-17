@@ -1,10 +1,47 @@
 // index.js
 import React from "react";
 import ReactDOM from "react-dom";
+import cx from "classnames";
 import {
 	SolrFacetedSearch,
-	SolrClient
+	SolrClient,
+        defaultComponentPack
 } from "solr-faceted-search-react";
+
+// Custom class for the result component
+class MyResult extends React.Component {
+
+	renderValue(field, doc) {
+		const value = [].concat(doc[field] || null).filter((v) => v !== null);
+
+                if( field == 'content') return "-";
+
+		return value.join(", ");
+	}
+
+	render() {
+		const { bootstrapCss, doc, fields } = this.props;
+
+		return (
+			<li className={cx({"list-group-item": bootstrapCss})} onClick={() => this.props.onSelect(doc)}>
+				<ul>
+                                        {Object.keys(this.props.doc).map( key => 
+                			        <li><label>{key}</label> {this.renderValue(key, doc)}</li>
+					)}
+				</ul>
+			</li>
+		);
+	}
+}
+
+// Create a custom component pack from the default component pack
+const myComponentPack = {
+	...defaultComponentPack,
+	results: {
+		...defaultComponentPack.results,
+		result: MyResult
+	}
+}
 
 document.addEventListener("DOMContentLoaded", () => {
 	// The client class
@@ -25,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					{...state}
 					{...handlers}
 					bootstrapCss={true}
+					customComponents={myComponentPack}
 					onSelectDoc={(doc) => console.log(doc)}
 				/>,
 				document.getElementById("app")
