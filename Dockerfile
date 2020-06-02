@@ -3,10 +3,6 @@ FROM openjdk:8 AS build-env
 ENV         ACTIVATOR_VERSION 1.3.11
 ARG         USER_HOME_DIR="/root"
 
-# Add cerificates that ensure download of dependencies works:
-RUN         apt-get install -y ca-certificates-java && \
-            update-ca-certificates
-
 # Install Typesafe Activator
 RUN         cd /tmp && \
             wget -q http://downloads.typesafe.com/typesafe-activator/$ACTIVATOR_VERSION/typesafe-activator-$ACTIVATOR_VERSION.zip && \

@@ -34,4 +34,7 @@ libraryDependencies ++= Seq(
 // Specify the configuration to be used during testing.
 javaOptions in Test += "-Dconfig.file=conf/application-docker.conf"
 
+// Add CSV formatter
+TwirlKeys.templateFormats += ("csv" -> "views.CsvFormat")
+
 fork in run := true

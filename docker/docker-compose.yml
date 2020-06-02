@@ -23,5 +23,9 @@ services:
      - "SOLR_URL=http://solr:8983/solr/discovery"
     ports:
      - 9000:9000
+    volumes:
+     - "./application.conf:/shine/conf/application-docker.conf"
+    depends_on:
+     - solr
 
 
