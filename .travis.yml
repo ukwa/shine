@@ -1,8 +1,9 @@
+dist: trusty
+
 language: scala
 
 jdk:
   - oraclejdk8
-  - oraclejdk9
 
 scala:
   - 2.11.8
@@ -10,7 +11,9 @@ scala:
 before_script:
   - cd shine
   - cp conf/application-docker.conf conf/application.conf
+  - echo "Determining dependency tree..."
+  - sbt "inspect tree clean"
 
 script:
-- sbt compile
+  - sbt compile
 
